@@ -354,30 +354,6 @@ public class MySysUtil {
         return System.getProperty("user.dir");
     }
 
-    public static void setGraphLevelPathLengthDistributions(MyProgressBar pb) {
-        int nodeCount = 0;
-        Collection<MyNode> startNodes = MyVars.g.getVertices();
-        Collection<MyNode> endNodes = MyVars.g.getVertices();
-        double currentTotalWork = 20;
-        double workfraction = (double) 65/startNodes.size();
-        for (MyNode startNode : startNodes) {
-            int unreachableNodeCount = 0;
-            String workPercent = MyMathUtil.twoDecimalFormat(((double)(++nodeCount)/MyVars.g.getVertexCount())*100);
-            MyProgressBarWaitMessage.waitingMsgLabel.setText("Computing path lengths: "+ nodeCount + "/" + MyMathUtil.getCommaSeperatedNumber(MyVars.g.getVertexCount()) + "(" + workPercent + "%)");
-            for (MyNode endNode : endNodes) {
-                if (startNode != endNode) {
-                    doGraphLevelDFSForAllPathSearch(endNode, startNode, new HashSet<MyNode>(), new LinkedList<>());
-                    if (unreachable) unreachableNodeCount++;
-                    else unreachable = true;
-                }
-            }
-            startNode.setUnreachableNodeCount(unreachableNodeCount);
-            currentTotalWork += workfraction;
-            pb.updateValue((int)currentTotalWork, 100);
-        }
-        MyProgressBarWaitMessage.waitingMsgLabel.setText(MyProgressBarWaitMessage.waitMsg);
-    }
-
     private static boolean unreachable = true;
 
     private static void doGraphLevelDFSForAllPathSearch(MyNode endNode, MyNode successor, Set<MyNode> visited, LinkedList<MyNode> currpath) {
@@ -412,37 +388,6 @@ public class MySysUtil {
         }
     }
 
-    private static void doSingleNodeLevelDFSForAllPathSearch(MyNode endNode, MyNode successor, Set<MyNode> visited, LinkedList<MyNode> currpath) {
-        try {
-            if (visited.contains(successor)) {
-                return;
-            }
-            visited.add(successor);
-            currpath.addLast(successor);
-
-            if (successor == endNode) {
-                int pathLength = currpath.size();
-                if (MyVars.getViewer().selectedNode.pathLengthByDepthMap.containsKey(pathLength)) {
-                    MyVars.getViewer().selectedNode.pathLengthByDepthMap.put(pathLength, MyVars.getViewer().selectedNode.pathLengthByDepthMap.get(pathLength)+1);
-                } else {
-                    MyVars.getViewer().selectedNode.pathLengthByDepthMap.put(pathLength, 1L);
-                }
-                currpath.removeLast();
-                visited.remove(successor);
-                return;
-            }
-
-            Collection<MyEdge> outEdges = MyVars.g.getOutEdges(successor);
-            for (MyEdge edge : outEdges) {;
-                doSingleNodeLevelDFSForAllPathSearch(endNode, edge.getDest(), visited, currpath);
-            }
-            currpath.removeLast();
-            visited.remove(successor);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
     public static int getUnWeightedBetweenNodeShortestPathLength(MyNode source, MyNode dest){
         MyProgressBar pb = new MyProgressBar(false);
         Queue<MyNode> Qu =  new LinkedList<>();
@@ -467,7 +412,7 @@ public class MySysUtil {
         return (found.containsKey(dest) ? found.get(dest) : 0);
     }
 
-    public static void setAverageUnWeightedPlusSequentialGraphShortestPathLength(Graph g) {
+    public static void setAverageUnWeightedShortestPathLength(Graph g) {
         StringBuilder b =  new StringBuilder();
         long gTotalL = 0L;
         long gCount = 0L;

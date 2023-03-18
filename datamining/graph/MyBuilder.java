@@ -780,7 +780,7 @@ public class MyBuilder {
     public void setMaxNodeValue() {MyVars.g.setMaxNodeValue();}
     public void setTotalEdgeContribution() {MyVars.g.setTotalEdgeContribution();}
     public void cleanWork(){ MyVars.g.edRefs = null; }
-    public void setAverageUnWeightedGraphShortestPathLength(Graph g) {MySysUtil.setAverageUnWeightedPlusSequentialGraphShortestPathLength(g);}
+    public void setAverageUnWeightedGraphShortestPathLength(Graph g) {MySysUtil.setAverageUnWeightedShortestPathLength(g);}
     public void setConnectedNetworkComponentCountByGraph() {
         MyConnectedNetworkComponentFinder.setConnectedComponentsByGraph();
     }

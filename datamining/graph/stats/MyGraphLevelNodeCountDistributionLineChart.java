@@ -63,7 +63,6 @@ extends JPanel {
 
                     XYSeries endNodeCountSeries = new XYSeries("E. N. CNT.");
                     TreeMap<Integer, Integer> endNodeCountByValueMap = new TreeMap<>();
-                    nodes = MyVars.g.getVertices();
                     totalCnt = 0;
                     totalValue = 0;
                     for (MyNode n : nodes) {
@@ -81,11 +80,9 @@ extends JPanel {
                     for (Integer value : endNodeCountByValueMap.keySet()) {
                         endNodeCountSeries.add(value, endNodeCountByValueMap.get(value));
                     }
-                    dataset.addSeries(endNodeCountSeries);
 
                     XYSeries directRecurrenceNodeCountSeries = new XYSeries("R. CNT.");
                     TreeMap<Integer, Integer> reccurrenceNodeCountByValueMap = new TreeMap<>();
-                    nodes = MyVars.g.getVertices();
                     totalCnt = 0;
                     totalValue = 0;
                     for (MyNode n : nodes) {
@@ -103,10 +100,8 @@ extends JPanel {
                     for (Integer value : reccurrenceNodeCountByValueMap.keySet()) {
                         directRecurrenceNodeCountSeries.add(value, reccurrenceNodeCountByValueMap.get(value));
                     }
-                    dataset.addSeries(directRecurrenceNodeCountSeries);
 
                     TreeMap<Integer, Integer> recurrencePeriodMap = new TreeMap<>();
-                    nodes = MyVars.g.getVertices();
                     totalCnt = 0;
                     for (MyNode n : nodes) {
                         if (n.getCurrentValue() == 0) continue;
@@ -123,10 +118,8 @@ extends JPanel {
                     for (Integer value : recurrencePeriodMap.keySet()) {
                         avgRecurrencePeriodSeries.add(value, recurrencePeriodMap.get(value));
                     }
-                    dataset.addSeries(avgRecurrencePeriodSeries);
 
                     TreeMap<Integer, Integer> itemsetLengthMap = new TreeMap<>();
-                    nodes = MyVars.g.getVertices();
                     totalCnt = 0;
                     for (MyNode n : nodes) {
                         if (n.getCurrentValue() == 0) continue;
@@ -143,8 +136,38 @@ extends JPanel {
                     for (Integer value : itemsetLengthMap.keySet()) {
                         itemsetLengthSeries.add(value, itemsetLengthMap.get(value));
                     }
-                    dataset.addSeries(itemsetLengthSeries);
 
+                    TreeMap<Integer, Integer> nodeHopCountByNodeMap = new TreeMap<>();
+                    for (MyNode n : nodes) {
+                        if (n.getCurrentValue() == 0) continue;
+                        int cnt = 0;
+                        int totalHop = 0;
+                        for (int s = 0; s < MyVars.seqs.length; s++) {
+                            for (int itemsetIdx = 0; itemsetIdx < MyVars.seqs[s].length; itemsetIdx++) {
+                                String nn = MyVars.seqs[s][itemsetIdx].split(":")[0];
+                                if (nn.equals(n.getName())) {
+                                    int hopCount = (MyVars.seqs[s].length - (itemsetIdx + 1));
+                                    if (hopCount > 0) {
+                                        totalHop += hopCount;
+                                        cnt++;
+                                    }
+                                }
+                            }
+                        }
+                        if (cnt > 0) {
+                            int avgHop = (int)((double)totalHop/cnt);
+                            if (nodeHopCountByNodeMap.containsKey(avgHop)) {
+                                nodeHopCountByNodeMap.put(avgHop, nodeHopCountByNodeMap.get(avgHop)+1);
+                            } else {
+                                nodeHopCountByNodeMap.put(avgHop, 1);
+                            }
+                        }
+                    }
+
+                    XYSeries avgHopSeries = new XYSeries("AVG. N. HOP");
+                    for (Integer avgHop : nodeHopCountByNodeMap.keySet()) {
+                        avgHopSeries.add(avgHop, nodeHopCountByNodeMap.get(avgHop));
+                    }
 
                     JFreeChart chart = ChartFactory.createXYLineChart("", "COUNT", "", dataset);
                     chart.getTitle().setHorizontalAlignment(HorizontalAlignment.LEFT);
@@ -162,39 +185,11 @@ extends JPanel {
 
                     XYPlot plot = (XYPlot) chart.getPlot();
                     XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
-                    renderer.setSeriesPaint(0, Color.RED);
+                    renderer.setSeriesPaint(0, Color.DARK_GRAY);
                     renderer.setSeriesStroke(0, new BasicStroke(1.5f));
                     renderer.setSeriesShapesVisible(0, true);
                     renderer.setSeriesShape(0, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
                     renderer.setSeriesFillPaint(0, Color.WHITE);
-                    renderer.setUseFillPaint(true);
-
-                    renderer.setSeriesPaint(1, Color.BLUE);
-                    renderer.setSeriesStroke(1, new BasicStroke(1.5f));
-                    renderer.setSeriesShapesVisible(1, true);
-                    renderer.setSeriesShape(1, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
-                    renderer.setSeriesFillPaint(1, Color.WHITE);
-                    renderer.setUseFillPaint(true);
-
-                    renderer.setSeriesPaint(2, Color.DARK_GRAY);
-                    renderer.setSeriesStroke(2, new BasicStroke(1.5f));
-                    renderer.setSeriesShapesVisible(2, true);
-                    renderer.setSeriesShape(2, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
-                    renderer.setSeriesFillPaint(2, Color.WHITE);
-                    renderer.setUseFillPaint(true);
-
-                    renderer.setSeriesPaint(3, Color.BLACK);
-                    renderer.setSeriesStroke(3, new BasicStroke(1.5f));
-                    renderer.setSeriesShapesVisible(3, true);
-                    renderer.setSeriesShape(3, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
-                    renderer.setSeriesFillPaint(3, Color.WHITE);
-                    renderer.setUseFillPaint(true);
-
-                    renderer.setSeriesPaint(4, Color.decode("#D29D3F"));
-                    renderer.setSeriesStroke(4, new BasicStroke(1.5f));
-                    renderer.setSeriesShapesVisible(4, true);
-                    renderer.setSeriesShape(4, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
-                    renderer.setSeriesFillPaint(4, Color.WHITE);
                     renderer.setUseFillPaint(true);
 
                     ChartPanel chartPanel = new ChartPanel(chart);
@@ -215,21 +210,18 @@ extends JPanel {
                     chartOption.setFocusable(false);
                     chartOption.setBackground(Color.WHITE);
                     chartOption.setFont(MyVars.tahomaPlainFont10);
-                    chartOption.addItem("SELECT");
                     chartOption.addItem("O. N."); // Open Node Count.
                     chartOption.addItem("E. N."); // Ending Node Count.
                     chartOption.addItem("D. R."); // Direct Recurrence Count.
                     chartOption.addItem("AVG. RP."); // Average recurrence period.
                     chartOption.addItem("ITEM L."); // Item length.
+                    chartOption.addItem("AVG. H. C."); // Average hop count.
                     //chartOption.addItem("PATH L. DIST."); // Path length length.
                     chartOption.addActionListener(new ActionListener() {
                         @Override public void actionPerformed(ActionEvent e) {
                             if (chartOption.getSelectedIndex() == 0) {
                                 dataset.removeAllSeries();
                                 dataset.addSeries(openNodeCountSeries);
-                                dataset.addSeries(endNodeCountSeries);
-                                dataset.addSeries(directRecurrenceNodeCountSeries);
-                                dataset.addSeries(avgRecurrencePeriodSeries);
                             } else if (chartOption.getSelectedIndex() == 1) {
                                 dataset.removeAllSeries();
                                 dataset.addSeries(openNodeCountSeries);
@@ -238,17 +230,14 @@ extends JPanel {
                                 dataset.addSeries(endNodeCountSeries);
                             } else if (chartOption.getSelectedIndex() == 3) {
                                 dataset.removeAllSeries();
-                                dataset.addSeries(directRecurrenceNodeCountSeries);
+                                dataset.addSeries(avgRecurrencePeriodSeries);
                             } else if (chartOption.getSelectedIndex() == 4) {
                                 dataset.removeAllSeries();
-                                dataset.addSeries(avgRecurrencePeriodSeries);
+                                dataset.addSeries(itemsetLengthSeries);
                             } else if (chartOption.getSelectedIndex() == 5) {
                                 dataset.removeAllSeries();
-                                dataset.addSeries(itemsetLengthSeries);
-                            } /**else if (chartOption.getSelectedIndex() == 7) {
-                                dataset.removeAllSeries();
-                                dataset.addSeries(pathLengthDistributionSeries);
-                            }*/
+                                dataset.addSeries(avgHopSeries);
+                            }
                         }
                     });
 

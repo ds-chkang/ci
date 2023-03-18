@@ -903,7 +903,7 @@ public class MyTimeConstrainedBuilider {
         MyVars.g.graphEbasilon = (double)MyVars.g.getEdgeCount()/MyVars.g.getVertexCount();
     }
 
-    public void setAverageUnWeightedGraphShortestPathLength(Graph g) {MySysUtil.setAverageUnWeightedPlusSequentialGraphShortestPathLength(g);}
+    public void setAverageUnWeightedGraphShortestPathLength(Graph g) {MySysUtil.setAverageUnWeightedShortestPathLength(g);}
     public void setMaxNodeValue() {MyVars.g.setMaxNodeValue();}
     public void cleanWork(){ MyVars.g.edRefs = null; }
 

@@ -76,7 +76,6 @@ extends JPanel {
                     graphLevelUniqueNodesByDepthLineChart = new MyGraphLevelUniqueNodesByDepthLineBarChart();
                     graphLevelContributionByDepthLineChart = new MyGraphLevelContributionByDepthLineChart();
                     graphLevelPredecessorSuccessorByDepthLineChart = new MyGraphLevelPredecessorSuccessorByDepthLineChart();
-                    //graphLevelEndingNodeValueHistogramDistributionLineChart = new MyGraphLevelNodeValueByPositionHistogramDistributionLineChart();
 
                     JPanel dataProfilePanel = new JPanel();
                     dataProfilePanel.setBackground(Color.WHITE);
@@ -87,25 +86,16 @@ extends JPanel {
                     dataProfilePanel.add(graphLevelPredecessorSuccessorByDepthLineChart);
                     dataProfilePanel.add(graphLevelReachTimeByDepthLineChart);
                     dataProfilePanel.add(graphLevelContributionByDepthLineChart);
-                    //dataProfilePanel.add(graphLevelEndingNodeValueHistogramDistributionLineChart);
 
                     JPanel graphProfilePanel = new JPanel();
                     graphProfilePanel.setBackground(Color.WHITE);
-                    graphProfilePanel.setLayout(new GridLayout(1, 7));
+                    graphProfilePanel.setLayout(new GridLayout(1, 6));
 
-                    graphLevelNodeHopCountDistributionLineGraph = new MyGraphLevelNodeAverageHopCountDistributionLineChart();
                     graphLevelShortestAvgPathLengthDistributionLineChart = new MyGraphLevelAverageShortestPathLengthDistributionLineChart();
-                    //graphLevelNodeCurrrentValueDistributionLineGraph = new MyGraphLevelNodeValueDistributionLineChart();
-                    //graphLevelEdgeCurrentValueDistributionLineGraph = new MyGraphLevelEdgeValueDistributionLineChart();
                     graphLevelSuccessorCountDistributionLineGraph = new MyGraphLevelSuccessorCountDistributionLineChart();
                     graphLevelPredecessorCountDistributionLineGraph = new MyGraphLevelPredecessorCountDistributionLineChart();
                     graphLevelValueDistributionLineChart = new MyGraphLevelValueDistributionLineChart();
                     graphLevelUniqueContributionDistributionLineChart = new MyGraphLevelUniqueContributionDistributionLineChart();
-
-                    graphProfilePanel.add(graphLevelNodeHopCountDistributionLineGraph);
-                    graphProfilePanel.add(graphLevelShortestAvgPathLengthDistributionLineChart);
-                    //graphProfilePanel.add(graphLevelNodeCurrrentValueDistributionLineGraph);
-                   // graphProfilePanel.add(graphLevelEdgeCurrentValueDistributionLineGraph);
 
                     if (MyVars.nodeLabelSet.size() > 0 || MyVars.edgeLabelSet.size() > 0) {
                         graphLevelLabelValueDistributionLineChart = new MyGraphLevelLabelDistributionLineChart();
@@ -115,13 +105,14 @@ extends JPanel {
                         graphProfilePanel.add(graphLevelNodeCountDistributionLineChart);
                     }
 
+                    graphProfilePanel.add(graphLevelShortestAvgPathLengthDistributionLineChart);
                     graphProfilePanel.add(graphLevelUniqueContributionDistributionLineChart);
                     graphProfilePanel.add(graphLevelPredecessorCountDistributionLineGraph);
                     graphProfilePanel.add(graphLevelSuccessorCountDistributionLineGraph);
                     graphProfilePanel.add(graphLevelValueDistributionLineChart);
 
                     JSplitPane depthChartAndGraphPane = new JSplitPane();
-                    depthChartAndGraphPane.setDividerLocation((int)(MySysUtil.getViewerWidth()*0.13));
+                    depthChartAndGraphPane.setDividerLocation((int)(MySysUtil.getViewerWidth()*0.15));
                     depthChartAndGraphPane.setDividerSize(5);
                     depthChartAndGraphPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
                     depthChartAndGraphPane.setLeftComponent(dataProfilePanel);
@@ -132,16 +123,16 @@ extends JPanel {
                     dashBoardSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
                     dashBoardSplitPane.setTopComponent(depthChartAndGraphPane);
                     dashBoardSplitPane.setBottomComponent(graphProfilePanel);
-                    dashBoardSplitPane.setDividerLocation((int)(MySysUtil.getViewerHeight()*0.71));
+                    dashBoardSplitPane.setDividerLocation((int)(MySysUtil.getViewerHeight()*0.69));
 
                     add(dashBoardSplitPane, BorderLayout.CENTER);
                     MyVars.app.addComponentListener(new ComponentAdapter() {
                         public void componentResized(ComponentEvent evt) {
                             dashBoardSplitPane.setDividerSize(4);
-                            dashBoardSplitPane.setDividerLocation((int)(MySysUtil.getViewerHeight()*0.71));
+                            dashBoardSplitPane.setDividerLocation((int)(MySysUtil.getViewerHeight()*0.69));
 
                             depthChartAndGraphPane.setDividerSize(5);
-                            depthChartAndGraphPane.setDividerLocation((int)(MySysUtil.getViewerWidth()*0.13));
+                            depthChartAndGraphPane.setDividerLocation((int)(MySysUtil.getViewerWidth()*0.15));
                         }
                     });
                     TitledBorder nodeDepthChartPanelBorder = BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "DATA PROFILE BY DEPTH", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, MyVars.tahomaBoldFont11, Color.DARK_GRAY);
@@ -153,8 +144,8 @@ extends JPanel {
                     graphLevelAverageValuesByDepthLineChart = new MyGraphLevelAverageValuesByDepthLineChart();
                     graphLevelUniqueNodesByDepthLineChart = new MyGraphLevelUniqueNodesByDepthLineBarChart();
                     graphLevelContributionByDepthLineChart = new MyGraphLevelContributionByDepthLineChart();
-                    graphLevelNodePathLengthDistributionLineChart = new MyGraphLevelNodePathLengthDistributionLineChart();
-                    //graphLevelEndingNodeValueHistogramDistributionLineChart = new MyGraphLevelNodeValueByPositionHistogramDistributionLineChart();
+                    graphLevelShortestAvgPathLengthDistributionLineChart = new MyGraphLevelAverageShortestPathLengthDistributionLineChart();
+                    graphLevelPredecessorSuccessorByDepthLineChart = new MyGraphLevelPredecessorSuccessorByDepthLineChart();
 
                     JPanel dataProfilePanel = new JPanel();
                     dataProfilePanel.setBackground(Color.WHITE);
@@ -162,40 +153,34 @@ extends JPanel {
                     dataProfilePanel.add(graphLevelAverageValuesByDepthLineChart);
                     dataProfilePanel.add(graphLevelUniqueNodesByDepthLineChart);
                     dataProfilePanel.add(graphLevelContributionByDepthLineChart);
-                    dataProfilePanel.add(graphLevelNodePathLengthDistributionLineChart);
-                    //dataProfilePanel.add(graphLevelEndingNodeValueHistogramDistributionLineChart);
+                    dataProfilePanel.add(graphLevelPredecessorSuccessorByDepthLineChart);
 
                     JPanel graphProfilePanel = new JPanel();
                     graphProfilePanel.setBackground(Color.WHITE);
                     graphProfilePanel.setLayout(new GridLayout(1, 6));
 
-                    graphLevelNodeHopCountDistributionLineGraph = new MyGraphLevelNodeAverageHopCountDistributionLineChart();
-                    //graphLevelNodeCurrrentValueDistributionLineGraph = new MyGraphLevelNodeValueDistributionLineChart();
-                    //graphLevelEdgeCurrentValueDistributionLineGraph = new MyGraphLevelEdgeValueDistributionLineChart();
                     graphLevelSuccessorCountDistributionLineGraph = new MyGraphLevelSuccessorCountDistributionLineChart();
                     graphLevelPredecessorCountDistributionLineGraph = new MyGraphLevelPredecessorCountDistributionLineChart();
                     graphLevelUniqueContributionDistributionLineChart = new MyGraphLevelUniqueContributionDistributionLineChart();
                     graphLevelValueDistributionLineChart = new MyGraphLevelValueDistributionLineChart();
                     graphLevelNodeCountDistributionLineChart = new MyGraphLevelNodeCountDistributionLineChart();
 
-                    graphProfilePanel.add(graphLevelNodeHopCountDistributionLineGraph);
+                    graphProfilePanel.add(graphLevelNodeCountDistributionLineChart);
+                    graphProfilePanel.add(graphLevelShortestAvgPathLengthDistributionLineChart);
+                    graphProfilePanel.add(graphLevelUniqueContributionDistributionLineChart);
                     graphProfilePanel.add(graphLevelPredecessorCountDistributionLineGraph);
                     graphProfilePanel.add(graphLevelSuccessorCountDistributionLineGraph);
-                    //graphProfilePanel.add(graphLevelNodeCurrrentValueDistributionLineGraph);
-                    //graphProfilePanel.add(graphLevelEdgeCurrentValueDistributionLineGraph);
-                    graphProfilePanel.add(graphLevelUniqueContributionDistributionLineChart);
                     graphProfilePanel.add(graphLevelValueDistributionLineChart);
-                    graphProfilePanel.add(graphLevelNodeCountDistributionLineChart);
 
                     JSplitPane depthChartAndGraphPane = new JSplitPane();
-                    depthChartAndGraphPane.setDividerLocation((int)(MySysUtil.getViewerWidth()*0.13));
+                    depthChartAndGraphPane.setDividerLocation((int)(MySysUtil.getViewerWidth()*0.15));
                     depthChartAndGraphPane.setDividerSize(4);
                     depthChartAndGraphPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
                     depthChartAndGraphPane.setLeftComponent(dataProfilePanel);
                     depthChartAndGraphPane.setRightComponent(MyVars.app.getGraphViewerPanel());
 
                     JSplitPane dashBoardSplitPane = new JSplitPane();
-                    dashBoardSplitPane.setDividerLocation((int)(MySysUtil.getViewerHeight()*0.71));
+                    dashBoardSplitPane.setDividerLocation((int)(MySysUtil.getViewerHeight()*0.69));
                     dashBoardSplitPane.setDividerSize(5);
                     dashBoardSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
                     dashBoardSplitPane.setTopComponent(depthChartAndGraphPane);
@@ -205,10 +190,10 @@ extends JPanel {
                     MyVars.app.addComponentListener(new ComponentAdapter() {
                         public void componentResized(ComponentEvent evt) {
                             dashBoardSplitPane.setDividerSize(4);
-                            dashBoardSplitPane.setDividerLocation((int) (MySysUtil.getViewerHeight()*0.71));
+                            dashBoardSplitPane.setDividerLocation((int) (MySysUtil.getViewerHeight()*0.69));
 
                             depthChartAndGraphPane.setDividerSize(5);
-                            depthChartAndGraphPane.setDividerLocation((int) (MySysUtil.getViewerWidth()*0.13));
+                            depthChartAndGraphPane.setDividerLocation((int) (MySysUtil.getViewerWidth()*0.15));
                         }
                     });
 
@@ -264,7 +249,7 @@ extends JPanel {
                     graphProfilePanel.add(depthLevelNodeValueHistogramDistributionLineChart);
 
                     JSplitPane depthChartAndGraphPane = new JSplitPane();
-                    depthChartAndGraphPane.setDividerLocation((int)(MySysUtil.getViewerWidth()*0.138));
+                    depthChartAndGraphPane.setDividerLocation((int)(MySysUtil.getViewerWidth()*0.15));
                     depthChartAndGraphPane.setDividerSize(4);
                     depthChartAndGraphPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
                     depthChartAndGraphPane.setLeftComponent(dataProfilePanel);
@@ -275,16 +260,16 @@ extends JPanel {
                     dashBoardSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
                     dashBoardSplitPane.setTopComponent(depthChartAndGraphPane);
                     dashBoardSplitPane.setBottomComponent(graphProfilePanel);
-                    dashBoardSplitPane.setDividerLocation((int)(MySysUtil.getViewerHeight()*0.71));
+                    dashBoardSplitPane.setDividerLocation((int)(MySysUtil.getViewerHeight()*0.69));
 
                     add(dashBoardSplitPane, BorderLayout.CENTER);
                     MyVars.app.addComponentListener(new ComponentAdapter() {
                         public void componentResized(ComponentEvent evt) {
                             dashBoardSplitPane.setDividerSize(4);
-                            dashBoardSplitPane.setDividerLocation((int) (MySysUtil.getViewerHeight()*0.71));
+                            dashBoardSplitPane.setDividerLocation((int) (MySysUtil.getViewerHeight()*0.69));
 
                             depthChartAndGraphPane.setDividerSize(5);
-                            depthChartAndGraphPane.setDividerLocation((int) (MySysUtil.getViewerWidth()*0.138));
+                            depthChartAndGraphPane.setDividerLocation((int) (MySysUtil.getViewerWidth()*0.15));
                         }
                     });
 
@@ -320,14 +305,14 @@ extends JPanel {
                     depthLevelNodeHopCountDistribution = new MyDepthLevelHopCountDistribution();
 
                     JSplitPane depthChartAndGraphPane = new JSplitPane();
-                    depthChartAndGraphPane.setDividerLocation((int)(MySysUtil.getViewerWidth()*0.13));
+                    depthChartAndGraphPane.setDividerLocation((int)(MySysUtil.getViewerWidth()*0.15));
                     depthChartAndGraphPane.setDividerSize(4);
                     depthChartAndGraphPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
                     depthChartAndGraphPane.setLeftComponent(dataProfilePanel);
                     depthChartAndGraphPane.setRightComponent(MyVars.app.getGraphViewerPanel());
 
                     JSplitPane dashBoardSplitPane = new JSplitPane();
-                    dashBoardSplitPane.setDividerLocation((int)(MySysUtil.getViewerHeight()*0.71));
+                    dashBoardSplitPane.setDividerLocation((int)(MySysUtil.getViewerHeight()*0.69));
                     dashBoardSplitPane.setDividerSize(5);
                     dashBoardSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
                     dashBoardSplitPane.setTopComponent(depthChartAndGraphPane);
@@ -337,10 +322,10 @@ extends JPanel {
                     MyVars.app.addComponentListener(new ComponentAdapter() {
                         public void componentResized(ComponentEvent evt) {
                             dashBoardSplitPane.setDividerSize(4);
-                            dashBoardSplitPane.setDividerLocation((int)(MySysUtil.getViewerHeight()*0.71));
+                            dashBoardSplitPane.setDividerLocation((int)(MySysUtil.getViewerHeight()*0.69));
 
                             depthChartAndGraphPane.setDividerSize(5);
-                            depthChartAndGraphPane.setDividerLocation((int)(MySysUtil.getViewerWidth()*0.13));
+                            depthChartAndGraphPane.setDividerLocation((int)(MySysUtil.getViewerWidth()*0.15));
                         }
                     });
 
@@ -384,14 +369,12 @@ extends JPanel {
                 graphProfilePanel.setBackground(Color.WHITE);
                 graphProfilePanel.setLayout(new GridLayout(1, 7));
 
-                //multiNodeNodeHopCountDistributionLineChart = new MyMultiNodeHopCountDistributionLineChart();
                 multiNodePredecessorValueDistributionLineChart = new MyMultiNodePredecessorValueDistributionLineChart();
                 multiNodeSuccessorValueDistributionLineChart = new MyMultiNodeSuccessorValueDistributionLineChart();
                 multiNodeSharedPredecessorEdgeValueDistributionLineChart = new MyMultiNodeSharedPredecessorEdgeValueDistributionLineChart();
                 multiNodeSharedSuccessorEdgeValueDistributionLineChart = new MyMultiNodeSharedSuccessorEdgeValueDistributionLineChart();
                 multiNodeSelectedNodeValueDistributionLineChart = new MyMultiLevelSelectedNodeValueDistributionLineChart();
 
-                //graphProfilePanel.add(multiNodeNodeHopCountDistributionLineChart);
                 graphProfilePanel.add(multiNodePredecessorValueDistributionLineChart);
                 graphProfilePanel.add(multiNodeSuccessorValueDistributionLineChart);
                 graphProfilePanel.add(multiNodeSharedPredecessorEdgeValueDistributionLineChart);
@@ -401,14 +384,14 @@ extends JPanel {
                 graphProfilePanel.add(multiNodeSelectedNodeValueDistributionLineChart);
 
                 JSplitPane depthChartAndGraphPane = new JSplitPane();
-                depthChartAndGraphPane.setDividerLocation((int) (MySysUtil.getViewerWidth()*0.13));
+                depthChartAndGraphPane.setDividerLocation((int) (MySysUtil.getViewerWidth()*0.15));
                 depthChartAndGraphPane.setDividerSize(5);
                 depthChartAndGraphPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
                 depthChartAndGraphPane.setLeftComponent(dataProfilePanel);
                 depthChartAndGraphPane.setRightComponent(MyVars.app.getGraphViewerPanel());
 
                 JSplitPane dashBoardSplitPane = new JSplitPane();
-                dashBoardSplitPane.setDividerLocation((int) (MySysUtil.getViewerHeight()*0.71));
+                dashBoardSplitPane.setDividerLocation((int) (MySysUtil.getViewerHeight()*0.69));
                 dashBoardSplitPane.setDividerSize(5);
                 dashBoardSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
                 dashBoardSplitPane.setTopComponent(depthChartAndGraphPane);
@@ -418,10 +401,10 @@ extends JPanel {
                 MyVars.app.addComponentListener(new ComponentAdapter() {
                     public void componentResized(ComponentEvent evt) {
                         dashBoardSplitPane.setDividerSize(5);
-                        dashBoardSplitPane.setDividerLocation((int) (MySysUtil.getViewerHeight()*0.71));
+                        dashBoardSplitPane.setDividerLocation((int) (MySysUtil.getViewerHeight()*0.69));
 
                         depthChartAndGraphPane.setDividerSize(4);
-                        depthChartAndGraphPane.setDividerLocation((int) (MySysUtil.getViewerWidth()*0.13));
+                        depthChartAndGraphPane.setDividerLocation((int) (MySysUtil.getViewerWidth()*0.15));
                     }
                 });
 
@@ -459,11 +442,9 @@ extends JPanel {
 
                     dataProfilePanel.add(singleNodeAverageValuesByDepthLineChart);
                     dataProfilePanel.add(singleNodePredecessorsAndSuccessorsByDepthLineChart);
-                    //dataProfilePanel.add(singleNodeAppearanceByDepthLineChart);
                     dataProfilePanel.add(singleNodeReachTimeByDepthLineChart);
                     dataProfilePanel.add(singleNodeNodeContributionByDepthLineChart);
                     dataProfilePanel.add(singleNodeEndingNodeValueHistogramDistributionLineChart);
-
 
                     JPanel graphProfilePanel = new JPanel();
                     graphProfilePanel.setBackground(Color.WHITE);
@@ -483,14 +464,14 @@ extends JPanel {
                     graphProfilePanel.add(singleNodeSuccessorValueHistogramDistributionLineChart);
 
                     JSplitPane depthChartAndGraphPane = new JSplitPane();
-                    depthChartAndGraphPane.setDividerLocation((int)(MySysUtil.getViewerWidth()*0.13));
+                    depthChartAndGraphPane.setDividerLocation((int)(MySysUtil.getViewerWidth()*0.15));
                     depthChartAndGraphPane.setDividerSize(5);
                     depthChartAndGraphPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
                     depthChartAndGraphPane.setLeftComponent(dataProfilePanel);
                     depthChartAndGraphPane.setRightComponent(MyVars.app.getGraphViewerPanel());
 
                     JSplitPane dashBoardSplitPane = new JSplitPane();
-                    dashBoardSplitPane.setDividerLocation((int)(MySysUtil.getViewerHeight()*0.71));
+                    dashBoardSplitPane.setDividerLocation((int)(MySysUtil.getViewerHeight()*0.69));
                     dashBoardSplitPane.setDividerSize(5);
                     dashBoardSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
                     dashBoardSplitPane.setTopComponent(depthChartAndGraphPane);
@@ -500,10 +481,10 @@ extends JPanel {
                     MyVars.app.addComponentListener(new ComponentAdapter() {
                         public void componentResized(ComponentEvent evt) {
                             dashBoardSplitPane.setDividerSize(5);
-                            dashBoardSplitPane.setDividerLocation((int)(MySysUtil.getViewerHeight()*0.71));
+                            dashBoardSplitPane.setDividerLocation((int)(MySysUtil.getViewerHeight()*0.69));
 
                             depthChartAndGraphPane.setDividerSize(4);
-                            depthChartAndGraphPane.setDividerLocation((int)(MySysUtil.getViewerWidth()*0.13));
+                            depthChartAndGraphPane.setDividerLocation((int)(MySysUtil.getViewerWidth()*0.15));
                         }
                     });
 
@@ -548,14 +529,14 @@ extends JPanel {
                     graphProfilePanel.add(singleNodeEndingNodeValueHistogramDistributionLineChart);
 
                     JSplitPane depthChartAndGraphPane = new JSplitPane();
-                    depthChartAndGraphPane.setDividerLocation((int)(MySysUtil.getViewerWidth()*0.13));
+                    depthChartAndGraphPane.setDividerLocation((int)(MySysUtil.getViewerWidth()*0.15));
                     depthChartAndGraphPane.setDividerSize(5);
                     depthChartAndGraphPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
                     depthChartAndGraphPane.setLeftComponent(dataProfilePanel);
                     depthChartAndGraphPane.setRightComponent(MyVars.app.getGraphViewerPanel());
 
                     JSplitPane dashBoardSplitPane = new JSplitPane();
-                    dashBoardSplitPane.setDividerLocation((int)(MySysUtil.getViewerHeight()*0.71));
+                    dashBoardSplitPane.setDividerLocation((int)(MySysUtil.getViewerHeight()*0.69));
                     dashBoardSplitPane.setDividerSize(5);
                     dashBoardSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
                     dashBoardSplitPane.setTopComponent(depthChartAndGraphPane);
@@ -565,10 +546,10 @@ extends JPanel {
                     MyVars.app.addComponentListener(new ComponentAdapter() {
                         public void componentResized(ComponentEvent evt) {
                             dashBoardSplitPane.setDividerSize(5);
-                            dashBoardSplitPane.setDividerLocation((int)(MySysUtil.getViewerHeight()*0.71));
+                            dashBoardSplitPane.setDividerLocation((int)(MySysUtil.getViewerHeight()*0.69));
 
                             depthChartAndGraphPane.setDividerSize(4);
-                            depthChartAndGraphPane.setDividerLocation((int)(MySysUtil.getViewerWidth()*0.13));
+                            depthChartAndGraphPane.setDividerLocation((int)(MySysUtil.getViewerWidth()*0.15));
                         }
                     });
 
