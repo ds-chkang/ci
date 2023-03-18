@@ -1411,7 +1411,7 @@ implements ActionListener {
                       MyVars.getViewer().repaint();
                   } else if (graphGroupSelecter.getSelectedIndex() == 0) {
                       if (depthSelecter.getSelectedIndex() == 0) {
-                          MyViewerControlComponentUtil.setDefaultLookToViewer();
+                          MyNodeUtil.setNodeValue();
                           graphGroupSelecterLabel.setText("[0%]");
                       }
                   }

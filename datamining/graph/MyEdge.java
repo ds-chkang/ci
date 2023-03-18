@@ -15,9 +15,9 @@ implements Serializable, Comparable<MyEdge> {
     public long reachTime;
     public float support;
     public float confidence;
-    public int contribution;
+    public long contribution;
     public float value = 4.8f;
-    public int uniqueContribution;
+    public long uniqueContribution;
     public float originalValue = 4.8f;
     public float tmpValue = 0.0f;
     public Map<String, Float> edgeValueMap = new HashMap<>();
@@ -72,9 +72,9 @@ implements Serializable, Comparable<MyEdge> {
         this.value = value;
     }
     public void setContribution(int contribution) {this.contribution += contribution;}
-    public int getContribution() {return this.contribution;}
+    public long getContribution() {return this.contribution;}
     public void setUniqueContribution(int uniqueContribution) {this.uniqueContribution += uniqueContribution;}
-    public int getUniqueContribution() {return this.uniqueContribution;}
+    public long getUniqueContribution() {return this.uniqueContribution;}
     public void setReachTime(long reachTime) {this.reachTime += reachTime;}
     public long getReachTime() {return this.reachTime;}
     public float getOriginalValue() { return this.originalValue; }
@@ -92,22 +92,22 @@ implements Serializable, Comparable<MyEdge> {
     }
     @Override public int compareTo(MyEdge e) {
         if (MyVars.isTimeOn) {
-            if (MyVars.edgeOrderByComboBoxIdx == 0) {return this.uniqueContribution - e.getUniqueContribution();
-            } else if (MyVars.edgeOrderByComboBoxIdx == 1) {return this.contribution - e.getContribution();
+            if (MyVars.edgeOrderByComboBoxIdx == 0) {return (int)(this.uniqueContribution - e.getUniqueContribution());
+            } else if (MyVars.edgeOrderByComboBoxIdx == 1) {return (int)(this.contribution - e.getContribution());
             } else if (MyVars.edgeOrderByComboBoxIdx == 2) {return (int) (this.reachTime - e.getReachTime());
             } else if (MyVars.edgeOrderByComboBoxIdx == 3) {return (int) (this.support - e.getSupport());
             } else if (MyVars.edgeOrderByComboBoxIdx == 4) {return (int) ((this.confidence - e.getConfidence()) * 1000);
             } else if (MyVars.edgeOrderByComboBoxIdx == 5) {return (int) ((this.lift - e.getLift()) * 1000);
             } else if (MyVars.edgeOrderByComboBoxIdx > 5) {return (int)((this.value - e.getCurrentValue())*1000);
-            } else {return this.contribution - e.contribution;}
+            } else {return (int)(this.contribution - e.contribution);}
         } else {
-            if (MyVars.edgeOrderByComboBoxIdx == 0) {return this.uniqueContribution - e.getUniqueContribution();
-            } else if (MyVars.edgeOrderByComboBoxIdx == 1) {return this.contribution - e.getContribution();
+            if (MyVars.edgeOrderByComboBoxIdx == 0) {return (int)(this.uniqueContribution - e.getUniqueContribution());
+            } else if (MyVars.edgeOrderByComboBoxIdx == 1) {return (int)(this.contribution - e.getContribution());
             } else if (MyVars.edgeOrderByComboBoxIdx == 2) {return (int) ((this.support - e.getSupport()) * 1000);
             } else if (MyVars.edgeOrderByComboBoxIdx == 3) {return (int) ((this.confidence - e.getConfidence()) * 1000);
             } else if (MyVars.edgeOrderByComboBoxIdx == 4) {return (int) ((this.lift - e.getLift()) * 1000);
             } else if (MyVars.edgeOrderByComboBoxIdx > 4) {return (int)((this.value - e.getCurrentValue())*1000);
-            } else {return this.contribution - e.contribution;}
+            } else {return (int)(this.contribution - e.contribution);}
         }
 
     }

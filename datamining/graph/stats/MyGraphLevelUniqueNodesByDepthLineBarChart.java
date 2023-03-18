@@ -33,7 +33,7 @@ extends JPanel{
     public static int instances = 0;
     private int selectedChart = 0;
     private ArrayList<Color> colors;
-    private static int BAR_LIMIT = 300;
+    private static int BAR_LIMIT = 200;
     private String avg = "";
     private String aboveAvg = "";
     private String belowAvg = "";
@@ -209,7 +209,7 @@ extends JPanel{
         CategoryDataset dataset = new DefaultCategoryDataset();
         int limitCount = 0;
         for (String label : depthUniqueNodeMap.keySet()) {
-            if (!MAXIMIZED && limitCount == 8) break;
+            if (!MAXIMIZED && limitCount == 7) break;
             else if (MAXIMIZED && limitCount == BAR_LIMIT) break;
             ((DefaultCategoryDataset) dataset).addValue(depthUniqueNodeMap.get(label), label, label);
             limitCount++;
@@ -219,15 +219,15 @@ extends JPanel{
         chart.getCategoryPlot().setBackgroundPaint(Color.WHITE);
         chart.getCategoryPlot().setDomainGridlinePaint(Color.DARK_GRAY);
         chart.getCategoryPlot().setRangeGridlinePaint(Color.DARK_GRAY);
-        chart.getCategoryPlot().getDomainAxis().setTickLabelFont(MyVars.tahomaPlainFont10);
-        chart.getCategoryPlot().getRangeAxis().setTickLabelFont(MyVars.tahomaPlainFont10);
+        chart.getCategoryPlot().getDomainAxis().setTickLabelFont(MyVars.tahomaPlainFont7);
+        chart.getCategoryPlot().getRangeAxis().setTickLabelFont(MyVars.tahomaPlainFont7);
         BarRenderer renderer = (BarRenderer) chart.getCategoryPlot().getRenderer();
         renderer.setBarPainter(new StandardBarPainter());
         for (int i = 0; i < dataset.getColumnCount(); i++) {
             renderer.setSeriesPaint(i, colors.get(i));
         }
         renderer.setMaximumBarWidth(0.09);
-        renderer.setBaseLegendTextFont(MyVars.tahomaPlainFont10);
+        renderer.setBaseLegendTextFont(MyVars.tahomaPlainFont7);
 
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new Dimension(350, 367));

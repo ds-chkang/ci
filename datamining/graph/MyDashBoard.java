@@ -76,18 +76,18 @@ extends JPanel {
                     graphLevelUniqueNodesByDepthLineChart = new MyGraphLevelUniqueNodesByDepthLineBarChart();
                     graphLevelContributionByDepthLineChart = new MyGraphLevelContributionByDepthLineChart();
                     graphLevelPredecessorSuccessorByDepthLineChart = new MyGraphLevelPredecessorSuccessorByDepthLineChart();
-                    graphLevelEndingNodeValueHistogramDistributionLineChart = new MyGraphLevelNodeValueByPositionHistogramDistributionLineChart();
+                    //graphLevelEndingNodeValueHistogramDistributionLineChart = new MyGraphLevelNodeValueByPositionHistogramDistributionLineChart();
 
                     JPanel dataProfilePanel = new JPanel();
                     dataProfilePanel.setBackground(Color.WHITE);
                     dataProfilePanel.setFont(MyVars.tahomaBoldFont10);
-                    dataProfilePanel.setLayout(new GridLayout(6, 1));
+                    dataProfilePanel.setLayout(new GridLayout(5, 1));
                     dataProfilePanel.add(graphLevelAverageValuesByDepthLineChart);
                     dataProfilePanel.add(graphLevelUniqueNodesByDepthLineChart);
                     dataProfilePanel.add(graphLevelPredecessorSuccessorByDepthLineChart);
                     dataProfilePanel.add(graphLevelReachTimeByDepthLineChart);
                     dataProfilePanel.add(graphLevelContributionByDepthLineChart);
-                    dataProfilePanel.add(graphLevelEndingNodeValueHistogramDistributionLineChart);
+                    //dataProfilePanel.add(graphLevelEndingNodeValueHistogramDistributionLineChart);
 
                     JPanel graphProfilePanel = new JPanel();
                     graphProfilePanel.setBackground(Color.WHITE);
@@ -153,16 +153,16 @@ extends JPanel {
                     graphLevelUniqueNodesByDepthLineChart = new MyGraphLevelUniqueNodesByDepthLineBarChart();
                     graphLevelContributionByDepthLineChart = new MyGraphLevelContributionByDepthLineChart();
                     graphLevelNodePathLengthDistributionLineChart = new MyGraphLevelNodePathLengthDistributionLineChart();
-                    graphLevelEndingNodeValueHistogramDistributionLineChart = new MyGraphLevelNodeValueByPositionHistogramDistributionLineChart();
+                    //graphLevelEndingNodeValueHistogramDistributionLineChart = new MyGraphLevelNodeValueByPositionHistogramDistributionLineChart();
 
                     JPanel dataProfilePanel = new JPanel();
                     dataProfilePanel.setBackground(Color.WHITE);
-                    dataProfilePanel.setLayout(new GridLayout(5, 1));
+                    dataProfilePanel.setLayout(new GridLayout(4, 1));
                     dataProfilePanel.add(graphLevelAverageValuesByDepthLineChart);
                     dataProfilePanel.add(graphLevelUniqueNodesByDepthLineChart);
                     dataProfilePanel.add(graphLevelContributionByDepthLineChart);
                     dataProfilePanel.add(graphLevelNodePathLengthDistributionLineChart);
-                    dataProfilePanel.add(graphLevelEndingNodeValueHistogramDistributionLineChart);
+                    //dataProfilePanel.add(graphLevelEndingNodeValueHistogramDistributionLineChart);
 
                     JPanel graphProfilePanel = new JPanel();
                     graphProfilePanel.setBackground(Color.WHITE);

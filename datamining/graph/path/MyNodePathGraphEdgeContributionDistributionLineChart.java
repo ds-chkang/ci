@@ -96,12 +96,12 @@ extends JPanel {
                     this.add(msg, BorderLayout.CENTER);
                 } else {
                     XYSeriesCollection dataset = new XYSeriesCollection();
-                    TreeMap<Integer, Integer> mapByEdgeValue = new TreeMap<>();
+                    TreeMap<Long, Integer> mapByEdgeValue = new TreeMap<>();
                     edges = directedSparseMultigraph.getEdges();
                     int count = 0;
                     int totalContribution = 0;
                     for (MyEdge e : edges) {
-                        int value = e.getContribution();
+                        long value = e.getContribution();
                         if (value > 0) {
                             count++;
                             totalContribution += value;
@@ -115,11 +115,11 @@ extends JPanel {
 
                     XYSeries edgeValueSeries = new XYSeries("E. CONTRIBUTION[AVG.:" + MySysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat((double)totalContribution/count)) + "]");
                     if (MyVars.getViewer().vc.edgeValueSelecter.getSelectedIndex() > 6) {
-                        for (Integer value : mapByEdgeValue.keySet()) {
+                        for (Long value : mapByEdgeValue.keySet()) {
                             edgeValueSeries.add(value, mapByEdgeValue.get(value));
                         }
                     } else {
-                        for (Integer value : mapByEdgeValue.keySet()) {
+                        for (Long value : mapByEdgeValue.keySet()) {
                             edgeValueSeries.add(value, mapByEdgeValue.get(value));
                         }
                     }

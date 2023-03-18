@@ -43,7 +43,7 @@ implements MyRelationExtractionJobCompleteListener {
             startTime = System.currentTimeMillis();
             startMining();
             endTime = System.currentTimeMillis();
-           printStatistics();
+           //printStatistics();
             return true;
         } catch (Exception ex) {ex.printStackTrace();}
         return false;

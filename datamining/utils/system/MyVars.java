@@ -29,6 +29,7 @@ public class MyVars {
     public static Font f_bold_22 = new Font("Tahoma", Font.BOLD, 22);
     public static Font f_bold_25 = new Font("Noto Sans", Font.BOLD, 25);
     public final static Font tahomaPlainFont12 = new Font("Tahoma", Font.PLAIN, 12);
+    public final static Font tahomaPlainFont0 = new Font("Tahoma", Font.PLAIN, 0);
     public final static Font tahomaPlainFont13 = new Font("Tahoma", Font.PLAIN, 13);
     public final static Font tahomaPlainFont11 = new Font("Tahoma", Font.PLAIN, 11);
     public final static Font tahomaPlainFont10 = new Font("Tahoma", Font.PLAIN, 10);
@@ -38,7 +39,6 @@ public class MyVars {
     public final static Font tahomaBoldFont12 = new Font("Tahoma", Font.BOLD, 12);
     public final static Font tahomaBoldFont10 = new Font("Tahoma", Font.BOLD, 10);
     public final static Font tahomaBoldFont11 = new Font("Tahoma", Font.BOLD, 11);
-    public final static Font tahomaPlainFont0 = new Font("Tahoma", Font.BOLD, 0);
 
     public static String outputDir = "";
     public static MyGraph g;

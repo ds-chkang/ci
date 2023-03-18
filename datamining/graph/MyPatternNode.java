@@ -7,8 +7,8 @@ public class MyPatternNode
 extends MyDepthNode {
 
     public long time;
+    public long paths;
 
-    public Set<Integer> sequences = new HashSet<>();
 
     public MyPatternNode(String name, int depth) {
         super(name, depth);

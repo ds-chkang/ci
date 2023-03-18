@@ -32,7 +32,7 @@ implements ActionListener {
     private JComboBox chartMenu;
     private int selectedChart;
     private Random rand = new Random();
-    private static int BAR_LIMIT = 300;
+    private static int BAR_LIMIT = 200;
     private String avg = "";
     private String aboveAvg = "";
     private String belowAvg = "";
@@ -101,12 +101,11 @@ implements ActionListener {
                         if (MAXIMIZED) {
                             int limitCount = 0;
                             for (String label : valueMap.keySet()) {
-                                if (!MAXIMIZED && limitCount == 8) break;
-                                else if (MAXIMIZED && limitCount == BAR_LIMIT) break;
+                                if (MAXIMIZED && limitCount == BAR_LIMIT) break;
                                 ((DefaultCategoryDataset) dataset).addValue(valueMap.get(label), label, label);
                                 limitCount++;
                             }
-                            chart.getCategoryPlot().getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.DOWN_45);
+                            chart.getCategoryPlot().getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.DOWN_90);
                             chart.removeLegend();
                         } else {
                             int limitCount = 0;
@@ -128,12 +127,11 @@ implements ActionListener {
                         for (int i = 0; i < dataset.getColumnCount(); i++) {
                             renderer.setSeriesPaint(i, colors.get(i));
                         }
-                        //renderer.setMaximumBarWidth(0.2);
 
                         ChartPanel chartPanel = new ChartPanel(chart);
                         chartPanel.setPreferredSize(new Dimension(350, 367));
 
-                        JLabel titleLabel = new JLabel(" HEAD. N. V.");
+                        JLabel titleLabel = new JLabel(" N. BY POS.");
                         titleLabel.setToolTipText("HEAD NODE VALUE DISTRIBUTION");
                         titleLabel.setFont(MyVars.tahomaBoldFont11);
                         titleLabel.setBackground(Color.WHITE);
@@ -249,12 +247,11 @@ implements ActionListener {
                         if (MAXIMIZED) {
                             int limitCount = 0;
                             for (String label : valueMap.keySet()) {
-                                if (!MAXIMIZED && limitCount == 8) break;
-                                else if (MAXIMIZED && limitCount == BAR_LIMIT) break;
+                                if (MAXIMIZED && limitCount == BAR_LIMIT) break;
                                 ((DefaultCategoryDataset) dataset).addValue(valueMap.get(label), label, label);
                                 limitCount++;
                             }
-                            chart.getCategoryPlot().getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.DOWN_45);
+                            chart.getCategoryPlot().getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.DOWN_90);
                             chart.removeLegend();
                         } else {
                             int limitCount = 0;
@@ -278,7 +275,7 @@ implements ActionListener {
                         }
                         //renderer.setMaximumBarWidth(0.2);
 
-                        JLabel titleLabel = new JLabel(" INTER. N. V.");
+                        JLabel titleLabel = new JLabel(" N. BY POS. ");
                         titleLabel.setToolTipText("INTERMEDIATE NODE VALUE DISTRIBUTION");
                         titleLabel.setFont(MyVars.tahomaBoldFont11);
                         titleLabel.setBackground(Color.WHITE);
@@ -390,12 +387,11 @@ implements ActionListener {
                         if (MAXIMIZED) {
                             int limitCount = 0;
                             for (String label : valueMap.keySet()) {
-                                if (!MAXIMIZED && limitCount == 8) break;
-                                else if (MAXIMIZED && limitCount == BAR_LIMIT) break;
+                                if (MAXIMIZED && limitCount == BAR_LIMIT) break;
                                 ((DefaultCategoryDataset) dataset).addValue(valueMap.get(label), label, label);
                                 limitCount++;
                             }
-                            chart.getCategoryPlot().getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.DOWN_45);
+                            chart.getCategoryPlot().getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.DOWN_90);
                             chart.removeLegend();
                         } else {
                             int limitCount = 0;
@@ -419,7 +415,7 @@ implements ActionListener {
                         }
                         //renderer.setMaximumBarWidth(0.2);
 
-                        JLabel titleLabel = new JLabel(" TAIL. N. V.");
+                        JLabel titleLabel = new JLabel(" N. BY POS. ");
                         titleLabel.setToolTipText("TAIL NODE VALUE DISTRIBUTION");
                         titleLabel.setFont(MyVars.tahomaBoldFont11);
                         titleLabel.setBackground(Color.WHITE);

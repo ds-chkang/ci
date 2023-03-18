@@ -55,7 +55,7 @@ implements ActionListener {
     public Map<String, MyPatternEdge> edgeRefMap = new HashMap<>();
 
     public MyPatternMiner2() {
-        super("SEQUENTIAL PATTERN MINING");
+        super("SEQUENTIAL PATTERN EXPLORATION");
         try {
             this.statBoard = new JLabel();
             this.statBoard.setFont(MyVars.tahomaPlainFont12);
@@ -107,8 +107,8 @@ implements ActionListener {
                                 int matched = 0;
                                 int nextPos = 0;
                                 for (int j = 0; j < MyVars.seqs[i].length; j++) {
-                                    String [] n = MyVars.seqs[i][j].split(":");
-                                    if (searchItemsets[matched].equals(n[0])) {
+                                    String n = MyVars.seqs[i][j].split(":")[0];
+                                    if (searchItemsets[matched].equals(n)) {
                                         matched++;
                                         if (matched == 1) {nextPos = j;}
                                         if (matched == searchItemsets.length) {
@@ -127,15 +127,25 @@ implements ActionListener {
                                 pb.updateValue((int) workDone, 100);
                             }
 
+                            for (int i = table.getRowCount() - 1; i >= 0; i--) {
+                                ((DefaultTableModel) table.getModel()).removeRow(i);
+                            }
+
                             int i = 0;
                             for (String n : nodeSet) {
                                 ((DefaultTableModel) table.getModel()).addRow(new String[]{"" + (++i), (n.contains("x") ? MySysUtil.decodeVariable(n) : MySysUtil.getDecodedNodeName(n))});
                                 pb.updateValue(i, nodeSet.size());
                             }
+
                             pb.updateValue(100, 100);
                             pb.dispose();
                         } else{
                             MyProgressBar pb = new MyProgressBar(false);
+
+                            for (int i = table.getRowCount() - 1; i >= 0; i--) {
+                                ((DefaultTableModel) table.getModel()).removeRow(i);
+                            }
+
                             int i = 0;
                             Collection<MyNode> nodes = MyVars.g.getVertices();
                             for (MyNode n : nodes) {
@@ -246,7 +256,7 @@ implements ActionListener {
                                 }
                             }
 
-                            BufferedWriter bw = new BufferedWriter(new FileWriter(MySysUtil.getWorkingDir() + MySysUtil.getDirectorySlash() + "patterns.txt"));
+                            //BufferedWriter bw = new BufferedWriter(new FileWriter(MySysUtil.getWorkingDir() + MySysUtil.getDirectorySlash() + "patterns.txt"));
                             times = new long[searchItemsets.length];
                             pathNodeUniqueContributions = new long[searchItemsets.length];
                             pathNodeContributions = new long[searchItemsets.length];
@@ -310,7 +320,7 @@ implements ActionListener {
                                 pb.updateValue((int) workDone, 100);
                             }
 
-                            bw.close();
+                            //bw.close();
 
                             createGraph();
                             setMaxNodeValue();
@@ -411,31 +421,57 @@ implements ActionListener {
             String ps = searchItemsets[i-1] + "-" + (i-1);
             String ss = searchItemsets[i] + "-" + i;
             String edgeRef = ps + "-" + ss;
+
             if (!this.edgeRefMap.containsKey(edgeRef)) {
                 if (!this.patternGraph.vRefs.containsKey(ps)) {
                     MyPatternNode pn = new MyPatternNode(ps, i-1);
                     pn.contribution = pathNodeContributions[i-1];
                     pn.uniqueContribution = pathNodeUniqueContributions[i-1];
                     pn.time = times[i-1];
+                    pn.paths++;
                     this.patternGraph.addVertex(pn);
                     this.patternGraph.vRefs.put(ps, pn);
+                } else {
+                    ((MyPatternNode) patternGraph.vRefs.get(ps)).contribution++;
+                    ((MyPatternNode) patternGraph.vRefs.get(ps)).paths++;
                 }
 
                 if (!this.patternGraph.vRefs.containsKey(ss)) {
                     MyPatternNode sn = new MyPatternNode(ss, i);
-                    sn.contribution = pathNodeContributions[i];
                     sn.uniqueContribution = pathNodeUniqueContributions[i];
                     sn.time = times[i];
+                    if ((i+1) == searchItemsets.length) {
+                        sn.contribution = pathNodeContributions[i];
+                        sn.paths++;
+                    }
                     this.patternGraph.addVertex(sn);
                     this.patternGraph.vRefs.put(ss, sn);
+                } else {
+                    if ((i+1) == searchItemsets.length) {
+                        ((MyPatternNode) patternGraph.vRefs.get(ss)).contribution = pathNodeContributions[i];
+                        ((MyPatternNode) patternGraph.vRefs.get(ss)).paths++;
+                    }
+                    ((MyPatternNode) patternGraph.vRefs.get(ss)).contribution += pathNodeContributions[i];
                 }
 
                 MyPatternNode pn = (MyPatternNode) this.patternGraph.vRefs.get(ps);
                 MyPatternNode sn = (MyPatternNode) this.patternGraph.vRefs.get(ss);
                 MyPatternEdge edge = new MyPatternEdge(pn, sn);
-                edge.contribution = (int) sn.contribution;
+                edge.contribution = pathNodeContributions[i];
                 this.patternGraph.addEdge(edge, pn, sn);
                 this.edgeRefMap.put(edgeRef, edge);
+            } else {
+                MyPatternNode pn = (MyPatternNode) this.patternGraph.vRefs.get(ps);
+                MyPatternNode sn = (MyPatternNode) this.patternGraph.vRefs.get(ss);
+                pn.paths++;
+                if ((i+1) == searchItemsets.length) {
+                    sn.contribution += pathNodeContributions[i];
+                    sn.paths++;
+                }
+                MyPatternEdge edge = patternGraph.findEdge(pn, sn);
+                edge.contribution += pathNodeContributions[i];
+                if (!pn.getName().contains("x")) pn.contribution += pathNodeContributions[i-1];
+
             }
         }
     }
@@ -467,15 +503,13 @@ implements ActionListener {
                 return new Font("Noto Sans", Font.BOLD, 20);
             }
         });
-        //this.vv.getRenderContext().setEdgeLabelTransformer(new Transformer<MyPatternEdge, String>() {
-       //     @Override
-       //     public String transform(MyPatternEdge e) {
-       //         return MyMathUtil.getCommaSeperatedNumber(e.contribution);
-       //     }
-       // });
+        this.vv.getRenderContext().setEdgeLabelTransformer(new Transformer<MyPatternEdge, String>() {
+            @Override public String transform(MyPatternEdge e) {
+                return MyMathUtil.getCommaSeperatedNumber(e.contribution);
+            }
+        });
         this.vv.getRenderContext().setEdgeFontTransformer(new Transformer<MyPatternEdge, Font>() {
-            @Override
-            public Font transform(MyPatternEdge e) {
+            @Override public Font transform(MyPatternEdge e) {
                 return new Font("Noto Sans", Font.BOLD, 22);
             }
         });
@@ -488,6 +522,7 @@ implements ActionListener {
                             "<br>PATH CONT.: " + MyMathUtil.getCommaSeperatedNumber(n.contribution) +
                             "<br>U. CONT.:" + MyMathUtil.getCommaSeperatedNumber(n.uniqueContribution) + "[" + MyMathUtil.twoDecimalFormat(((double) n.contribution / MyVars.seqs.length) * 100) + "%]" +
                             "<br>TIME: " + MyMathUtil.getCommaSeperatedNumber(n.time) +
+                            "<br>NO.OF PATHS: " + MyMathUtil.getCommaSeperatedNumber(n.paths) +
                             "</body></html>";
                 } else {
                     return "<html><body>" +
@@ -496,6 +531,7 @@ implements ActionListener {
                             "<br>PATH CONT.: " + MyMathUtil.getCommaSeperatedNumber(n.contribution) +
                             "<br>U. CONT.:" + MyMathUtil.getCommaSeperatedNumber(n.uniqueContribution) + "[" + MyMathUtil.twoDecimalFormat(((double) n.contribution / MyVars.seqs.length) * 100) + "%]" +
                             "<br>TIME: " + MyMathUtil.getCommaSeperatedNumber(n.time) +
+                            "<br>NO.OF PATHS: " + MyMathUtil.getCommaSeperatedNumber(n.paths) +
                             "</body></html>";
                 }
             }
@@ -509,6 +545,7 @@ implements ActionListener {
                             "<br>PATH CONT.: " + MyMathUtil.getCommaSeperatedNumber(n.contribution) +
                             "<br>U. CONT.:" + MyMathUtil.getCommaSeperatedNumber(n.uniqueContribution) + "[" + MyMathUtil.twoDecimalFormat(((double) n.contribution / MyVars.seqs.length) * 100) + "%]" +
                             "<br>TIME: " + MyMathUtil.getCommaSeperatedNumber(n.time) +
+                            "<br>NO.OF PATHS: " + MyMathUtil.getCommaSeperatedNumber(n.paths) +
                             "</body></html>";
                 } else {
                     return "<html><body>" +
@@ -517,6 +554,7 @@ implements ActionListener {
                             "<br>PATH CONT.: " + MyMathUtil.getCommaSeperatedNumber(n.contribution) +
                             "<br>U. CONT.:" + MyMathUtil.getCommaSeperatedNumber(n.uniqueContribution) + "[" + MyMathUtil.twoDecimalFormat(((double) n.contribution / MyVars.seqs.length) * 100) + "%]" +
                             "<br>TIME: " + MyMathUtil.getCommaSeperatedNumber(n.time) +
+                            "<br>NO.OF PATHS: " + MyMathUtil.getCommaSeperatedNumber(n.paths) +
                             "</body></html>";
                 }
             }
@@ -556,7 +594,7 @@ implements ActionListener {
 
     private Transformer<MyPatternEdge, Stroke> edgeStroker = new Transformer<MyPatternEdge, Stroke>() {
         @Override public Stroke transform(MyPatternEdge e) {
-            float edgeStrokeWeight = e.getContribution() / MAX_EDGE_VALUE;
+            float edgeStrokeWeight = ((float)e.contribution)/MAX_EDGE_VALUE;
             return new BasicStroke(edgeStrokeWeight * MAX_EDGE_STROKE);
         }
     };
@@ -587,7 +625,7 @@ implements ActionListener {
         table.getColumnModel().getColumn(0).setPreferredWidth(45);
         table.getColumnModel().getColumn(0).setMaxWidth(55);
         table.setRowHeight(20);
-        table.setFont(MyVars.f_pln_10);
+        table.setFont(MyVars.f_pln_11);
         table.setBackground(Color.WHITE);
         Collection<MyNode> nodes = MyVars.g.getVertices();
         int i=0;
@@ -678,15 +716,15 @@ implements ActionListener {
         tablePanel.add(bottomPanel, BorderLayout.SOUTH);
 
         JSplitPane splitPane = new JSplitPane();
-        splitPane.setDividerLocation(0.14);
-        splitPane.setDividerSize(6);
+        splitPane.setDividerLocation(0.13);
+        splitPane.setDividerSize(5);
         splitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
         splitPane.setLeftComponent(tablePanel);
         splitPane.setRightComponent(contentPanel);
         this.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent evt) {
                 splitPane.setDividerSize(4);
-                splitPane.setDividerLocation((int)(MySysUtil.getViewerWidth()*0.14));
+                splitPane.setDividerLocation((int)(MySysUtil.getViewerWidth()*0.13));
             }
         });
         return splitPane;
