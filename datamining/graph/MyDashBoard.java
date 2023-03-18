@@ -99,14 +99,11 @@ extends JPanel {
                     //graphLevelEdgeCurrentValueDistributionLineGraph = new MyGraphLevelEdgeValueDistributionLineChart();
                     graphLevelSuccessorCountDistributionLineGraph = new MyGraphLevelSuccessorCountDistributionLineChart();
                     graphLevelPredecessorCountDistributionLineGraph = new MyGraphLevelPredecessorCountDistributionLineChart();
-                    graphLevelUniqueContributionDistributionLineChart = new MyGraphLevelUniqueContributionDistributionLineChart();
                     graphLevelValueDistributionLineChart = new MyGraphLevelValueDistributionLineChart();
+                    graphLevelUniqueContributionDistributionLineChart = new MyGraphLevelUniqueContributionDistributionLineChart();
 
                     graphProfilePanel.add(graphLevelNodeHopCountDistributionLineGraph);
                     graphProfilePanel.add(graphLevelShortestAvgPathLengthDistributionLineChart);
-                    graphProfilePanel.add(graphLevelUniqueContributionDistributionLineChart);
-                    graphProfilePanel.add(graphLevelPredecessorCountDistributionLineGraph);
-                    graphProfilePanel.add(graphLevelSuccessorCountDistributionLineGraph);
                     //graphProfilePanel.add(graphLevelNodeCurrrentValueDistributionLineGraph);
                    // graphProfilePanel.add(graphLevelEdgeCurrentValueDistributionLineGraph);
 
@@ -117,6 +114,10 @@ extends JPanel {
                         graphLevelNodeCountDistributionLineChart = new MyGraphLevelNodeCountDistributionLineChart();
                         graphProfilePanel.add(graphLevelNodeCountDistributionLineChart);
                     }
+
+                    graphProfilePanel.add(graphLevelUniqueContributionDistributionLineChart);
+                    graphProfilePanel.add(graphLevelPredecessorCountDistributionLineGraph);
+                    graphProfilePanel.add(graphLevelSuccessorCountDistributionLineGraph);
                     graphProfilePanel.add(graphLevelValueDistributionLineChart);
 
                     JSplitPane depthChartAndGraphPane = new JSplitPane();

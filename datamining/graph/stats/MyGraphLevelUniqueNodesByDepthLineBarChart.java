@@ -20,10 +20,7 @@ import org.jfree.ui.HorizontalAlignment;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
 import java.util.*;
 
@@ -46,12 +43,13 @@ extends JPanel{
     public MyGraphLevelUniqueNodesByDepthLineBarChart() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
-                decorate();
+                selectedChart = 1;
+                setUniqueNodeBarChartByDepth();
             }
         });
     }
 
-    public void decorate() {
+    public void setUniqueNodesByDepthLineChart() {
         try {
             removeAll();
             setLayout(new BorderLayout(5, 5));
@@ -61,10 +59,6 @@ extends JPanel{
             XYSeriesCollection dataset = new XYSeriesCollection();
             Collection<MyNode> nodes = MyVars.g.getVertices();
 
-            if (selectedChart > 0) {
-                setUniqueNodeBarChartByDepth();
-                return;
-            }
             if (MyVars.currentGraphDepth == 0) {
                 for (int i = 1; i <= MyVars.mxDepth; i++) {
                     int totalNode = 0;
@@ -135,11 +129,9 @@ extends JPanel{
             enlargeBtn.setFocusable(false);
             enlargeBtn.setBackground(Color.WHITE);
             enlargeBtn.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
+                @Override public void actionPerformed(ActionEvent e) {
                     new Thread(new Runnable() {
-                        @Override
-                        public void run() {
+                        @Override public void run() {
                             enlarge();
                         }
                     }).start();
@@ -160,10 +152,10 @@ extends JPanel{
                 public void actionPerformed(ActionEvent e) {
                     if (chartMenu.getSelectedIndex() == 0) {
                         selectedChart = 0;
-                        decorate();
+                        setUniqueNodesByDepthLineChart();
                     } else {
                         selectedChart = chartMenu.getSelectedIndex();
-                        decorate();
+                        setUniqueNodeBarChartByDepth();
                     }
                 }
             });
@@ -190,13 +182,18 @@ extends JPanel{
     }
 
     private void setUniqueNodeBarChartByDepth() {
+        removeAll();
+        setLayout(new BorderLayout(5, 5));
+        setBackground(Color.WHITE);
+
         colors = new ArrayList<>();
-        LinkedHashMap<String, Long> depthUniqueNodeMap = new LinkedHashMap<>();
+        LinkedHashMap<String, Long> valueMap = new LinkedHashMap<>();
         Collection<MyNode> nodes = MyVars.g.getVertices();
         for (MyNode n : nodes) {
+            if (n.getCurrentValue() == 0) continue;
             if (n.getNodeDepthInfoMap().containsKey(selectedChart)) {
                 String pName = (n.getName().contains("x") ? MySysUtil.decodeVariable(n.getName()) : MySysUtil.getDecodedNodeName(n.getName()));
-                depthUniqueNodeMap.put(pName, (long) n.getCurrentValue());
+                valueMap.put(pName, (long) n.getCurrentValue());
                 final float hue = rand.nextFloat();
                 final float saturation = 0.9f;
                 final float luminance = 1.0f;
@@ -205,14 +202,22 @@ extends JPanel{
             }
         }
 
-        depthUniqueNodeMap = MySysUtil.sortMapByLongValue(depthUniqueNodeMap);
+        valueMap = MySysUtil.sortMapByLongValue(valueMap);
         CategoryDataset dataset = new DefaultCategoryDataset();
-        int limitCount = 0;
-        for (String label : depthUniqueNodeMap.keySet()) {
-            if (!MAXIMIZED && limitCount == 7) break;
-            else if (MAXIMIZED && limitCount == BAR_LIMIT) break;
-            ((DefaultCategoryDataset) dataset).addValue(depthUniqueNodeMap.get(label), label, label);
-            limitCount++;
+        if (MAXIMIZED) {
+            int i=0;
+            for (String label : valueMap.keySet()) {
+                if (i == BAR_LIMIT) break;
+                ((DefaultCategoryDataset) dataset).addValue(valueMap.get(label), label, "");
+                i++;
+            }
+        } else {
+            int i=0;
+            for (String label : valueMap.keySet()) {
+                if (i == 7) break;
+                ((DefaultCategoryDataset) dataset).addValue(valueMap.get(label), label, "");
+                i++;
+            }
         }
 
         JFreeChart chart = ChartFactory.createBarChart("", "", "", dataset);
@@ -223,9 +228,11 @@ extends JPanel{
         chart.getCategoryPlot().getRangeAxis().setTickLabelFont(MyVars.tahomaPlainFont7);
         BarRenderer renderer = (BarRenderer) chart.getCategoryPlot().getRenderer();
         renderer.setBarPainter(new StandardBarPainter());
-        for (int i = 0; i < dataset.getColumnCount(); i++) {
+        // Set the colors for each data item in the series
+        for (int i = 0; i <= dataset.getColumnCount(); i++) {
             renderer.setSeriesPaint(i, colors.get(i));
         }
+
         renderer.setMaximumBarWidth(0.09);
         renderer.setBaseLegendTextFont(MyVars.tahomaPlainFont7);
 
@@ -271,10 +278,10 @@ extends JPanel{
             public void actionPerformed(ActionEvent e) {
                 if (chartMenu.getSelectedIndex() == 0) {
                     selectedChart = 0;
-                    decorate();
+                    setUniqueNodesByDepthLineChart();
                 } else {
                     selectedChart = chartMenu.getSelectedIndex();
-                    decorate();
+                    setUniqueNodeBarChartByDepth();
                 }
             }
         });
@@ -313,45 +320,15 @@ extends JPanel{
         pb.dispose();
 
         frame.setCursor(Cursor.HAND_CURSOR);
-        frame.setVisible(true);
         frame.setAlwaysOnTop(true);
-        frame.setAlwaysOnTop(false);
-        frame.addWindowListener(new WindowListener() {
-            @Override
-            public void windowOpened(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowClosing(WindowEvent e) {
+        frame.addWindowListener(new WindowAdapter() {
+            @Override public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
                 MAXIMIZED = false;
             }
-
-            @Override
-            public void windowClosed(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowIconified(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowDeiconified(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowActivated(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowDeactivated(WindowEvent e) {
-
-            }
         });
+        frame.setVisible(true);
+        frame.setAlwaysOnTop(false);
     }
 
 }

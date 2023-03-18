@@ -70,7 +70,7 @@ public class MyViewerControlComponentUtil {
                     MyVars.app.getDashboard().graphLevelReachTimeByDepthLineChart.decorate();
                 }
                 MyGraphLevelUniqueNodesByDepthLineBarChart.instances = 0;
-                MyVars.app.getDashboard().graphLevelUniqueNodesByDepthLineChart.decorate();
+                MyVars.app.getDashboard().graphLevelUniqueNodesByDepthLineChart.setUniqueNodesByDepthLineChart();
                 MyGraphLevelNodeAverageHopCountDistributionLineChart.instances = 0;
                 MyVars.app.getDashboard().graphLevelNodeHopCountDistributionLineGraph.decorate();
                 MyVars.app.getDashboard().graphLevelContributionByDepthLineChart.decorate();
@@ -394,11 +394,11 @@ public class MyViewerControlComponentUtil {
                 MyVars.app.getDashboard().depthLevelNodeCurrentValueDistribution.decorate();
                 MyVars.app.getDashboard().depthLevelEdgeCurrentValueDistribution.decorate();
             } else {
-                MyVars.app.getDashboard().graphLevelSuccessorCountDistributionLineGraph.decorate();
+                MyVars.app.getDashboard().graphLevelSuccessorCountDistributionLineGraph.setSuccessorCountLineChart();
                 MyVars.app.getDashboard().graphLevelNodeHopCountDistributionLineGraph.decorate();
                 MyVars.app.getDashboard().graphLevelEdgeCurrentValueDistributionLineGraph.decorate();
                 MyVars.app.getDashboard().graphLevelNodeCurrrentValueDistributionLineGraph.decorate();
-                MyVars.app.getDashboard().graphLevelSuccessorCountDistributionLineGraph.decorate();
+                MyVars.app.getDashboard().graphLevelSuccessorCountDistributionLineGraph.setSuccessorCountLineChart();
             }
         } else if (MyVars.getViewer().multiNodes != null && MyVars.getViewer().multiNodes.size() > 0) {
 //            MyVars.app.getDashboard().multiNodeNodeHopCountDistributionLineChart.decorate();
@@ -418,12 +418,12 @@ public class MyViewerControlComponentUtil {
             MyGraphLevelPredecessorCountDistributionLineChart.instances = 0;
             MyGraphLevelSuccessorCountDistributionLineChart.instances = 0;
 
-            MyVars.app.getDashboard().graphLevelSuccessorCountDistributionLineGraph.decorate();
+            MyVars.app.getDashboard().graphLevelSuccessorCountDistributionLineGraph.setSuccessorCountLineChart();
             MyVars.app.getDashboard().graphLevelNodeHopCountDistributionLineGraph.decorate();
             //MyVars.app.getDashboard().graphLevelEdgeCurrentValueDistributionLineGraph.decorate();
             //MyVars.app.getDashboard().graphLevelNodeCurrrentValueDistributionLineGraph.decorate();
             //MyVars.app.getDashboard().graphLevelValueDistributionLineChart.valueMenu.setSelectedIndex(1); // Edge value selection.
-            MyVars.app.getDashboard().graphLevelSuccessorCountDistributionLineGraph.decorate();
+            MyVars.app.getDashboard().graphLevelSuccessorCountDistributionLineGraph.setSuccessorCountLineChart();
         }
         MyVars.app.getDashboard().revalidate();
         MyVars.app.getDashboard().repaint();

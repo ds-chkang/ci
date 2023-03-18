@@ -15,6 +15,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Random;
@@ -26,6 +28,8 @@ implements ActionListener {
     public static int instances = 0;
     private ArrayList<Color> colors;
     private Random rand = new Random();
+    private int BAR_LIMIT = 200;
+    private static boolean MAXIMIZED;
 
     public MySingleNodeSuccessorValueHistogramDistributionLineChart() {
         this.decorate();
@@ -40,17 +44,17 @@ implements ActionListener {
                     setBackground(Color.WHITE);
 
                     colors = new ArrayList<>();
-                    LinkedHashMap<String, Long> successorNodeValueMap = new LinkedHashMap<>();
+                    LinkedHashMap<String, Long> valueMap = new LinkedHashMap<>();
                     for (MyNode successor : MyVars.getViewer().selectedSingleNodeSuccessors) {
                         String sName = (successor.getName().contains("x") ? MySysUtil.decodeVariable(successor.getName()) : MySysUtil.getDecodedNodeName(successor.getName()));
-                        successorNodeValueMap.put(sName, (long)successor.getCurrentValue());
+                        valueMap.put(sName, (long)successor.getCurrentValue());
                         final float hue = rand.nextFloat();
                         final float saturation = 0.9f;
                         final float luminance = 1.0f;
                         Color randomColor = Color.getHSBColor(hue, saturation, luminance);
                         colors.add(randomColor);
                     }
-                    if (successorNodeValueMap.size() == 0) {
+                    if (valueMap.size() == 0) {
                         JLabel titleLabel = new JLabel(" S. V.");
                         titleLabel.setToolTipText("SUCCESSOR VALUE DISTRIBUTION");
                         titleLabel.setFont(MyVars.tahomaBoldFont11);
@@ -76,10 +80,22 @@ implements ActionListener {
                         return;
                     }
 
-                    successorNodeValueMap = MySysUtil.sortMapByLongValue(successorNodeValueMap);
+                    valueMap = MySysUtil.sortMapByLongValue(valueMap);
                     CategoryDataset dataset = new DefaultCategoryDataset();
-                    for (String label : successorNodeValueMap.keySet()) {
-                        ((DefaultCategoryDataset) dataset).addValue(successorNodeValueMap.get(label), label, "");
+                    if (MAXIMIZED) {
+                        int i=0;
+                        for (String label : valueMap.keySet()) {
+                            if (i == BAR_LIMIT) break;
+                            ((DefaultCategoryDataset) dataset).addValue(valueMap.get(label), label, "");
+                            i++;
+                        }
+                    } else {
+                        int i=0;
+                        for (String label : valueMap.keySet()) {
+                            if (i == 7) break;
+                            ((DefaultCategoryDataset) dataset).addValue(valueMap.get(label), label, "");
+                            i++;
+                        }
                     }
 
                     // Create a bar chart with the dataset
@@ -87,16 +103,17 @@ implements ActionListener {
                     chart.getCategoryPlot().setBackgroundPaint(Color.WHITE);
                     chart.getCategoryPlot().setDomainGridlinePaint(Color.DARK_GRAY);
                     chart.getCategoryPlot().setRangeGridlinePaint(Color.DARK_GRAY);
-                    chart.getCategoryPlot().getDomainAxis().setTickLabelFont(MyVars.tahomaPlainFont10);
-                    chart.getCategoryPlot().getRangeAxis().setTickLabelFont(MyVars.tahomaPlainFont10);
+                    chart.getCategoryPlot().getDomainAxis().setTickLabelFont(MyVars.tahomaPlainFont7);
+                    chart.getCategoryPlot().getRangeAxis().setTickLabelFont(MyVars.tahomaPlainFont7);
                     BarRenderer renderer = (BarRenderer) chart.getCategoryPlot().getRenderer();
                     renderer.setBarPainter(new StandardBarPainter());
                     // Set the colors for each data item in the series
-                    for (int i = 0; i <= dataset.getColumnCount(); i++) {
-                        renderer.setSeriesPaint(i, colors.get(i));
+                     for (int i = 0; i <= dataset.getColumnCount(); i++) {
+                            renderer.setSeriesPaint(i, colors.get(i));
                     }
+
                     renderer.setMaximumBarWidth(0.09);
-                    renderer.setBaseLegendTextFont(MyVars.tahomaPlainFont10);
+                    renderer.setBaseLegendTextFont(MyVars.tahomaPlainFont7);
                     // Create a ChartPanel and display it
                     ChartPanel chartPanel = new ChartPanel(chart);
                     chartPanel.setPreferredSize(new Dimension(350, 367));
@@ -148,13 +165,19 @@ implements ActionListener {
     }
 
     public void enlarge() {
-        MySingleNodeSuccessorValueHistogramDistributionLineChart labelValueDistribution = new MySingleNodeSuccessorValueHistogramDistributionLineChart();
-
+        MAXIMIZED = true;
         JFrame distFrame = new JFrame(" SUCCESSOR VALUE DISTRIBUTION");
         distFrame.setLayout(new BorderLayout(3,3));
-        distFrame.getContentPane().add(labelValueDistribution, BorderLayout.CENTER);
+        distFrame.getContentPane().add(new MySingleNodeSuccessorValueHistogramDistributionLineChart(), BorderLayout.CENTER);
         distFrame.setPreferredSize(new Dimension(450, 350));
         distFrame.pack();
+        distFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        distFrame.addWindowListener(new WindowAdapter() {
+            @Override public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                MAXIMIZED = false;
+            }
+        });
         distFrame.setVisible(true);
     }
 

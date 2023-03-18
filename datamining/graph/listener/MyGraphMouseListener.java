@@ -82,8 +82,12 @@ implements GraphMouseListener {
                             MyVars.getViewer().selectedNode == null &&
                             MyVars.getViewer().getPickedVertexState().getPicked().size() == 1 &&
                             MyVars.getViewer().vc.depthSelecter.getSelectedIndex() == 0) {
-                        MyVars.getViewer().selectedTableNodeSet = null;
-                        setSingleNodeDashBoard(obj);
+                        new Thread(new Runnable() {
+                            @Override public void run() {
+                                MyVars.getViewer().selectedTableNodeSet = null;
+                                setSingleNodeDashBoard(obj);
+                            }
+                        }).start();
                     } else if (SwingUtilities.isLeftMouseButton(e) &&
                         MyVars.getViewer().getPickedVertexState().getPicked().size() == 1 &&
                         MyVars.getViewer().vc.depthSelecter.getSelectedIndex() > 0 &&

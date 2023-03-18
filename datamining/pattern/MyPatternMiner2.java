@@ -373,10 +373,10 @@ implements ActionListener {
                 MyPatternNode n = (MyPatternNode) this.patternGraph.vRefs.get(nn);
                 if (i == 1) {
                     currentLoc.x = (250 + (this.MAX_NODE_WIDTH/2));
-                    currentLoc.y = (((this.MAX_NODE_HEIGHT / 2) + 150) * (vDepth + 1)) + (this.MAX_NODE_HEIGHT * vDepth);
+                    currentLoc.y = (((this.MAX_NODE_HEIGHT / 2) + 170) * (vDepth + 1)) + (this.MAX_NODE_HEIGHT * vDepth);
                 } else {
                     currentLoc.x = (250 + (this.MAX_NODE_WIDTH/2)) + ((i-1) * 350);
-                    currentLoc.y = (((this.MAX_NODE_HEIGHT / 2) + 150) * (vDepth + 1)) + (this.MAX_NODE_HEIGHT * vDepth);
+                    currentLoc.y = (((this.MAX_NODE_HEIGHT / 2) + 170) * (vDepth + 1)) + (this.MAX_NODE_HEIGHT * vDepth);
                 }
                 ++vDepth;
                 layout.setLocation(n, currentLoc);
@@ -733,7 +733,7 @@ implements ActionListener {
     private void scale() {
         this.viewScaler = new CrossoverScalingControl();
         double amount = -1.0;
-        this.viewScaler.scale(this.vv, amount > 0 ? 2.0f : 1 / 2.5f, new Point2D.Double(0, 0));
+        this.viewScaler.scale(this.vv, amount > 0 ? 2.0f : 1 / 2.0f, new Point2D.Double(0, 0));
     }
 
     private void decorate() {
