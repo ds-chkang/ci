@@ -1,5 +1,6 @@
 package datamining.graph.stats;
 
+import datamining.graph.MyComboBoxTooltipRenderer;
 import datamining.main.MyProgressBar;
 import datamining.graph.MyNode;
 import datamining.utils.system.MyVars;
@@ -534,6 +535,16 @@ extends JPanel {
                     titlePanel.add(titleLabel);
 
                     JComboBox lineChartSelector = new JComboBox();
+                    lineChartSelector.setToolTipText("SELECT A CHART FOR A DEPTH DISTRIBUTION.");
+                    String[] tooltips = {"SELECT A CHART FOR A DEPTH DISTRIBUTION.",
+                            "IN-CONTRIBUTION DISTRIBUTION BY DEPTH.",
+                            "OUT-CONTRIBUTION DISTRIBUTION BY DEPTH",
+                            "MAX. IN-CONTRIBUTION DISTRIBUTION BY DEPTH.",
+                            "MIN. IN-CONTRIBUTION DISTRIBUTION BY DEPTH",
+                            "MAX. OUT-CONTRIBUTION DISTRIBUTION BY DEPTH",
+                            "MIN. IN-CONTRIBUTION DISTRIBUTION BY DEPTH,",
+                            "CONTRIBUTION DIFFERENCE DISTRIBUTION BY DEPTH."};
+                    lineChartSelector.setRenderer(new MyComboBoxTooltipRenderer(tooltips));
                     lineChartSelector.setFocusable(false);
                     lineChartSelector.setFont(MyVars.tahomaPlainFont10);
                     lineChartSelector.setBackground(Color.WHITE);

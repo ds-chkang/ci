@@ -89,7 +89,7 @@ implements ActionListener {
                     ChartPanel chartPanel = new ChartPanel(chart);
                     chartPanel.setPreferredSize(new Dimension(350, 367));
 
-                    JLabel titleLabel = new JLabel(" E. N. V.");
+                    JLabel titleLabel = new JLabel(" E. N.");
                     titleLabel.setToolTipText("ENDING NODE VALUE DISTRIBUTION");
                     titleLabel.setFont(MyVars.tahomaBoldFont11);
                     titleLabel.setBackground(Color.WHITE);

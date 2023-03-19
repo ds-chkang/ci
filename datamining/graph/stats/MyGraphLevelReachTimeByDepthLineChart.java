@@ -1,5 +1,6 @@
 package datamining.graph.stats;
 
+import datamining.graph.MyComboBoxTooltipRenderer;
 import datamining.main.MyProgressBar;
 import datamining.graph.MyNode;
 import datamining.utils.system.MyVars;
@@ -52,7 +53,6 @@ implements ActionListener {
                         XYSeries reachTimeByDepthSeries = new XYSeries("TOTAL");
                         XYSeries maxReachTimeByDepthSeries = new XYSeries("MAX.");
                         XYSeries minReachTimeByDepthSeries = new XYSeries("MIN.");
-                        XYSeries avgReachTimeByDepthSeries = new XYSeries("AVG.");
 
                         Map<Integer, Long> reachTimeByDepthMap = new HashMap<>();
                         Map<Integer, Long> maxReachTimeByDepthMap = new HashMap<>();
@@ -157,46 +157,11 @@ implements ActionListener {
                             }
                         }
 
-                        if (MyVars.currentGraphDepth == 0) {
-                            Collection<MyNode> nodes = MyVars.g.getVertices();
-                            for (int i = 1; i <= MyVars.mxDepth; i++) {
-                                long totalReachTime = 0L;
-                                int count = 0;
-                                for (MyNode n : nodes) {
-                                    if (n.getCurrentValue() == 0) continue;
-                                    if (n.getNodeDepthInfoMap().containsKey(i)) {
-                                        totalReachTime += n.getNodeDepthInfo(i).getReachTime();
-                                        count++;
-                                    }
-                                }
-                                avgReachTimeByDepthSeries.add(i, (double)totalReachTime/count);
-                            }
-                        } else {
-                            Collection<MyNode> nodes = MyVars.g.getVertices();
-                            for (int i = 1; i <= MyVars.mxDepth; i++) {
-                                if (i == MyVars.currentGraphDepth) {
-                                    long totalReachTime = 0L;
-                                    int count = 0;
-                                    for (MyNode n : nodes) {
-                                        if (n.getCurrentValue() == 0) continue;
-                                        if (n.getNodeDepthInfoMap().containsKey(i)) {
-                                            totalReachTime += n.getNodeDepthInfo(i).getReachTime();
-                                            count++;
-                                        }
-                                    }
-                                    avgReachTimeByDepthSeries.add(i, (double)totalReachTime/count);
-                                } else {
-                                    avgReachTimeByDepthSeries.add(i, 0D);
-                                }
-                            }
-                        }
-
 
                         XYSeriesCollection dataset = new XYSeriesCollection();
                         dataset.addSeries(reachTimeByDepthSeries);
                         dataset.addSeries(maxReachTimeByDepthSeries);
                         dataset.addSeries(minReachTimeByDepthSeries);
-                        dataset.addSeries(avgReachTimeByDepthSeries);
 
                         JFreeChart chart = ChartFactory.createXYLineChart("", "DEPTH", "", dataset);
                         chart.getTitle().setHorizontalAlignment(HorizontalAlignment.LEFT);
@@ -231,20 +196,6 @@ implements ActionListener {
                         renderer.setSeriesShapesVisible(2, true);
                         renderer.setSeriesShape(2, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
                         renderer.setSeriesFillPaint(2, Color.WHITE);
-                        renderer.setUseFillPaint(true);
-
-                        renderer.setSeriesPaint(3, Color.MAGENTA);
-                        renderer.setSeriesStroke(3, new BasicStroke(1.5f));
-                        renderer.setSeriesShapesVisible(3, true);
-                        renderer.setSeriesShape(3, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
-                        renderer.setSeriesFillPaint(3, Color.WHITE);
-                        renderer.setUseFillPaint(true);
-
-                        renderer.setSeriesPaint(4, Color.BLACK);//Color.decode("#59A869"));
-                        renderer.setSeriesStroke(4, new BasicStroke(1.5f));
-                        renderer.setSeriesShapesVisible(4, true);
-                        renderer.setSeriesShape(4, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
-                        renderer.setSeriesFillPaint(4, Color.WHITE);
                         renderer.setUseFillPaint(true);
 
                         ChartPanel chartPanel = new ChartPanel(chart);
@@ -283,7 +234,6 @@ implements ActionListener {
                         lineChartSelector.addItem("TOTAL");
                         lineChartSelector.addItem("MAX.");
                         lineChartSelector.addItem("MIN.");
-                        lineChartSelector.addItem("AVG.");
                         lineChartSelector.addActionListener(graphLevelReachTimeByDepthLineChart);
 
                         JPanel btnPanel = new JPanel();
@@ -400,7 +350,6 @@ implements ActionListener {
                         lineChartSelector.addItem("TOTAL");
                         lineChartSelector.addItem("MAX.");
                         lineChartSelector.addItem("MIN.");
-                        lineChartSelector.addItem("AVG.");
                         lineChartSelector.setSelectedIndex(selectedGraphItem);
                         lineChartSelector.addActionListener(graphLevelReachTimeByDepthLineChart);
 
@@ -522,7 +471,6 @@ implements ActionListener {
                         lineChartSelector.addItem("TOTAL");
                         lineChartSelector.addItem("MAX.");
                         lineChartSelector.addItem("MIN.");
-                        lineChartSelector.addItem("AVG.");
                         lineChartSelector.setSelectedIndex(selectedGraphItem);
                         lineChartSelector.addActionListener(graphLevelReachTimeByDepthLineChart);
 
@@ -638,7 +586,6 @@ implements ActionListener {
                         lineChartSelector.addItem("TOTAL");
                         lineChartSelector.addItem("MAX.");
                         lineChartSelector.addItem("MIN.");
-                        lineChartSelector.addItem("AVG.");
                         lineChartSelector.setSelectedIndex(selectedGraphItem);
                         lineChartSelector.addActionListener(graphLevelReachTimeByDepthLineChart);
 
@@ -738,7 +685,6 @@ implements ActionListener {
                         lineChartSelector.addItem("TOTAL");
                         lineChartSelector.addItem("MAX.");
                         lineChartSelector.addItem("MIN.");
-                        lineChartSelector.addItem("AVG.");
                         lineChartSelector.setSelectedIndex(selectedGraphItem);
                         lineChartSelector.addActionListener(graphLevelReachTimeByDepthLineChart);
 
@@ -846,6 +792,11 @@ implements ActionListener {
                         });
 
                         lineChartSelector = new JComboBox();
+                        String[] tooltips = {"SELECT A CHART FOR A DEPTH DISTRIBUTION.",
+                                "TOTAL TIME DISTRIBUTION BY DEPTH.",
+                                "MAX. TIME DISTRIBUTION BY DEPTH",
+                                "MIN. TIME DISTRIBUTION BY DEPTH."};
+                        lineChartSelector.setRenderer(new MyComboBoxTooltipRenderer(tooltips));
                         lineChartSelector.setBackground(Color.WHITE);
                         lineChartSelector.setFont(MyVars.tahomaPlainFont10);
                         lineChartSelector.setFocusable(false);
@@ -853,7 +804,6 @@ implements ActionListener {
                         lineChartSelector.addItem("TOTAL");
                         lineChartSelector.addItem("MAX.");
                         lineChartSelector.addItem("MIN.");
-                        lineChartSelector.addItem("AVG.");
                         lineChartSelector.setSelectedIndex(selectedGraphItem);
                         lineChartSelector.addActionListener(graphLevelReachTimeByDepthLineChart);
 

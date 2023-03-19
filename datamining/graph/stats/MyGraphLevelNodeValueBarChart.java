@@ -54,7 +54,7 @@ public class MyGraphLevelNodeValueBarChart extends JPanel {
         } else {
             setBounds((MySysUtil.getViewerWidth() <= 1900 ?
                     MySysUtil.getViewerWidth() - (780 + MyVars.getViewer().vc.nodeListTable.getWidth()) :
-                    MySysUtil.getViewerWidth() - (810 + MyVars.getViewer().vc.nodeListTable.getWidth())), 5, 600, 2000);
+                    MySysUtil.getViewerWidth() - (830 + MyVars.getViewer().vc.nodeListTable.getWidth())), 5, 600, 2000);
         }
         setOpaque(false);
         setBackground(new Color(0, 0, 0, 0.0f));

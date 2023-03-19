@@ -1,5 +1,6 @@
 package datamining.graph.stats;
 
+import datamining.graph.MyComboBoxTooltipRenderer;
 import datamining.graph.MyNode;
 import datamining.utils.MyMathUtil;
 import datamining.utils.system.MyVars;
@@ -207,6 +208,15 @@ extends JPanel {
                     titlePanel.add(titleLabel);
 
                     JComboBox chartOption = new JComboBox();
+                    chartOption.setToolTipText("SELECT A CHART FOR DISTRIBUTION");
+                    String[] tooltips = {"SELECT A CHART FOR A DEPTH DISTRIBUTION.",
+                            "OPEN NODE COUNT DISTRIBUTION.",
+                            "ENDING NODE COUNT DISTRIBUTION.",
+                            "DIRECT RECURRENCE COUNT DISTRIBUTION.",
+                            "AVERAGE RECURRENCE PERIOD DISTRIBUTION.",
+                            "ITEM LENGTH DISTRIBUTION.",
+                            "AVERAGE NODE HOP DISTRIBUTION."};
+                    chartOption.setRenderer(new MyComboBoxTooltipRenderer(tooltips));
                     chartOption.setFocusable(false);
                     chartOption.setBackground(Color.WHITE);
                     chartOption.setFont(MyVars.tahomaPlainFont10);
@@ -224,10 +234,10 @@ extends JPanel {
                                 dataset.addSeries(openNodeCountSeries);
                             } else if (chartOption.getSelectedIndex() == 1) {
                                 dataset.removeAllSeries();
-                                dataset.addSeries(openNodeCountSeries);
+                                dataset.addSeries(endNodeCountSeries);
                             } else if (chartOption.getSelectedIndex() == 2) {
                                 dataset.removeAllSeries();
-                                dataset.addSeries(endNodeCountSeries);
+                                dataset.addSeries(directRecurrenceNodeCountSeries);
                             } else if (chartOption.getSelectedIndex() == 3) {
                                 dataset.removeAllSeries();
                                 dataset.addSeries(avgRecurrencePeriodSeries);
@@ -240,6 +250,8 @@ extends JPanel {
                             }
                         }
                     });
+
+
 
                     JButton enlargeBtn = new JButton("+");
                     enlargeBtn.setFont(MyVars.tahomaPlainFont10);

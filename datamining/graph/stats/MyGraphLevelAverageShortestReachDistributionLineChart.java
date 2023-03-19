@@ -22,12 +22,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MyGraphLevelAverageShortestPathLengthDistributionLineChart
+public class MyGraphLevelAverageShortestReachDistributionLineChart
 extends JPanel {
 
     public static int instances = 0;
 
-    public MyGraphLevelAverageShortestPathLengthDistributionLineChart() {
+    public MyGraphLevelAverageShortestReachDistributionLineChart() {
         this.decorate();
     }
 
@@ -40,7 +40,7 @@ extends JPanel {
                     setBackground(Color.WHITE);
 
                     XYSeriesCollection dataset = new XYSeriesCollection();
-                    XYSeries avgShortestPathLengthDistributionSeries = new XYSeries("AVG. SHORTEST PATH LENGTH");
+                    XYSeries avgShortestPathLengthDistributionSeries = new XYSeries("AVG. SHORTEST REACH LENGTH");
                     Collection<MyNode> nodes = MyVars.g.getVertices();
                     Map<Double, Long> avgShortestPathLengthMap = new HashMap<>();
                     for (MyNode n : nodes) {
@@ -59,7 +59,7 @@ extends JPanel {
 
                     dataset.addSeries(avgShortestPathLengthDistributionSeries);
 
-                    JFreeChart chart = ChartFactory.createXYLineChart("", "AVG. SHORTEST PATH LENGTH", "", dataset);
+                    JFreeChart chart = ChartFactory.createXYLineChart("", "AVG. SHORTEST REACH LENGTH", "", dataset);
                     chart.getTitle().setHorizontalAlignment(HorizontalAlignment.LEFT);
                     chart.getXYPlot().setBackgroundPaint(Color.WHITE);
                     chart.getXYPlot().setDomainGridlinePaint(Color.DARK_GRAY);
@@ -84,8 +84,8 @@ extends JPanel {
                     ChartPanel chartPanel = new ChartPanel(chart);
                     chartPanel.setPreferredSize(new Dimension(350, 367));
 
-                    JLabel titleLabel = new JLabel(" AVG. SHORTEST PATH L.");
-                    titleLabel.setToolTipText("AVERAGE SHORTEST PATH LENGTHS");
+                    JLabel titleLabel = new JLabel(" AVG. SHORTEST REACH");
+                    titleLabel.setToolTipText("AVERAGE SHORTEST REACH");
                     titleLabel.setFont(MyVars.tahomaBoldFont11);
                     titleLabel.setBackground(Color.WHITE);
                     titleLabel.setForeground(Color.DARK_GRAY);
@@ -133,7 +133,7 @@ extends JPanel {
     }
 
     public void enlarge() {
-        MyGraphLevelAverageShortestPathLengthDistributionLineChart betweenPathLengthDistributions = new MyGraphLevelAverageShortestPathLengthDistributionLineChart();
+        MyGraphLevelAverageShortestReachDistributionLineChart betweenPathLengthDistributions = new MyGraphLevelAverageShortestReachDistributionLineChart();
         betweenPathLengthDistributions.setLayout(new BorderLayout(3,3));
         betweenPathLengthDistributions.setBackground(Color.WHITE);
 

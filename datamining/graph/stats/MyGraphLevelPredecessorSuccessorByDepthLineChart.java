@@ -1,5 +1,6 @@
 package datamining.graph.stats;
 
+import datamining.graph.MyComboBoxTooltipRenderer;
 import datamining.graph.MyNode;
 import datamining.main.MyProgressBar;
 import datamining.utils.system.MyVars;
@@ -401,6 +402,14 @@ implements ActionListener {
             titlePanel.add(titleLabel);
 
             graphSelection = new JComboBox();
+            String[] tooltips = {"SELECT A CHART FOR A DEPTH DISTRIBUTION.",
+                                 "PREDECESSOR DISTRIBUTION BY DEPTH.",
+                                 "MAX. PREDECESSOR DISTRIBUTION BY DEPTH.",
+                                 "SUCCESSOR DISTRIBUTION BY DEPTH.",
+                                 "MAX. SUCCESSOR DISTRIBUTION BY DEPTH.",
+                                 "DIFFERENCE DISTRIBUTION BETWEEN PREDECESSOR AND SUCCESSOR BY DEPTH.",
+                                 "DROP-OFF DISTRIBUTION BY DEPTH."};
+            graphSelection.setRenderer(new MyComboBoxTooltipRenderer(tooltips));
             graphSelection.setBackground(Color.WHITE);
             graphSelection.setFocusable(false);
             graphSelection.setFont(MyVars.tahomaPlainFont10);

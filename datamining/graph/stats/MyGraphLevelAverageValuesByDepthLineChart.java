@@ -1,5 +1,6 @@
 package datamining.graph.stats;
 
+import datamining.graph.MyComboBoxTooltipRenderer;
 import datamining.main.MyProgressBar;
 import datamining.graph.MyNode;
 import datamining.utils.system.MyVars;
@@ -45,7 +46,7 @@ implements ActionListener {
     XYSeries averageOutContributionByDepthSeries = new XYSeries("OUT-CONT.");
     XYSeries averagePredecessorByDepthSeries = new XYSeries("P.");
     XYSeries averageSuccessorByDepthSeries = new XYSeries("S.");
-    XYSeries averageReachTimeByDepthSeries = new XYSeries("REACh TIME");
+    XYSeries averageReachTimeByDepthSeries = new XYSeries("REACH TIME");
 
     public MyGraphLevelAverageValuesByDepthLineChart() {
         decorate();
@@ -81,6 +82,9 @@ implements ActionListener {
                     removeAll();
                     if (graphOptionComboBox == null) {
                         graphOptionComboBox = new JComboBox();
+                        String[] tooltips = {"SELECT AN AVERAGE VALUE", "AVERAGE CONTRIBUTION BY DEPTH ", "AVERAGE IN-CONTRIBUTION BY DEPTH ", "AVERAGE OUT-CONTRIBUTION BY DEPTH",
+                                "AVERAGE PREDECESSORS BY DEPTH", "AVERAGE SUCCESSORS BY DEPTH", "AVERAGE REACH TIME BY DEPTH"};
+                        graphOptionComboBox.setRenderer(new MyComboBoxTooltipRenderer(tooltips));
                         graphOptionComboBox.setFont(MyVars.tahomaPlainFont10);
                         graphOptionComboBox.setBackground(Color.WHITE);
                         graphOptionComboBox.setFocusable(false);
@@ -90,13 +94,14 @@ implements ActionListener {
                         graphOptionComboBox.addItem("OUT-CONT.");
                         graphOptionComboBox.addItem("PRED.");
                         graphOptionComboBox.addItem("SUCC.");
+                        graphOptionComboBox.addItem("REACH T.");
                         graphOptionComboBox.setSelectedIndex(selectedOption);
                     }
 
                     setLayout(new BorderLayout(5, 5));
                     setBackground(Color.WHITE);
 
-                    Map<Integer, Set<MyNode>> totalNodesByDepth = new HashMap<>();
+                    Map<Integer, Long> totalReachTimeByDepth = new HashMap<>();
                     Map<Integer, Integer> totalContributionByDepthMap = new HashMap<>();
                     Map<Integer, Integer> totalInContributionByDepthMap = new HashMap<>();
                     Map<Integer, Integer> totalOutContributionByDepthMap = new HashMap<>();
@@ -107,11 +112,12 @@ implements ActionListener {
                     Map<Integer, Double> averageContributionByDepthMap = new HashMap<>();
                     Map<Integer, Double> averageInContributionByDepthMap = new HashMap<>();
                     Map<Integer, Double> averageOutContributionByDepthMap = new HashMap<>();
+                    Map<Integer, Double> averageReachTimeByDepthMap = new HashMap<>();
                     Collection<MyNode> nodes = MyVars.g.getVertices();
 
                     for (int i = 1; i <= MyVars.mxDepth; i++) {
                         int count = 0;
-                        double reachTimeTotal = 0;
+                        double totalReachTime = 0;
                         double contTotal = 0;
                         double inContTotal = 0;
                         double outContTotal = 0;
@@ -125,15 +131,8 @@ implements ActionListener {
                                     outContTotal += n.getNodeDepthInfo(i).getOutContribution();
                                     predecessorTotal += n.getNodeDepthInfo(i).getPredecessorCount();
                                     successorTotal += n.getNodeDepthInfo(i).getSuccessorCount();
-                                    reachTimeTotal += n.getNodeDepthInfo(i).getReachTime();
+                                    totalReachTime += n.getNodeDepthInfo(i).getReachTime();
                                     count++;
-                                    if (!totalNodesByDepth.containsKey(i)) {
-                                        Set<MyNode> depthNodes = new HashSet<>();
-                                        depthNodes.add(n);
-                                        totalNodesByDepth.put(i, depthNodes);
-                                    } else {
-                                        totalNodesByDepth.get(i).add(n);
-                                    }
                                 }
                             }
                         }
@@ -143,12 +142,14 @@ implements ActionListener {
                         totalOutContributionByDepthMap.put(i, (int) outContTotal);
                         totalPredecessorByDepthMap.put(i, (int) predecessorTotal);
                         totalSuccessorByDepthMap.put(i, (int) successorTotal);
+                        totalReachTimeByDepth.put(i, (long) totalReachTime);
 
                         averageContributionByDepthMap.put(i, ((count == 0) ? 0 : (contTotal / count)));
                         averageInContributionByDepthMap.put(i, ((count == 0) ? 0 : (inContTotal / count)));
                         averageOutContributionByDepthMap.put(i, ((count == 0) ? 0 : (outContTotal / count)));
                         averagePredecessorByDepthMap.put(i, ((count == 0) ? 0 : (predecessorTotal / count)));
                         averageSuccessorByDepthMap.put(i, ((count == 0) ? 0 : (successorTotal / count)));
+                        averageReachTimeByDepthMap.put(i, ((count == 0) ? 0 : (totalReachTime / count)));
                     }
 
 
@@ -158,7 +159,7 @@ implements ActionListener {
                     totalOutContributionByDepthSereis = new XYSeries("TOTAL OUT-CONT.");
                     totalPredecessorByDepthSereis = new XYSeries("TOTAL P.");
                     totalSuccessorByDepthSereis = new XYSeries("TOTAL S.");
-                    totalReachTimeByDepthSereis = new XYSeries("REACH TIME");
+                    totalReachTimeByDepthSereis = new XYSeries("TOTAL REACH TIME");
 
                     averageContributionByDepthSeries = new XYSeries("CONT.");
                     averageInContributionByDepthSeries = new XYSeries("IN-CONT.");
@@ -194,6 +195,11 @@ implements ActionListener {
                             } else {
                                 averageSuccessorByDepthSeries.add(i, 0);
                             }
+                            if (averageReachTimeByDepthMap.containsKey(i)) {
+                                averageReachTimeByDepthSeries.add(i, averageReachTimeByDepthMap.get(i));
+                            } else {
+                                averageReachTimeByDepthSeries.add(i, 0);
+                            }
                             if (totalContributionByDepthMap.containsKey(i)) {
                                 totalContributionByDepthSereis.add(i, totalContributionByDepthMap.get(i));
                             } else {
@@ -219,10 +225,10 @@ implements ActionListener {
                             } else {
                                 totalSuccessorByDepthSereis.add(i, 0);
                             }
-                            if (totalNodesByDepth.containsKey(i)) {
-                                totalNodesByDepthSereis.add(i, totalNodesByDepth.get(i).size());
+                            if (totalReachTimeByDepth.containsKey(i)) {
+                                totalReachTimeByDepthSereis.add(i, totalReachTimeByDepth.get(i));
                             } else {
-                                totalNodesByDepthSereis.add(i, 0);
+                                totalReachTimeByDepthSereis.add(i, 0);
                             }
                         }
                     } else {
@@ -253,6 +259,11 @@ implements ActionListener {
                                 } else {
                                     averageSuccessorByDepthSeries.add(i, 0);
                                 }
+                                if (averageReachTimeByDepthMap.containsKey(i)) {
+                                    averageReachTimeByDepthSeries.add(i, averageReachTimeByDepthMap.get(i));
+                                } else {
+                                    averageReachTimeByDepthSeries.add(i, 0);
+                                }
                                 if (totalContributionByDepthMap.containsKey(i)) {
                                     totalContributionByDepthSereis.add(i, totalContributionByDepthMap.get(i));
                                 } else {
@@ -278,10 +289,10 @@ implements ActionListener {
                                 } else {
                                     totalSuccessorByDepthSereis.add(i, 0);
                                 }
-                                if (totalNodesByDepth.containsKey(i)) {
-                                    totalNodesByDepthSereis.add(i, totalNodesByDepth.get(i).size());
+                                if (totalReachTimeByDepth.containsKey(i)) {
+                                    totalReachTimeByDepthSereis.add(i, totalReachTimeByDepth.get(i));
                                 } else {
-                                    totalNodesByDepthSereis.add(i, 0);
+                                    totalReachTimeByDepthSereis.add(i, 0);
                                 }
                             } else {
                                 averageContributionByDepthSeries.add(i, 0);
@@ -294,7 +305,7 @@ implements ActionListener {
                                 totalOutContributionByDepthSereis.add(i, 0);
                                 totalPredecessorByDepthSereis.add(i, 0);
                                 totalSuccessorByDepthSereis.add(i, 0);
-                                totalNodesByDepthSereis.add(i, 0);
+                                totalReachTimeByDepthSereis.add(i, 0);
                             }
                         }
                     }
@@ -306,6 +317,7 @@ implements ActionListener {
                         dataset.addSeries(averageOutContributionByDepthSeries);
                         dataset.addSeries(averagePredecessorByDepthSeries);
                         dataset.addSeries(averageSuccessorByDepthSeries);
+                        dataset.addSeries(averageReachTimeByDepthSeries);
                     } else if (graphOptionComboBox.getSelectedIndex() == 1) {
                         dataset.addSeries(averageContributionByDepthSeries);
                     } else if (graphOptionComboBox.getSelectedIndex() == 2) {
@@ -316,6 +328,8 @@ implements ActionListener {
                         dataset.addSeries(averagePredecessorByDepthSeries);
                     } else if (graphOptionComboBox.getSelectedIndex() == 5) {
                         dataset.addSeries(averageSuccessorByDepthSeries);
+                    } else if (graphOptionComboBox.getSelectedIndex() == 6) {
+                        dataset.addSeries(averageReachTimeByDepthSeries);
                     }
 
                     JFreeChart chart = ChartFactory.createXYLineChart("", "DEPTH", "", dataset);
@@ -334,44 +348,61 @@ implements ActionListener {
                     XYPlot plot = (XYPlot) chart.getPlot();
                     XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
                     if (graphOptionComboBox.getSelectedIndex() == 0) {
-                        renderer.setSeriesPaint(0, Color.MAGENTA);
-                        renderer.setSeriesStroke(0, new BasicStroke(1.3f));
+                        graphOptionComboBox.setToolTipText("SELECT AN AVERAGE VALUE CHART FOR DISTRIBUTION");
+                        renderer.setSeriesPaint(0, Color.DARK_GRAY);
+                        renderer.setSeriesStroke(0, new BasicStroke(1.5f));
                         renderer.setSeriesShapesVisible(0, true);
                         renderer.setSeriesShape(0, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
                         renderer.setSeriesFillPaint(0, Color.WHITE);
 
                         renderer.setSeriesPaint(1, Color.DARK_GRAY);
-                        renderer.setSeriesStroke(1, new BasicStroke(1.3f));
+                        renderer.setSeriesStroke(1, new BasicStroke(1.5f));
                         renderer.setSeriesShapesVisible(1, true);
                         renderer.setSeriesShape(1, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
                         renderer.setSeriesFillPaint(1, Color.WHITE);
 
                         renderer.setSeriesPaint(2, Color.decode("#F0CF4C"));
-                        renderer.setSeriesStroke(2, new BasicStroke(1.3f));
+                        renderer.setSeriesStroke(2, new BasicStroke(1.5f));
                         renderer.setSeriesShapesVisible(2, true);
                         renderer.setSeriesShape(2, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
                         renderer.setSeriesFillPaint(2, Color.WHITE);
 
                         renderer.setSeriesPaint(3, Color.RED);
-                        renderer.setSeriesStroke(3, new BasicStroke(1.3f));
+                        renderer.setSeriesStroke(3, new BasicStroke(1.5f));
                         renderer.setSeriesShapesVisible(3, true);
                         renderer.setSeriesShape(3, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
                         renderer.setSeriesFillPaint(3, Color.WHITE);
 
                         renderer.setSeriesPaint(4, Color.decode("#59A869"));
-                        renderer.setSeriesStroke(4, new BasicStroke(1.3f));
+                        renderer.setSeriesStroke(4, new BasicStroke(1.5f));
                         renderer.setSeriesShapesVisible(4, true);
                         renderer.setSeriesShape(4, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
                         renderer.setSeriesFillPaint(4, Color.WHITE);
                         renderer.setUseFillPaint(true);
+
+                        renderer.setSeriesPaint(5, Color.RED);
+                        renderer.setSeriesStroke(5, new BasicStroke(1.5f));
+                        renderer.setSeriesShapesVisible(5, true);
+                        renderer.setSeriesShape(5, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
+                        renderer.setSeriesFillPaint(5, Color.WHITE);
+                        renderer.setUseFillPaint(true);
+
+                        renderer.setSeriesPaint(6, Color.RED);
+                        renderer.setSeriesStroke(6, new BasicStroke(1.5f));
+                        renderer.setSeriesShapesVisible(6, true);
+                        renderer.setSeriesShape(6, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
+                        renderer.setSeriesFillPaint(6, Color.WHITE);
+                        renderer.setUseFillPaint(true);
                     } else if (graphOptionComboBox.getSelectedIndex() == 1) {
-                        renderer.setSeriesPaint(0, Color.MAGENTA);
+                        graphOptionComboBox.setToolTipText("AVERAGE CONTRIBUTION BY DEPTH");
+                        renderer.setSeriesPaint(0, Color.DARK_GRAY);
                         renderer.setSeriesStroke(0, new BasicStroke(1.5f));
                         renderer.setSeriesShapesVisible(0, true);
                         renderer.setSeriesShape(0, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
                         renderer.setSeriesFillPaint(0, Color.WHITE);
                         renderer.setUseFillPaint(true);
                     } else if (graphOptionComboBox.getSelectedIndex() == 2) {
+                        graphOptionComboBox.setToolTipText("AVERAGE IN-CONTRIBUTION BY DEPTH");
                         renderer.setSeriesPaint(0, Color.DARK_GRAY);
                         renderer.setSeriesStroke(0, new BasicStroke(1.5f));
                         renderer.setSeriesShapesVisible(0, true);
@@ -379,6 +410,7 @@ implements ActionListener {
                         renderer.setSeriesFillPaint(0, Color.WHITE);
                         renderer.setUseFillPaint(true);
                     } else if (graphOptionComboBox.getSelectedIndex() == 3) {
+                        graphOptionComboBox.setToolTipText("AVERAGE OUT-CONTRIBUTION BY DEPTH");
                         renderer.setSeriesPaint(0, Color.PINK);
                         renderer.setSeriesStroke(0, new BasicStroke(1.5f));
                         renderer.setSeriesShapesVisible(0, true);
@@ -386,6 +418,7 @@ implements ActionListener {
                         renderer.setSeriesFillPaint(0, Color.WHITE);
                         renderer.setUseFillPaint(true);
                     } else if (graphOptionComboBox.getSelectedIndex() == 4) {
+                        graphOptionComboBox.setToolTipText("AVERAGE PREDECESSORS BY DEPTH");
                         renderer.setSeriesPaint(0, Color.RED);
                         renderer.setSeriesStroke(0, new BasicStroke(1.5f));
                         renderer.setSeriesShapesVisible(0, true);
@@ -393,6 +426,15 @@ implements ActionListener {
                         renderer.setSeriesFillPaint(0, Color.WHITE);
                         renderer.setUseFillPaint(true);
                     } else if (graphOptionComboBox.getSelectedIndex() == 5) {
+                        graphOptionComboBox.setToolTipText("AVERAGE SUCCESSORS BY DEPTH");
+                        renderer.setSeriesPaint(0, Color.RED);
+                        renderer.setSeriesStroke(0, new BasicStroke(1.5f));
+                        renderer.setSeriesShapesVisible(0, true);
+                        renderer.setSeriesShape(0, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
+                        renderer.setSeriesFillPaint(0, Color.WHITE);
+                        renderer.setUseFillPaint(true);
+                    } else if (graphOptionComboBox.getSelectedIndex() == 6) {
+                        graphOptionComboBox.setToolTipText("AVERAGE REACH TIME BY DEPTH");
                         renderer.setSeriesPaint(0, Color.RED);
                         renderer.setSeriesStroke(0, new BasicStroke(1.5f));
                         renderer.setSeriesShapesVisible(0, true);
@@ -449,7 +491,6 @@ implements ActionListener {
                     btnPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
                     btnPanel.add(graphOptionComboBox);
-                    //btnPanel.add(depthMenu);
                     btnPanel.add(enlargeBtn);
                     menuPanel.add(titlePanel, BorderLayout.WEST);
                     menuPanel.add(btnPanel, BorderLayout.CENTER);

@@ -1,5 +1,6 @@
 package datamining.graph.stats;
 
+import datamining.graph.MyComboBoxTooltipRenderer;
 import datamining.main.MyProgressBar;
 import datamining.graph.MyNode;
 import datamining.utils.system.MySysUtil;
@@ -43,8 +44,7 @@ extends JPanel{
     public MyGraphLevelUniqueNodesByDepthLineBarChart() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
-                selectedChart = 1;
-                setUniqueNodeBarChartByDepth();
+                setUniqueNodesByDepthLineChart();
             }
         });
     }
@@ -58,7 +58,6 @@ extends JPanel{
             XYSeries uniqueNodeSeries = new XYSeries("U. N.");
             XYSeriesCollection dataset = new XYSeriesCollection();
             Collection<MyNode> nodes = MyVars.g.getVertices();
-
             if (MyVars.currentGraphDepth == 0) {
                 for (int i = 1; i <= MyVars.mxDepth; i++) {
                     int totalNode = 0;
@@ -139,6 +138,14 @@ extends JPanel{
             });
 
             JComboBox chartMenu = new JComboBox();
+            chartMenu.setToolTipText("SELECT A DEPTH FOR DEPTH NODES");
+            String [] tooltips = new String[MyVars.mxDepth+1];
+            tooltips[0] = "SELECT A DEPTH FOR THE DEPTH NODES.";
+            for (int i=1; i < MyVars.mxDepth; i++) {
+                tooltips[i] = "DEPTH " + i + " FOR THE DEPTH NODES.";
+            }
+            chartMenu.setRenderer(new MyComboBoxTooltipRenderer(tooltips));
+
             chartMenu.setFocusable(false);
             chartMenu.setBackground(Color.WHITE);
             chartMenu.setFont(MyVars.tahomaPlainFont10);
@@ -148,8 +155,7 @@ extends JPanel{
             }
             chartMenu.setSelectedIndex(selectedChart);
             chartMenu.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
+                @Override public void actionPerformed(ActionEvent e) {
                     if (chartMenu.getSelectedIndex() == 0) {
                         selectedChart = 0;
                         setUniqueNodesByDepthLineChart();
@@ -175,7 +181,6 @@ extends JPanel{
             add(topPanel, BorderLayout.NORTH);
             renderer.setBaseLegendTextFont(MyVars.tahomaPlainFont11);
             add(chartPanel, BorderLayout.CENTER);
-            instances++;
         } catch (Exception ex) {ex.printStackTrace();}
         revalidate();
         repaint();
