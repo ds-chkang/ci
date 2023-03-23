@@ -111,22 +111,27 @@ extends JPanel {
     private JFreeChart setChart() {
         try {
             int totalCnt = 0;
-            int totalValue = 0;
+            double totalValue = 0;
             Map<Integer, Integer> valueMap = new HashMap<>();
             for (MyDirectNode n : MyVars.getDirectGraphViewer().multiNodePredecessorSet) {
                 if (n.getCurrentValue() > 0) {
                     int value = (int) n.getCurrentValue();
                     totalCnt++;
-                    totalValue += value;
-
+                    totalValue += n.getCurrentValue();
                     if (!MAXIMIZED) {
-                        if (valueMap.size() == 15) break;
-                    } else if (valueMap.size() == 200) break;
-
-                    if (valueMap.containsKey(value)) {
-                        valueMap.put(value, valueMap.get(value) + 1);
-                    } else {
-                        valueMap.put(value, 1);
+                        if (valueMap.size() <= 15) {
+                            if (valueMap.containsKey(value)) {
+                                valueMap.put(value, valueMap.get(value) + 1);
+                            } else {
+                                valueMap.put(value, 1);
+                            }
+                        }
+                    } else if (valueMap.size() <= 200) {
+                        if (valueMap.containsKey(value)) {
+                            valueMap.put(value, valueMap.get(value) + 1);
+                        } else {
+                            valueMap.put(value, 1);
+                        }
                     }
                 }
             }

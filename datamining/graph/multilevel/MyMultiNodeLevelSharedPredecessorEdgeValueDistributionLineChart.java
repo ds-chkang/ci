@@ -147,8 +147,7 @@ extends JPanel {
     private JFreeChart setChart() {
         try {
             int totalCnt = 0;
-            int totalValue = 0;
-            XYSeries edgeValueSeries = new XYSeries("SHARED P. E. V.");
+            double totalValue = 0;
             Map<Integer, Integer> valueMap = new HashMap<>();
             Collection<MyDirectEdge> edges = MyVars.directMarkovChain.getEdges();
             for (MyDirectEdge e : edges) {
@@ -156,16 +155,21 @@ extends JPanel {
                     if (e.getCurrentValue() > 0) {
                         int value = (int) e.getCurrentValue();
                         totalCnt++;
-                        totalValue += value;
-
+                        totalValue += e.getCurrentValue();
                         if (!MAXIMIZED) {
-                            if (valueMap.size() == 15) break;
-                        } else if (valueMap.size() == 200) break;
-
-                        if (valueMap.containsKey(value)) {
-                            valueMap.put(value, valueMap.get(value) + 1);
-                        } else {
-                            valueMap.put(value, 1);
+                            if (valueMap.size() <= 15) {
+                                if (valueMap.containsKey(value)) {
+                                    valueMap.put(value, valueMap.get(value) + 1);
+                                } else {
+                                    valueMap.put(value, 1);
+                                }
+                            }
+                        } else if (valueMap.size() <= 200) {
+                            if (valueMap.containsKey(value)) {
+                                valueMap.put(value, valueMap.get(value) + 1);
+                            } else {
+                                valueMap.put(value, 1);
+                            }
                         }
                     }
                 }

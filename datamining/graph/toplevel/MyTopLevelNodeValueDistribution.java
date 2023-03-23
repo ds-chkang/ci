@@ -1,6 +1,7 @@
 package datamining.graph.toplevel;
 
 import datamining.graph.MyDirectNode;
+import datamining.main.MyProgressBar;
 import datamining.utils.MyMathUtil;
 import datamining.utils.system.MySysUtil;
 import datamining.utils.system.MyVars;
@@ -110,43 +111,58 @@ extends JPanel {
     }
 
     public void enlarge() {
-        MAXIMIZED = true;
-        JFrame frame = new JFrame(" NODE VALUE DISTRIBUTION");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.addWindowListener(new WindowAdapter() {
-            @Override public void windowClosing(WindowEvent e) {
-                super.windowClosing(e);
-                MAXIMIZED = false;
-            }
-        });
-        frame.setLayout(new BorderLayout(3,3));
-        frame.getContentPane().add(new MyTopLevelNodeValueDistribution(), BorderLayout.CENTER);
-        frame.setPreferredSize(new Dimension(550, 450));
-        frame.pack();
-        frame.setVisible(true);
+        MyProgressBar pb = new MyProgressBar(false);
+        try {
+            MAXIMIZED = true;
+            JFrame f = new JFrame(" NODE VALUE DISTRIBUTION");
+            f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            f.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    super.windowClosing(e);
+                    MAXIMIZED = false;
+                }
+            });
+            f.setLayout(new BorderLayout(3, 3));
+            f.getContentPane().add(new MyTopLevelNodeValueDistribution(), BorderLayout.CENTER);
+            f.setPreferredSize(new Dimension(450, 350));
+            f.pack();
+            f.setAlwaysOnTop(true);
+            pb.updateValue(100, 100);
+            pb.dispose();
+            f.setVisible(true);
+            f.setAlwaysOnTop(false);
+        } catch (Exception ex) {
+            pb.updateValue(100, 100);
+            pb.dispose();
+            MAXIMIZED = false;
+        }
     }
 
     private JFreeChart setChart() {
         int totalCnt = 0;
-        int totalValue = 0;
+        double totalValue = 0;
         TreeMap<Integer, Integer> valueMap = new TreeMap<>();
         Collection<MyDirectNode> nodes = MyVars.directMarkovChain.getVertices();
         for (MyDirectNode n : nodes) {
             if (n.getCurrentValue() <= 0) continue;
             int value = (int) n.getCurrentValue();
             totalCnt++;
-            totalValue += value;
-
+            totalValue += n.getCurrentValue();
             if (!MAXIMIZED) {
-                if (valueMap.size() == 15) break;
-            } else {
-                if (valueMap.size() == 200) break;
-            }
-
-            if (valueMap.containsKey(value)) {
-                valueMap.put(value, valueMap.get(value) + 1);
-            } else {
-                valueMap.put(value, 1);
+                if (valueMap.size() <= 15) {
+                    if (valueMap.containsKey(value)) {
+                        valueMap.put(value, valueMap.get(value) + 1);
+                    } else {
+                        valueMap.put(value, 1);
+                    }
+                }
+            } else if (valueMap.size() <= 200) {
+                if (valueMap.containsKey(value)) {
+                    valueMap.put(value, valueMap.get(value) + 1);
+                } else {
+                    valueMap.put(value, 1);
+                }
             }
         }
 
@@ -155,7 +171,7 @@ extends JPanel {
             dataset.addValue(valueMap.get(nodeValue), "N. V.", nodeValue);
         }
 
-        double avgValue = (double)totalValue/totalCnt;
+        double avgValue = totalValue/totalCnt;
 
         String plotTitle = "";
         String xaxis = "[AVG.: " + MySysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(avgValue))+"]";

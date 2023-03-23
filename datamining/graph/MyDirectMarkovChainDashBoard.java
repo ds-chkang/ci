@@ -284,131 +284,115 @@ implements ActionListener {
     }
 
     private JPanel setNodeLevelCharts() {
-        nodeLevelPredecessorEdgeValueDistribution = new MyNodeLevelPredecessorEdgeValueDistribution();
-        nodeLevelSuccessorEdgeValueDistribution = new MyNodeLevelSuccessorEdgeValueDistribution();
-        nodeLevelPredecessorValueDistribution = new MyNodeLevelPredecessorValueDistribution();
-        nodeLevelSuccessorValueDistribution = new MyNodeLevelSuccessorValueDistribution();
-        nodeLevelEdgeValueDistribution = new MyNodeLevelEdgeValueDistribution();
+        this.nodeLevelPredecessorEdgeValueDistribution = new MyNodeLevelPredecessorEdgeValueDistribution();
+        this.nodeLevelSuccessorEdgeValueDistribution = new MyNodeLevelSuccessorEdgeValueDistribution();
+        this.nodeLevelPredecessorValueDistribution = new MyNodeLevelPredecessorValueDistribution();
+        this.nodeLevelSuccessorValueDistribution = new MyNodeLevelSuccessorValueDistribution();
+        this.nodeLevelEdgeValueDistribution = new MyNodeLevelEdgeValueDistribution();
 
         JPanel nodeLevelStatPanel = new JPanel();
         nodeLevelStatPanel.setBackground(Color.WHITE);
         nodeLevelStatPanel.setLayout(new GridLayout(5, 1));
 
-        nodeLevelStatPanel.add(nodeLevelPredecessorValueDistribution);
-        nodeLevelStatPanel.add(nodeLevelSuccessorValueDistribution);
-        nodeLevelStatPanel.add(nodeLevelEdgeValueDistribution);
-        nodeLevelStatPanel.add(nodeLevelPredecessorEdgeValueDistribution);
-        nodeLevelStatPanel.add(nodeLevelSuccessorEdgeValueDistribution);
+        nodeLevelStatPanel.add(this.nodeLevelPredecessorValueDistribution);
+        nodeLevelStatPanel.add(this.nodeLevelSuccessorValueDistribution);
+        nodeLevelStatPanel.add(this.nodeLevelEdgeValueDistribution);
+        nodeLevelStatPanel.add(this.nodeLevelPredecessorEdgeValueDistribution);
+        nodeLevelStatPanel.add(this.nodeLevelSuccessorEdgeValueDistribution);
 
         return nodeLevelStatPanel;
     }
 
     private JPanel setMultiNodeLevelCharts() {
-        multiNodeLevelPredecessorValueDistributionLineChart = new MyMultiNodeLevelPredecessorValueDistributionLineChart();
-        multiNodeLevelSuccessorValueDistributionLineChart = new MyMultiNodeLevelSuccessorValueDistributionLineChart();
-        multiNodeLevelPredecessorEdgeValueDistributionLineChart = new MyMultiNodeLevelPredecessorEdgeValueDistributionLineChart();
-        multiNodeLevelSuccessorEdgeValueDistributionLineChart = new MyMultiNodeLevelSuccessorEdgeValueDistributionLineChart();
-        multiNodeLevelSharedPredecessorsEdgeValueDistributionChart = new MyMultiNodeLevelSharedPredecessorEdgeValueDistributionLineChart();
-        multiNodeLevelSharedSuccessorEdgeValueDistributionLineChart = new MyMultiNodeLevelSharedSuccessorEdgeValueDistributionLineChart();
+        this.multiNodeLevelPredecessorValueDistributionLineChart = new MyMultiNodeLevelPredecessorValueDistributionLineChart();
+        this.multiNodeLevelSuccessorValueDistributionLineChart = new MyMultiNodeLevelSuccessorValueDistributionLineChart();
+        this.multiNodeLevelPredecessorEdgeValueDistributionLineChart = new MyMultiNodeLevelPredecessorEdgeValueDistributionLineChart();
+        this.multiNodeLevelSuccessorEdgeValueDistributionLineChart = new MyMultiNodeLevelSuccessorEdgeValueDistributionLineChart();
+        this.multiNodeLevelSharedPredecessorsEdgeValueDistributionChart = new MyMultiNodeLevelSharedPredecessorEdgeValueDistributionLineChart();
+        this.multiNodeLevelSharedSuccessorEdgeValueDistributionLineChart = new MyMultiNodeLevelSharedSuccessorEdgeValueDistributionLineChart();
 
         JPanel multinodeLevelStatPanel = new JPanel();
         multinodeLevelStatPanel.setBackground(Color.WHITE);
         multinodeLevelStatPanel.setLayout(new GridLayout(6, 1));
 
-        multinodeLevelStatPanel.add(multiNodeLevelPredecessorValueDistributionLineChart);
-        multinodeLevelStatPanel.add(multiNodeLevelSuccessorValueDistributionLineChart);
-        multinodeLevelStatPanel.add(multiNodeLevelPredecessorEdgeValueDistributionLineChart);
-        multinodeLevelStatPanel.add(multiNodeLevelSuccessorEdgeValueDistributionLineChart);
-        multinodeLevelStatPanel.add(multiNodeLevelSharedPredecessorsEdgeValueDistributionChart);
-        multinodeLevelStatPanel.add(multiNodeLevelSharedSuccessorEdgeValueDistributionLineChart);
+        multinodeLevelStatPanel.add(this.multiNodeLevelPredecessorValueDistributionLineChart);
+        multinodeLevelStatPanel.add(this.multiNodeLevelSuccessorValueDistributionLineChart);
+        multinodeLevelStatPanel.add(this.multiNodeLevelPredecessorEdgeValueDistributionLineChart);
+        multinodeLevelStatPanel.add(this.multiNodeLevelSuccessorEdgeValueDistributionLineChart);
+        multinodeLevelStatPanel.add(this.multiNodeLevelSharedPredecessorsEdgeValueDistributionChart);
+        multinodeLevelStatPanel.add(this.multiNodeLevelSharedSuccessorEdgeValueDistributionLineChart);
 
         return multinodeLevelStatPanel;
     }
 
     public JPanel setTopLevelCharts() {
-        //topLevelNodeCountDistribution = new MyTopLevelNodeCountDistribution();
-        topLevelNodeValueDistribution = new MyTopLevelNodeValueDistribution();
-        topLevelEdgeValueDistribution = new MyTopLevelEdgeValueDistribution();
-        topLevelPredecessorCountDistribution = new MyTopLevelPredecessorCountDistribution();
-        topLevelSuccessorCountDistribution = new MyTopLevelSuccessorCountDistribution();
-        topLevelPredecessorEdgeValueDistribution = new MyTopLevelPredecessorEdgeValueDistribution();
-        topLevelSuccessorEdgeValueDistribution = new MyTopLevelSuccessorEdgeValueDistribution();
-        topLevelAverageShortestReachDistributionLineChart = new MyTopLevelAverageShortestReachDistributionLineChart();
+        this.topLevelNodeValueDistribution = new MyTopLevelNodeValueDistribution();
+        this.topLevelEdgeValueDistribution = new MyTopLevelEdgeValueDistribution();
+        this.topLevelPredecessorCountDistribution = new MyTopLevelPredecessorCountDistribution();
+        this.topLevelSuccessorCountDistribution = new MyTopLevelSuccessorCountDistribution();
+        this.topLevelPredecessorEdgeValueDistribution = new MyTopLevelPredecessorEdgeValueDistribution();
+        this.topLevelSuccessorEdgeValueDistribution = new MyTopLevelSuccessorEdgeValueDistribution();
+        this.topLevelAverageShortestReachDistributionLineChart = new MyTopLevelAverageShortestReachDistributionLineChart();
 
         JPanel graphStatPanel = new JPanel();
         graphStatPanel.setBackground(Color.WHITE);
         graphStatPanel.setLayout(new GridLayout(7, 1));
-        //graphStatPanel.add(topLevelNodeCountDistribution);
-        graphStatPanel.add(topLevelNodeValueDistribution);
-        graphStatPanel.add(topLevelPredecessorCountDistribution);
-        graphStatPanel.add(topLevelSuccessorCountDistribution);
-        graphStatPanel.add(topLevelEdgeValueDistribution);
-        graphStatPanel.add(topLevelPredecessorEdgeValueDistribution);
-        graphStatPanel.add(topLevelSuccessorEdgeValueDistribution);
-        graphStatPanel.add(topLevelAverageShortestReachDistributionLineChart);
+        graphStatPanel.add(this.topLevelNodeValueDistribution);
+        graphStatPanel.add(this.topLevelPredecessorCountDistribution);
+        graphStatPanel.add(this.topLevelSuccessorCountDistribution);
+        graphStatPanel.add(this.topLevelEdgeValueDistribution);
+        graphStatPanel.add(this.topLevelPredecessorEdgeValueDistribution);
+        graphStatPanel.add(this.topLevelSuccessorEdgeValueDistribution);
+        graphStatPanel.add(this.topLevelAverageShortestReachDistributionLineChart);
 
         return graphStatPanel;
     }
 
-    private JTabbedPane setGraphLevelTableTabPane() {
-        JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.setFocusable(false);
-        tabbedPane.setOpaque(false);
-        tabbedPane.setPreferredSize(new Dimension(160, 2000));
-        tabbedPane.setFont(MyVars.tahomaPlainFont11);
-        tabbedPane.addTab("N.", null, setNodeTable(), "NODES");
-        tabbedPane.addTab("E.", null, setEdgeTable(), "EDGES");
-        //tabbedPane.addTab("P.", null, setPathFindTable(), "PATH ANALYSIS");
-        //tabbedPane.addTab("S.", null, setStatTable(), "GRAPH TEXT STATISTICS");
-        //tabbedPane.addTab("C.", null, setGraphLevelCharts(), "GRAPH CHART STATISTICS");
-        return tabbedPane;
-    }
-
-    public JTabbedPane topLevelTabbedPane = new JTabbedPane();
-    public JTabbedPane nodeLevelTabbedPane = new JTabbedPane();
-    public JTabbedPane multiNodeLevelTabbedPane = new JTabbedPane();
+    public JTabbedPane topLevelTabbedPane;
+    public JTabbedPane nodeLevelTabbedPane;
+    public JTabbedPane multiNodeLevelTabbedPane;
 
     private JPanel setTopLevelTabPane() {
+        this.topLevelTabbedPane = new JTabbedPane();
+
         JPanel tablePanel = new JPanel();
         tablePanel.setLayout(new BorderLayout(1,1));
         tablePanel.setBackground(Color.WHITE);
 
-        topLevelTabbedPane.setFont(MyVars.tahomaPlainFont11);
-        topLevelTabbedPane.setFocusable(false);
-        topLevelTabbedPane.addTab("N.",  null, setNodeTable(), "NODES FOR THE CURRENT GRAPH");
-        topLevelTabbedPane.addTab("E.",  null, setEdgeTable(), "EDGES FOR THE CURRENT GRAPH");
-        topLevelTabbedPane.addTab("S.",  null, setTopLevelStatTable(), "STATISTICAL PROPERTIES FOR THE CURRENT GRAPH");
-       // topLevelTabbedPane.addTab("P.", null, setPathFindTable(), "GRAPH PATH ANALYSIS");
-
-        tablePanel.add(topLevelTabbedPane, BorderLayout.CENTER);
+        this.topLevelTabbedPane.setFont(MyVars.tahomaPlainFont11);
+        this.topLevelTabbedPane.setFocusable(false);
+        this.topLevelTabbedPane.addTab("N.",  null, setNodeTable(), "NODES FOR THE CURRENT GRAPH");
+        this.topLevelTabbedPane.addTab("E.",  null, setEdgeTable(), "EDGES FOR THE CURRENT GRAPH");
+        this.topLevelTabbedPane.addTab("S.",  null, setTopLevelStatTable(), "STATISTICAL PROPERTIES FOR THE CURRENT GRAPH");
+        tablePanel.add(this.topLevelTabbedPane, BorderLayout.CENTER);
         return tablePanel;
     }
 
     private JTabbedPane setNodeLevelTabPane() {
-        nodeLevelTabbedPane.setFocusable(false);
-        nodeLevelTabbedPane.setOpaque(false);
-        nodeLevelTabbedPane.setPreferredSize(new Dimension(160, 2000));
-        nodeLevelTabbedPane.setFont(MyVars.tahomaPlainFont11);
-        nodeLevelTabbedPane.addTab("N.", null, setNodeTable(), "NODES FOR THE CURRENT GRAPH");
-        nodeLevelTabbedPane.addTab("E.", null, setEdgeTable(), "EDGES FOR THE CURRENT GRAPH");
-        nodeLevelTabbedPane.addTab("S.", null, setNodeLevelStatTable(), "STATISTICAL PROPERTIES FOR THE CURRENT GRAPH");
-        //tabbedPane.addTab("C.", null, setNodeLevelCharts(), "VALUE DISTRIBUTIONS FOR THE CURRENT GRAPH");
-        return nodeLevelTabbedPane;
+        this.nodeLevelTabbedPane = new JTabbedPane();
+        this.nodeLevelTabbedPane.setFocusable(false);
+        this.nodeLevelTabbedPane.setOpaque(false);
+        this.nodeLevelTabbedPane.setPreferredSize(new Dimension(160, 2000));
+        this.nodeLevelTabbedPane.setFont(MyVars.tahomaPlainFont11);
+        this.nodeLevelTabbedPane.addTab("N.", null, setNodeTable(), "NODES FOR THE CURRENT GRAPH");
+        this.nodeLevelTabbedPane.addTab("E.", null, setEdgeTable(), "EDGES FOR THE CURRENT GRAPH");
+        this.nodeLevelTabbedPane.addTab("S.", null, setNodeLevelStatTable(), "STATISTICAL PROPERTIES FOR THE CURRENT GRAPH");
+        return this.nodeLevelTabbedPane;
     }
 
     private JTabbedPane setMultiNodeLevelTabPane() {
-        multiNodeLevelTabbedPane.setFocusable(false);
-        multiNodeLevelTabbedPane.setOpaque(false);
-        multiNodeLevelTabbedPane.setPreferredSize(new Dimension(160, 2000));
-        multiNodeLevelTabbedPane.setFont(MyVars.tahomaPlainFont11);
-        multiNodeLevelTabbedPane.addTab("N.", null, setNodeTable(), "NODES FOR THE CURRENT GRAPH");
-        multiNodeLevelTabbedPane.addTab("E.", null, setEdgeTable(), "EDGES FOR THE CURRENT GRAPH");
-        multiNodeLevelTabbedPane.addTab("S.", null, setMultiNodeLevelStatTable(), "STATISTICAL PROPERTIES FOR THE CURRENT GRAPH");
-        //tabbedPane.addTab("C.", null, setMultiNodeLevelCharts(), "VALUE DISTRIBUTIONS FOR THE CURRENT GRAPH");
-        return multiNodeLevelTabbedPane;
+        this.multiNodeLevelTabbedPane = new JTabbedPane();
+        this.multiNodeLevelTabbedPane.setFocusable(false);
+        this.multiNodeLevelTabbedPane.setOpaque(false);
+        this.multiNodeLevelTabbedPane.setPreferredSize(new Dimension(160, 2000));
+        this.multiNodeLevelTabbedPane.setFont(MyVars.tahomaPlainFont11);
+        this.multiNodeLevelTabbedPane.addTab("N.", null, setNodeTable(), "NODES FOR THE CURRENT GRAPH");
+        this.multiNodeLevelTabbedPane.addTab("E.", null, setEdgeTable(), "EDGES FOR THE CURRENT GRAPH");
+        this.multiNodeLevelTabbedPane.addTab("S.", null, setMultiNodeLevelStatTable(), "STATISTICAL PROPERTIES FOR THE CURRENT GRAPH");
+        return this.multiNodeLevelTabbedPane;
     }
 
-    public JTextField nodeListTableNodeTableNodeSearchTxt = new JTextField();
+    public JTextField nodeListTableNodeTableNodeSearchTxt;
 
     private JPanel setNodeTable() {
         JPanel componentPanel = new JPanel();
@@ -462,18 +446,18 @@ implements ActionListener {
                 );
             }
 
-            nodeListTable.setRowHeight(20);
-            nodeListTable.setBackground(Color.WHITE);
-            nodeListTable.setFont(MyVars.f_pln_11);
-            nodeListTable.getTableHeader().setFont(MyVars.tahomaBoldFont10);
-            nodeListTable.getTableHeader().setOpaque(false);
-            nodeListTable.getTableHeader().setBackground(new Color(0, 0, 0, 0f));
-            nodeListTable.getColumnModel().getColumn(0).setPreferredWidth(35);
-            nodeListTable.getColumnModel().getColumn(0).setMaxWidth(45);
-            nodeListTable.getColumnModel().getColumn(1).setPreferredWidth(55);
-            nodeListTable.getColumnModel().getColumn(2).setPreferredWidth(30);
-            nodeListTable.getColumnModel().getColumn(2).setMaxWidth(35);
-            nodeListTable.addComponentListener(new ComponentListener() {
+            this.nodeListTable.setRowHeight(20);
+            this.nodeListTable.setBackground(Color.WHITE);
+            this.nodeListTable.setFont(MyVars.f_pln_11);
+            this.nodeListTable.getTableHeader().setFont(MyVars.tahomaBoldFont10);
+            this.nodeListTable.getTableHeader().setOpaque(false);
+            this.nodeListTable.getTableHeader().setBackground(new Color(0, 0, 0, 0f));
+            this.nodeListTable.getColumnModel().getColumn(0).setPreferredWidth(35);
+            this.nodeListTable.getColumnModel().getColumn(0).setMaxWidth(45);
+            this.nodeListTable.getColumnModel().getColumn(1).setPreferredWidth(55);
+            this.nodeListTable.getColumnModel().getColumn(2).setPreferredWidth(30);
+            this.nodeListTable.getColumnModel().getColumn(2).setMaxWidth(35);
+            this.nodeListTable.addComponentListener(new ComponentListener() {
                 @Override public void componentResized(ComponentEvent e) {
                     new Thread(new Runnable() {
                         @Override public void run() {}
@@ -487,26 +471,27 @@ implements ActionListener {
             JButton bottomTableNodeSelectBtn = new JButton("SEL.");
             bottomTableNodeSelectBtn.setFont(MyVars.tahomaPlainFont10);
             bottomTableNodeSelectBtn.setFocusable(false);
-            nodeListTableNodeTableNodeSearchTxt.setBackground(Color.WHITE);
-            nodeListTableNodeTableNodeSearchTxt.setBorder(BorderFactory.createLoweredSoftBevelBorder());
-            JPanel bottomTableSearchAndSavePanel = MyTableUtil.searchAndSaveDataPanelForJTable2(this, nodeListTableNodeTableNodeSearchTxt, bottomTableNodeSelectBtn, bottomTableModel, nodeListTable);
-            nodeListTableNodeTableNodeSearchTxt.setFont(MyVars.f_bold_12);
-            nodeListTableNodeTableNodeSearchTxt.setToolTipText("TYPE A NODE NAME TO SEARCH");
-            nodeListTableNodeTableNodeSearchTxt.setPreferredSize(new Dimension(90, 19));
+            this.nodeListTableNodeTableNodeSearchTxt = new JTextField();
+            this.nodeListTableNodeTableNodeSearchTxt.setBackground(Color.WHITE);
+            this.nodeListTableNodeTableNodeSearchTxt.setBorder(BorderFactory.createLoweredSoftBevelBorder());
+            JPanel bottomTableSearchAndSavePanel = MyTableUtil.searchAndSaveDataPanelForJTable2(this, this.nodeListTableNodeTableNodeSearchTxt, bottomTableNodeSelectBtn, bottomTableModel, nodeListTable);
+            this.nodeListTableNodeTableNodeSearchTxt.setFont(MyVars.f_bold_12);
+            this.nodeListTableNodeTableNodeSearchTxt.setToolTipText("TYPE A NODE NAME TO SEARCH");
+            this.nodeListTableNodeTableNodeSearchTxt.setPreferredSize(new Dimension(90, 19));
             bottomTableNodeSelectBtn.setPreferredSize(new Dimension(50, 19));
             bottomTableNodeSelectBtn.setToolTipText("SELECT A NODE");
             bottomTableNodeSelectBtn.removeActionListener(this);
             bottomTableNodeSelectBtn.removeActionListener(this);
             bottomTableSearchAndSavePanel.remove(bottomTableNodeSelectBtn);
 
-            nodeListTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            nodeListTable.setSelectionBackground(Color.LIGHT_GRAY);
-            nodeListTable.setForeground(Color.BLACK);
-            nodeListTable.setSelectionForeground(Color.BLACK);
-            nodeListTable.setFocusable(false);
-            nodeListTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            this.nodeListTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            this.nodeListTable.setSelectionBackground(Color.LIGHT_GRAY);
+            this.nodeListTable.setForeground(Color.BLACK);
+            this.nodeListTable.setSelectionForeground(Color.BLACK);
+            this.nodeListTable.setFocusable(false);
+            this.nodeListTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
                 public void valueChanged(ListSelectionEvent event) {
-                    new Thread(new Runnable() {
+                    MyVars.currentThread = new Thread(new Runnable() {
                         @Override public void run() {
                             try {
                                 if (nodeListTable.getSelectedRow() >= 0) {
@@ -522,7 +507,14 @@ implements ActionListener {
                                 ex.printStackTrace();
                             }
                         }
-                    }).start();
+                    });
+                    MyVars.currentThread.start();
+                    try {
+                        MyVars.currentThread.join();
+                        MyVars.currentThread = null;
+                    } catch (Exception ex) {
+                        MyVars.currentThread = null;
+                    }
                 }
             });
 
@@ -1097,16 +1089,31 @@ implements ActionListener {
                 removeAll();
                 setBackground(Color.WHITE);
                 setLayout(new BorderLayout(3, 3));
+
                 directGraphTextStatisticsPanel = new MyDirectGraphTextStatisticsPanel();
+                JPanel checkBoxControlPanel = new JPanel();
+                checkBoxControlPanel.setBackground(Color.WHITE);
+                checkBoxControlPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 3,3));
+                checkBoxControlPanel.add(MyVars.getDirectGraphViewer().directGraphViewerControlPanel.weightedNodeColorCheckBox);
+                checkBoxControlPanel.add(MyVars.getDirectGraphViewer().directGraphViewerControlPanel.removeEdgeCheckBox);
+                checkBoxControlPanel.add(MyVars.getDirectGraphViewer().directGraphViewerControlPanel.nodeValueCheckBox);
+                checkBoxControlPanel.add(MyVars.getDirectGraphViewer().directGraphViewerControlPanel.edgeValueCheckBox);
+
+                JPanel bottomPanel = new JPanel();
+                bottomPanel.setBackground(Color.WHITE);
+                bottomPanel.setLayout(new BorderLayout(3,3));
+                bottomPanel.add(directGraphTextStatisticsPanel, BorderLayout.CENTER);
+                bottomPanel.add(checkBoxControlPanel, BorderLayout.EAST);
 
                 JPanel graphViewer = new JPanel();
                 graphViewer.setOpaque(false);
                 graphViewer.setBackground(new Color(0.0f, 0.0f, 0.0f, 0.0f));
                 graphViewer.setLayout(new BorderLayout(3, 3));
+
                 MyVars.getDirectGraphViewer().directGraphViewerControlPanel = new MyDirectGraphController();
                 graphViewer.add(MyVars.getDirectGraphViewer().directGraphViewerControlPanel, BorderLayout.NORTH);
                 graphViewer.add(directGraphViewer, BorderLayout.CENTER);
-                graphViewer.add(directGraphTextStatisticsPanel, BorderLayout.SOUTH);
+                graphViewer.add(bottomPanel, BorderLayout.SOUTH);
 
                 JSplitPane nodeListGraphSplitPane = new JSplitPane();
                 nodeListGraphSplitPane.setDividerLocation((int) (MySysUtil.getViewerWidth() * 0.105));
@@ -1153,6 +1160,20 @@ implements ActionListener {
                 setLayout(new BorderLayout(3, 3));
                 directGraphTextStatisticsPanel = new MyDirectGraphTextStatisticsPanel();
 
+                JPanel checkBoxControlPanel = new JPanel();
+                checkBoxControlPanel.setBackground(Color.WHITE);
+                checkBoxControlPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 3,3));
+                checkBoxControlPanel.add(MyVars.getDirectGraphViewer().directGraphViewerControlPanel.weightedNodeColorCheckBox);
+                checkBoxControlPanel.add(MyVars.getDirectGraphViewer().directGraphViewerControlPanel.removeEdgeCheckBox);
+                checkBoxControlPanel.add(MyVars.getDirectGraphViewer().directGraphViewerControlPanel.nodeValueCheckBox);
+                checkBoxControlPanel.add(MyVars.getDirectGraphViewer().directGraphViewerControlPanel.edgeValueCheckBox);
+
+                JPanel bottomPanel = new JPanel();
+                bottomPanel.setBackground(Color.WHITE);
+                bottomPanel.setLayout(new BorderLayout(3,3));
+                bottomPanel.add(directGraphTextStatisticsPanel, BorderLayout.CENTER);
+                bottomPanel.add(checkBoxControlPanel, BorderLayout.EAST);
+
                 JPanel graphViewer = new JPanel();
                 graphViewer.setOpaque(false);
                 graphViewer.setBackground(new Color(0.0f, 0.0f, 0.0f, 0.0f));
@@ -1160,7 +1181,7 @@ implements ActionListener {
                 MyVars.getDirectGraphViewer().directGraphViewerControlPanel = new MyDirectGraphController();
                 graphViewer.add(MyVars.getDirectGraphViewer().directGraphViewerControlPanel, BorderLayout.NORTH);
                 graphViewer.add(directGraphViewer, BorderLayout.CENTER);
-                graphViewer.add(directGraphTextStatisticsPanel, BorderLayout.SOUTH);
+                graphViewer.add(bottomPanel, BorderLayout.SOUTH);
 
                 JSplitPane nodeListGraphSplitPane = new JSplitPane();
                 nodeListGraphSplitPane.setDividerLocation((int) (MySysUtil.getViewerWidth() * 0.105));
@@ -1451,9 +1472,9 @@ implements ActionListener {
             ((DefaultTableModel) currentNodeListTable.getModel()).removeRow(i);
         }
 
-        for (int i = nodeListTable.getRowCount()-1; i >= 0; i--) {
-            ((DefaultTableModel) nodeListTable.getModel()).removeRow(i);
-        }
+        //for (int i = nodeListTable.getRowCount()-1; i >= 0; i--) {
+        //    ((DefaultTableModel) nodeListTable.getModel()).removeRow(i);
+        //}
 
         if (MyVars.getDirectGraphViewer().selectedSingleNode != null) {
             LinkedHashMap<String, Long> nodeMap = new LinkedHashMap<>();
@@ -1476,18 +1497,6 @@ implements ActionListener {
                                 MyMathUtil.getCommaSeperatedNumber((long) nn.getCurrentValue())});
             }
             nodeMap = MySysUtil.sortMapByLongValue(nodeMap);
-
-            i = 0;
-            for (String n : nodeMap.keySet()) {
-                MyDirectNode nn = (MyDirectNode) MyVars.directMarkovChain.vRefs.get(n);
-                if (nn.getCurrentValue() == 0) continue;
-
-                ((DefaultTableModel) currentNodeListTable.getModel()).addRow(
-                        new String[]{
-                                "" + (++i),
-                                n,
-                                MyMathUtil.getCommaSeperatedNumber((long) nn.getCurrentValue())});
-            }
         } else if (MyVars.getDirectGraphViewer().multiNodes != null) {
             LinkedHashMap<String, Long> nodeMap = new LinkedHashMap<>();
             ArrayList<MyDirectNode> nodes = new ArrayList<>(MyVars.getDirectGraphViewer().multiNodePredecessorSet);
@@ -1523,18 +1532,6 @@ implements ActionListener {
                 if (nn.getCurrentValue() <= 0) continue;;
 
                 ((DefaultTableModel) currentNodeListTable.getModel()).addRow(
-                        new String[]{
-                                "" + (++i),
-                                n,
-                                MyMathUtil.getCommaSeperatedNumber((long) nn.getCurrentValue())});
-            }
-
-            i = 0;
-            for (String n : nodeMap.keySet()) {
-                MyDirectNode nn = (MyDirectNode) MyVars.directMarkovChain.vRefs.get(n);
-                if (nn.getCurrentValue() <= 0) continue;
-
-                ((DefaultTableModel) nodeListTable.getModel()).addRow(
                         new String[]{
                                 "" + (++i),
                                 n,

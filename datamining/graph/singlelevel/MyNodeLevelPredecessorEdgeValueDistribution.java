@@ -1,6 +1,7 @@
 package datamining.graph.singlelevel;
 
 import datamining.graph.MyDirectEdge;
+import datamining.main.MyProgressBar;
 import datamining.utils.MyMathUtil;
 import datamining.utils.system.MySysUtil;
 import datamining.utils.system.MyVars;
@@ -48,7 +49,7 @@ extends JPanel {
 
                     if (!isValueExists) {
                         JLabel titleLabel = new JLabel(" P. E. V.");
-                        titleLabel.setToolTipText("CURRENT PREDECESSOR EDGE VALUE DISTRIBUTION");
+                        titleLabel.setToolTipText("PREDECESSOR EDGE VALUE DISTRIBUTION");
                         titleLabel.setFont(MyVars.tahomaBoldFont10);
                         titleLabel.setBackground(Color.WHITE);
                         titleLabel.setForeground(Color.DARK_GRAY);
@@ -90,7 +91,7 @@ extends JPanel {
                         barRenderer.setBaseLegendTextFont(MyVars.tahomaPlainFont10);
 
                         JLabel titleLabel = new JLabel(" P. E. V.");
-                        titleLabel.setToolTipText("CURRENT PREDECESSOR EDGE VALUE DISTRIBUTION");
+                        titleLabel.setToolTipText("PREDECESSOR EDGE VALUE DISTRIBUTION");
                         titleLabel.setFont(MyVars.tahomaBoldFont10);
                         titleLabel.setBackground(Color.WHITE);
                         titleLabel.setForeground(Color.DARK_GRAY);
@@ -147,23 +148,28 @@ extends JPanel {
         try {
             DefaultCategoryDataset dataset = new DefaultCategoryDataset();
             long totalCnt = 0;
-            long totalValue = 0;
+            double totalValue = 0;
             TreeMap<Integer, Long> valueMap = new TreeMap<>();
             Collection<MyDirectEdge> edges = MyVars.directMarkovChain.getInEdges(MyVars.getDirectGraphViewer().selectedSingleNode);
             for (MyDirectEdge e : edges) {
                 if (e.getCurrentValue() <= 0) continue;
                 int value = (int) e.getCurrentValue();
                 totalCnt++;
-                totalValue += value;
-
+                totalValue += e.getCurrentValue();
                 if (!MAXIMIZED) {
-                    if (valueMap.size() == 15) break;
-                } else if (valueMap.size() == 200) break;
-
-                if (valueMap.containsKey(value)) {
-                    valueMap.put(value, valueMap.get(value) + 1);
-                } else {
-                    valueMap.put(value, 1L);
+                    if (valueMap.size() <= 15) {
+                        if (valueMap.containsKey(value)) {
+                            valueMap.put(value, valueMap.get(value) + 1);
+                        } else {
+                            valueMap.put(value, 1L);
+                        }
+                    }
+                } else if (valueMap.size() <= 200) {
+                    if (valueMap.containsKey(value)) {
+                        valueMap.put(value, valueMap.get(value) + 1);
+                    } else {
+                        valueMap.put(value, 1L);
+                    }
                 }
                 isValueExists = true;
             }
@@ -187,28 +193,27 @@ extends JPanel {
     }
 
     public void enlarge() {
-        MAXIMIZED = true;
-        JFrame frame = new JFrame(" PREDECESSOR EDGE VALUE DISTRIBUTION");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.addWindowListener(new WindowAdapter() {
-            @Override public void windowClosing(WindowEvent e) {
-                super.windowClosing(e);
-                MAXIMIZED = false;
-            }
-        });
-        frame.setLayout(new BorderLayout(3,3));
-        frame.getContentPane().add(new MyNodeLevelPredecessorEdgeValueDistribution(), BorderLayout.CENTER);
-        frame.setPreferredSize(new Dimension(400, 450));
-        frame.pack();
-        frame.addWindowListener(new WindowListener() {
-            @Override public void windowOpened(WindowEvent e) {}
-            @Override public void windowClosing(WindowEvent e) {}
-            @Override public void windowClosed(WindowEvent e) {}
-            @Override public void windowIconified(WindowEvent e) {}
-            @Override public void windowDeiconified(WindowEvent e) {}
-            @Override public void windowActivated(WindowEvent e) {}
-            @Override public void windowDeactivated(WindowEvent e) {}
-        });
-        frame.setVisible(true);
+        MyProgressBar pb = new MyProgressBar(false);
+        try {
+            MAXIMIZED = true;
+            JFrame f = new JFrame(" PREDECESSOR EDGE VALUE DISTRIBUTION");
+            f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            f.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    super.windowClosing(e);
+                    MAXIMIZED = false;
+                }
+            });
+            f.setLayout(new BorderLayout(3, 3));
+            f.getContentPane().add(new MyNodeLevelPredecessorEdgeValueDistribution(), BorderLayout.CENTER);
+            f.setPreferredSize(new Dimension(400, 450));
+            f.pack();
+            f.setAlwaysOnTop(true);
+            f.setVisible(true);
+            f.setAlwaysOnTop(false);
+        } catch (Exception ex) {
+
+        }
     }
 }

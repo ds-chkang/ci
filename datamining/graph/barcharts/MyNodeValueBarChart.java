@@ -43,7 +43,7 @@ extends JPanel {
         }
         this.data = MySysUtil.sortMapByFloatValue(this.data);
         this.setMaximumValue();
-        setBounds(((MyVars.main.getWidth() > 1800) ? MyVars.main.getWidth()-964 : MyVars.main.getWidth()-918), 5, 515, 2000);
+        setBounds(((MyVars.main.getWidth() > 1800) ? MyVars.main.getWidth()-964 : MyVars.main.getWidth()-890), 5, 515, 2000);
         setOpaque(false);
         setBackground(new Color(0, 0, 0, 0.0f));
         this.isMaxValueSet = true;

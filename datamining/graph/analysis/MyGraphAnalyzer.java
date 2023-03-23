@@ -450,6 +450,7 @@ implements ActionListener, WindowListener {
         this.table = new JTable(this.model);
         this.table.getTableHeader().setFont(MyVars.tahomaBoldFont11);
         this.table.getTableHeader().setOpaque(false);
+        this.table.getTableHeader().setBackground(new Color(0,0,0,0));
         this.table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.table.setFont(MyVars.f_pln_12);
         Cursor cursor = new Cursor(Cursor.HAND_CURSOR);

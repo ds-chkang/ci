@@ -42,7 +42,6 @@ extends JPanel {
                     setLayout(new BorderLayout(3, 3));
                     setBackground(Color.WHITE);
 
-
                     ChartPanel chartPanel = new ChartPanel(setChart());
                     chartPanel.getChart().getCategoryPlot().setRangeGridlinePaint(Color.DARK_GRAY);
                     chartPanel.getChart().getCategoryPlot().setDomainGridlinePaint(Color.DARK_GRAY);
@@ -63,7 +62,7 @@ extends JPanel {
                     renderer.setBaseLegendTextFont(MyVars.tahomaPlainFont11);
 
                     JLabel titleLabel = new JLabel(" AVG. SHORTEST REACH");
-                    titleLabel.setToolTipText("AVERAGE SHORTEST REACH");
+                    titleLabel.setToolTipText("AVERAGE SHORTEST REACH DISTRIBUTION");
                     titleLabel.setFont(MyVars.tahomaBoldFont11);
                     titleLabel.setBackground(Color.WHITE);
                     titleLabel.setForeground(Color.DARK_GRAY);
@@ -112,35 +111,39 @@ extends JPanel {
 
     private JFreeChart setChart() {
         int totalCnt = 0;
-        int totalValue = 0;
+        double totalValue = 0;
         TreeMap<Integer, Integer> valueMap = new TreeMap<>();
         Collection<MyDirectNode> nodes = MyVars.directMarkovChain.getVertices();
         for (MyDirectNode n : nodes) {
             if (n.getCurrentValue() <= 0) continue;
             int value = (int)n.getAverageShortestPathLength();
             totalCnt++;
-            totalValue = value;
-
+            totalValue += n.getAverageShortestPathLength();
             if (!MAXIMIZED) {
-                if (valueMap.size() == 15) break;
-            } else if (valueMap.size() == 200) break;
-
-            if (valueMap.containsKey(value)) {
-                valueMap.put(value, valueMap.get(value) + 1);
-            } else {
-                valueMap.put(value, 1);
+                if (valueMap.size() <= 15) {
+                    if (valueMap.containsKey(value)) {
+                        valueMap.put(value, valueMap.get(value) + 1);
+                    } else {
+                        valueMap.put(value, 1);
+                    }
+                }
+            } else if (valueMap.size() <= 200) {
+                if (valueMap.containsKey(value)) {
+                    valueMap.put(value, valueMap.get(value) + 1);
+                } else {
+                    valueMap.put(value, 1);
+                }
             }
         }
 
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        for (Integer avgSuccessorCount : valueMap.keySet()) {
-            dataset.addValue(valueMap.get(avgSuccessorCount), "AVG. SHORTEST REACH", avgSuccessorCount);
+        for (Integer value : valueMap.keySet()) {
+            dataset.addValue(valueMap.get(value), "AVG. SHORTEST REACH", value);
         }
 
-        double avgSuccessorCnt = (double)totalValue/totalCnt;
-
+        double avg = totalValue/totalCnt;
         String plotTitle = "";
-        String xaxis = "[AVG.: " + MySysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(avgSuccessorCnt)) + "]";
+        String xaxis = "[AVG.: " + MySysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(avg)) + "]";
         String yaxis = "";
         PlotOrientation orientation = PlotOrientation.VERTICAL;
         boolean show = false;
@@ -153,12 +156,12 @@ extends JPanel {
         MyProgressBar pb = new MyProgressBar(false);
         try {
             MAXIMIZED = true;
-            JFrame f = new JFrame(" AVERAGE SHORTEST PATH LENGTH DISTRIBUTION");
+            JFrame f = new JFrame(" AVERAGE SHORTEST REACH DISTRIBUTION");
             f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             f.addWindowListener(new WindowAdapter() {
                 @Override public void windowClosing(WindowEvent e) {
-                    super.windowClosing(e);
-                    MAXIMIZED = false;
+                super.windowClosing(e);
+                MAXIMIZED = false;
                 }
             });
             f.setLayout(new BorderLayout(3, 3));
@@ -167,7 +170,9 @@ extends JPanel {
             f.pack();
             pb.updateValue(100, 100);
             pb.dispose();
+            f.setAlwaysOnTop(true);
             f.setVisible(true);
+            f.setAlwaysOnTop(false);
         } catch (Exception ex) {
             MAXIMIZED = false;
             pb.updateValue(100, 100);

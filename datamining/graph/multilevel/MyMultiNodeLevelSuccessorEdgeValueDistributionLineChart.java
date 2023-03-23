@@ -143,7 +143,7 @@ extends JPanel {
     private JFreeChart setChart() {
         try {
             int totalCnt = 0;
-            int totalValue = 0;
+            double totalValue = 0;
             TreeMap<Integer, Integer> valueMap = new TreeMap<>();
             for (MyDirectNode n : MyVars.getDirectGraphViewer().multiNodes) {
                 Set<MyDirectEdge> edges = new HashSet<>(MyVars.directMarkovChain.getOutEdges(n));
@@ -152,15 +152,20 @@ extends JPanel {
                     int value = (int) e.getCurrentValue();
                     totalCnt++;
                     totalValue += e.getCurrentValue();
-
                     if (!MAXIMIZED) {
-                        if (valueMap.size() == 15) break;
-                    } else if (valueMap.size() == 200) break;
-
-                    if (valueMap.containsKey(value)) {
-                        valueMap.put(value, valueMap.get(value) + 1);
-                    } else {
-                        valueMap.put(value, 1);
+                        if (valueMap.size() <= 15) {
+                            if (valueMap.containsKey(value)) {
+                                valueMap.put(value, valueMap.get(value) + 1);
+                            } else {
+                                valueMap.put(value, 1);
+                            }
+                        }
+                    } else if (valueMap.size() <= 200) {
+                        if (valueMap.containsKey(value)) {
+                            valueMap.put(value, valueMap.get(value) + 1);
+                        } else {
+                            valueMap.put(value, 1);
+                        }
                     }
                 }
             }

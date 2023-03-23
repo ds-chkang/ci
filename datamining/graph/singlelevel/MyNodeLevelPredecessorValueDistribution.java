@@ -1,6 +1,7 @@
 package datamining.graph.singlelevel;
 
 import datamining.graph.MyDirectNode;
+import datamining.main.MyProgressBar;
 import datamining.utils.MyMathUtil;
 import datamining.utils.system.MySysUtil;
 import datamining.utils.system.MyVars;
@@ -137,25 +138,37 @@ public class MyNodeLevelPredecessorValueDistribution
     }
 
     public void enlarge() {
-        MAXIMIZED = true;
-        JFrame frame = new JFrame(" PREDECESSOR VALUE DISTRIBUTION");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.addWindowListener(new WindowAdapter() {
-            @Override public void windowClosing(WindowEvent e) {
-                super.windowClosing(e);
-                MAXIMIZED = false;
-            }
-        });
-        frame.setLayout(new BorderLayout(3,3));
-        frame.getContentPane().add(new MyNodeLevelPredecessorValueDistribution(), BorderLayout.CENTER);
-        frame.setPreferredSize(new Dimension(550, 450));
-        frame.pack();
-        frame.setVisible(true);
+        MyProgressBar pb = new MyProgressBar(false);
+        try {
+            MAXIMIZED = true;
+            JFrame f = new JFrame(" PREDECESSOR VALUE DISTRIBUTION");
+            f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            f.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    super.windowClosing(e);
+                    MAXIMIZED = false;
+                }
+            });
+            f.setLayout(new BorderLayout(3, 3));
+            f.getContentPane().add(new MyNodeLevelPredecessorValueDistribution(), BorderLayout.CENTER);
+            f.setPreferredSize(new Dimension(550, 450));
+            f.pack();
+            pb.updateValue(100, 100);
+            pb.dispose();
+            f.setAlwaysOnTop(true);
+            f.setVisible(true);
+            f.setAlwaysOnTop(false);
+        } catch (Exception ex) {
+            MAXIMIZED = true;
+            pb.updateValue(100, 100);
+            pb.dispose();
+        }
     }
 
     private JFreeChart setChart() {
         int totalCnt = 0;
-        int totalValue = 0;
+        double totalValue = 0;
         TreeMap<Double, Integer> valueMap = new TreeMap<>();
         Collection<MyDirectNode> nodes = MyVars.directMarkovChain.getPredecessors(MyVars.getDirectGraphViewer().selectedSingleNode);
         if (nodes != null) {
@@ -163,16 +176,21 @@ public class MyNodeLevelPredecessorValueDistribution
                 if (n.getCurrentValue() <= 0) continue;
                 double value = n.getCurrentValue();
                 totalCnt++;
-                totalValue += value;
-
+                totalValue += n.getCurrentValue();
                 if (!MAXIMIZED) {
-                    if (valueMap.size() == 15) break;
-                } else if (valueMap.size() == 200) break;
-
-                if (valueMap.containsKey(value)) {
-                    valueMap.put(value, valueMap.get(value) + 1);
-                } else {
-                    valueMap.put(value, 1);
+                    if (valueMap.size() <= 15) {
+                        if (valueMap.containsKey(value)) {
+                            valueMap.put(value, valueMap.get(value) + 1);
+                        } else {
+                            valueMap.put(value, 1);
+                        }
+                    }
+                } else if (valueMap.size() <= 200) {
+                    if (valueMap.containsKey(value)) {
+                        valueMap.put(value, valueMap.get(value) + 1);
+                    } else {
+                        valueMap.put(value, 1);
+                    }
                 }
                 isValueExists = true;
             }
@@ -184,7 +202,7 @@ public class MyNodeLevelPredecessorValueDistribution
         }
 
         totalCnt = (totalCnt == 0 ? 1 : totalCnt);
-        double avg = (double)totalValue/totalCnt;
+        double avg = totalValue/totalCnt;
         String plotTitle = "";
         String xaxis = "[AVG.: " + MySysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(avg)) + "]";
         String yaxis = "";

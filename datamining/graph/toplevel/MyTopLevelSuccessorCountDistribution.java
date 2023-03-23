@@ -116,22 +116,24 @@ extends JPanel {
         MyProgressBar pb = new MyProgressBar(false);
         try {
             MAXIMIZED = true;
-            JFrame frame = new JFrame(" SUCCESSOR COUNT DISTRIBUTION");
-            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            frame.addWindowListener(new WindowAdapter() {
+            JFrame f = new JFrame(" SUCCESSOR COUNT DISTRIBUTION");
+            f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            f.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent e) {
                     super.windowClosing(e);
                     MAXIMIZED = false;
                 }
             });
-            frame.setLayout(new BorderLayout(3, 3));
-            frame.getContentPane().add(new MyTopLevelSuccessorCountDistribution(), BorderLayout.CENTER);
-            frame.setPreferredSize(new Dimension(550, 450));
-            frame.pack();
+            f.setLayout(new BorderLayout(3, 3));
+            f.getContentPane().add(new MyTopLevelSuccessorCountDistribution(), BorderLayout.CENTER);
+            f.setPreferredSize(new Dimension(550, 450));
+            f.pack();
+            f.setAlwaysOnTop(true);
             pb.updateValue(100, 100);
             pb.dispose();
-            frame.setVisible(true);
+            f.setVisible(true);
+            f.setAlwaysOnTop(false);
         } catch (Exception ex) {
             MAXIMIZED = false;
             pb.updateValue(100, 100);
@@ -148,17 +150,23 @@ extends JPanel {
             if (n.getCurrentValue() <= 0) continue;
             int value = MyVars.directMarkovChain.getSuccessorCount(n);
             totalCnt++;
-            totalValue = value;
-
+            totalValue += value;
             if (!MAXIMIZED) {
-                if (valueMap.size() == 15) break;
-            } else if (valueMap.size() == 200) break;
-
-            if (valueMap.containsKey(value)) {
-                valueMap.put(value, valueMap.get(value) + 1);
-            } else {
-                valueMap.put(value, 1);
+                if (valueMap.size() <= 15) {
+                    if (valueMap.containsKey(value)) {
+                        valueMap.put(value, valueMap.get(value) + 1);
+                    } else {
+                        valueMap.put(value, 1);
+                    }
+                }
+            } else if (valueMap.size() <= 200) {
+                if (valueMap.containsKey(value)) {
+                    valueMap.put(value, valueMap.get(value) + 1);
+                } else {
+                    valueMap.put(value, 1);
+                }
             }
+
         }
 
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();

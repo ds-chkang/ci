@@ -57,7 +57,7 @@ extends JPanel {
         }
         this.predecessors = MySysUtil.sortMapByFloatValue(this.predecessors);
         this.setPredecessorMaximumValue();
-        setBounds(((MyVars.main.getWidth() > 1800) ? MyVars.main.getWidth()-974 : MyVars.main.getWidth()-918), 5, 515, 2000);
+        setBounds(((MyVars.main.getWidth() > 1800) ? MyVars.main.getWidth()-964 : MyVars.main.getWidth()-900), 5, 515, 2000);
         setOpaque(false);
         setBackground(new Color(0, 0, 0, 0.0f));
         this.isMaxValueSet = true;
@@ -79,7 +79,7 @@ extends JPanel {
         }
         this.successors = MySysUtil.sortMapByFloatValue(this.successors);
         this.setSuccessorMaximumValue();
-        setBounds(((MyVars.main.getWidth() > 1800) ? MyVars.main.getWidth()-974 : MyVars.main.getWidth()-918), 5, 515, 2000);
+        setBounds(((MyVars.main.getWidth() > 1800) ? MyVars.main.getWidth()-964 : MyVars.main.getWidth()-900), 5, 515, 2000);
         setOpaque(false);
         setBackground(new Color(0, 0, 0, 0.0f));
         this.isMaxValueSet = true;
@@ -115,7 +115,7 @@ extends JPanel {
         this.successors = MySysUtil.sortMapByFloatValue(this.successors);
         this.setPredecessorMaximumValue();
         this.setSuccessorMaximumValue();
-        setBounds(((MyVars.main.getWidth() > 1800) ? MyVars.main.getWidth()-974 : MyVars.main.getWidth()-918), 5, 515, 2000);
+        setBounds(((MyVars.main.getWidth() > 1800) ? MyVars.main.getWidth()-964 : MyVars.main.getWidth()-900), 5, 515, 2000);
         setOpaque(false);
         setBackground(new Color(0, 0, 0, 0.0f));
         this.isMaxValueSet = true;

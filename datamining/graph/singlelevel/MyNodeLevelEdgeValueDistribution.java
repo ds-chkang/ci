@@ -1,6 +1,7 @@
 package datamining.graph.singlelevel;
 
 import datamining.graph.MyDirectEdge;
+import datamining.main.MyProgressBar;
 import datamining.utils.MyMathUtil;
 import datamining.utils.system.MySysUtil;
 import datamining.utils.system.MyVars;
@@ -145,22 +146,31 @@ extends JPanel {
     }
 
     public void enlarge() {
-        MAXIMIZED = true;
-        JFrame frame = new JFrame(" EDGE VALUE DISTRIBUTION");
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                super.windowClosing(e);
-                MAXIMIZED = false;
-            }
-        });
-        frame.setLayout(new BorderLayout(3,3));
-        frame.getContentPane().add(new MyNodeLevelEdgeValueDistribution(), BorderLayout.CENTER);
-        frame.setPreferredSize(new Dimension(550, 450));
-        frame.pack();
-        frame.setAlwaysOnTop(true);
-        frame.setVisible(true);
-        frame.setAlwaysOnTop(false);
+        MyProgressBar pb = new MyProgressBar(false);
+        try {
+            MAXIMIZED = true;
+            JFrame frame = new JFrame(" EDGE VALUE DISTRIBUTION");
+            frame.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    super.windowClosing(e);
+                    MAXIMIZED = false;
+                }
+            });
+            frame.setLayout(new BorderLayout(3, 3));
+            frame.getContentPane().add(new MyNodeLevelEdgeValueDistribution(), BorderLayout.CENTER);
+            frame.setPreferredSize(new Dimension(550, 450));
+            frame.pack();
+            frame.setAlwaysOnTop(true);
+            frame.setVisible(true);
+            frame.setAlwaysOnTop(false);
+            pb.updateValue(100, 100);
+            pb.dispose();
+        } catch (Exception ex) {
+            MAXIMIZED = false;
+            pb.updateValue(100, 100);
+            pb.dispose();
+        }
     }
 
     private JFreeChart setChart() {
@@ -171,17 +181,22 @@ extends JPanel {
         for (MyDirectEdge e : edges) {
             if (e.getCurrentValue() <= 0) continue;
             int value = (int) e.getCurrentValue();
-            totalValue += value;
             totalCnt++;
-
+            totalValue += e.getCurrentValue();
             if (!MAXIMIZED) {
-                if (valueMap.size() == 15) break;
-            } else if (valueMap.size() == 200) break;
-
-            if (valueMap.containsKey(value)) {
-                valueMap.put(value, valueMap.get(value) + 1);
-            } else {
-                valueMap.put(value, 1);
+                if (valueMap.size() <= 15) {
+                    if (valueMap.containsKey(value)) {
+                        valueMap.put(value, valueMap.get(value) + 1);
+                    } else {
+                        valueMap.put(value, 1);
+                    }
+                }
+            } else if (valueMap.size() <= 200) {
+                if (valueMap.containsKey(value)) {
+                    valueMap.put(value, valueMap.get(value) + 1);
+                } else {
+                    valueMap.put(value, 1);
+                }
             }
             isValueExists = true;
         }

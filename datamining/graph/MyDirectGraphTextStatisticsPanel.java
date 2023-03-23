@@ -55,8 +55,8 @@ extends JPanel {
                     numOfIntersectedNodeLabel.setFont(MyVars.f_pln_13);
                     numOfIntersectedNodeLabel.setBackground(Color.WHITE);
                     numOfIntersectedNodeLabel.setForeground(Color.BLACK);
-                    String numOfIntersectedNodeValue = MyMathUtil.getCommaSeperatedNumber(intersectedNodeSet.size()) + "[" + MyMathUtil.twoDecimal(((double)intersectedNodeSet.size()/(MyVars.getDirectGraphViewer().selectedSingleNodePredecessorSet.size() + MyVars.getDirectGraphViewer().selectedSingleNodeSuccessorSet.size()))*100) + "]";
-                    numOfIntersectedNodeLabel.setText("INTERSECTED N.: " + numOfIntersectedNodeValue);
+                    String numOfIntersectedNodeValue = MyMathUtil.getCommaSeperatedNumber(intersectedNodeSet.size()) + "[" + MyMathUtil.twoDecimalFormat((double)intersectedNodeSet.size()/(MyVars.getDirectGraphViewer().selectedSingleNodePredecessorSet.size() + MyVars.getDirectGraphViewer().selectedSingleNodeSuccessorSet.size())) + "]";
+                    numOfIntersectedNodeLabel.setText("INTER. N.: " + numOfIntersectedNodeValue);
 
                     JLabel selectedNodeLabel = new JLabel();
                     selectedNodeLabel.setFont(MyVars.f_pln_13);
@@ -70,7 +70,7 @@ extends JPanel {
                     numOfEdgeLabel.setBackground(Color.WHITE);
                     numOfEdgeLabel.setForeground(Color.BLACK);
                     String numOfEdgeValue = MyMathUtil.getCommaSeperatedNumber(MyVars.directMarkovChain.getOutEdges(selectedSingleNode).size() + MyVars.directMarkovChain.getInEdges(selectedSingleNode).size());
-                    String numOfEdgePercent = MySysUtil.formatAverageValue(MyMathUtil.twoDecimalPercent((double) MyVars.directMarkovChain.getNeighborCount(selectedSingleNode)/MyVars.directMarkovChain.getEdgeCount()));
+                    String numOfEdgePercent = MySysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat((double) MyVars.directMarkovChain.getNeighborCount(selectedSingleNode)/MyVars.directMarkovChain.getEdgeCount()));
                     numOfEdgeLabel.setText("E.: " + numOfEdgeValue + "[" + numOfEdgePercent + "]");
 
                     JLabel numOfNodeLabel = new JLabel();
@@ -78,15 +78,15 @@ extends JPanel {
                     numOfNodeLabel.setBackground(Color.WHITE);
                     numOfNodeLabel.setForeground(Color.BLACK);
                     String numberOfNodeValue = MyMathUtil.getCommaSeperatedNumber(MyVars.directMarkovChain.getNeighborCount(selectedSingleNode));
-                    String numberOfNodePercent = MySysUtil.formatAverageValue(MyMathUtil.twoDecimalPercent((double) MyVars.directMarkovChain.getNeighborCount(selectedSingleNode)/MyVars.directMarkovChain.getVertexCount()));
-                    numOfNodeLabel.setText("T. N.: " + numberOfNodeValue + "[" + numberOfNodePercent + "]");
+                    String numberOfNodePercent = MySysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat((double) MyVars.directMarkovChain.getNeighborCount(selectedSingleNode)/MyVars.directMarkovChain.getVertexCount()));
+                    numOfNodeLabel.setText("N.: " + numberOfNodeValue + "[" + numberOfNodePercent + "]");
 
                     JLabel successorCountLabel = new JLabel();
                     successorCountLabel.setFont(MyVars.tahomaPlainFont13);
                     successorCountLabel.setBackground(Color.WHITE);
                     successorCountLabel.setForeground(Color.BLACK);
                     String successorCountValue = MyMathUtil.getCommaSeperatedNumber(MyVars.directMarkovChain.getSuccessorCount(selectedSingleNode));
-                    String successorPercent = MySysUtil.formatAverageValue(MyMathUtil.twoDecimalPercent((double) MyVars.directMarkovChain.getSuccessorCount(selectedSingleNode)/MyVars.directMarkovChain.getNeighborCount(selectedSingleNode)));
+                    String successorPercent = MySysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat((double) MyVars.directMarkovChain.getSuccessorCount(selectedSingleNode)/MyVars.directMarkovChain.getNeighborCount(selectedSingleNode)));
                     successorCountLabel.setText("S.: " + successorCountValue + "[" + successorPercent + "]");
 
                     JLabel predecessorCountLabel = new JLabel();
@@ -94,7 +94,7 @@ extends JPanel {
                     predecessorCountLabel.setBackground(Color.WHITE);
                     predecessorCountLabel.setForeground(Color.BLACK);
                     String predecessorCountValue = MyMathUtil.getCommaSeperatedNumber(MyVars.directMarkovChain.getPredecessorCount(MyVars.getDirectGraphViewer().selectedSingleNode));
-                    String predecessorPercent = MySysUtil.formatAverageValue(MyMathUtil.twoDecimalPercent((double) MyVars.directMarkovChain.getPredecessorCount(selectedSingleNode)/MyVars.directMarkovChain.getNeighborCount(selectedSingleNode)));
+                    String predecessorPercent = MySysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat((double) MyVars.directMarkovChain.getPredecessorCount(selectedSingleNode)/MyVars.directMarkovChain.getNeighborCount(selectedSingleNode)));
                     predecessorCountLabel.setText("P.: " + predecessorCountValue + "[" + predecessorPercent + "]");
 
                     JLabel totalInEdgeValueLabel = new JLabel();
@@ -148,7 +148,7 @@ extends JPanel {
                     JLabel emptyLabel10 = new JLabel(" ");
                     emptyLabel10.setFont(MyVars.tahomaPlainFont9);
 
-                    add(selectedNodeLabel);
+                    //add(selectedNodeLabel);
                     //MyVars.main.getDirectMarkovChainDashBoard().nodeListTableNodeTableNodeSearchTxt.setText(selectedNodeLabel.getText());
 
                     add(emptyLabel1);
@@ -230,7 +230,7 @@ extends JPanel {
                     numOfEdgeLabel.setBackground(Color.WHITE);
                     numOfEdgeLabel.setForeground(Color.BLACK);
                     String numOfEdgeValue = MyMathUtil.getCommaSeperatedNumber(MyVars.directMarkovChain.getOutEdges(MyVars.getDirectGraphViewer().graphMouseMotionListener.hoveredNode).size() + MyVars.directMarkovChain.getInEdges(MyVars.getDirectGraphViewer().graphMouseMotionListener.hoveredNode).size());
-                    String numOfEdgePercent = MySysUtil.formatAverageValue(MyMathUtil.twoDecimalPercent((double) MyVars.directMarkovChain.getNeighborCount(MyVars.getDirectGraphViewer().graphMouseMotionListener.hoveredNode)/MyVars.directMarkovChain.getEdgeCount()));
+                    String numOfEdgePercent = MySysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat((double) MyVars.directMarkovChain.getNeighborCount(MyVars.getDirectGraphViewer().graphMouseMotionListener.hoveredNode)/MyVars.directMarkovChain.getEdgeCount()));
                     numOfEdgeLabel.setText("E.: " + numOfEdgeValue + "[" + numOfEdgePercent + "]");
 
                     JLabel numOfNodeLabel = new JLabel();
@@ -238,15 +238,15 @@ extends JPanel {
                     numOfNodeLabel.setBackground(Color.WHITE);
                     numOfNodeLabel.setForeground(Color.BLACK);
                     String numberOfNodeValue = MyMathUtil.getCommaSeperatedNumber(MyVars.directMarkovChain.getNeighborCount(MyVars.getDirectGraphViewer().graphMouseMotionListener.hoveredNode));
-                    String numberOfNodePercent = MySysUtil.formatAverageValue(MyMathUtil.twoDecimalPercent((double) MyVars.directMarkovChain.getNeighborCount(MyVars.getDirectGraphViewer().graphMouseMotionListener.hoveredNode)/MyVars.directMarkovChain.getVertexCount()));
-                    numOfNodeLabel.setText("T. N.: " + numberOfNodeValue + "[" + numberOfNodePercent + "]");
+                    String numberOfNodePercent = MySysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat((double) MyVars.directMarkovChain.getNeighborCount(MyVars.getDirectGraphViewer().graphMouseMotionListener.hoveredNode)/MyVars.directMarkovChain.getVertexCount()));
+                    numOfNodeLabel.setText("N.: " + numberOfNodeValue + "[" + numberOfNodePercent + "]");
 
                     JLabel successorCountLabel = new JLabel();
                     successorCountLabel.setFont(MyVars.tahomaPlainFont13);
                     successorCountLabel.setBackground(Color.WHITE);
                     successorCountLabel.setForeground(Color.BLACK);
                     String successorCountValue = MyMathUtil.getCommaSeperatedNumber(MyVars.directMarkovChain.getSuccessorCount(MyVars.getDirectGraphViewer().graphMouseMotionListener.hoveredNode));
-                    String successorPercent = MySysUtil.formatAverageValue(MyMathUtil.twoDecimalPercent((double) MyVars.directMarkovChain.getSuccessorCount(MyVars.getDirectGraphViewer().graphMouseMotionListener.hoveredNode)/MyVars.directMarkovChain.getNeighborCount(MyVars.getDirectGraphViewer().graphMouseMotionListener.hoveredNode)));
+                    String successorPercent = MySysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat((double) MyVars.directMarkovChain.getSuccessorCount(MyVars.getDirectGraphViewer().graphMouseMotionListener.hoveredNode)/MyVars.directMarkovChain.getNeighborCount(MyVars.getDirectGraphViewer().graphMouseMotionListener.hoveredNode)));
                     successorCountLabel.setText("S.: " + successorCountValue + "[" + successorPercent + "]");
 
                     JLabel predecessorCountLabel = new JLabel();
@@ -254,7 +254,7 @@ extends JPanel {
                     predecessorCountLabel.setBackground(Color.WHITE);
                     predecessorCountLabel.setForeground(Color.BLACK);
                     String predecessorCountValue = MyMathUtil.getCommaSeperatedNumber(MyVars.directMarkovChain.getPredecessorCount(MyVars.getDirectGraphViewer().graphMouseMotionListener.hoveredNode));
-                    String predecessorPercent = MySysUtil.formatAverageValue(MyMathUtil.twoDecimalPercent((double) MyVars.directMarkovChain.getPredecessorCount(MyVars.getDirectGraphViewer().graphMouseMotionListener.hoveredNode)/MyVars.directMarkovChain.getNeighborCount(MyVars.getDirectGraphViewer().graphMouseMotionListener.hoveredNode)));
+                    String predecessorPercent = MySysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat((double) MyVars.directMarkovChain.getPredecessorCount(MyVars.getDirectGraphViewer().graphMouseMotionListener.hoveredNode)/MyVars.directMarkovChain.getNeighborCount(MyVars.getDirectGraphViewer().graphMouseMotionListener.hoveredNode)));
                     predecessorCountLabel.setText("P.: " + predecessorCountValue + "[" + predecessorPercent + "]");
 
                     JLabel emptyhLabel0 = new JLabel(" ");
@@ -328,7 +328,7 @@ extends JPanel {
             totalNodeLabel.setFont(MyVars.tahomaPlainFont13);
             totalNodeLabel.setBackground(Color.WHITE);
             totalNodeLabel.setForeground(Color.BLACK);
-            String totalNodeValue = MyMathUtil.getCommaSeperatedNumber(totalNode) + "[" + MyMathUtil.twoDecimalPercent((double)totalNode/MyVars.directMarkovChain.getVertexCount()) + "]";
+            String totalNodeValue = MyMathUtil.getCommaSeperatedNumber(totalNode) + "[" + MyMathUtil.twoDecimalFormat((double)totalNode/MyVars.directMarkovChain.getVertexCount()) + "]";
             totalNodeLabel.setText("N.: " + totalNodeValue);
 
             JLabel numOfMultiNodeEdgesLabel = new JLabel();
@@ -342,7 +342,7 @@ extends JPanel {
                 edges.addAll(MyVars.directMarkovChain.getOutEdges(n));
             }
             totalEdge = edges.size();
-            String numOfEdgesValue = MyMathUtil.getCommaSeperatedNumber(totalEdge) + "[" + (MyMathUtil.twoDecimalPercent((double)totalEdge/MyVars.directMarkovChain.getEdgeCount())) + "]";
+            String numOfEdgesValue = MyMathUtil.getCommaSeperatedNumber(totalEdge) + "[" + (MyMathUtil.twoDecimalFormat((double)totalEdge/MyVars.directMarkovChain.getEdgeCount())) + "]";
             numOfMultiNodeEdgesLabel.setText("E.: " + numOfEdgesValue);
 
             JLabel numOfSuccessorLabel = new JLabel();
@@ -350,7 +350,7 @@ extends JPanel {
             numOfSuccessorLabel.setBackground(Color.WHITE);
             numOfSuccessorLabel.setForeground(Color.BLACK);
             String numOfSuccessorValue = MyMathUtil.getCommaSeperatedNumber(MyVars.getDirectGraphViewer().multiNodeSuccessorSet.size());
-            numOfSuccessorValue += "[" + MyMathUtil.twoDecimalPercent((double)MyVars.getDirectGraphViewer().multiNodeSuccessorSet.size()/totalNode) + "]";
+            numOfSuccessorValue += "[" + MyMathUtil.twoDecimalFormat((double)MyVars.getDirectGraphViewer().multiNodeSuccessorSet.size()/totalNode) + "]";
             numOfSuccessorLabel.setText("S.: " + numOfSuccessorValue);
 
             JLabel numOfPredecessorLabel = new JLabel();
@@ -358,7 +358,7 @@ extends JPanel {
             numOfPredecessorLabel.setBackground(Color.WHITE);
             numOfPredecessorLabel.setForeground(Color.BLACK);
             String numOfPredecessorValue = MyMathUtil.getCommaSeperatedNumber(MyVars.getDirectGraphViewer().multiNodePredecessorSet.size());
-            numOfPredecessorValue += "[" + MyMathUtil.twoDecimalPercent((double)MyVars.getDirectGraphViewer().multiNodePredecessorSet.size()/totalNode) + "]";
+            numOfPredecessorValue += "[" + MyMathUtil.twoDecimalFormat((double)MyVars.getDirectGraphViewer().multiNodePredecessorSet.size()/totalNode) + "]";
             numOfPredecessorLabel.setText("P.: " + numOfPredecessorValue);
 
             JLabel numOfSharedPredecessorLabel = new JLabel();
@@ -366,7 +366,7 @@ extends JPanel {
             numOfSharedPredecessorLabel.setBackground(Color.WHITE);
             numOfSharedPredecessorLabel.setForeground(Color.BLACK);
             String numOfSharedPredecessorValue = MyMathUtil.getCommaSeperatedNumber(MyVars.getDirectGraphViewer().multiNodeSharedPredecessorSet.size());
-            numOfSharedPredecessorValue += "[" + MyMathUtil.twoDecimalPercent((double)MyVars.getDirectGraphViewer().multiNodeSharedPredecessorSet.size()/MyVars.getDirectGraphViewer().multiNodePredecessorSet.size()) + "]";
+            numOfSharedPredecessorValue += "[" + MyMathUtil.twoDecimalFormat((double)MyVars.getDirectGraphViewer().multiNodeSharedPredecessorSet.size()/MyVars.getDirectGraphViewer().multiNodePredecessorSet.size()) + "]";
             numOfSharedPredecessorLabel.setText("SHARED S.: " + numOfSharedPredecessorValue);
 
             JLabel numOfSharedSuccessorLabel = new JLabel();
@@ -374,7 +374,7 @@ extends JPanel {
             numOfSharedSuccessorLabel.setBackground(Color.WHITE);
             numOfSharedSuccessorLabel.setForeground(Color.BLACK);
             String numOfSharedSuccessorValue = MyMathUtil.getCommaSeperatedNumber(MyVars.getDirectGraphViewer().multiNodeSharedSuccessorSet.size());
-            numOfSharedSuccessorValue += "[" + MyMathUtil.twoDecimalPercent((double)MyVars.getDirectGraphViewer().multiNodeSharedSuccessorSet.size()/MyVars.getDirectGraphViewer().multiNodeSuccessorSet.size()) + "]";
+            numOfSharedSuccessorValue += "[" + MyMathUtil.twoDecimalFormat((double)MyVars.getDirectGraphViewer().multiNodeSharedSuccessorSet.size()/MyVars.getDirectGraphViewer().multiNodeSuccessorSet.size()) + "]";
             numOfSharedSuccessorLabel.setText("SHARED S.: " + numOfSharedSuccessorValue);
 
             JLabel numOfIntersectedNodeLabel = new JLabel();
@@ -382,8 +382,8 @@ extends JPanel {
             numOfIntersectedNodeLabel.setBackground(Color.WHITE);
             numOfIntersectedNodeLabel.setForeground(Color.BLACK);
             String numOfIntersectedNodeValue = MyMathUtil.getCommaSeperatedNumber(intersectedNodes.size());
-            numOfIntersectedNodeValue += "[" + MyMathUtil.twoDecimalPercent((double)intersectedNodes.size()/(MyVars.getDirectGraphViewer().multiNodeSuccessorSet.size()+MyVars.getDirectGraphViewer().multiNodePredecessorSet.size())) + "]";
-            numOfIntersectedNodeLabel.setText("INTERSECTED N.: " + numOfIntersectedNodeValue);
+            numOfIntersectedNodeValue += "[" + MyMathUtil.twoDecimalFormat((double)intersectedNodes.size()/(MyVars.getDirectGraphViewer().multiNodeSuccessorSet.size()+MyVars.getDirectGraphViewer().multiNodePredecessorSet.size())) + "]";
+            numOfIntersectedNodeLabel.setText("INTER. N.: " + numOfIntersectedNodeValue);
 
             totalNodeLabel.setText(totalNodeLabel.getText() + "  ");
             numOfMultiNodeLabel.setText(numOfMultiNodeLabel.getText() + "  ");
@@ -420,7 +420,7 @@ extends JPanel {
         numOfNetworkLabel.setBackground(Color.WHITE);
         numOfNetworkLabel.setForeground(Color.BLACK);
         String numOfNetworkValue = MyMathUtil.getCommaSeperatedNumber(MyVars.connectedComponentCountsByGraph.size());
-        numOfNetworkLabel.setText("T. N.: " + numOfNetworkValue);
+        numOfNetworkLabel.setText("N.: " + numOfNetworkValue);
 
         JLabel maxNodeContLabel = new JLabel();
         maxNodeContLabel.setFont(MyVars.tahomaPlainFont13);
@@ -517,14 +517,14 @@ extends JPanel {
         blueNodeCntLabel.setFont(MyVars.tahomaPlainFont13);
         blueNodeCntLabel.setBackground(Color.WHITE);
         blueNodeCntLabel.setForeground(Color.BLACK);
-        String blueNodeCntValue = MySysUtil.getCommaSeperateString(MyVars.directMarkovChain.getBlueNodeCount()) + "[" + MyMathUtil.twoDecimal(((double)MyVars.directMarkovChain.getBlueNodeCount()/MyVars.directMarkovChain.getVertexCount())) + "]";;
+        String blueNodeCntValue = MySysUtil.getCommaSeperateString(MyVars.directMarkovChain.getBlueNodeCount()) + "[" + MyMathUtil.twoDecimalFormat(((double)MyVars.directMarkovChain.getBlueNodeCount()/MyVars.directMarkovChain.getVertexCount())) + "]";;
         blueNodeCntLabel.setText("B: " + blueNodeCntValue);
 
         JLabel greenNodeCntLabel = new JLabel();
         greenNodeCntLabel.setFont(MyVars.tahomaPlainFont13);
         greenNodeCntLabel.setBackground(Color.WHITE);
         greenNodeCntLabel.setForeground(Color.BLACK);
-        String greenNodeCntValue = MySysUtil.getCommaSeperateString(MyVars.directMarkovChain.getGreenNodeCount()) + "[" + MyMathUtil.twoDecimal(((double)MyVars.directMarkovChain.getGreenNodeCount()/MyVars.directMarkovChain.getVertexCount())) + "]";;
+        String greenNodeCntValue = MySysUtil.getCommaSeperateString(MyVars.directMarkovChain.getGreenNodeCount()) + "[" + MyMathUtil.twoDecimalFormat(((double)MyVars.directMarkovChain.getGreenNodeCount()/MyVars.directMarkovChain.getVertexCount())) + "]";;
         greenNodeCntLabel.setText("G: " + greenNodeCntValue);
 
         JLabel numOfNodes = new JLabel();

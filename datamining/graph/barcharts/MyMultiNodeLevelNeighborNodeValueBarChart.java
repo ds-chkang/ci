@@ -62,7 +62,7 @@ public class MyMultiNodeLevelNeighborNodeValueBarChart extends JPanel {
 
         this.sharedPredecessors = MySysUtil.sortMapByFloatValue(this.sharedPredecessors);
         this.sharedSuccessors = MySysUtil.sortMapByFloatValue(this.sharedSuccessors);
-        setBounds(((MyVars.main.getWidth() > 1800) ? MyVars.main.getWidth()-974 : MyVars.main.getWidth()-918), 5, 515, 2000);
+        setBounds(((MyVars.main.getWidth() > 1800) ? MyVars.main.getWidth()-964 : MyVars.main.getWidth()-896), 5, 515, 2000);
 
         this.setOpaque(false);
         this.setBackground(new Color(0,0,0,0.0f));
