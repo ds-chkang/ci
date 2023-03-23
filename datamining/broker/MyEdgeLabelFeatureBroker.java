@@ -1,7 +1,7 @@
 package datamining.broker;
 
+
 import datamining.feature.MyEdgeLabelFeatureGenerator;
-import datamining.feature.MyEdgeValueFeatureGenerator;
 
 public class MyEdgeLabelFeatureBroker
 extends MyEdgeValueFeatureBroker {

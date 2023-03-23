@@ -31,12 +31,12 @@ public class MyNodeLabelFeatureGenerator {
     }
 
     private void setObjectIDIndex() { 
-        objIDIdx = MyVars.app.getMsgBroker().getHeaderIndex(objIDColNm);
+        objIDIdx = MyVars.main.getMsgBroker().getHeaderIndex(objIDColNm);
     }
-    private void setWeightNameIndex(String edgeWeightVariable) {weightLoc = MyVars.app.getMsgBroker().getHeaderIndex(edgeWeightVariable);}
-    private void setItemNameIndex(String itemIDColNm) {itemLoc = MyVars.app.getMsgBroker().getHeaderIndex(itemIDColNm);}
+    private void setWeightNameIndex(String edgeWeightVariable) {weightLoc = MyVars.main.getMsgBroker().getHeaderIndex(edgeWeightVariable);}
+    private void setItemNameIndex(String itemIDColNm) {itemLoc = MyVars.main.getMsgBroker().getHeaderIndex(itemIDColNm);}
     private void setTransactionIDIndex() {
-        trIDIdx = MyVars.app.getMsgBroker().getHeaderIndex(trIDColNm);
+        trIDIdx = MyVars.main.getMsgBroker().getHeaderIndex(trIDColNm);
     }
     private void run(ArrayList<ArrayList<String>> dataIn, String nodeValueType) {
         try {

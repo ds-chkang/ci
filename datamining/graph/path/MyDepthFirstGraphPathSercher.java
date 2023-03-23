@@ -1,14 +1,15 @@
 package datamining.graph.path;
 
 import datamining.main.MyProgressBar;
-import datamining.graph.MyEdge;
-import datamining.graph.MyNode;
-import datamining.graph.layout.MyDirectedSparseMultigraph;
+import datamining.graph.MyDirectEdge;
+import datamining.graph.MyDirectMarkovChain;
+import datamining.graph.MyDirectNode;
 import datamining.graph.layout.MyFRLayout;
 import datamining.utils.MyMathUtil;
 import datamining.utils.system.MySysUtil;
 import datamining.utils.system.MyVars;
 import datamining.utils.table.MyTableUtil;
+import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.visualization.DefaultVisualizationModel;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import org.apache.commons.collections15.Transformer;
@@ -26,17 +27,17 @@ public class MyDepthFirstGraphPathSercher
 extends JFrame
 implements ComponentListener, ActionListener {
 
-    protected Map<String, MyEdge> edgeMap;
+    protected Map<String, MyDirectEdge> edgeMap;
     protected TreeMap<Integer, Long> pathLengthByDepthMap;
     protected Map<Integer, Long> nodeInContributionByDepthMap;
     protected Map<Integer, Long> nodeOutContributionByDepthMap;
     public TreeMap<Integer, Set<String>> nodesByDepthMap;
     protected Map<Integer, Map<String, Integer>>  maxNodeContByDepthMap;
-    protected Set<MyNode> topSuccessors;
-    protected MyNode endNode;
-    protected MyNode startNode;
-    public MyDirectedSparseMultigraph integratedGraph;
-    protected MyNodePathGraphViewer betweenPathGraphViewer;
+    protected Set<MyDirectNode> topSuccessors;
+    protected MyDirectNode endNode;
+    protected MyDirectNode startNode;
+    public MyDirectMarkovChain integratedGraph;
+    protected MyPathGraphViewer betweenPathGraphViewer;
     protected JCheckBox edgeWgtCheckBoxMenu = new JCheckBox("E. WGT.");
     protected JCheckBox nodeWgtCheckBoxMenu = new JCheckBox("N. WGT. ");
     protected JCheckBox nodeValueBarChartCheckBoxMenu = new JCheckBox("N. CONT. ");
@@ -88,16 +89,16 @@ implements ComponentListener, ActionListener {
                     new Thread(new Runnable() {
                         @Override public void run() {
                             if (edgeWgtCheckBoxMenu.isSelected()) {
-                                betweenPathGraphViewer.getRenderContext().setEdgeStrokeTransformer(new Transformer<MyEdge, Stroke>() {
-                                    public Stroke transform(MyEdge e) {
+                                betweenPathGraphViewer.getRenderContext().setEdgeStrokeTransformer(new Transformer<MyDirectEdge, Stroke>() {
+                                    public Stroke transform(MyDirectEdge e) {
                                         float edgeStrokeWeight = e.getContribution() / betweenPathGraphViewer.MAX_EDGE_SIZE;
                                         return new BasicStroke(edgeStrokeWeight * betweenPathGraphViewer.MAX_EDGE_STOKE);
                                     }
                                 });
                                 betweenPathGraphViewer.getRenderContext().setEdgeDrawPaintTransformer(betweenPathGraphViewer.weightedEdgeColor);
                             } else {
-                                betweenPathGraphViewer.getRenderContext().setEdgeStrokeTransformer(new Transformer<MyEdge, Stroke>() {
-                                    public Stroke transform(MyEdge e) {
+                                betweenPathGraphViewer.getRenderContext().setEdgeStrokeTransformer(new Transformer<MyDirectEdge, Stroke>() {
+                                    public Stroke transform(MyDirectEdge e) {
                                         return new BasicStroke(1f);
                                     }
                                 });
@@ -123,7 +124,7 @@ implements ComponentListener, ActionListener {
                                 if (betweenPathGraphViewer.betweenPathGraphNodeValueBarChart != null) {
                                     betweenPathGraphViewer.remove(betweenPathGraphViewer.betweenPathGraphNodeValueBarChart);
                                 }
-                                betweenPathGraphViewer.betweenPathGraphNodeValueBarChart = new MyNodePathGraphNodeValueBarChart(betweenPathGraphDepthFirstSearch);
+                                betweenPathGraphViewer.betweenPathGraphNodeValueBarChart = new MyPathGraphNodeValueBarChart(betweenPathGraphDepthFirstSearch);
                                 betweenPathGraphViewer.add(betweenPathGraphViewer.betweenPathGraphNodeValueBarChart);
                             } else {
                                 if (betweenPathGraphViewer.betweenPathGraphNodeValueBarChart != null) {
@@ -149,7 +150,7 @@ implements ComponentListener, ActionListener {
                                 if (betweenPathGraphViewer.betweenPathGraphEdgeValueBarChart != null) {
                                     betweenPathGraphViewer.remove(betweenPathGraphViewer.betweenPathGraphEdgeValueBarChart);
                                 }
-                                betweenPathGraphViewer.betweenPathGraphEdgeValueBarChart = new MyNodePathGraphEdgeValueBarChart(betweenPathGraphDepthFirstSearch);
+                                betweenPathGraphViewer.betweenPathGraphEdgeValueBarChart = new MyPathGraphEdgeValueBarChart(betweenPathGraphDepthFirstSearch);
                                 betweenPathGraphViewer.add(betweenPathGraphViewer.betweenPathGraphEdgeValueBarChart);
                             } else {
                                 if (betweenPathGraphViewer.betweenPathGraphEdgeValueBarChart != null) {
@@ -270,8 +271,8 @@ implements ComponentListener, ActionListener {
         nodeValueBarChartCheckBoxMenu.setVisible(false);
         edgeValueBarChartCheckBoxMenu.setSelected(false);
         edgeValueBarChartCheckBoxMenu.setVisible(false);
-        MyFRLayout frLayout = new MyFRLayout<>(integratedGraph, new Dimension(1000, 1000));
-        this.betweenPathGraphViewer = new MyNodePathGraphViewer(new DefaultVisualizationModel<>(frLayout));
+        MyFRLayout frLayout = new MyFRLayout<>(integratedGraph, new Dimension(5000, 5000));
+        this.betweenPathGraphViewer = new MyPathGraphViewer(new DefaultVisualizationModel<>(frLayout));
         this.betweenPathGraphViewer.betweenPathGraphDepthFirstSearch = this;
         return this.betweenPathGraphViewer;
     }
@@ -290,10 +291,10 @@ implements ComponentListener, ActionListener {
             nodeInContributionByDepthMap = new HashMap<>();
             nodeOutContributionByDepthMap = new HashMap<>();
             maxNodeContByDepthMap = new HashMap<>();
-            integratedGraph = new MyDirectedSparseMultigraph();
-            startNode = (MyNode) MyVars.g.vRefs.get(fromChoice);
-            endNode = (MyNode) MyVars.g.vRefs.get(toChoice);
-            topSuccessors = new HashSet<>(MyVars.g.getSuccessors(startNode));
+            integratedGraph = new MyDirectMarkovChain(EdgeType.DIRECTED);
+            startNode = (MyDirectNode) MyVars.directMarkovChain.vRefs.get(fromChoice);
+            endNode = (MyDirectNode) MyVars.directMarkovChain.vRefs.get(toChoice);
+            topSuccessors = new HashSet<>(MyVars.directMarkovChain.getSuccessors(startNode));
             doDepthFirstAllPathSearch(startNode, new HashSet<>(), new LinkedList<>());
             mainPanel.add(attachGraphToViewer(), BorderLayout.CENTER);
             nodeWgtCheckBoxMenu.setVisible(true);
@@ -303,11 +304,11 @@ implements ComponentListener, ActionListener {
 
             JPanel bottomPanel = new JPanel();
             bottomPanel.setLayout(new GridLayout(1, 5));
-            bottomPanel.add(new MyNodePathGraphPredecessorCountDistributionLineChart(integratedGraph));
-            bottomPanel.add(new MyNodePathGraphSuccessorCountDistributionLineChart(integratedGraph));
-            bottomPanel.add(new MyNodePathGraphNodeContributionDistributionLineChart(integratedGraph));
-            bottomPanel.add(new MyNodePathGraphEdgeContributionDistributionLineChart(integratedGraph));
-            bottomPanel.add(new MyNodePathGraphPathLengthDistributionLineChart(pathLengthByDepthMap));
+            bottomPanel.add(new MyPathGraphPredecessorCountDistributionLineChart(integratedGraph));
+            bottomPanel.add(new MyPathGraphSuccessorCountDistributionLineChart(integratedGraph));
+            bottomPanel.add(new MyPathGraphNodeContributionDistributionLineChart(integratedGraph));
+            bottomPanel.add(new MyPathGraphEdgeContributionDistributionLineChart(integratedGraph));
+            bottomPanel.add(new MyPathGraphPathLengthDistributionLineChart(pathLengthByDepthMap));
 
             if (betweenPathGraphViewer.betweenPathGraphEdgeValueBarChart != null) {
                 betweenPathGraphViewer.remove(betweenPathGraphViewer.betweenPathGraphNodeValueBarChart);
@@ -327,11 +328,11 @@ implements ComponentListener, ActionListener {
                              "AVG. E. C.: " + MySysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat((double) betweenPathGraphViewer.getTotalEdgeContribution()/integratedGraph.getEdgeCount())).split("\\.")[0];
             txtStatLabel.setText(txtStat);
 
-            this.depthStatisticsPanel.add(new MyNodePathGraphNodesByDepthDistributionLinChart(nodesByDepthMap));
-            this.depthStatisticsPanel.add(new MyNodePathGraphNodeInContributionDistributionLinChart(nodeInContributionByDepthMap));
-            this.depthStatisticsPanel.add(new MyNodePathGraphNodeOutContributionDistributionLinChart(nodeOutContributionByDepthMap));
-            this.depthStatisticsPanel.add(new MyNodePathGraphNodeInOutContributionDifferenceDistributionLinChart(nodeInContributionByDepthMap, nodeOutContributionByDepthMap));
-            this.depthStatisticsPanel.add(new MyNodePathGraphNodeMaxContributionDistributionLinChart(maxNodeContByDepthMap));
+            this.depthStatisticsPanel.add(new MyPathGraphNodesByDepthDistributionLinChart(nodesByDepthMap));
+            this.depthStatisticsPanel.add(new MyPathGraphNodeInContributionDistributionLinChart(nodeInContributionByDepthMap));
+            this.depthStatisticsPanel.add(new MyPathGraphNodeOutContributionDistributionLinChart(nodeOutContributionByDepthMap));
+            this.depthStatisticsPanel.add(new MyPathGraphNodeInOutContributionDifferenceDistributionLinChart(nodeInContributionByDepthMap, nodeOutContributionByDepthMap));
+            this.depthStatisticsPanel.add(new MyPathGraphNodeMaxContributionDistributionLinChart(maxNodeContByDepthMap));
 
 
             mainPanel.add(betweenPathGraphViewer, BorderLayout.CENTER);
@@ -350,10 +351,11 @@ implements ComponentListener, ActionListener {
             graphSplitPane.setDividerLocation(screenWidth-480);
             contentSplitPane.setBottomComponent(bottomPanel);
             this.pack();
-            this.setTitle("ALL PATHS BETWEEN [" + MySysUtil.getDecodedNodeName(fromChoice) + "  AND  " + MySysUtil.getDecodedNodeName(toChoice) + "]");
+            this.setTitle("ALL PATHS BETWEEN [" + fromChoice + "  AND  " + toChoice + "]");
+            bw.close();
+            System.out.println(integratedGraph.getVertexCount());
             pb.updateValue(100, 100);
             pb.dispose();
-            bw.close();
         } catch (Exception ex) {ex.printStackTrace();}
     }
 
@@ -361,7 +363,7 @@ implements ComponentListener, ActionListener {
     private MyProgressBar pb;
     private BufferedWriter bw;
 
-    private void doDepthFirstAllPathSearch(MyNode successor, Set<MyNode> visited, LinkedList<MyNode> currpath) {
+    private void doDepthFirstAllPathSearch(MyDirectNode successor, Set<MyDirectNode> visited, LinkedList<MyDirectNode> currpath) {
         try {
             if (visited.contains(successor)) {return;}
             visited.add(successor);
@@ -376,27 +378,27 @@ implements ComponentListener, ActionListener {
                 }
 
                 int j=0;
-                for (MyNode n : currpath) {
-                    String decondedNodeName = MySysUtil.getDecodedNodeName(n.getName());
+                for (MyDirectNode n : currpath) {
+                    //String decondedNodeName = MySysUtil.getDecodedNodeName(n.getName());
                     if (nodesByDepthMap.containsKey(j+1)) {
-                        nodesByDepthMap.get(j+1).add(decondedNodeName);
+                        nodesByDepthMap.get(j+1).add(n.getName());
                     } else {
                         Set<String> nodeSet = new HashSet<>();
-                        nodeSet.add(decondedNodeName);
+                        nodeSet.add(n.getName());
                         nodesByDepthMap.put(j+1, nodeSet);
                     }
 
                     if (maxNodeContByDepthMap.containsKey(j+1)) {
                         Map<String, Integer> nodeContributionMap = maxNodeContByDepthMap.get(j+1);
-                        if (nodeContributionMap.containsKey(decondedNodeName)) {
-                            nodeContributionMap.put(decondedNodeName, nodeContributionMap.get(decondedNodeName)+1);
+                        if (nodeContributionMap.containsKey(n.getName())) {
+                            nodeContributionMap.put(n.getName(), nodeContributionMap.get(n.getName())+1);
                         } else {
-                            nodeContributionMap.put(decondedNodeName, 1);
+                            nodeContributionMap.put(n.getName(), 1);
                         }
                         maxNodeContByDepthMap.put(j+1, nodeContributionMap);
                     } else {
                         Map<String, Integer> nodeContributionMap = new HashMap<>();
-                        nodeContributionMap.put(decondedNodeName, 1);
+                        nodeContributionMap.put(n.getName(), 1);
                         maxNodeContByDepthMap.put(j+1, nodeContributionMap);
                     }
 
@@ -427,13 +429,13 @@ implements ComponentListener, ActionListener {
                     }
 
                     if (!integratedGraph.vRefs.containsKey(n.getName())) {
-                        MyNode nn = new MyNode(n.getName());
+                        MyDirectNode nn = new MyDirectNode(n.getName());
                         integratedGraph.addVertex(nn);
                         integratedGraph.vRefs.put(nn.getName(), nn);
                         nn.setContribution(1);
                         nn.setOriginalValue(nn.getContribution());
                     } else {
-                        MyNode nn = (MyNode) integratedGraph.vRefs.get(n.getName());
+                        MyDirectNode nn = (MyDirectNode) integratedGraph.vRefs.get(n.getName());
                         nn.updateContribution(1);
                         nn.setOriginalValue((float)nn.getContribution());
                     }
@@ -444,9 +446,9 @@ implements ComponentListener, ActionListener {
                 for (int i=1; i < currpath.size(); i++) {
                     String edgeStr = currpath.get(i-1).getName() + "-" + currpath.get(i).getName();
                     if (!integratedGraph.edRefs.contains(edgeStr)) {
-                        MyNode pNode = (MyNode) integratedGraph.vRefs.get(currpath.get(i-1).getName());
-                        MyNode sNode = (MyNode) integratedGraph.vRefs.get(currpath.get(i).getName());
-                        MyEdge edge = new MyEdge(pNode, sNode);
+                        MyDirectNode pNode = (MyDirectNode) integratedGraph.vRefs.get(currpath.get(i-1).getName());
+                        MyDirectNode sNode = (MyDirectNode) integratedGraph.vRefs.get(currpath.get(i).getName());
+                        MyDirectEdge edge = new MyDirectEdge(pNode, sNode);
                         integratedGraph.addEdge(edge, pNode, sNode);
                         integratedGraph.edRefs.add(edgeStr);
                         edgeMap.put(edgeStr, edge);
@@ -459,7 +461,7 @@ implements ComponentListener, ActionListener {
                  * Write the current path to file.
                  */
                 String line = "";
-                for (MyNode n : currpath) {
+                for (MyDirectNode n : currpath) {
                     if (line.length() == 0) {
                         line = n.getName();
                     } else {
@@ -475,9 +477,11 @@ implements ComponentListener, ActionListener {
                 return;
             }
 
-            Collection<MyEdge> outEdges = MyVars.g.getOutEdges(successor);
-            for (MyEdge edge : outEdges) {;
-                doDepthFirstAllPathSearch(edge.getDest(), visited, currpath);
+            Collection<MyDirectEdge> outEdges = MyVars.directMarkovChain.getOutEdges(successor);
+            if (outEdges != null) {
+                for (MyDirectEdge edge : outEdges) {
+                    doDepthFirstAllPathSearch(edge.getDest(), visited, currpath);
+                }
             }
             currpath.removeLast();
             visited.remove(successor);
@@ -541,8 +545,8 @@ implements ComponentListener, ActionListener {
         DefaultTableModel tableModel = new DefaultTableModel(data, columns);
         JTable nodeTable = new JTable(tableModel);
         int i=-0;
-        Collection<MyNode> nodes = integratedGraph.getVertices();
-        for (MyNode n : nodes) {
+        Collection<MyDirectNode> nodes = integratedGraph.getVertices();
+        for (MyDirectNode n : nodes) {
             tableModel.addRow(new String[]{String.valueOf(++i), n.getName()});
         }
 
@@ -577,7 +581,7 @@ implements ComponentListener, ActionListener {
                             synchronized (nodeSelectBtn) {
                                 String n = nodeTable.getValueAt(nodeTable.getSelectedRow(), 1).toString();
                                 n = MyVars.nodeNameMap.get(n);
-                                betweenPathGraphViewer.selectedNode = (MyNode) integratedGraph.vRefs.get(n);
+                                betweenPathGraphViewer.selectedNode = (MyDirectNode) integratedGraph.vRefs.get(n);
                                 betweenPathGraphViewer.setMaximumNodeValue();
                                 betweenPathGraphViewer.setMaximumNodeSize();
                                 betweenPathGraphViewer.revalidate();
@@ -630,13 +634,13 @@ implements ComponentListener, ActionListener {
                 try {
                     if (nodesByDepthComboBoxMenu.getSelectedIndex() == 0) {
                         depthNodePercentLabel.setText("");
-                        Collection<MyNode> nodes = integratedGraph.getVertices();
+                        Collection<MyDirectNode> nodes = integratedGraph.getVertices();
                         long maxValue = 0L;
-                        for (MyNode n : nodes) {
+                        for (MyDirectNode n : nodes) {
                             n.setContribution((int) n.getOriginalValue());
                         }
 
-                        for (MyNode n : nodes) {
+                        for (MyDirectNode n : nodes) {
                             if (n.getContribution() > maxValue) {
                                 maxValue = n.getContribution();
                             }
@@ -652,7 +656,7 @@ implements ComponentListener, ActionListener {
 
                         // Add all the nodes.
                         int i=0;
-                        for (MyNode n : nodes) {
+                        for (MyDirectNode n : nodes) {
                             tableModel.addRow(new String[]{"" + (++i), n.getName()});
                         }
 
@@ -668,12 +672,12 @@ implements ComponentListener, ActionListener {
                         depthNodePercentLabel.setText(percentOfDepthNodes);
                         long maxValue = 0L;
                         Set<String> depthNodeSet = new HashSet<>(nodesByDepthMap.get(Integer.valueOf(depthStr)));
-                        Collection<MyNode> nodes = integratedGraph.getVertices();
-                        for (MyNode n : nodes) {
+                        Collection<MyDirectNode> nodes = integratedGraph.getVertices();
+                        for (MyDirectNode n : nodes) {
                             n.setContribution((int) n.getOriginalValue());
                         }
 
-                        for (MyNode n : nodes) {
+                        for (MyDirectNode n : nodes) {
                             if (!depthNodeSet.contains(n.getName())) {
                                 n.setContribution(0);
                             } else {
@@ -731,8 +735,8 @@ implements ComponentListener, ActionListener {
 
         String [] statTableColumns = {"PROPERTY.", "V."};
         String [][] statTableData = {
-                {"NODES", MyMathUtil.getCommaSeperatedNumber(MyVars.g.getVertexCount())},
-                {"EDGES", MyMathUtil.getCommaSeperatedNumber(MyVars.g.getEdgeCount())},
+                {"NODES", MyMathUtil.getCommaSeperatedNumber(MyVars.directMarkovChain.getVertexCount())},
+                {"EDGES", MyMathUtil.getCommaSeperatedNumber(MyVars.directMarkovChain.getEdgeCount())},
                 {"MAX N. C.", MyMathUtil.getCommaSeperatedNumber((long) betweenPathGraphViewer.MAX_NODE_VALUE)},
                 {"MIN. N. C.", MyMathUtil.getCommaSeperatedNumber((long) betweenPathGraphViewer.MIN_NODE_VALUE)},
                 {"AVG. N. C.", MySysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat((double) betweenPathGraphViewer.getTotalNodeContribution()/integratedGraph.getVertexCount()))},

@@ -5,24 +5,24 @@ import java.util.*;
 
 public class MyConnectedNetworkComponentFinder {
     public static void setConnectedComponentsByGraph() {
-        Set<MyNode> visited = new HashSet<>();
-        Collection<MyNode> nodes = MyVars.g.getVertices();
-        for (MyNode n : nodes) {
+        Set<MyDirectNode> visited = new HashSet<>();
+        Collection<MyDirectNode> nodes = MyVars.directMarkovChain.getVertices();
+        for (MyDirectNode n : nodes) {
             if (!visited.contains(n)) {
-                Set<MyNode> componentSet = new HashSet<>();
-                dfsWithComponents(n, visited, componentSet);
-                MyVars.connectedComponentCountsByGraph.add(componentSet);
+                Set<MyDirectNode> component = new HashSet<>();
+                dfs(n, visited, component);
+                MyVars.connectedComponentCountsByGraph.add(component);
             }
         }
     }
 
-    private static void dfsWithComponents(MyNode node, Set<MyNode> visitedSet, Set<MyNode> componentSet) {
+    private static void dfs(MyDirectNode node, Set<MyDirectNode> visitedSet, Set<MyDirectNode> componentSet) {
         visitedSet.add(node);
         componentSet.add(node);
-        Collection<MyNode> nodes = MyVars.g.getNeighbors(node);
-        for (MyNode neighbor : nodes) {
+        Collection<MyDirectNode> nodes = MyVars.directMarkovChain.getNeighbors(node);
+        for (MyDirectNode neighbor : nodes) {
             if (!visitedSet.contains(neighbor)) {
-                dfsWithComponents(neighbor, visitedSet, componentSet);
+                dfs(neighbor, visitedSet, componentSet);
             }
         }
     }

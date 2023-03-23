@@ -1,9 +1,9 @@
 package datamining.main;
 
+import datamining.graph.layout.MyFRLayout;
 import datamining.utils.message.MyMessageUtil;
 import datamining.utils.system.MySysUtil;
 import datamining.utils.system.MyVars;
-import datamining.graph.layout.MyDelegateLayout;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,11 +19,11 @@ public class MyNetworkDeserializer {
             JFileChooser fc = new JFileChooser();
             fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
             fc.setPreferredSize(new Dimension(600, 460));
-            fc.showOpenDialog(MyVars.app);
+            fc.showOpenDialog(MyVars.main);
 
             if (fc.getSelectedFile().isFile()) {
                 this.pb = new MyProgressBar(false);
-                MyVars.app.getToolBar().getSearchPathButton().setEnabled(true);
+                MyVars.main.getToolBar().getSearchPathButton().setEnabled(true);
                 pb.updateValue(20, 100);
                 pb.updateValue(40, 100);
                 MySysUtil.loadVariablesAndValues();
@@ -31,19 +31,19 @@ public class MyNetworkDeserializer {
                 if (this.deserializeNetwork(fc.getSelectedFile()))
                 {
                     pb.updateValue(80, 100);
-                    MyVars.app.setGrpahViewer(MyVars.app.getMsgBroker().createPlusGraphView(
-                        new MyDelegateLayout<>(
-                            MyVars.g,
-                            new Dimension(4500, 3500)
+                    MyVars.main.setDirectGraph(MyVars.main.getMsgBroker().createDirectGraphView(
+                        new MyFRLayout<>(
+                            MyVars.directMarkovChain,
+                            new Dimension(6000, 6000)
                             ),
-                            new Dimension(4500, 3500))
+                            new Dimension(6000, 6000))
                     );
-                    MyVars.app.getContentTabbedPane().setSelectedIndex(2);
+                    MyVars.main.getContentTabbedPane().setSelectedIndex(2);
                     pb.updateValue(100, 100);
                     MySysUtil.sleepExecution(150);
                     pb.dispose();
-                    MyVars.app.revalidate();
-                    MyVars.app.repaint();
+                    MyVars.main.revalidate();
+                    MyVars.main.repaint();
                 }
             }
         } catch (Exception ex) {
@@ -51,12 +51,39 @@ public class MyNetworkDeserializer {
         }
     }
 
+    public String loadSerializedNetwork(boolean flag) {// This function gets called from the command prompt.{
+        try {
+            JFileChooser fc = new JFileChooser();
+            fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+            fc.setPreferredSize(new Dimension(600, 460));
+            fc.showOpenDialog(MyVars.main);
+            if (fc.getSelectedFile().isFile()) {
+                this.pb = new MyProgressBar(false);
+                MyVars.main.getToolBar().getSearchPathButton().setEnabled(true);
+                pb.updateValue(20, 100);
+                pb.updateValue(40, 100);
+                MySysUtil.loadVariablesAndValues();
+                pb.updateValue(60, 100);
+                if (this.deserializeNetwork(fc.getSelectedFile(), true)) {
+                    pb.updateValue(100, 100);
+                    MySysUtil.sleepExecution(120);
+                    pb.dispose();
+                } else {
+                    return "FAILED TO LOAD THE NETWORK!";
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return "THE NETWORK HAS SUCCESSFULLY BEEN LOADED INTO MEMORY.";
+    }
+
     private boolean deserializeNetwork(File serializedNetworkFile, boolean flag) { // Gets called from the command prompt.
         try {
             FileInputStream fileInputStream = new FileInputStream(serializedNetworkFile);
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
             MySerializableNetwork serializableNetwork = (MySerializableNetwork) objectInputStream.readObject();
-            MyVars.g = serializableNetwork.getMainGraph();
+            //MyVars.plusMarkovChain = serializableNetwork.();
         } catch (Exception ex) {
             this.pb.dispose();
             return false;
@@ -69,7 +96,7 @@ public class MyNetworkDeserializer {
             FileInputStream fileInputStream = new FileInputStream(serializedNetworkFile);
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
             MySerializableNetwork serializableNetwork = (MySerializableNetwork) objectInputStream.readObject();
-            MyVars.g = serializableNetwork.getMainGraph();
+           // MyVars.markovChain = serializableNetwork.getMainGraph();
         } catch (Exception ex) {
             this.pb.dispose();
             MyMessageUtil.showErrorMsg("The selected file is not a serialized network.\n" +

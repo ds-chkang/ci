@@ -1,6 +1,6 @@
 package datamining.graph.layout;
 
-import datamining.graph.MyNode;
+import datamining.graph.MyDirectNode;
 import datamining.utils.system.MySysUtil;
 import datamining.utils.system.MyVars;
 import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
@@ -184,7 +184,7 @@ implements IterativeContext {
             newYPos = getSize().getHeight() - borderWidth - Math.random() * borderWidth * 2.0;
         }
 
-        System.out.println(MySysUtil.getDecodedNodeName(((MyNode) v).getName()) + "   " + newXPos + "     " + newYPos);
+        System.out.println(MySysUtil.getDecodedNodeName(((MyDirectNode) v).getName()) + "   " + newXPos + "     " + newYPos);
 
         xyd.setLocation(newXPos, newYPos);
     }

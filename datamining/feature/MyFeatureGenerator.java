@@ -1,6 +1,5 @@
 package datamining.feature;
 
-import datamining.category.MyCategory;
 import datamining.utils.system.MyVars;
 
 import java.util.ArrayList;
@@ -38,16 +37,16 @@ public class MyFeatureGenerator {
     }
 
     private void setItemIDIndex() { 
-        itemIDIdx = MyVars.app.getMsgBroker().getHeaderIndex(itemIDColNm);
+        itemIDIdx = MyVars.main.getMsgBroker().getHeaderIndex(itemIDColNm);
     }
     private void setObjectIDIndex() { 
-        objIDIdx = MyVars.app.getMsgBroker().getHeaderIndex(objIDColNm);
+        objIDIdx = MyVars.main.getMsgBroker().getHeaderIndex(objIDColNm);
     }
     private void setItemNameIndex() { 
-        itemNmIdx = MyVars.app.getMsgBroker().getHeaderIndex(itemNmColNm);
+        itemNmIdx = MyVars.main.getMsgBroker().getHeaderIndex(itemNmColNm);
     }
     private void setTransactionIDIndex() { 
-        trIDIdx = MyVars.app.getMsgBroker().getHeaderIndex(trIDColNm);
+        trIDIdx = MyVars.main.getMsgBroker().getHeaderIndex(trIDColNm);
     }
     private void runWithCategorization(ArrayList<ArrayList<String>> dataIn) {
         try {
@@ -166,26 +165,7 @@ public class MyFeatureGenerator {
 
     private String appendCategories(ArrayList<String> lastTrLine) {
         String variableStr = "";
-        for (int i = 0; i < MyVars.app.getMsgBroker().getConfigPanel().getSupplimentaryVariableTable().getRowCount(); i++) {
-            if (MyVars.app.getMsgBroker().getConfigPanel().getSupplimentaryVariableTable().getValueAt(i, 0).toString().contains("SET") &&
-                MyVars.app.getMsgBroker().getConfigPanel().getSupplimentaryVariableTable().getValueAt(i, 1).toString().replaceAll(" ", "").length() == 0 &&
-                MyVars.app.getMsgBroker().getConfigPanel().getSupplimentaryVariableTable().getValueAt(i, 2).toString().contains("SET")) continue;
-            String colNm = MyVars.app.getMsgBroker().getConfigPanel().getSupplimentaryVariableTable().getValueAt(i, 0).toString().substring(2);
-            int colNmIdx = MyVars.app.getMsgBroker().getHeaderIndex(colNm);
-            if (MyVars.app.getMsgBroker().getConfigPanel().getSupplimentaryVariableTable().getCategoryType(i, 2).contains("BINARY") ||
-                MyVars.app.getMsgBroker().getConfigPanel().getSupplimentaryVariableTable().getCategoryType(i, 2).contains("INTEGER")) {
-                if (variableStr.length() == 0) {
-                    variableStr = lastTrLine.get(colNmIdx);
-                } else {
-                    variableStr = variableStr + MyVars.commaDelimeter + lastTrLine.get(colNmIdx);
-                }
-            } else if (MyVars.app.getMsgBroker().getConfigPanel().getSupplimentaryVariableTable().getCategoryType(i, 2).contains("REAL")) {
-                MyCategory category = MyVars.app.getMsgBroker().getCategoryList().getCategory(colNm);
-                if (variableStr.length() == 0) { variableStr = category.getCategory(lastTrLine.get(colNmIdx)); }
-                else { variableStr = variableStr + MyVars.commaDelimeter + category.getCategory(lastTrLine.get(colNmIdx));
-                }
-            } else break;
-        }
+
         variableStr = this.variableMapper.mapVariableToID(variableStr);
         return (variableStr + MyVars.hyphenDelimeter);
     }

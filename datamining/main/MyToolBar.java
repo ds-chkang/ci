@@ -1,10 +1,8 @@
 package datamining.main;
 
-import datamining.config.MySequentialConfigPanel;
+import datamining.config.MyDirectConfigPanel;
 import datamining.graph.analysis.MyGraphAnalyzer;
 import datamining.graph.layout.MyFRLayout;
-import datamining.pattern.MyPatternMiner;
-import datamining.pattern.MyPatternMiner2;
 import datamining.utils.message.MyMessageUtil;
 import datamining.utils.system.MySysUtil;
 import datamining.utils.system.MyVars;
@@ -32,10 +30,10 @@ implements ActionListener {
     private final ImageIcon logo_img_icon = new ImageIcon(getClass().getResource(MyVars.imgDir +"thomas2.jpg"));
     private final ImageIcon funnel_img_icon = new ImageIcon(getClass().getResource(MyVars.imgDir +"funnel.png"));
     private final ImageIcon network_img_icon = new ImageIcon(getClass().getResource(MyVars.imgDir +"network.png"));
-    private final ImageIcon pathfinder_img_icon = new ImageIcon(getClass().getResource(MyVars.imgDir + "searchPath.png"));
+    private final ImageIcon pathfinder_img_icon = new ImageIcon(getClass().getResource(MyVars.imgDir + "network.png"));
 
     protected   JComboBox projectMenuComboBox;
-    private final String [] projectMenuItems = {"", "SEQUENTIAL NETWORK"};
+    private final String [] projectMenuItems = {"", "DIRECT NETWORK", "SEQUENTIAL NETWORK"};
 
     public MyToolBar() {
         this.decorate();
@@ -57,7 +55,7 @@ implements ActionListener {
                     remove(toolBar);
                     pb.updateValue(10, 100);
 
-                    MyVars.app.getContentTabbedPane().removeAll();
+                    MyVars.main.getContentTabbedPane().removeAll();
                     pb.updateValue(20, 100);
                     projectMenuComboBox = new JComboBox();
                     projectMenuComboBox.setFont(MyVars.tahomaPlainFont12);
@@ -89,7 +87,7 @@ implements ActionListener {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override public void run() {
                     remove(toolBar);
-                    MyVars.app.getContentTabbedPane().removeAll();
+                    MyVars.main.getContentTabbedPane().removeAll();
 
                     projectMenuComboBox = new JComboBox();
                     projectMenuComboBox.setFont(MyVars.tahomaPlainFont12);
@@ -123,7 +121,7 @@ implements ActionListener {
                     @Override public void run() {
                         try {
                             MyProgressBar pb = new MyProgressBar(false);
-                            MyVars.app.getContentTabbedPane().removeAll();
+                            MyVars.main.getContentTabbedPane().removeAll();
                             remove(toolBar);
                             pb.updateValue(10, 100);
 
@@ -154,23 +152,20 @@ implements ActionListener {
                             pb.updateValue(60, 100);
 
                             MySysUtil.resetVariables();
-                            if (selectedTabIdx == 0) {
-
-                            } else if (selectedTabIdx == 1) {
-                                MySequentialConfigPanel sequentialConfigPanel = new MySequentialConfigPanel();
-                                MyVars.app.getMsgBroker().setSequentialConfigPanel(sequentialConfigPanel);
-                                if (MyVars.app.getContentTabbedPane().getTabCount() > 0) {
-                                    MyVars.app.getContentTabbedPane().removeAll();
-                                    runBtn.setEnabled(false);
-                                    searchPathBtn.setEnabled(false);
-                                    networkBtn.setEnabled(false);
+                            if (selectedTabIdx == 1) {
+                                MyDirectConfigPanel directConfigPanel = new MyDirectConfigPanel();
+                                MyVars.main.getMsgBroker().setDirectConfigPanel(directConfigPanel);
+                                JScrollPane scrollPane = new JScrollPane(MyVars.main.getMsgBroker().getDirectConfigPanel());
+                                if (MyVars.main.getContentTabbedPane().getTabCount() > 0) {
+                                    MyVars.main.getContentTabbedPane().removeAll();
                                 }
-                                MyVars.app.getContentTabbedPane().addTab("      CONFIGURATION       ", sequentialConfigPanel);
-                                MyVars.app.getContentTabbedPane().addTab("      DASHBOARD       ", MyVars.app.resetDashboard());
+                                MyVars.main.getContentTabbedPane().addTab("      CONFIGURATION       ", scrollPane);
+                                MyVars.main.getContentTabbedPane().addTab("      DASHBOARD       ", MyVars.main.resetDirectMarkovChainDashBoard());
+                            } else if (selectedTabIdx == 2) {
+
                             }
 
                             setButton(runBtn, run_img_icon, "Discover relations", false);
-                            setButton(searchPathBtn, pathfinder_img_icon, "Behavioral Pattern Mining", false);
                             setButton(networkBtn, network_img_icon, "Network Analyses", false);
 
                             add(toolBar, BorderLayout.CENTER);
@@ -178,12 +173,15 @@ implements ActionListener {
 
                             if (selectedTabIdx == 1) {
                                 projectMenuComboBox.setSelectedIndex(1);
+                            } else if (selectedTabIdx == 2) {
+                                projectMenuComboBox.setSelectedIndex(2);
                             }
+
                             setProjectMenuActionListener();
                             pb.updateValue(100, 100);
                             pb.dispose();
-                            MyVars.app.revalidate();
-                            MyVars.app.repaint();
+                            MyVars.main.revalidate();
+                            MyVars.main.repaint();
                         } catch (Exception ex) {}
                     }
                 }).start();
@@ -241,93 +239,61 @@ implements ActionListener {
     }
 
     @Override public void actionPerformed(ActionEvent evt) {
-        if (projectMenuComboBox.getSelectedIndex() == 1) {
-            if (evt.getSource() == runBtn) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override public void run() {
-                        new Thread(new Runnable() {
-                            @Override public void run() {
-                                try {
-                                    MyProgressBar pb = new MyProgressBar(false);
-                                    runBtn.setEnabled(false);
-                                    MyVars.outputDir = MySysUtil.getWorkingDir() + MySysUtil.getDirectorySlash() + "elements" + MySysUtil.getDirectorySlash();
-                                    MyVars.app.getMsgBroker().getConfigPanel().getDefaultVariableTable().isTimeVariableOn();
-                                    MyVars.app.getMsgBroker().categorize();
-                                    pb.updateValue(5, 100);
-                                    MyVars.app.getMsgBroker().generateInputFeatures();
-                                    pb.updateValue(10, 100);
-                                    MyVars.app.getMsgBroker().runEngine();
-                                    pb.updateValue(20, 100);
-                                    inputBtn.setEnabled(false);
-                                    runBtn.setEnabled(false);
-                                    new Thread(new Runnable() {
-                                        @Override public void run() {
-                                            MyVars.app.getContentTabbedPane().setSelectedIndex(1);
-                                        }
-                                    }).start();
-                                    new Thread(new Runnable() {
-                                        @Override public void run() {
-                                            try {
-                                                MyFRLayout layout = new MyFRLayout<>(MyVars.app.getMsgBroker().createGraph(pb), new Dimension(5500, 4500));
-                                                MyVars.app.setGrpahViewer(MyVars.app.getMsgBroker().createPlusGraphView(layout, new Dimension(5500, 4500)));
-                                                pb.updateValue(60, 100);
-                                                searchPathBtn.setEnabled(true);
-                                                networkBtn.setEnabled(true);
-                                                MyVars.getViewer().vc.edgeValueSelecter.removeActionListener(MyVars.getViewer().vc);
-                                                MyVars.getViewer().vc.edgeValueSelecter.setSelectedIndex(1); // DEFAULT VALUE.
-                                                MyVars.getViewer().vc.edgeValueSelecter.addActionListener(MyVars.getViewer().vc);
-                                                MyVars.getViewer().vc.vTxtStat.setTextStatistics();
-                                                pb.updateValue(80, 100);
-                                                MyVars.app.getDashboard().setDashboard();
-                                                System.out.println(MyVars.inputSequenceFile);
-                                                pb.updateValue(100, 100);
-                                                pb.dispose();
-                                                MyVars.app.revalidate();
-                                                MyVars.app.repaint();
-                                                if (MyVars.g.getVertices().size() == 0) {
-                                                    MyMessageUtil.showInfoMsg("<html><body>An exception has occurred while creating a network.<br>Please, check the information provided in the configuration panel.</body></html>");
-                                                } else {
-                                                    MyMessageUtil.showInfoMsg("Network has successfully been built!");
-                                                }
-                                            } catch (Exception ex) {
-                                                MyMessageUtil.showInfoMsg("<html><body>An exception has occurred while creating a network.<br>Please, check the information provided in the configuration panel.</body></html>");
-                                            }
-                                        }
-                                    }).start();
-                                } catch (Exception ex) {
-                                    runBtn.setEnabled(true);
-                                }
-                            }
-                        }).start();
-                    }
-                });
-            } else if (evt.getSource() == networkBtn) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override public void run() {
-                        new Thread(new Runnable() {
-                            @Override public void run() {
-                                MyGraphAnalyzer networkAnalyzer = new MyGraphAnalyzer();
-                                networkAnalyzer.setAlwaysOnTop(false);
-                               // networkBtn.setEnabled(false);
-
-                            }
-                        }).start();
-                    }
-                });
-            } else if (evt.getSource() == searchPathBtn) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override public void run() {
-                        new Thread(new Runnable() {
-                            @Override public void run() {
-                                MyPatternMiner2 pm = new MyPatternMiner2();
-                            }
-                        }).start();
-                    }
-                });
-            }
+        if (evt.getSource() instanceof JButton) {
+            if (projectMenuComboBox.getSelectedIndex() == 1) {
+                MyVars.isDirectMarkovRelation = true;
+                this.doDirectRelationOperations(evt);
+            }// else if (projectMenuComboBox.getSelectedIndex() == 2) {
+              //  MyVars.isDirectMarkovRelation = false;
+                //this.doSequentialPlusRelationOperations(evt);
+           // }
         }
     }
 
     public JButton getSearchPathButton() { return this.searchPathBtn; }
 
+       private void doDirectRelationOperations(ActionEvent evt) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override public void run() {
+                if (evt.getSource() == runBtn) {
+                    new Thread(new Runnable() {
+                        @Override public void run() {
+                            try {
+                                if (MyVars.main.getMsgBroker().getInputFiles() == null) {
+                                    MyMessageUtil.showErrorMsg("Please, set input data files!");
+                                    return;
+                                }
+                                MyProgressBar pb = new MyProgressBar(false);
+                                MyVars.main.getMsgBroker().categorize();
+                                pb.updateValue(20, 100);
+                                Thread.sleep(200);
+                                pb.updateValue(50, 100);
+                                MyFRLayout layout = new MyFRLayout<>(MyVars.main.getMsgBroker().createDirectGraph(), new Dimension(6000, 5500));
+                                MyVars.main.setDirectGraph(MyVars.main.getMsgBroker().createDirectGraphView(layout, new Dimension(6000, 5500)));
+                                MyVars.getDirectGraphViewer().layout = layout;
+                                MyVars.main.getContentTabbedPane().setSelectedIndex(1);
+                                pb.updateValue(80, 100);
+                                networkBtn.setEnabled(true);
+                                pb.updateValue(80, 100);
+                                Thread.sleep(300);
+                                runBtn.setEnabled(false);
+                                pb.updateValue(100, 100);
+                                pb.dispose();
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
+                        }
+                    }).start();
+                } else if (evt.getSource() == networkBtn) {
+                    new Thread(new Runnable() {
+                        @Override public void run() {
+                            MyGraphAnalyzer networkAnalyzer = new MyGraphAnalyzer();
+                            networkAnalyzer.setAlwaysOnTop(false);
+                          //  networkBtn.setEnabled(false);
+                        }
+                    }).start();
+                }
+            }
+        });
+    }
 }

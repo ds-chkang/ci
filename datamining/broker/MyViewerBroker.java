@@ -1,8 +1,9 @@
 package datamining.broker;
 
-import datamining.graph.MyEdge;
-import datamining.graph.MyViewer;
-import datamining.graph.MyNode;
+import datamining.graph.MyDirectEdge;
+import datamining.graph.MyDirectMarkovChainViewer;
+import datamining.graph.MyDirectNode;
+
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.visualization.DefaultVisualizationModel;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
@@ -12,18 +13,17 @@ import java.awt.*;
 public class MyViewerBroker
 extends MyGraphBroker {
 
-    protected MyViewer plusViewer;
+    protected MyDirectMarkovChainViewer directGraphViewer;
 
     public MyViewerBroker() throws Exception {super();}
 
 
-
-    public VisualizationViewer<MyNode, MyEdge> createPlusGraphView(
-            final Layout<MyNode, MyEdge> l,
+    public VisualizationViewer<MyDirectNode, MyDirectEdge> createDirectGraphView(
+            final Layout<MyDirectNode, MyDirectEdge> l,
             final Dimension d) {
-        this.plusViewer = new MyViewer(new DefaultVisualizationModel<>(l, d));
-        return this.plusViewer.create();
+        this.directGraphViewer = new MyDirectMarkovChainViewer(new DefaultVisualizationModel<>(l, d));
+        return this.directGraphViewer.create();
     }
 
-    public MyViewer getPlusMarkovChainContainer() { return this.plusViewer; }
+    public MyDirectMarkovChainViewer getDirectMarkovChainContainer() { return this.directGraphViewer; }
 }

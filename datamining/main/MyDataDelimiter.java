@@ -18,7 +18,7 @@ implements ActionListener {
     private JButton dataDelimiterCmd = new JButton("   OK   ");
 
     public MyDataDelimiter() {
-        super(MyVars.app);
+        super(MyVars.main);
         this.decorate();
     }
 

@@ -35,8 +35,13 @@ implements Serializable {
             cancel.setBounds(new Rectangle(100, 65, 100, 30));
             cancel.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    setVisible(false);
-                    dispose();
+                    try {
+                        setVisible(false);
+                        dispose();
+                        MyVars.currentThread.interrupt();
+                    } catch (Exception ex) {
+
+                    }
                 }
             });
             this.waitMsgPanel.setBorder(BorderFactory.createEtchedBorder());

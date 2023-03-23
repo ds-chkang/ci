@@ -16,7 +16,7 @@ public class MyMessageUtil {
 
                     JLabel label = new JLabel(message);
                     label.setFont(MyVars.f_pln_12);
-                    JOptionPane.showMessageDialog(MyVars.app, label, MyVars.appFrameTitleMsg, JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(MyVars.main, label, MyVars.appFrameTitleMsg, JOptionPane.INFORMATION_MESSAGE);
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -41,7 +41,7 @@ public class MyMessageUtil {
                     JLabel message = new JLabel(msg);
                     message.setFont(MyVars.f_pln_12);
                     JOptionPane.showMessageDialog(
-                            MyVars.app,
+                            MyVars.main,
                             message,
                             MyVars.appFrameTitleMsg, JOptionPane.ERROR_MESSAGE);
 
@@ -70,31 +70,13 @@ public class MyMessageUtil {
                     JLabel message = new JLabel(msg);
                     message.setFont(MyVars.f_pln_12);
                     int dialogResult = JOptionPane.showConfirmDialog(
-                            MyVars.app,
+                            MyVars.main,
                             message,
                             MyVars.appFrameTitleMsg,
                             JOptionPane.YES_NO_OPTION);
                     if (dialogResult == JOptionPane.YES_OPTION) {
                         return 1;
                     }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return -1;
-    }
-
-    public static int showConfirmMessage(Component comp, String msg) {
-        try {
-            JLabel message = new JLabel(msg);
-            message.setFont(MyVars.f_pln_12);
-            int dialogResult = JOptionPane.showConfirmDialog(
-                    comp,
-                    message,
-                    MyVars.appFrameTitleMsg,
-                    JOptionPane.YES_NO_OPTION);
-            if (dialogResult == JOptionPane.YES_OPTION) {
-                return 1;
-            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }

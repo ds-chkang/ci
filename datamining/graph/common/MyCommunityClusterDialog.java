@@ -1,6 +1,6 @@
 package datamining.graph.common;
 
-import datamining.graph.MyEdge;
+import datamining.graph.MyDirectEdge;
 import datamining.utils.message.MyMessageUtil;
 import datamining.utils.MyMathUtil;
 import datamining.utils.system.MySysUtil;
@@ -52,18 +52,18 @@ extends JFrame {
                             public void run() {
                                 try {
                                     int numOfEdgesToRemove = Integer.valueOf(txt.getText().replaceAll(" ", ""));
-                                    if (numOfEdgesToRemove > MyVars.g.getVertexCount()) {
-                                        MyMessageUtil.showInfoMsg("The number of edges must be less than " + MyMathUtil.getCommaSeperatedNumber((int)((double)MyVars.g.getVertexCount()/2)));
+                                    if (numOfEdgesToRemove > MyVars.directMarkovChain.getVertexCount()) {
+                                        MyMessageUtil.showInfoMsg("The number of edges must be less than " + MyMathUtil.getCommaSeperatedNumber((int)((double)MyVars.directMarkovChain.getVertexCount()/2)));
                                         decorate();
                                     } else {
                                         dispose();
                                         try {Thread.sleep(250);}
                                         catch (Exception ex) {ex.printStackTrace();}
                                         MyEdgeBetweennessClusterer edgeBetweennessClusterer = new MyEdgeBetweennessClusterer(numOfEdgesToRemove);
-                                        edgeBetweennessClusterer.transform(MyVars.g);
+                                        edgeBetweennessClusterer.transform(MyVars.directMarkovChain);
                                         for (Object e : edgeBetweennessClusterer.getEdgesRemoved()) {
-                                            String p = ((MyEdge) e).getSource().getName();
-                                            String s = ((MyEdge) e).getDest().getName();
+                                            String p = ((MyDirectEdge) e).getSource().getName();
+                                            String s = ((MyDirectEdge) e).getDest().getName();
                                             p = (p.contains("x") ? MySysUtil.decodeVariable(p) : MySysUtil.decodeNodeName(p));
                                             s = (s.contains("x") ? MySysUtil.decodeVariable(s) : MySysUtil.decodeNodeName(s));
                                             System.out.println(p + "-" + s);

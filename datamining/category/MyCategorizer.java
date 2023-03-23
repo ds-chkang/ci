@@ -1,6 +1,5 @@
 package datamining.category;
 
-import datamining.config.MySupplementaryVariableTable;
 import datamining.data.MyDataLoader;
 import datamining.data.MyFileMerger;
 import datamining.utils.message.MyMessageUtil;
@@ -24,17 +23,21 @@ extends MyDataLoader {
 
     public boolean categorize() {
         try {
-            if (!getCategoryInfo()) {
-                    MyMessageUtil.showErrorMsg("An exception occurred while gettting categorization information.");
+            if (MyVars.isDirectMarkovRelation) {
+                readDirectRelationInputData();
+            } else {
+                if (!getCategoryInfo()) {
+                    MyMessageUtil.showErrorMsg("Set the number of categories!");
                     return false;
                 } else {
-                if (!readInputData()) {
-                    MyMessageUtil.showErrorMsg("An exception occurred while reading in input data!");
-                    return false;
-                } else {
-                    createIntervals();
-                    display();
-                    return true;
+                    if (!readInputData()) {
+                        MyMessageUtil.showErrorMsg("Failed to read in input data!");
+                        return false;
+                    } else {
+                        createIntervals();
+                        display();
+                        return true;
+                    }
                 }
             }
         } catch (Exception ex) {
@@ -49,20 +52,9 @@ extends MyDataLoader {
      */
     private boolean getCategoryInfo() {
         try {
-            MySupplementaryVariableTable supplementVariableTbl = MyVars.app.getMsgBroker().getConfigPanel().getSupplimentaryVariableTable();
-            int supplemenatryBindingVariableCount = supplementVariableTbl.getRowCount();
-            for (int i = 0; i < supplemenatryBindingVariableCount; i++) { // loop the number of times as the number of supplementary variables.
-                if ((supplementVariableTbl.getCategoryType(i, 2)).trim().contains("REAL")) { // if supplementary variable categorized by real number.
-                    String howManyCategories = supplementVariableTbl.getCategoryNumber(i, 1);
-                    String categoryName = supplementVariableTbl.getVariableName(i, 0); // get supplementary variable name.
-                    int headerIndex = getHeadIndex(categoryName); // get location of supplementary variable in the headerloader.
-                    int numOfCategories = Integer.valueOf(howManyCategories); // get the number of categories of the current supplementary variable.
-                    categoryList.createCategoriesForRealVariable(new MyCategory(categoryName, 0.0, 0.0, headerIndex, numOfCategories)); // add category with given information above.
-                }
-            }
             return true;
         } catch (Exception ex) {
-            //ex.printStackTrace();
+            ex.printStackTrace();
         }
         return false;
     }
@@ -127,7 +119,7 @@ extends MyDataLoader {
     }
 
     private int getHeadIndex(String categoryName) {
-        return MyVars.app.getMsgBroker().getHeaderIndex(categoryName);
+        return MyVars.main.getMsgBroker().getHeaderIndex(categoryName);
     }
 
     /**

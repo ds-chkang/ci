@@ -2,8 +2,8 @@ package datamining.graph.analysis;
 
 import datamining.main.MyProgressBar;
 import datamining.graph.layout.MyStaticLayout;
-import datamining.graph.MyEdge;
-import datamining.graph.MyNode;
+import datamining.graph.MyDirectEdge;
+import datamining.graph.MyDirectNode;
 import datamining.utils.MyMathUtil;
 import datamining.utils.message.MyMessageUtil;
 import datamining.utils.system.MySysUtil;
@@ -22,7 +22,6 @@ import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 
 public class MyGraphAnalyzer
@@ -32,7 +31,7 @@ implements ActionListener, WindowListener {
     private MyAnalyzerGraph graph;
     protected JButton addBtn;
     private JTable table;
-    private MyNetworkAnalyzerViewer networkViewer;
+    private MyNetworkAnalyzerViewer graphViewer;
     private DefaultTableModel model;
     private JTextField searchTxt = new JTextField();
     protected JComboBox nodeOptionComboBoxMenu = new JComboBox();
@@ -60,11 +59,11 @@ implements ActionListener, WindowListener {
         viewerSplitPane.setDividerSize(5);
         viewerSplitPane.setLeftComponent(this.getLeftPanel());
         viewerSplitPane.setRightComponent(this.getRightPanel());
-        viewerSplitPane.setDividerLocation((int) (MySysUtil.getViewerHeight()*0.82));
+        viewerSplitPane.setDividerLocation((int) (MySysUtil.getViewerHeight()*0.83));
         viewerSplitPane.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent evt) {
                 viewerSplitPane.setDividerSize(5);
-                viewerSplitPane.setDividerLocation((int) (getWidth()*0.82));
+                viewerSplitPane.setDividerLocation((int) (getWidth()*0.83));
             }
         });
         this.getContentPane().add(viewerSplitPane, BorderLayout.CENTER);
@@ -192,35 +191,35 @@ implements ActionListener, WindowListener {
                     @Override public void run() {
                         if (nodeValueCheckBoxMenu.isSelected()) {
                             if (nodeNameCheckBoxMenu.isSelected()) {
-                                networkViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyNode, String>() {
-                                    @Override public String transform(MyNode n) {
-                                        return MySysUtil.getDecodedNodeName(n.getName()) + "[" + MyMathUtil.getCommaSeperatedNumber(n.getContribution()) + "] ";
+                                graphViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyDirectNode, String>() {
+                                    @Override public String transform(MyDirectNode n) {
+                                        return n.getName() + "[" + MyMathUtil.getCommaSeperatedNumber(n.getContribution()) + "] ";
                                     }
                                 });
                             } else {
-                                networkViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyNode, String>() {
-                                    @Override public String transform(MyNode n) {
+                                graphViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyDirectNode, String>() {
+                                    @Override public String transform(MyDirectNode n) {
                                         return MyMathUtil.getCommaSeperatedNumber(n.getContribution());
                                     }
                                 });
                             }
                         } else {
                             if (nodeNameCheckBoxMenu.isSelected()) {
-                                networkViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyNode, String>() {
-                                    @Override public String transform(MyNode n) {
-                                        return MySysUtil.getDecodedNodeName(n.getName());
+                                graphViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyDirectNode, String>() {
+                                    @Override public String transform(MyDirectNode n) {
+                                        return n.getName();
                                     }
                                 });
                             } else {
-                                networkViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyNode, String>() {
-                                    @Override public String transform(MyNode n) {
+                                graphViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyDirectNode, String>() {
+                                    @Override public String transform(MyDirectNode n) {
                                         return "";
                                     }
                                 });
                             }
                         }
-                        networkViewer.revalidate();
-                        networkViewer.repaint();
+                        graphViewer.revalidate();
+                        graphViewer.repaint();
                     }
                 }).start();
             }
@@ -235,35 +234,35 @@ implements ActionListener, WindowListener {
                     @Override public void run() {
                         if (nodeNameCheckBoxMenu.isSelected()) {
                             if (nodeValueCheckBoxMenu.isSelected()) {
-                                networkViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyNode, String>() {
-                                    @Override public String transform(MyNode n) {
-                                        return MySysUtil.getDecodedNodeName(n.getName()) + "[" + MyMathUtil.getCommaSeperatedNumber(n.getContribution()) + "] ";
+                                graphViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyDirectNode, String>() {
+                                    @Override public String transform(MyDirectNode n) {
+                                        return n.getName() + "[" + MyMathUtil.getCommaSeperatedNumber(n.getContribution()) + "] ";
                                     }
                                 });
                             } else {
-                                networkViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyNode, String>() {
-                                    @Override public String transform(MyNode n) {
-                                        return MySysUtil.getDecodedNodeName(n.getName());
+                                graphViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyDirectNode, String>() {
+                                    @Override public String transform(MyDirectNode n) {
+                                        return n.getName();
                                     }
                                 });
                             }
                         } else {
                             if (nodeValueCheckBoxMenu.isSelected()) {
-                                networkViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyNode, String>() {
-                                    @Override public String transform(MyNode n) {
+                                graphViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyDirectNode, String>() {
+                                    @Override public String transform(MyDirectNode n) {
                                         return MyMathUtil.getCommaSeperatedNumber(n.getContribution());
                                     }
                                 });
                             } else {
-                                networkViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyNode, String>() {
-                                    @Override public String transform(MyNode n) {
+                                graphViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyDirectNode, String>() {
+                                    @Override public String transform(MyDirectNode n) {
                                         return "";
                                     }
                                 });
                             }
                         }
-                        networkViewer.revalidate();
-                        networkViewer.repaint();
+                        graphViewer.revalidate();
+                        graphViewer.repaint();
                     }
                 }).start();
             }
@@ -278,27 +277,27 @@ implements ActionListener, WindowListener {
                     @Override public void run() {
                         if (edgeValueCheckBoxMenu.isSelected()) {
                             if (edgeValueComboBoxMenu.getSelectedIndex() == 0) {
-                                MyMessageUtil.showInfoMsg(networkViewer.plusNetworkAnalyzer, "Select an edge value, first.");
+                                MyMessageUtil.showInfoMsg(graphViewer.graphAnalyzer, "Select an edge value, first.");
                                 edgeValueCheckBoxMenu.setSelected(false);
                                 return;
                             }
 
-                            networkViewer.getRenderContext().setEdgeLabelTransformer(new Transformer<MyEdge, String>() {
-                                @Override public String transform(MyEdge e) {
-                                    String edgeContributionRatio = MyMathUtil.twoDecimalFormat(((double) e.getContribution() / e.getSource().getContribution()) * 100) + "%";
+                            graphViewer.getRenderContext().setEdgeLabelTransformer(new Transformer<MyDirectEdge, String>() {
+                                @Override public String transform(MyDirectEdge e) {
+                                    String edgeContributionRatio = MyMathUtil.twoDecimalFormat(((double) e.getContribution()/e.getSource().getContribution()) * 100) + "%";
                                     return MyMathUtil.getCommaSeperatedNumber(e.getContribution()) + " / " + MyMathUtil.getCommaSeperatedNumber(e.getSource().getContribution()) + " = " + edgeContributionRatio + " ";
                                 }
                             });
 
                         } else {
-                            networkViewer.getRenderContext().setEdgeLabelTransformer(new Transformer<MyEdge, String>() {
-                                @Override public String transform(MyEdge e) {
+                            graphViewer.getRenderContext().setEdgeLabelTransformer(new Transformer<MyDirectEdge, String>() {
+                                @Override public String transform(MyDirectEdge e) {
                                     return "";
                                 }
                             });
                         }
-                        networkViewer.revalidate();
-                        networkViewer.repaint();
+                        graphViewer.revalidate();
+                        graphViewer.repaint();
                     }
                 }).start();
             }
@@ -318,16 +317,16 @@ implements ActionListener, WindowListener {
                         try {
                             if (nodeWeightCheckBoxMenu.isSelected()) {
                                 if (nodeValueComboBoxMenu.getSelectedIndex() == 0) {
-                                    MyMessageUtil.showInfoMsg(networkViewer.plusNetworkAnalyzer, "Select a node value, first.");
+                                    MyMessageUtil.showInfoMsg(graphViewer.graphAnalyzer, "Select a node value, first.");
                                     nodeWeightCheckBoxMenu.setSelected(false);
                                     return;
                                 }
                                 if (nodeValueComboBoxMenu.getSelectedIndex() == 1) {
                                     edgeValueComboBoxMenu.setSelectedIndex(0);
-                                    networkViewer.getRenderContext().setVertexShapeTransformer(new Transformer<MyNode, Shape>() {
-                                        @Override public Shape transform(MyNode n) {
-                                            float sizeRatio = (float) n.getContribution() / networkViewer.MAX_NODE_VALUE;
-                                            float nodeSize = sizeRatio * (networkViewer.MAX_NODE_SIZE);
+                                    graphViewer.getRenderContext().setVertexShapeTransformer(new Transformer<MyDirectNode, Shape>() {
+                                        @Override public Shape transform(MyDirectNode n) {
+                                            float sizeRatio = (float) n.getContribution() / graphViewer.MAX_NODE_VALUE;
+                                            float nodeSize = sizeRatio * (graphViewer.MAX_NODE_SIZE);
                                             if (nodeSize < 25f) {
                                                 nodeSize = 15f;
                                             }
@@ -336,22 +335,22 @@ implements ActionListener, WindowListener {
                                     });
                                     edgeValueComboBoxMenu.setSelectedIndex(1);
                                 } else if (nodeValueComboBoxMenu.getSelectedIndex() == 0) {
-                                    networkViewer.getRenderContext().setVertexShapeTransformer(new Transformer<MyNode, Shape>() {
-                                        @Override public Shape transform(MyNode n) {
+                                    graphViewer.getRenderContext().setVertexShapeTransformer(new Transformer<MyDirectNode, Shape>() {
+                                        @Override public Shape transform(MyDirectNode n) {
                                             return new Ellipse2D.Double(-40, -40, 80, 80);
                                         }
                                     });
                                 }
-                                networkViewer.revalidate();
-                                networkViewer.repaint();
+                                graphViewer.revalidate();
+                                graphViewer.repaint();
                             } else {
-                                networkViewer.getRenderContext().setVertexShapeTransformer(new Transformer<MyNode, Shape>() {
-                                    @Override public Shape transform(MyNode n) {
+                                graphViewer.getRenderContext().setVertexShapeTransformer(new Transformer<MyDirectNode, Shape>() {
+                                    @Override public Shape transform(MyDirectNode n) {
                                         return new Ellipse2D.Double(-40, -40, 80, 80);
                                     }
                                 });
-                                networkViewer.revalidate();
-                                networkViewer.repaint();
+                                graphViewer.revalidate();
+                                graphViewer.repaint();
                             }
                         } catch (Exception ex) {
                             ex.printStackTrace();
@@ -370,33 +369,33 @@ implements ActionListener, WindowListener {
                     @Override public void run() {
                         if (edgeWeightCheckBoxMenu.isSelected()) {
                             if (edgeValueComboBoxMenu.getSelectedIndex() == 0) {
-                                MyMessageUtil.showInfoMsg(networkViewer.plusNetworkAnalyzer, "Select a node value, first.");
+                                MyMessageUtil.showInfoMsg(graphViewer.graphAnalyzer, "Select a node value, first.");
                                 edgeWeightCheckBoxMenu.setSelected(false);
                                 return;
                             }
                             if (edgeValueComboBoxMenu.getSelectedIndex() == 0) {
-                                networkViewer.getRenderContext().setEdgeStrokeTransformer(new Transformer<MyEdge, Stroke>() {
-                                    @Override public Stroke transform(MyEdge e) {
+                                graphViewer.getRenderContext().setEdgeStrokeTransformer(new Transformer<MyDirectEdge, Stroke>() {
+                                    @Override public Stroke transform(MyDirectEdge e) {
                                         return new BasicStroke(1f);
                                     }
                                 });
                             } else if (edgeValueComboBoxMenu.getSelectedIndex() == 1) {
-                                networkViewer.getRenderContext().setEdgeStrokeTransformer(new Transformer<MyEdge, Stroke>() {
-                                    @Override public Stroke transform(MyEdge e) {
-                                        return new BasicStroke((((float) e.getContribution() / networkViewer.MAX_EDGE_VALUE) * networkViewer.MAX_EDGE_SIZE)/2);
+                                graphViewer.getRenderContext().setEdgeStrokeTransformer(new Transformer<MyDirectEdge, Stroke>() {
+                                    @Override public Stroke transform(MyDirectEdge e) {
+                                        return new BasicStroke((((float) e.getContribution() / graphViewer.MAX_EDGE_VALUE) * graphViewer.MAX_EDGE_SIZE)/2);
                                     }
                                 });
                             }
-                            networkViewer.revalidate();
-                            networkViewer.repaint();
+                            graphViewer.revalidate();
+                            graphViewer.repaint();
                         } else {
-                            networkViewer.getRenderContext().setEdgeStrokeTransformer(new Transformer<MyEdge, Stroke>() {
-                                @Override public Stroke transform(MyEdge e) {
+                            graphViewer.getRenderContext().setEdgeStrokeTransformer(new Transformer<MyDirectEdge, Stroke>() {
+                                @Override public Stroke transform(MyDirectEdge e) {
                                     return new BasicStroke(1f);
                                 }
                             });
-                            networkViewer.revalidate();
-                            networkViewer.repaint();
+                            graphViewer.revalidate();
+                            graphViewer.repaint();
                         }
                     }
                 }).start();
@@ -437,9 +436,9 @@ implements ActionListener, WindowListener {
 
         this.graph = new MyAnalyzerGraph<>();
         MyStaticLayout staticLayout = new MyStaticLayout(this.graph, new Dimension(400, 500));
-        this.networkViewer = new MyNetworkAnalyzerViewer(new DefaultVisualizationModel<>(staticLayout, new Dimension(400, 500)), nodeOptionComboBoxMenu);
+        this.graphViewer = new MyNetworkAnalyzerViewer(new DefaultVisualizationModel<>(staticLayout, new Dimension(400, 500)),  this);
         leftPanel.add(topPanel, BorderLayout.NORTH);
-        leftPanel.add(this.networkViewer, BorderLayout.CENTER);
+        leftPanel.add(this.graphViewer, BorderLayout.CENTER);
         leftPanel.add(bottomPanel, BorderLayout.SOUTH);
         return leftPanel;
     }
@@ -477,7 +476,6 @@ implements ActionListener, WindowListener {
         this.searchTxt.setBorder(BorderFactory.createEtchedBorder());
         this.searchTxt.setFont(MyVars.f_bold_11);
         this.table.setRowSorter(sorter);
-        //this.loadNodes(new MyProgressBar(false));
         JScrollPane tableScrollPane = new JScrollPane(this.table);
         tableScrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(9, 0));
         tableScrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 9));
@@ -488,10 +486,10 @@ implements ActionListener, WindowListener {
     private void loadNodes(MyProgressBar pb) {
         try {
             int cnt = 0;
-            Collection<MyNode> nodes = MyVars.g.getVertices();
+            Collection<MyDirectNode> nodes = MyVars.directMarkovChain.getVertices();
             LinkedHashMap<String, Long> sortedNodes = new LinkedHashMap<>();
-            for (MyNode n : nodes) {
-                sortedNodes.put(n.getName(), n.getContribution());
+            for (MyDirectNode n : nodes) {
+                sortedNodes.put(n.getName(), (long)n.getContribution());
             }
 
             sortedNodes = MySysUtil.sortMapByLongValue(sortedNodes);
@@ -501,8 +499,8 @@ implements ActionListener, WindowListener {
                 this.model.addRow(
                     new String[]{
                             String.valueOf(++cnt),
-                            MySysUtil.decodeNodeName(n),
-                            MyMathUtil.getCommaSeperatedNumber(((MyNode) MyVars.g.vRefs.get(n)).getContribution())});
+                            n,
+                            MyMathUtil.getCommaSeperatedNumber(((MyDirectNode) MyVars.directMarkovChain.vRefs.get(n)).getContribution())});
                 totalWork += work;
                 pb.updateValue((int) totalWork, nodes.size());
             }
@@ -530,15 +528,15 @@ implements ActionListener, WindowListener {
         try {
             int cnt = 0;
             LinkedHashMap<String, Long> sortedNodes = new LinkedHashMap<>();
-            Collection<MyNode> predecessors = MyVars.g.getPredecessors(networkViewer.graphMouseListener.selectedNode);
-            for (MyNode n : predecessors) {
-                sortedNodes.put(n.getName(), n.getContribution());
+            Collection<MyDirectNode> predecessors = MyVars.directMarkovChain.getPredecessors(graphViewer.graphMouseListener.selectedNode);
+            for (MyDirectNode n : predecessors) {
+                sortedNodes.put(n.getName(), (long)n.getContribution());
             }
 
             sortedNodes = MySysUtil.sortMapByLongValue(sortedNodes);
             pb.updateValue(75, 100);
             for (String n : sortedNodes.keySet()) {
-                this.model.addRow(new String[]{String.valueOf(++cnt), MySysUtil.decodeNodeName(n), MyMathUtil.getCommaSeperatedNumber(sortedNodes.get(n))});
+                this.model.addRow(new String[]{String.valueOf(++cnt), n, MyMathUtil.getCommaSeperatedNumber(sortedNodes.get(n))});
             }
 
             pb.updateValue(100, 100);
@@ -550,15 +548,15 @@ implements ActionListener, WindowListener {
         try {
             int cnt = 0;
             LinkedHashMap<String, Long> sortedNodes = new LinkedHashMap<>();
-            Collection<MyNode> successors = MyVars.g.getSuccessors(networkViewer.graphMouseListener.selectedNode);
-            for (MyNode n : successors) {
-                sortedNodes.put(n.getName(), n.getContribution());
+            Collection<MyDirectNode> successors = MyVars.directMarkovChain.getSuccessors(graphViewer.graphMouseListener.selectedNode);
+            for (MyDirectNode n : successors) {
+                sortedNodes.put(n.getName(), (long)n.getContribution());
             }
 
             sortedNodes = MySysUtil.sortMapByLongValue(sortedNodes);
             pb.updateValue(75, 100);
             for (String n : sortedNodes.keySet()) {
-                this.model.addRow(new String[]{String.valueOf(++cnt), MySysUtil.decodeNodeName(n), MyMathUtil.getCommaSeperatedNumber(sortedNodes.get(n))});
+                this.model.addRow(new String[]{String.valueOf(++cnt), n, MyMathUtil.getCommaSeperatedNumber(sortedNodes.get(n))});
             }
 
             pb.updateValue(100, 100);
@@ -567,43 +565,43 @@ implements ActionListener, WindowListener {
     }
 
     @Override public void actionPerformed(ActionEvent e) {
-        final MyGraphAnalyzer plusNetworkAnalyzer = this;
+        final MyGraphAnalyzer networkAnalyzer = this;
         try {
             new Thread(new Runnable() {
                 @Override public void run() {
                     try {
                         if (e.getSource() == addBtn) {
-                            if (networkViewer.graphMouseListener.selectedNode == null && nodeOptionComboBoxMenu.getSelectedIndex() > 1) {
-                                MyMessageUtil.showInfoMsg(plusNetworkAnalyzer, "Select a node, first.");
-                                nodeOptionComboBoxMenu.removeActionListener(plusNetworkAnalyzer);
+                            if (graphViewer.graphMouseListener.selectedNode == null && nodeOptionComboBoxMenu.getSelectedIndex() > 1) {
+                                MyMessageUtil.showInfoMsg(networkAnalyzer, "Select a node, first.");
+                                nodeOptionComboBoxMenu.removeActionListener(networkAnalyzer);
                                 nodeOptionComboBoxMenu.setSelectedIndex(0);
-                                nodeOptionComboBoxMenu.addActionListener(plusNetworkAnalyzer);
-                            } else if (networkViewer.graphMouseListener.selectedNode != null && nodeOptionComboBoxMenu.getSelectedIndex() < 2) {
-                                MyMessageUtil.showInfoMsg(plusNetworkAnalyzer, "Select a predecessor or successor.");
-                                nodeOptionComboBoxMenu.removeActionListener(plusNetworkAnalyzer);
+                                nodeOptionComboBoxMenu.addActionListener(networkAnalyzer);
+                            } else if (graphViewer.graphMouseListener.selectedNode != null && nodeOptionComboBoxMenu.getSelectedIndex() < 2) {
+                                MyMessageUtil.showInfoMsg(networkAnalyzer, "Select a predecessor or successor.");
+                                nodeOptionComboBoxMenu.removeActionListener(networkAnalyzer);
                                 nodeOptionComboBoxMenu.setSelectedIndex(0);
-                                nodeOptionComboBoxMenu.addActionListener(plusNetworkAnalyzer);
+                                nodeOptionComboBoxMenu.addActionListener(networkAnalyzer);
                             }  else {
                                 addNodeToGraph();
-                                networkViewer.setEdgeContributionValue();
-                                networkViewer.graphMouseListener.selectedNode = null;
+                                graphViewer.setEdgeContributionValue();
+                                graphViewer.graphMouseListener.selectedNode = null;
+                                nodeOptionComboBoxMenu.removeActionListener(networkAnalyzer);
+                                nodeOptionComboBoxMenu.setSelectedIndex(0);
+                                nodeOptionComboBoxMenu.addActionListener(networkAnalyzer);
                             }
-                            nodeOptionComboBoxMenu.removeActionListener(plusNetworkAnalyzer);
-                            nodeOptionComboBoxMenu.setSelectedIndex(0);
-                            nodeOptionComboBoxMenu.addActionListener(plusNetworkAnalyzer);
                         } else if (e.getSource() == nodeOptionComboBoxMenu) {
-                            if (graph.getVertexCount() == 0 && networkViewer.graphMouseListener.selectedNode == null  && nodeOptionComboBoxMenu.getSelectedIndex() > 1) {
-                                MyMessageUtil.showInfoMsg(plusNetworkAnalyzer, "Add a node to the graph.");
-                                nodeOptionComboBoxMenu.removeActionListener(plusNetworkAnalyzer);
+                            if (graph.getVertexCount() == 0 && graphViewer.graphMouseListener.selectedNode == null  && nodeOptionComboBoxMenu.getSelectedIndex() > 1) {
+                                MyMessageUtil.showInfoMsg(networkAnalyzer, "Add a node to the graph.");
+                                nodeOptionComboBoxMenu.removeActionListener(networkAnalyzer);
                                 nodeOptionComboBoxMenu.setSelectedIndex(0);
-                                nodeOptionComboBoxMenu.addActionListener(plusNetworkAnalyzer);
-                            } else if (networkViewer.graphMouseListener.selectedNode != null && nodeOptionComboBoxMenu.getSelectedIndex() < 2) {
-                                MyMessageUtil.showInfoMsg(plusNetworkAnalyzer, "Select a predecessor or successor.");
-                                nodeOptionComboBoxMenu.removeActionListener(plusNetworkAnalyzer);
+                                nodeOptionComboBoxMenu.addActionListener(networkAnalyzer);
+                            } else if (graphViewer.graphMouseListener.selectedNode != null && nodeOptionComboBoxMenu.getSelectedIndex() < 2) {
+                                MyMessageUtil.showInfoMsg(networkAnalyzer, "Select a predecessor or successor.");
+                                nodeOptionComboBoxMenu.removeActionListener(networkAnalyzer);
                                 nodeOptionComboBoxMenu.setSelectedIndex(0);
-                                nodeOptionComboBoxMenu.addActionListener(plusNetworkAnalyzer);
-                            } if (networkViewer.graphMouseListener.selectedNode == null && nodeOptionComboBoxMenu.getSelectedIndex() > 1) {
-                                MyMessageUtil.showInfoMsg(plusNetworkAnalyzer, "Select a node, first.");
+                                nodeOptionComboBoxMenu.addActionListener(networkAnalyzer);
+                            } if (graphViewer.graphMouseListener.selectedNode == null && nodeOptionComboBoxMenu.getSelectedIndex() > 1) {
+                                MyMessageUtil.showInfoMsg(networkAnalyzer, "Select a node, first.");
                             } else if (nodeOptionComboBoxMenu.getSelectedItem().toString().contains("NODE")) {
                                 MyProgressBar pb = new MyProgressBar(false);
                                 removeTableRecords(pb);
@@ -628,91 +626,91 @@ implements ActionListener, WindowListener {
 
     protected void addNodeToGraph() {
         String tableNodeName = this.table.getValueAt(table.getSelectedRow(), 1).toString();
-        MyNode n = ((MyNode) MyVars.g.vRefs.get(MyVars.nodeNameMap.get(tableNodeName)));
+        MyDirectNode n = ((MyDirectNode) MyVars.directMarkovChain.vRefs.get(tableNodeName));
         if (this.graph.vRefs.containsKey(n.getName())) {
             if (nodeOptionComboBoxMenu.getSelectedIndex() <= 1) {
                 MyMessageUtil.showInfoMsg(this, "The selected node already exists in the graph.");
                 return;
             } else if (nodeOptionComboBoxMenu.getSelectedItem().toString().contains("SUCCESSOR")) {
-                String edge = networkViewer.graphMouseListener.selectedNode.getName() + "-" + n.getName();
+                String edge = graphViewer.graphMouseListener.selectedNode.getName() + "-" + n.getName();
                 if (!this.graph.edRefs.contains(edge)) {
-                    Collection<MyEdge> outEdges = MyVars.g.getOutEdges(networkViewer.graphMouseListener.selectedNode);
-                    for (MyEdge e : outEdges) {
+                    Collection<MyDirectEdge> outEdges = MyVars.directMarkovChain.getOutEdges(graphViewer.graphMouseListener.selectedNode);
+                    for (MyDirectEdge e : outEdges) {
                         if (e.getDest() == n) {
-                            this.graph.addEdge(e, networkViewer.graphMouseListener.selectedNode, n);
+                            this.graph.addEdge(e, graphViewer.graphMouseListener.selectedNode, n);
                             this.graph.edRefs.add(edge);
                             break;
                         }
                     }
                 } else {
-                    String selectedNodeName = (networkViewer.graphMouseListener.selectedNode.getName().contains("x") ? MySysUtil.decodeVariable(networkViewer.graphMouseListener.selectedNode.getName()) : MySysUtil.getDecodedNodeName(networkViewer.graphMouseListener.selectedNode.getName()));
+                    String selectedNodeName = (graphViewer.graphMouseListener.selectedNode.getName().contains("x") ? MySysUtil.decodeVariable(graphViewer.graphMouseListener.selectedNode.getName()) : MySysUtil.getDecodedNodeName(graphViewer.graphMouseListener.selectedNode.getName()));
                     MyMessageUtil.showInfoMsg(this, "An edge between " + selectedNodeName + " and " + n.getName() + " already exists.");
                 }
             }
         } else if (this.nodeOptionComboBoxMenu.getSelectedItem().toString().contains("NODE")) {
             this.graph.vRefs.put(n.getName(), n);
-            if (networkViewer.mouseClickedLocation != null) {
-                networkViewer.getGraphLayout().setLocation(n, new Point2D.Double(networkViewer.mouseClickedLocation.getX()+150, networkViewer.mouseClickedLocation.getY()));
+            if (graphViewer.mouseClickedLocation != null) {
+                graphViewer.getGraphLayout().setLocation(n, new Point2D.Double(graphViewer.mouseClickedLocation.getX()+150, graphViewer.mouseClickedLocation.getY()));
                 this.graph.addVertex(n);
             } else {
-                networkViewer.getGraphLayout().setLocation(n, new Point2D.Double(getWidth()/2, getHeight()/2));
+                graphViewer.getGraphLayout().setLocation(n, new Point2D.Double(getWidth()/2, getHeight()/2));
                 this.graph.addVertex(n);
             }
-            networkViewer.mouseClickedLocation = null;
+            graphViewer.mouseClickedLocation = null;
 
-            if (networkViewer.MAX_NODE_VALUE < n.getContribution()) {
-                networkViewer.MAX_NODE_VALUE = n.getContribution();
+            if (graphViewer.MAX_NODE_VALUE < n.getContribution()) {
+                graphViewer.MAX_NODE_VALUE = n.getContribution();
             }
         } else if (nodeOptionComboBoxMenu.getSelectedItem().toString().contains("PREDECESSOR")) {
             this.graph.vRefs.put(n.getName(), n);
-            if (networkViewer.mouseClickedLocation != null) {
-                networkViewer.getGraphLayout().setLocation(n, new Point2D.Double(networkViewer.mouseClickedLocation.getX()+100, networkViewer.mouseClickedLocation.getY()+150));
+            if (graphViewer.mouseClickedLocation != null) {
+                graphViewer.getGraphLayout().setLocation(n, new Point2D.Double(graphViewer.mouseClickedLocation.getX()+100, graphViewer.mouseClickedLocation.getY()+150));
                 this.graph.addVertex(n);
             } else {
-                networkViewer.getGraphLayout().setLocation(n, new Point2D.Double(getWidth()/2, getHeight()/2));
+                graphViewer.getGraphLayout().setLocation(n, new Point2D.Double(getWidth()/2, getHeight()/2));
                 this.graph.addVertex(n);
             }
-            networkViewer.mouseClickedLocation = null;
+            graphViewer.mouseClickedLocation = null;
 
-            if (networkViewer.MAX_NODE_VALUE < n.getContribution()) {
-                networkViewer.MAX_NODE_VALUE = n.getContribution();
+            if (graphViewer.MAX_NODE_VALUE < n.getContribution()) {
+                graphViewer.MAX_NODE_VALUE = n.getContribution();
             }
 
-            Collection<MyEdge> inEdges = MyVars.g.getInEdges(this.networkViewer.graphMouseListener.selectedNode);
-            for (MyEdge e : inEdges) {
-                if (n.getName().equals(e.getSource().getName()) && e.getDest().getName().equals(networkViewer.graphMouseListener.selectedNode.getName())) {
-                    this.graph.addEdge(e, n, networkViewer.graphMouseListener.selectedNode);
+            Collection<MyDirectEdge> inEdges = MyVars.directMarkovChain.getInEdges(this.graphViewer.graphMouseListener.selectedNode);
+            for (MyDirectEdge e : inEdges) {
+                if (n.getName().equals(e.getSource().getName()) && e.getDest().getName().equals(graphViewer.graphMouseListener.selectedNode.getName())) {
+                    this.graph.addEdge(e, n, graphViewer.graphMouseListener.selectedNode);
                     this.graph.edRefs.add(e.getSource().getName() + "-" + e.getDest().getName());
-                    if (this.networkViewer.MAX_EDGE_VALUE < e.getContribution()) {
-                        this.networkViewer.MAX_EDGE_VALUE = e.getContribution();
+                    if (this.graphViewer.MAX_EDGE_VALUE < e.getContribution()) {
+                        this.graphViewer.MAX_EDGE_VALUE = e.getContribution();
                     }
                     break;
                 }
             }
         } else if (this.nodeOptionComboBoxMenu.getSelectedItem().toString().contains("SUCCESSOR")) {
             this.graph.vRefs.put(n.getName(), n);
-            if (networkViewer.mouseClickedLocation != null) {
-                networkViewer.getGraphLayout().setLocation(n, new Point2D.Double(networkViewer.mouseClickedLocation.getX()+800, networkViewer.mouseClickedLocation.getY()+150));
+            if (graphViewer.mouseClickedLocation != null) {
+                graphViewer.getGraphLayout().setLocation(n, new Point2D.Double(graphViewer.mouseClickedLocation.getX()+800, graphViewer.mouseClickedLocation.getY()+150));
                 this.graph.addVertex(n);
             } else {
-                networkViewer.getGraphLayout().setLocation(n, new Point2D.Double(getWidth()/2, getHeight()/2));
+                graphViewer.getGraphLayout().setLocation(n, new Point2D.Double(getWidth()/2, getHeight()/2));
                 this.graph.addVertex(n);
             }
-            networkViewer.mouseClickedLocation = null;
-            if (networkViewer.MAX_NODE_VALUE < n.getContribution()) {
-                networkViewer.MAX_NODE_VALUE = n.getContribution();
+            graphViewer.mouseClickedLocation = null;
+            if (graphViewer.MAX_NODE_VALUE < n.getContribution()) {
+                graphViewer.MAX_NODE_VALUE = n.getContribution();
             }
 
-            String userSelectedEdgeName = networkViewer.graphMouseListener.selectedNode.getName() + "-" + n.getName();
+            String userSelectedEdgeName = graphViewer.graphMouseListener.selectedNode.getName() + "-" + n.getName();
             if (!this.graph.edRefs.contains(userSelectedEdgeName)) {
-                Collection<MyEdge> outEdges = MyVars.g.getOutEdges(networkViewer.graphMouseListener.selectedNode);
-                for (MyEdge e : outEdges) {
+                Collection<MyDirectEdge> outEdges = MyVars.directMarkovChain.getOutEdges(graphViewer.graphMouseListener.selectedNode);
+                for (MyDirectEdge e : outEdges) {
                     String exEdName = e.getSource().getName() + "-" + e.getDest().getName();
                     if (exEdName.equals(userSelectedEdgeName)) {
-                        this.graph.addEdge(e, networkViewer.graphMouseListener.selectedNode, n);
+                        this.graph.addEdge(e, graphViewer.graphMouseListener.selectedNode, n);
                         this.graph.edRefs.add(userSelectedEdgeName);
-                        if (this.networkViewer.MAX_EDGE_VALUE < e.getContribution()) {
-                            this.networkViewer.MAX_EDGE_VALUE = e.getContribution();
+                        if (this.graphViewer.MAX_EDGE_VALUE < e.getContribution()) {
+                            this.graphViewer.MAX_EDGE_VALUE = e.getContribution();
                         }
                         break;
                     }
@@ -726,11 +724,11 @@ implements ActionListener, WindowListener {
 
         String statTxt = "N.: " + MyMathUtil.getCommaSeperatedNumber(graph.getVertexCount()) + "   " +
                          "E.: " + MyMathUtil.getCommaSeperatedNumber(graph.getEdgeCount()) + "   " +
-                         "MAX. N. V.: " + MyMathUtil.twoDecimalFormat(networkViewer.MAX_NODE_VALUE) + "   " +
-                         "MAX. E. V.: " + MyMathUtil.twoDecimalFormat(networkViewer.MAX_EDGE_VALUE);
+                         "MAX. N. V.: " + MyMathUtil.twoDecimalFormat(graphViewer.MAX_NODE_VALUE) + "   " +
+                         "MAX. E. V.: " + MyMathUtil.twoDecimalFormat(graphViewer.MAX_EDGE_VALUE);
         this.statisticLabel.setText(statTxt);
-        this.networkViewer.revalidate();
-        this.networkViewer.repaint();
+        this.graphViewer.revalidate();
+        this.graphViewer.repaint();
     }
 
     @Override public void windowOpened(WindowEvent e) {dispose();}

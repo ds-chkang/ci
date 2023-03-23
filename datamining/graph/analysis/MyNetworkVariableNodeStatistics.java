@@ -1,7 +1,7 @@
 package datamining.graph.analysis;
 
+import datamining.graph.MyDirectNode;
 import datamining.main.MyProgressBar;
-import datamining.graph.MyNode;
 import datamining.utils.MyMathUtil;
 import datamining.utils.system.MySysUtil;
 import datamining.utils.system.MyVars;
@@ -40,10 +40,10 @@ implements ActionListener {
     private JTextField searchTxt = new JTextField();
     private JButton save = new JButton(" SAVE ");
     private MyNetworkAnalyzerViewer funnelViewer;
-    private MyNode currentSelectedNode;
+    private MyDirectNode currentSelectedNode;
     private JPanel contentPanel = new JPanel();
 
-    public MyNetworkVariableNodeStatistics(MyNetworkAnalyzerViewer funnelViewer, MyNode currentSelectedNode) {
+    public MyNetworkVariableNodeStatistics(MyNetworkAnalyzerViewer funnelViewer, MyDirectNode currentSelectedNode) {
         super("VARIABLE NODE STATISTICS");
         this.funnelViewer = funnelViewer;
         this.currentSelectedNode = currentSelectedNode;

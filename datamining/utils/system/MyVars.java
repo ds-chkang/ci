@@ -1,10 +1,11 @@
 package datamining.utils.system;
 
 import datamining.feature.MyVariableMap;
-import datamining.graph.MyGraph;
-import datamining.graph.MyDashBoard;
-import datamining.graph.MyNode;
-import datamining.graph.MyViewer;
+import datamining.graph.MyDirectMarkovChain;
+import datamining.graph.MyDirectMarkovChainDashBoard;
+import datamining.graph.MyDirectMarkovChainViewer;
+import datamining.graph.MyDirectNode;
+
 import datamining.main.MyMedousa;
 
 import java.util.*;
@@ -23,27 +24,23 @@ public class MyVars {
     public static Font f_bold_12 = new Font("Noto Sans", Font.BOLD, 12);
     public static Font f_bold_11 = new Font("Noto Sans", Font.BOLD, 11);
     public static Font f_bold_10 = new Font("Noto Sans", Font.BOLD, 10);
-    public static Font f_bold_9 = new Font("Noto Sans", Font.BOLD, 9);
     public static Font f_pln_6 = new Font("Noto Sans", Font.PLAIN, 6);
     public static Font f_pln_13 = new Font("Noto Sans", Font.PLAIN, 13);
     public static Font f_bold_22 = new Font("Tahoma", Font.BOLD, 22);
     public static Font f_bold_25 = new Font("Noto Sans", Font.BOLD, 25);
     public final static Font tahomaPlainFont12 = new Font("Tahoma", Font.PLAIN, 12);
-    public final static Font tahomaPlainFont0 = new Font("Tahoma", Font.PLAIN, 0);
     public final static Font tahomaPlainFont13 = new Font("Tahoma", Font.PLAIN, 13);
     public final static Font tahomaPlainFont11 = new Font("Tahoma", Font.PLAIN, 11);
     public final static Font tahomaPlainFont10 = new Font("Tahoma", Font.PLAIN, 10);
     public final static Font tahomaPlainFont9 = new Font("Tahoma", Font.PLAIN, 9);
-    public final static Font tahomaPlainFont7 = new Font("Tahoma", Font.PLAIN, 7);
-    public final static Font tahomaBoldFont13 = new Font("Tahoma", Font.BOLD, 13);
     public final static Font tahomaBoldFont12 = new Font("Tahoma", Font.BOLD, 12);
     public final static Font tahomaBoldFont10 = new Font("Tahoma", Font.BOLD, 10);
     public final static Font tahomaBoldFont11 = new Font("Tahoma", Font.BOLD, 11);
 
     public static String outputDir = "";
-    public static MyGraph g;
+    public static MyDirectMarkovChain directMarkovChain;
     public static String [][] seqs;
-    public static MyMedousa app = null;
+    public static MyMedousa main = null;
     public static HashMap<String, String> itemToIdMap = null;
     public static int mxDepth = 0;
     public static int diameter = 0;
@@ -56,23 +53,22 @@ public class MyVars {
     public static boolean isTimeOn = false;
     public static boolean isSupplementaryOn = false;
     public static int totalRecords;
-    public static int minSub;
-    public static String patternCountSymbol = "#";
     public static boolean isDirectMarkovRelation = false;
     public static int edgeOrderByComboBoxIdx = -1;
     public static int nodeOrderByComboBoxIdx = -1;
-    public static int BAR_CHART_RECORD_LIMIT = 40;
+    public static int BAR_CHART_RECORD_LIMIT = 35;
     public static boolean isAppStarted = false;
-    public static Set<String> edgeLabelSet = new HashSet<>();
-    public static Set<String> nodeLabelSet = new HashSet<>();
+    public static java.util.List<Set<MyDirectNode>> connectedComponentCountsByGraph = new ArrayList<>();
+    public static MyVariableMap variableToIdMap = new MyVariableMap();
+    public static Map<String, String> edgeValues = new HashMap<>();
+    public static Set<String> edgeLabels = new HashSet<>();
+    public static Set<String> nodeLabels = new HashSet<>();
+    public static Map<String, String> nodeValues = new HashMap<>();
     public static Map<Integer, Long> pathLengthByDepthMap = new HashMap<>();
     public static Map<String, String> nodeNameMap = new HashMap<>();
-    public static Map<String, String> edgeValueMap = new HashMap<>();
-    public static Map<String, String> nodeValueMap = new HashMap<>();
-    public static MyVariableMap variableToIdMap = new MyVariableMap();
-    public static java.util.List<Set<MyNode>> connectedComponentCountsByGraph = new ArrayList<>();
-    public static MyDashBoard dashBoard;
-    public static MyViewer getViewer() {return MyVars.app.getMsgBroker().getPlusMarkovChainContainer();}
+    public static Set<String> edgeValueSet = new HashSet<>();
+    public static MyDirectMarkovChainDashBoard directMarkovChainDashBoard;
+    public static MyDirectMarkovChainViewer getDirectGraphViewer() {return MyVars.main.getMsgBroker().getDirectMarkovChainContainer();}
     public static String nodeLabelFileExt = ".nodelbl";
     public static String nodeValueFileExt = ".nodeVal";
     public static String edgeLabelFileExt = ".edgelbl";
@@ -80,8 +76,8 @@ public class MyVars {
     public static String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
     public static final String stopAppMsg = "Would you like to close medousa?";
     public static final String statusAppVerMsg = " MEDOUSA CONNECTED INTELLIGENCE VERSION 1.0 IS RUNNING.";
-    public static String appFrameTitleMsg = "medousa 1.0";
-    public static String appTitleMsg = "medousa - Connected Intelligence";
+    public final static String appFrameTitleMsg = "medousa 1.0";
+    public final static String appTitleMsg = "medousa - Connected Intelligence";
     public static String dateSecurityFileName = "thomas.sec";
     public static String dateSecurityFormat = "MM/dd/yyyy";
     public static final String commaDelimeter = ",";
@@ -94,4 +90,5 @@ public class MyVars {
     public static String durationSeparator = "#";
     public static String inputSequenceFile = "";
     public static String sequenceFileName = "";
+    public static Thread currentThread = null;
 }

@@ -1,13 +1,8 @@
 package datamining.main;
 
 import datamining.broker.MyMessageBroker;
-import datamining.graph.MyDashBoard;
-import datamining.graph.stats.MyGraphLevelNodeValueBarChart;
-import datamining.graph.stats.depthnode.MyDepthLevelNeighborNodeValueBarChart;
-import datamining.graph.stats.MyGraphLevelEdgeValueBarChart;
-import datamining.graph.stats.multinode.MyMultiLevelEdgeValueBarChart;
-import datamining.utils.MyNodeUtil;
-import datamining.utils.MyViewerControlComponentUtil;
+import datamining.graph.MyDirectMarkovChainDashBoard;
+import datamining.graph.MyDirectMarkovChainViewer;
 import datamining.utils.security.MyMultipleInstanceRunMonitor;
 import datamining.utils.message.MyMessageUtil;
 import datamining.utils.system.MyVars;
@@ -19,8 +14,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class MyMedousa
-extends JFrame
-implements ComponentListener {
+extends JFrame {
     private JDesktopPane deskpane;
     private MyToolBar toolBar;
     private JTabbedPane tabbedPane;
@@ -28,10 +22,10 @@ implements ComponentListener {
     private JPanel tabbedPanePanel;
     public MyMedousa() {
         try {
-            MyVars.app = this;
-            MyVars.app.addComponentListener(this);
+            MyVars.main = this;
             Thread t = new Thread(new Runnable() {
-                @Override public void run() {
+                @Override
+                public void run() {
                     try {
                         deskpane = new JDesktopPane();
                         tabbedPane = new JTabbedPane();
@@ -51,9 +45,10 @@ implements ComponentListener {
             });
 
             Thread logoThread = new Thread(new Runnable() {
-                @Override public void run() {
+                @Override
+                public void run() {
                     try {
-                        MyLogoPanel.launchLogo(MyVars.app);
+                        MyLogoPanel.launchLogo(MyVars.main);
                         Thread.sleep(2700);
                         MyLogoPanel.disposeLogo();
                         Thread.sleep(300);
@@ -86,7 +81,8 @@ implements ComponentListener {
         this.setPreferredSize(new Dimension(800, 800));
 
         this.addWindowListener(new WindowAdapter() {
-            @Override public void windowClosing(WindowEvent e) {
+            @Override
+            public void windowClosing(WindowEvent e) {
             int response = MyMessageUtil.showConfirmMessage(MyVars.stopAppMsg);
             if (response == 1) {System.exit(0);}
             }
@@ -99,32 +95,39 @@ implements ComponentListener {
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
 
+    public static void setUI() {
+        try {
+            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+            UIDefaults defaults = UIManager.getLookAndFeelDefaults();
+            ToolTipManager.sharedInstance().setInitialDelay(100);
+            ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
+            defaults.put("Table.gridColor", Color.decode("#9da4b2"));
+            defaults.put("Table.disabled", false);
+            defaults.put("Table.showGrid", true);
+            defaults.put("Tree.drawHorizontalLines", true);
+            defaults.put("JTree.lineStyle", "Angled");
+            defaults.put("Tree.drawVerticalLines", true);
+            defaults.put("Tree.linesStyle", "dashed");
+            defaults.put("ProgressBar[Enabled+Indeterminate].foregroundPainter", new MyIndeterminateProgressBarRegionPainter());
+            defaults.put("Table.intercellSpacing", new Dimension(2, 1));
+            defaults.put("ScrollBar.thumb", new ColorUIResource(0, 0, 0));
+            defaults.put("nimbusOrange", defaults.get("nimbusBase"));
+            defaults.put("Slider.thumbHeight", 13); // change height
+            defaults.put("Slider.thumbWidth", 13); // change width
+            defaults.put("OptionPane.minimumSize", new Dimension(450, 130));
+            defaults.put("ToolTip.font", MyVars.f_pln_12);
+            defaults.put("OptionPane.okButtonText", "    OK    ");
+        } catch (Exception ex) {}
+    }
+
     public static void main(String [] args) throws Exception {
         SwingUtilities.invokeLater(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 try {
                     MyDateMonitor.checkDate();
                     MyMultipleInstanceRunMonitor.monitorInstances();
-                    UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-                    UIDefaults defaults = UIManager.getLookAndFeelDefaults();
-                    ToolTipManager.sharedInstance().setInitialDelay(100);
-                    ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
-                    defaults.put("Table.gridColor", Color.decode("#9da4b2"));
-                    defaults.put("Table.disabled", false);
-                    defaults.put("Table.showGrid", true);
-                    defaults.put("Tree.drawHorizontalLines", true);
-                    defaults.put("JTree.lineStyle", "Angled");
-                    defaults.put("Tree.drawVerticalLines", true);
-                    defaults.put("Tree.linesStyle", "dashed");
-                    defaults.put("ProgressBar[Enabled+Indeterminate].foregroundPainter", new MyIndeterminateProgressBarRegionPainter());
-                    defaults.put("Table.intercellSpacing", new Dimension(2, 1));
-                    defaults.put("ScrollBar.thumb", new ColorUIResource(0, 0, 0));
-                    defaults.put("nimbusOrange", defaults.get("nimbusBase"));
-                    defaults.put("Slider.thumbHeight", 13); // change height
-                    defaults.put("Slider.thumbWidth", 13); // change width
-                    defaults.put("OptionPane.minimumSize", new Dimension(450, 130));
-                    defaults.put("ToolTip.font", MyVars.f_pln_12);
-                    defaults.put("OptionPane.okButtonText", "    OK    ");
+                    MyMedousa.setUI();
                     MyMedousa medousa = new MyMedousa();
                     medousa.decorate();
                     medousa.setAlwaysOnTop(true);
@@ -138,101 +141,21 @@ implements ComponentListener {
 
     }
 
-    public void setGrpahViewer(JPanel graphContainer) {
+    public void setDirectGraph(JPanel graphContainer) {
         try {
-            MyNodeUtil.setContributionToNodes();
-            MyVars.getViewer().vc.setGraphPanel(graphContainer);
+            this.getDirectMarkovChainDashBoard().setTopLevelDashboard((MyDirectMarkovChainViewer) graphContainer);
         } catch (Exception ex) {}
     }
 
-    public JPanel getGraphViewerPanel() { return MyVars.getViewer().vc.getNetworkChart(); }
     public JTabbedPane getContentTabbedPane() {return this.tabbedPane;}
     public MyToolBar getToolBar() {return this.toolBar;}
     public MyMessageBroker getMsgBroker() {return this.msgBroker;}
-    public MyDashBoard getDashboard() {return MyVars.dashBoard;}
+    public MyDirectMarkovChainDashBoard getDirectMarkovChainDashBoard() {return MyVars.directMarkovChainDashBoard;}
 
-    public MyDashBoard resetDashboard() {
-        MyVars.dashBoard = new MyDashBoard();
-        return MyVars.dashBoard;
+    public MyDirectMarkovChainDashBoard resetDirectMarkovChainDashBoard() {
+        MyVars.directMarkovChainDashBoard = new MyDirectMarkovChainDashBoard();
+        return MyVars.directMarkovChainDashBoard;
     }
 
-    private synchronized void updateSplitPaneDividerLocations() {
-        if (MyVars.getViewer() != null && MyVars.app.getWidth() >= 1200) {
-            if (MyVars.getViewer().vc.nodeValueBarChart.isSelected()) {
-                MyViewerControlComponentUtil.removeBarChartsFromViewer();
-                MyViewerControlComponentUtil.removeEdgeValueBarChartFromViewer();
-                if (MyVars.getViewer().vc.depthSelecter.getSelectedIndex() > 0) {
-                    if (MyVars.getViewer().vc.edgeValueSelecter.getSelectedIndex() < 2) {
-                        MyViewerControlComponentUtil.removeEdgeValueBarChartFromViewer();
-                        return;
-                    }
-                    if (MyVars.getViewer().vc.depthNeighborNodeTypeSelector.getSelectedItem().toString().contains("P.")) {
-                        if (MyVars.getViewer().vc.nodeValueBarChart.isSelected()) {
-                            MyVars.getViewer().remove(MyVars.getViewer().depthNodeLevelNodeValueBarChart);
-                            MyVars.getViewer().depthNodeLevelNeighborNodeValueBarChart = new MyDepthLevelNeighborNodeValueBarChart();
-                            MyVars.getViewer().depthNodeLevelNeighborNodeValueBarChart.setPredecessorValueBarChartsForDepthNodes();
-                            MyVars.getViewer().add(MyVars.getViewer().depthNodeLevelNeighborNodeValueBarChart);
-                        }
-                    } else if (MyVars.getViewer().vc.depthNeighborNodeTypeSelector.getSelectedItem().toString().contains("S.")) {
-                        if (MyVars.getViewer().vc.nodeValueBarChart.isSelected()) {
-                            MyVars.getViewer().remove(MyVars.getViewer().depthNodeLevelNodeValueBarChart);
-                            MyVars.getViewer().depthNodeLevelNeighborNodeValueBarChart = new MyDepthLevelNeighborNodeValueBarChart();
-                            MyVars.getViewer().depthNodeLevelNeighborNodeValueBarChart.setSuccessorValueBarChartsForDepthNodes();
-                            MyVars.getViewer().add(MyVars.getViewer().depthNodeLevelNeighborNodeValueBarChart);
-                        }
-                    }
-                } else if (MyVars.getViewer().multiNodes != null) {
-                    MyViewerControlComponentUtil.setSharedNodeLevelNodeValueBarChart();
-                } else if (MyVars.getViewer().selectedNode != null) {
-                    MyViewerControlComponentUtil.setSelectedNodeNeighborValueBarChartToViewer();
-                } else {
-                    MyVars.getViewer().graphLevelNodeValueBarChart = new MyGraphLevelNodeValueBarChart();
-                    MyVars.getViewer().add(MyVars.getViewer().graphLevelNodeValueBarChart);
-                }
-            } else {
-                MyViewerControlComponentUtil.removeBarChartsFromViewer();
-            }
 
-            if (MyVars.getViewer().vc.edgeValueBarChart.isSelected()) {
-                if (MyVars.getViewer().vc.edgeValueSelecter.getSelectedIndex() > 1) {
-                    if (MyVars.getViewer().graphLelvelEdgeValueBarChart != null) {
-                        MyVars.getViewer().remove(MyVars.getViewer().graphLelvelEdgeValueBarChart);
-                        MyVars.getViewer().graphLelvelEdgeValueBarChart = new MyGraphLevelEdgeValueBarChart();
-                        MyVars.getViewer().graphLelvelEdgeValueBarChart.setEdgeValueBarChart();
-                        MyVars.getViewer().add(MyVars.getViewer().graphLelvelEdgeValueBarChart);
-                    }
-
-                    if (MyVars.getViewer().multiNodeLevelEdgeValueBarChart != null) {
-                        MyVars.getViewer().remove(MyVars.getViewer().multiNodeLevelEdgeValueBarChart);
-                        MyVars.getViewer().multiNodeLevelEdgeValueBarChart = new MyMultiLevelEdgeValueBarChart();
-                        MyVars.getViewer().multiNodeLevelEdgeValueBarChart.setMultiNodeSharedEdgeValueRankBarChart();
-                        MyVars.getViewer().add(MyVars.getViewer().multiNodeLevelEdgeValueBarChart);
-                    }
-                }
-            } else {
-                MyViewerControlComponentUtil.removeEdgeValueBarChartFromViewer();
-            }
-            MyVars.getViewer().revalidate();
-            MyVars.getViewer().repaint();
-        }
-    }
-
-    @Override public void componentResized(ComponentEvent e) {
-        new Thread(new Runnable() {
-            @Override public void run() {
-                updateSplitPaneDividerLocations();
-            }
-        }).start();
-    }
-
-    @Override public void componentMoved(ComponentEvent e) {
-        new Thread(new Runnable() {
-            @Override public void run() {
-                updateSplitPaneDividerLocations();
-            }
-        }).start();
-    }
-
-    @Override public void componentShown(ComponentEvent e) {}
-    @Override public void componentHidden(ComponentEvent e) {}
 }

@@ -1,7 +1,5 @@
 package datamining.data;
 
-import datamining.utils.MyMathUtil;
-import datamining.utils.message.MyMessageUtil;
 import datamining.utils.system.MyVars;
 
 import java.io.File;
@@ -18,20 +16,11 @@ public class MyHeaderLoader {
     public String [] load(File headerFile) {
         try {
             Scanner scanner = new Scanner(headerFile);
-            if (scanner.hasNextLine()) {
+            while (scanner.hasNextLine()) {
                 String headerLine = scanner.nextLine();
-                if (headerLine.split(MyVars.commaDelimeter).length > 0) {
-                    headers = headerLine.split(MyVars.commaDelimeter);
-                    this.CapitalizeHeaders();
-                    MyMessageUtil.showInfoMsg("The header file has " + MyMathUtil.getCommaSeperatedNumber(headers.length) + " columns. \n" +
-                            "It has been loaded successfully.");
-                } else {
-                    MyMessageUtil.showErrorMsg( "Please, check the format of the header file.");
-                }
-            } else {
-                MyMessageUtil.showErrorMsg( "Please, check the format of the header file.\n" +
-                                            "The provided header file seems empty.");
+                headers = headerLine.split(MyVars.commaDelimeter);
             }
+            this.CapitalizeHeaders();
         } catch(Exception ex) {
             ex.printStackTrace();
         }
@@ -41,19 +30,11 @@ public class MyHeaderLoader {
     public String [] load() {
         try {
             Scanner scanner = new Scanner(this.headerFile);
-            if (scanner.hasNextLine()) {
+            while (scanner.hasNextLine()) {
                 String headerLine = scanner.nextLine();
-                if (headerLine.split(MyVars.commaDelimeter).length > 0) {
-                    headers = headerLine.split(MyVars.commaDelimeter);
-                    this.CapitalizeHeaders();
-                    MyMessageUtil.showInfoMsg("The header file has " + MyMathUtil.getCommaSeperatedNumber(headers.length) + " columns. \n" +
-                                              "It has been loaded successfully.");
-                } else {
-                    return null;
-                }
-            } else {
-                return null;
+                headers = headerLine.split(MyVars.commaDelimeter);
             }
+            this.CapitalizeHeaders();
         } catch(Exception ex) {
             ex.printStackTrace();
         }

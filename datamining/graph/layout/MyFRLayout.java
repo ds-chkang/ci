@@ -1,5 +1,6 @@
 package datamining.graph.layout;
 
+import datamining.utils.system.MyVars;
 import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
 import edu.uci.ics.jung.algorithms.layout.util.RandomLocationTransformer;
 import edu.uci.ics.jung.algorithms.util.IterativeContext;
@@ -7,23 +8,43 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Pair;
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
-import java.util.*;
-
+import java.util.ConcurrentModificationException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import org.apache.commons.collections15.Factory;
 import org.apache.commons.collections15.map.LazyMap;
 
 public class MyFRLayout<V, E> extends AbstractLayout<V, E> implements IterativeContext {
     private double forceConstant;
     private double temperature;
-    private int currentIteration;
-    private int mMaxIterations = 100000;
+    public int currentIteration;
+    private int mMaxIterations = 6000;
     private Map<V, FRVertexData> frVertexData;
-    private double attraction_multiplier;
+    public double attraction_multiplier;
     private double attraction_constant;
-    private double repulsion_multiplier;
+    public double repulsion_multiplier;
     private double repulsion_constant;
     private double max_dimension;
     private double EPSILON;
+
+    public void shakeGraph(float attraction_multiplier, float repulsion_multiplier, int currentIteration) {
+        MyVars.getDirectGraphViewer().revalidate();
+        MyVars.getDirectGraphViewer().repaint();
+        this.currentIteration = currentIteration;
+        this.attraction_multiplier = attraction_multiplier;
+        this.repulsion_multiplier = repulsion_multiplier;
+        this.mMaxIterations = 200;
+        //for (int i=0; i < 30; i++) {
+            this.doInit();
+            this.step();
+            MyVars.getDirectGraphViewer().revalidate();
+            MyVars.getDirectGraphViewer().repaint();
+            this.mMaxIterations = 6000;
+        this.attraction_multiplier = 0.75;
+        this.repulsion_multiplier = 0.75;
+       // }
+    }
 
     public MyFRLayout(Graph<V, E> g, Dimension d) {
         super(g, new RandomLocationTransformer(d), d);
@@ -75,7 +96,7 @@ public class MyFRLayout<V, E> extends AbstractLayout<V, E> implements IterativeC
         Dimension d = this.getSize();
         if (graph != null && d != null) {
             this.currentIteration = 0;
-            this.temperature = d.getWidth() / 100.0;
+            this.temperature = d.getWidth() / 10.0;
             this.forceConstant = Math.sqrt(d.getHeight() * d.getWidth() / (double)graph.getVertexCount());
             this.attraction_constant = this.attraction_multiplier * this.forceConstant;
             this.repulsion_constant = this.repulsion_multiplier * this.forceConstant;
@@ -170,13 +191,11 @@ public class MyFRLayout<V, E> extends AbstractLayout<V, E> implements IterativeC
                 }
 
                 xyd.setLocation(newXPos, newYPos);
-
-                //System.out.println(xyd);
             }
         }
     }
 
-    protected void calcAttraction(E e) {
+    public void calcAttraction(E e) {
         Pair<V> endpoints = this.getGraph().getEndpoints(e);
         V v1 = endpoints.getFirst();
         V v2 = endpoints.getSecond();
@@ -211,7 +230,7 @@ public class MyFRLayout<V, E> extends AbstractLayout<V, E> implements IterativeC
         }
     }
 
-    protected void calcRepulsion(V v1) {
+    public void calcRepulsion(V v1) {
         FRVertexData fvd1 = this.getFRData(v1);
         if (fvd1 != null) {
             fvd1.setLocation(0.0, 0.0);

@@ -1,15 +1,15 @@
 package datamining.graph.analysis;
 
-import datamining.graph.MyEdge;
-import datamining.graph.MyNode;
+import datamining.graph.MyDirectEdge;
+import datamining.graph.MyDirectNode;
 import datamining.utils.MyMathUtil;
-import datamining.utils.system.MySysUtil;
 import datamining.utils.system.MyVars;
 import edu.uci.ics.jung.visualization.VisualizationModel;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
+import edu.uci.ics.jung.visualization.renderers.EdgeArrowRenderingSupport;
 import edu.uci.ics.jung.visualization.renderers.Renderer;
 import org.apache.commons.collections15.Transformer;
 
@@ -23,30 +23,37 @@ import java.util.Collection;
 import static java.awt.Cursor.HAND_CURSOR;
 
 public class MyNetworkAnalyzerViewer
-extends VisualizationViewer<MyNode, MyEdge>
+extends VisualizationViewer<MyDirectNode, MyDirectEdge>
 implements Serializable {
 
     protected MyGraphMouseListener graphMouseListener;
-    protected MyGraphAnalyzer plusNetworkAnalyzer;
+    protected MyGraphAnalyzer graphAnalyzer;
     protected float MAX_EDGE_VALUE = 0f;
     protected float MAX_NODE_VALUE = 0f;
-    protected float MAX_EDGE_SIZE = 26f;
-    protected float MAX_NODE_SIZE = 40f;
+    protected float MAX_EDGE_SIZE = 18f;
+    protected float MAX_NODE_SIZE = 48f;
     protected Point mouseClickedLocation;
 
-    public MyNetworkAnalyzerViewer(VisualizationModel<MyNode, MyEdge> vm, JComboBox nodeOptionComboBox) {
+
+    public MyNetworkAnalyzerViewer(VisualizationModel<MyDirectNode, MyDirectEdge> vm, MyGraphAnalyzer graphAnalyzer) {
         super(vm);
         try {
-            this.setPreferredSize(new Dimension(400, 380));
+            this.setPreferredSize(new Dimension(4000, 4000));
             DefaultModalGraphMouse graphMouse = new DefaultModalGraphMouse();
             graphMouse.setMode(DefaultModalGraphMouse.Mode.PICKING);
             this.setGraphMouse(graphMouse);
             this.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.S);
-            this.getRenderContext().setLabelOffset(10);
+            this.getRenderContext().setLabelOffset(25);
             Cursor handCursor = new Cursor(HAND_CURSOR);
             this.setCursor(handCursor);
             this.setBackground(Color.WHITE);
             this.setDoubleBuffered(true);
+            this.getRenderContext().setEdgeArrowStrokeTransformer(new Transformer<MyDirectEdge, Stroke>() {
+                @Override public Stroke transform(MyDirectEdge e) {
+                    float edgeWidth = ((BasicStroke)getRenderContext().getEdgeStrokeTransformer().transform(e)).getLineWidth()/2;
+                    return new BasicStroke(edgeWidth);
+                }
+            });
             this.setLayout(null);
             this.getRenderContext().setEdgeDrawPaintTransformer(this.edgeColor);
             this.getRenderContext().setVertexFillPaintTransformer(this.vertexColor);
@@ -54,16 +61,16 @@ implements Serializable {
             this.getRenderContext().setVertexShapeTransformer(this.nodeSizer);
             this.graphMouseListener = new MyGraphMouseListener(this);
             this.addGraphMouseListener(this.graphMouseListener);
-            this.addMouseListener(new MyNetworkViewerMouseListener(this, nodeOptionComboBox));
-            this.getRenderContext().setVertexFontTransformer(new Transformer<MyNode, Font>() {
-                @Override public synchronized Font transform(MyNode n) {
+            this.addMouseListener(new MyNetworkViewerMouseListener(this, graphAnalyzer));
+            this.getRenderContext().setVertexFontTransformer(new Transformer<MyDirectNode, Font>() {
+                @Override public synchronized Font transform(MyDirectNode n) {
                     if (n.getContribution() == 0) {return new Font("Noto Sans", Font.PLAIN, 0);
                     } else {return new Font("Noto Sans", Font.BOLD, 24);}
                 }
             });
 
-            this.getRenderContext().setEdgeFontTransformer(new Transformer<MyEdge, Font>() {
-                @Override public synchronized Font transform(MyEdge e) {
+            this.getRenderContext().setEdgeFontTransformer(new Transformer<MyDirectEdge, Font>() {
+                @Override public synchronized Font transform(MyDirectEdge e) {
                     if (e.getContribution() == 0) {return new Font("Noto Sans", Font.PLAIN, 0);
                     } else {return new Font("Noto Sans", Font.BOLD, 24);}
                 }
@@ -72,59 +79,29 @@ implements Serializable {
         } catch (Exception ex) {}
     }
 
-    protected void setMaximumEdgeValue() {
-        float max = 0f;
-
-    }
-
-    private Transformer<MyNode, Shape> nodeSizer = new Transformer<MyNode, Shape>() {
-        @Override public Shape transform(MyNode n) {
+    private Transformer<MyDirectNode, Shape> nodeSizer = new Transformer<MyDirectNode, Shape>() {
+        @Override public Shape transform(MyDirectNode n) {
             return new Ellipse2D.Double(-40, -40, 80, 80);
         }
     };
 
-    public Transformer<MyNode, String> defaultToolTipper = new Transformer<MyNode, String>() {
-        @Override public String transform(MyNode n) {
-            if (MyVars.isTimeOn) {
+    public Transformer<MyDirectNode, String> defaultToolTipper = new Transformer<MyDirectNode, String>() {
+        @Override public String transform(MyDirectNode n) {
+
                 String toolTip = "<HTML>" +
                         "<BODY>" +
-                        "NODE: " + MySysUtil.decodeNodeName(n.getName()) +
+                        "NODE: " + n.getName() +
                         "<BR>" +
                         "CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(n.getContribution()) +
-                        "<BR>" +
-                        "UNIQUE CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(n.getUniqueContribution()) +
-                        "<BR>" +
-                        "END NODE COUNT: " + MySysUtil.getCommaSeperateString(n.getEndNodeCount()) +
-                        "<BR>" +
-                        "PRDECESSORS: " + MySysUtil.getCommaSeperateString(n.getPredecessorCount()) +
-                        "<BR>" +
-                        "SUCCESSORS: " + MySysUtil.getCommaSeperateString(n.getSuccessorCount()) +
                         "</BODY>" +
                         "</HTML>";
                 return toolTip;
-            } else {
-                String toolTip = "<HTML>" +
-                        "<BODY>" +
-                        "NODE: " + MySysUtil.decodeNodeName(n.getName()) +
-                        "<BR>" +
-                        "CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(n.getContribution()) +
-                        "<BR>" +
-                        "UNIQUE CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(n.getUniqueContribution()) +
-                        "<BR>" +
-                        "END NODE COUNT: " + MySysUtil.getCommaSeperateString(n.getEndNodeCount()) +
-                        "<BR>" +
-                        "PRDECESSORS: " + MySysUtil.getCommaSeperateString(n.getPredecessorCount()) +
-                        "<BR>" +
-                        "SUCCESSORS: " + MySysUtil.getCommaSeperateString(n.getSuccessorCount()) +
-                        "</BODY>" +
-                        "</HTML>";
-                return toolTip;
-            }
+
         }
     };
 
-    public Transformer<MyNode, Paint> vertexColor = new Transformer<MyNode, Paint>() {
-        public Paint transform(MyNode n) {
+    public Transformer<MyDirectNode, Paint> vertexColor = new Transformer<MyDirectNode, Paint>() {
+        public Paint transform(MyDirectNode n) {
             if (graphMouseListener.selectedNode != null && graphMouseListener.selectedNode == n) {return Color.YELLOW;
             } else if (getGraphLayout().getGraph().getPredecessorCount(n) > 0 && getGraphLayout().getGraph().getSuccessorCount(n) > 0) {return Color.BLUE;
             } else if (getGraphLayout().getGraph().getPredecessorCount(n) == 0 && getGraphLayout().getGraph().getSuccessorCount(n) > 0) {return Color.RED;
@@ -144,15 +121,15 @@ implements Serializable {
         scalingControl.scale(this, amount > 0 ? 2.0f : 1 / 2.0f, new Point2D.Double(30, 50));
     }
 
-    private Transformer<MyEdge, Paint> edgeColor = new Transformer<MyEdge, Paint>() {
-        @Override public Paint transform(MyEdge myEdge) {
-            return Color.LIGHT_GRAY;
+    private Transformer<MyDirectEdge, Paint> edgeColor = new Transformer<MyDirectEdge, Paint>() {
+        @Override public Paint transform(MyDirectEdge myEdge) {
+            return new Color(0, 0, 0, 0.1f);
         }
     };
 
     public void setEdgeContributionValue() {
-        Collection<MyEdge> edges = this.getGraphLayout().getGraph().getEdges();
-        for (MyEdge edge : edges) {
+        Collection<MyDirectEdge> edges = this.getGraphLayout().getGraph().getEdges();
+        for (MyDirectEdge edge : edges) {
             int edgeContribution = 0;
             for (int sequence=0; sequence < MyVars.seqs.length; sequence++) {
                 for (int i=1; i < MyVars.seqs[sequence].length; i++) {
@@ -171,8 +148,8 @@ implements Serializable {
     }
 
     public void setEdgeReachTimeValue() {
-        Collection<MyEdge> edges = this.getGraphLayout().getGraph().getEdges();
-        for (MyEdge edge : edges) {
+        Collection<MyDirectEdge> edges = this.getGraphLayout().getGraph().getEdges();
+        for (MyDirectEdge edge : edges) {
             int edgeReachTime = 0;
             for (int sequence=0; sequence < MyVars.seqs.length; sequence++) {
                 for (int i=1; i < MyVars.seqs[sequence].length; i++) {

@@ -74,7 +74,7 @@ public class MyEdgeBetweennessClusterer<V,E> implements Transformer<Graph<V,E>,S
 
         MyProgressBar pb = new MyProgressBar(false);
         int pbCnt = 0;
-        int totalCnt = MyVars.g.getEdgeCount()*this.mNumEdgesToRemove;
+        int totalCnt = MyVars.directMarkovChain.getEdgeCount()*this.mNumEdgesToRemove;
 
         for (int k=0;k<mNumEdgesToRemove;k++) {
             BetweennessCentrality<V,E> bc = new BetweennessCentrality<V,E>(graph);

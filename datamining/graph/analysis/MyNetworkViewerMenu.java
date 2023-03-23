@@ -1,8 +1,8 @@
 package datamining.graph.analysis;
 
+import datamining.graph.MyDirectEdge;
+import datamining.graph.MyDirectNode;
 import datamining.main.MyProgressBar;
-import datamining.graph.MyEdge;
-import datamining.graph.MyNode;
 import datamining.utils.MyMathUtil;
 import datamining.utils.message.MyMessageUtil;
 import datamining.utils.system.MySysUtil;
@@ -62,108 +62,108 @@ implements ActionListener {
     @Override public void actionPerformed(ActionEvent e) {
         new Thread(new Runnable() {@Override public void run() {
                 if (e.getSource() == showNodeContribution) {
-                    funnelViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyNode, String>() {
-                        @Override public String transform(MyNode node) {return MyMathUtil.getCommaSeperatedNumber(node.getContribution());}
+                    funnelViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyDirectNode, String>() {
+                        @Override public String transform(MyDirectNode node) {return MyMathUtil.getCommaSeperatedNumber(node.getContribution());}
                     });
 
-                    funnelViewer.getRenderContext().setVertexFontTransformer(new Transformer<MyNode, Font>() {
-                        @Override public Font transform(MyNode myNode) {
+                    funnelViewer.getRenderContext().setVertexFontTransformer(new Transformer<MyDirectNode, Font>() {
+                        @Override public Font transform(MyDirectNode myNode) {
                             return MyVars.f_bold_16;
                         }
                     });
                 } else if (e.getSource() == hideContribution) {
-                    funnelViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyNode, String>() {
-                        @Override public String transform(MyNode node) {
+                    funnelViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyDirectNode, String>() {
+                        @Override public String transform(MyDirectNode node) {
                             return "";
                         }
                     });
-                    funnelViewer.getRenderContext().setVertexFontTransformer(new Transformer<MyNode, Font>() {
-                        @Override public Font transform(MyNode myNode) {
+                    funnelViewer.getRenderContext().setVertexFontTransformer(new Transformer<MyDirectNode, Font>() {
+                        @Override public Font transform(MyDirectNode myNode) {
                             return new Font("Arial", Font.PLAIN, 0);
                         }
                     });
                 } else if (e.getSource() == showNodeLabel) {
-                    funnelViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyNode, String>() {
-                        @Override public String transform(MyNode node) {
+                    funnelViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyDirectNode, String>() {
+                        @Override public String transform(MyDirectNode node) {
                             return MySysUtil.decodeNodeName(node.getName());
                         }
                     });
-                    funnelViewer.getRenderContext().setVertexFontTransformer(new Transformer<MyNode, Font>() {
-                        @Override public Font transform(MyNode myNode) {
+                    funnelViewer.getRenderContext().setVertexFontTransformer(new Transformer<MyDirectNode, Font>() {
+                        @Override public Font transform(MyDirectNode myNode) {
                             return MyVars.f_bold_16;
                         }
                     });
                 } else if (e.getSource() == hideNodeLabel) {
-                    funnelViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyNode, String>() {
-                        @Override public String transform(MyNode node) {
+                    funnelViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyDirectNode, String>() {
+                        @Override public String transform(MyDirectNode node) {
                             return "";
                         }
                     });
-                    funnelViewer.getRenderContext().setVertexFontTransformer(new Transformer<MyNode, Font>() {
-                        @Override public Font transform(MyNode myNode) {
+                    funnelViewer.getRenderContext().setVertexFontTransformer(new Transformer<MyDirectNode, Font>() {
+                        @Override public Font transform(MyDirectNode myNode) {
                             return new Font("Arial", Font.PLAIN, 0);
                         }
                     });
                 } else if (e.getSource() == showEdgeContributionStrength) {
                     funnelViewer.setEdgeContributionValue();
-                    funnelViewer.getRenderContext().setEdgeLabelTransformer(new Transformer<MyEdge, String>() {
-                        @Override public String transform(MyEdge edge) {return MyMathUtil.getCommaSeperatedNumber((int)edge.getCurrentValue());}
+                    funnelViewer.getRenderContext().setEdgeLabelTransformer(new Transformer<MyDirectEdge, String>() {
+                        @Override public String transform(MyDirectEdge edge) {return MyMathUtil.getCommaSeperatedNumber((int)edge.getCurrentValue());}
                     });
-                    funnelViewer.getRenderContext().setEdgeFontTransformer(new Transformer<MyEdge, Font>() {
-                        @Override public Font transform(MyEdge myNode) {
+                    funnelViewer.getRenderContext().setEdgeFontTransformer(new Transformer<MyDirectEdge, Font>() {
+                        @Override public Font transform(MyDirectEdge myNode) {
                             return MyVars.f_bold_16;
                         }
                     });
                 } else if (e.getSource() == hideEdgeContributionStrength) {
-                    funnelViewer.getRenderContext().setEdgeLabelTransformer(new Transformer<MyEdge, String>() {
-                        @Override public String transform(MyEdge edge) {
+                    funnelViewer.getRenderContext().setEdgeLabelTransformer(new Transformer<MyDirectEdge, String>() {
+                        @Override public String transform(MyDirectEdge edge) {
                             return "";
                         }
                     });
-                    funnelViewer.getRenderContext().setEdgeFontTransformer(new Transformer<MyEdge, Font>() {
-                        @Override public Font transform(MyEdge myNode) {
+                    funnelViewer.getRenderContext().setEdgeFontTransformer(new Transformer<MyDirectEdge, Font>() {
+                        @Override public Font transform(MyDirectEdge myNode) {
                             return new Font("Arial", Font.PLAIN, 0);
                         }
                     });
                 } else if (e.getSource() == showReachTime) {
                     funnelViewer.setEdgeReachTimeValue();
-                    funnelViewer.getRenderContext().setEdgeLabelTransformer(new Transformer<MyEdge, String>() {
-                        @Override public String transform(MyEdge edge) {return MyMathUtil.getCommaSeperatedNumber((long)edge.getCurrentValue());}
+                    funnelViewer.getRenderContext().setEdgeLabelTransformer(new Transformer<MyDirectEdge, String>() {
+                        @Override public String transform(MyDirectEdge edge) {return MyMathUtil.getCommaSeperatedNumber((long)edge.getCurrentValue());}
                     });
-                    funnelViewer.getRenderContext().setEdgeFontTransformer(new Transformer<MyEdge, Font>() {
-                        @Override public Font transform(MyEdge myNode) {
+                    funnelViewer.getRenderContext().setEdgeFontTransformer(new Transformer<MyDirectEdge, Font>() {
+                        @Override public Font transform(MyDirectEdge myNode) {
                             return MyVars.f_bold_16;
                         }
                     });
                 } else if (e.getSource() == hideEdgeReachTimeStrength) {
-                    funnelViewer.getRenderContext().setEdgeLabelTransformer(new Transformer<MyEdge, String>() {
-                        @Override public String transform(MyEdge edge) {
+                    funnelViewer.getRenderContext().setEdgeLabelTransformer(new Transformer<MyDirectEdge, String>() {
+                        @Override public String transform(MyDirectEdge edge) {
                             return "";
                         }
                     });
-                    funnelViewer.getRenderContext().setEdgeFontTransformer(new Transformer<MyEdge, Font>() {
-                        @Override public Font transform(MyEdge myNode) {
+                    funnelViewer.getRenderContext().setEdgeFontTransformer(new Transformer<MyDirectEdge, Font>() {
+                        @Override public Font transform(MyDirectEdge myNode) {
                             return new Font("Arial", Font.PLAIN, 0);
                         }
                     });
                 } else if (e.getSource() == hideEdgeReachTimeStrength) {
-                    funnelViewer.getRenderContext().setEdgeLabelTransformer(new Transformer<MyEdge, String>() {
-                        @Override public String transform(MyEdge edge) {
+                    funnelViewer.getRenderContext().setEdgeLabelTransformer(new Transformer<MyDirectEdge, String>() {
+                        @Override public String transform(MyDirectEdge edge) {
                             return "";
                         }
                     });
-                    funnelViewer.getRenderContext().setEdgeFontTransformer(new Transformer<MyEdge, Font>() {
-                        @Override public Font transform(MyEdge myNode) {
+                    funnelViewer.getRenderContext().setEdgeFontTransformer(new Transformer<MyDirectEdge, Font>() {
+                        @Override public Font transform(MyDirectEdge myNode) {
                             return new Font("Arial", Font.PLAIN, 0);
                         }
                     });
                 } else if (e.getSource() == deleteNodes) {
                     try {
-                        Collection<MyNode> nodes = new ArrayList<>(funnelViewer.getGraphLayout().getGraph().getVertices());
+                        Collection<MyDirectNode> nodes = new ArrayList<>(funnelViewer.getGraphLayout().getGraph().getVertices());
                         if (nodes != null) {
                             MyProgressBar pb = new MyProgressBar(false);
                             int pbCnt = 0;
-                            for (MyNode node : nodes) {
+                            for (MyDirectNode node : nodes) {
                                 funnelViewer.getGraphLayout().getGraph().removeVertex(node);
                                 pb.updateValue(++pbCnt, nodes.size());
                             }

@@ -183,7 +183,7 @@ implements ActionListener {
     public static void main(String [] args) {
         JFrame fr = new JFrame();
         fr.setLayout(new BorderLayout());
-        fr.getContentPane().add(new MyNodeSearchAndDownloadPanel(MyVars.app, fr, new JTable()), BorderLayout.CENTER);
+        fr.getContentPane().add(new MyNodeSearchAndDownloadPanel(MyVars.main, fr, new JTable()), BorderLayout.CENTER);
         fr.setPreferredSize(new Dimension(550, 70));
         fr.pack();
         fr.setVisible(true);

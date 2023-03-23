@@ -1,13 +1,12 @@
 package datamining.broker;
 
-import datamining.config.MySequentialConfigPanel;
+import datamining.config.MyDirectConfigPanel;
 
 public class MyConfigBroker {
 
     public MyConfigBroker() {}
-    private MySequentialConfigPanel sequentialConfigPanel = new MySequentialConfigPanel();
-    public void setSequentialConfigPanel(MySequentialConfigPanel sequentialConfigPanel) { this.sequentialConfigPanel = sequentialConfigPanel; }
-    public MySequentialConfigPanel getConfigPanel() { return this.sequentialConfigPanel; }
-
+    private MyDirectConfigPanel directConfigPanel = new MyDirectConfigPanel();
+    public void setDirectConfigPanel(MyDirectConfigPanel directConfigPanel) { this.directConfigPanel = directConfigPanel; }
+    public MyDirectConfigPanel getDirectConfigPanel() {return this.directConfigPanel;}
 
 }

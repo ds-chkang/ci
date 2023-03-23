@@ -7,26 +7,25 @@ import java.awt.event.MouseListener;
 public class MyNetworkViewerMouseListener
 implements MouseListener {
 
-    private MyNetworkAnalyzerViewer plusNetworkAnalyzerViewer;
-    protected JComboBox nodeOptionComboBox;
+    private MyNetworkAnalyzerViewer graphViewer;
+    protected MyGraphAnalyzer graphAnalyzer;
 
-    public MyNetworkViewerMouseListener(MyNetworkAnalyzerViewer funnelViewer, JComboBox nodeOptionComboBox) {
-        this.nodeOptionComboBox = nodeOptionComboBox;
-        this.plusNetworkAnalyzerViewer = funnelViewer;
+    public MyNetworkViewerMouseListener(MyNetworkAnalyzerViewer funnelViewer, MyGraphAnalyzer graphAnalyzer) {
+        this.graphAnalyzer = graphAnalyzer;
+        this.graphViewer = funnelViewer;
     }
 
-    @Override
-    public void mouseClicked(MouseEvent e) {
+    @Override public void mouseClicked(MouseEvent e) {
         new Thread(new Runnable() {
             @Override public void run() {
-                plusNetworkAnalyzerViewer.mouseClickedLocation = e.getLocationOnScreen();
-                if (SwingUtilities.isRightMouseButton(e) && plusNetworkAnalyzerViewer.getPickedVertexState().getPicked().size() == 0) {
-                    if (plusNetworkAnalyzerViewer.getGraphLayout().getGraph().getVertexCount() > 0) {
-                        MyNetworkViewerMenu funnelViewerMenu = new MyNetworkViewerMenu(plusNetworkAnalyzerViewer);
-                        funnelViewerMenu.show(plusNetworkAnalyzerViewer, e.getX(), e.getY());
+                graphViewer.mouseClickedLocation = e.getLocationOnScreen();
+                if (SwingUtilities.isRightMouseButton(e) && graphViewer.getPickedVertexState().getPicked().size() == 0) {
+                    if (graphViewer.getGraphLayout().getGraph().getVertexCount() > 0) {
+                        MyNetworkViewerMenu funnelViewerMenu = new MyNetworkViewerMenu(graphViewer);
+                        funnelViewerMenu.show(graphViewer, e.getX(), e.getY());
                     }
-                } else if (SwingUtilities.isLeftMouseButton(e) && plusNetworkAnalyzerViewer.getPickedVertexState().getPicked().size() == 0) {
-                    plusNetworkAnalyzerViewer.graphMouseListener.selectedNode = null;
+                } else if (SwingUtilities.isLeftMouseButton(e) && graphViewer.getPickedVertexState().getPicked().size() == 0) {
+                    graphViewer.graphMouseListener.selectedNode = null;
 
                 }
             }

@@ -16,8 +16,8 @@ public class MyFileMerger {
                 String aLine = "";
                 while ((aLine = in.readLine()) != null) {
                     String [] dataColumnValues = aLine.split(MyVars.commaDelimeter);
-                    dataColumnValues[MyVars.app.getMsgBroker().getHeaderIndex("ITEM ID")] =
-                        String.valueOf(dataColumnValues[MyVars.app.getMsgBroker().getHeaderIndex("ITEM ID")]);
+                    dataColumnValues[MyVars.main.getMsgBroker().getHeaderIndex("ITEM ID")] =
+                        String.valueOf(dataColumnValues[MyVars.main.getMsgBroker().getHeaderIndex("ITEM ID")]);
                     aLine = dataColumnValues[0];
                     for (int i = 1; i < dataColumnValues.length; i++) {
                         aLine = aLine + MyVars.commaDelimeter + dataColumnValues[i];

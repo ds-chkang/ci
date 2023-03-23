@@ -1,12 +1,10 @@
 package datamining.utils.system;
 
 import datamining.feature.MyVariableMap;
-import datamining.graph.stats.*;
 import datamining.main.MyProgressBar;
 import datamining.main.MyProgressBarWaitMessage;
-import datamining.graph.MyEdge;
-import datamining.graph.MyNode;
-import datamining.graph.stats.singlenode.*;
+import datamining.graph.MyDirectEdge;
+import datamining.graph.MyDirectNode;
 import datamining.utils.MyMathUtil;
 import datamining.utils.security.MyOSMonitor;
 import datamining.utils.message.MyMessageUtil;
@@ -20,7 +18,16 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
-public class MySysUtil {
+public class MySysUtil
+{
+
+    public static LinkedHashMap<MyDirectNode, Long> sortNodeMapByLongValue(Map<MyDirectNode, Long> map) {
+        List<Map.Entry<MyDirectNode, Long>> entries = new LinkedList<>(map.entrySet());
+        Collections.sort(entries, (o1, o2) -> o2.getValue().compareTo(o1.getValue()));
+        LinkedHashMap<MyDirectNode, Long> sortedMap = new LinkedHashMap<>();
+        for (Map.Entry<MyDirectNode, Long> entry : entries) {sortedMap.put(entry.getKey(), entry.getValue());}
+        return sortedMap;
+    }
 
     public static LinkedHashMap<String, Long> sortMapByLongValue(Map<String, Long> map) {
         List<Map.Entry<String, Long>> entries = new LinkedList<>(map.entrySet());
@@ -248,11 +255,11 @@ public class MySysUtil {
     }
 
     public static int getViewerWidth() {
-        return MyVars.app.getWidth();
+        return MyVars.main.getWidth();
     }
 
     public static int getViewerHeight() {
-        return MyVars.app.getHeight();
+        return MyVars.main.getHeight();
     }
 
     public static String getTimeDifference(String fromDate, String toDate) {
@@ -271,7 +278,7 @@ public class MySysUtil {
     }
 
     public static void resetVariables() {
-        MyVars.g = null;
+        MyVars.directMarkovChain = null;
 
         MyVars.outputDir = "";
         MyVars.isTimeOn = false;
@@ -289,74 +296,47 @@ public class MySysUtil {
         MyVars.currentGraphDepth = 0;
         MyVars.itemToIdMap = null;
 
-        MyVars.nodeLabelSet = new HashSet<>();
-        MyVars.nodeValueMap = new HashMap<>();
-        MyVars.edgeLabelSet = new HashSet<>();
-        MyVars.edgeValueMap = new HashMap<>();
+        MyVars.nodeLabels = new HashSet<>();
+        MyVars.nodeValues = new HashMap<>();
+        MyVars.edgeLabels = new HashSet<>();
+        MyVars.edgeValues = new HashMap<>();
         MyVars.variableToIdMap = new MyVariableMap();
         MyVars.nodeNameMap = new HashMap<>();
         MyVars.pathLengthByDepthMap = new HashMap<>();
-
-        MyGraphLevelAverageValuesByDepthLineChart.instances = 0;
-        MyGraphLevelContributionByDepthLineChart.instances = 0;
-        MySequenceLengthByDepthLineChart.instances = 0;
-        MyGraphLevelReachTimeByDepthLineChart.instances = 0;
-        MyGraphLevelUniqueNodesByDepthLineBarChart.instances = 0;
-        MyGraphLevelNodeAverageHopCountDistributionLineChart.instances = 0;
-        MyGraphLevelUniqueNodeDifferenceByDepthChart.instances = 0;
-        MySingleNodeUniqueNodeDifferenceByNodeLineChart.instances = 0;
-        MySingleNodeInContributionByDepthLineChart.instances = 0;
-        MySingleNodeOutContributionByDepthLineChart.instances = 0;
-        MySingleNodeAverageReachTimeByDepthLineChart.instances = 0;
-        MySingleNodeDurationByDepthLineChart.instances = 0;
-        MySingleNodeContributionByDepthLineChart.instances = 0;
-        MySingleNodeHopCountDistributionLineChart.instances = 0;
-        MyGraphLevelDurationByDepthLineChart.instances = 0;
-        MySingleNodeReachTimeByDepthLineChart.instances = 0;
-        MySingleNodeInOutUniqueNodeDifferenceByDepthChart.instances = 0;
         MyVars.currentGraphDepth = 0;
-    }
-
-    public static void setNodeNameMap() {
-        Collection<MyNode> nodes = MyVars.g.getVertices();
-        for (MyNode n : nodes) {
-            MyVars.nodeNameMap.put(getDecodedNodeName(n.getName()), n.getName());
-        }
-    }
-
-    public static void setSharedPredecessors(MyNode a, MyNode b) {
-        synchronized (MyVars.getViewer().sharedPredecessors) {
-            MyVars.getViewer().sharedPredecessors.addAll(MyVars.g.getPredecessors(a));
-            MyVars.getViewer().sharedPredecessors.retainAll(MyVars.g.getPredecessors(b));
-        }
-    }
-
-    public static void setSharedPredecessors(MyNode a) {
-        synchronized (MyVars.getViewer().sharedPredecessors) {
-            MyVars.getViewer().sharedPredecessors.retainAll(MyVars.g.getPredecessors(a));
-        }
-    }
-
-    public static void setSharedSuccessors(MyNode a, MyNode b) {
-        synchronized (MyVars.getViewer().sharedSuccessors) {
-            MyVars.getViewer().sharedSuccessors.addAll(MyVars.g.getSuccessors(a));
-            MyVars.getViewer().sharedSuccessors.retainAll(MyVars.g.getSuccessors(b));
-        }
-    }
-
-    public static void setSharedSuccessors(MyNode a) {
-        synchronized (MyVars.getViewer().sharedSuccessors) {
-            MyVars.getViewer().sharedSuccessors.retainAll(MyVars.g.getSuccessors(a));
-        }
     }
 
     public static String getWorkingDir() {
         return System.getProperty("user.dir");
     }
 
+    public static void setGraphLevelPathLengthDistributions(MyProgressBar pb) {
+        int nodeCount = 0;
+        Collection<MyDirectNode> startNodes = MyVars.directMarkovChain.getVertices();
+        Collection<MyDirectNode> endNodes = MyVars.directMarkovChain.getVertices();
+        double currentTotalWork = 20;
+        double workfraction = (double) 65/startNodes.size();
+        for (MyDirectNode startNode : startNodes) {
+            int unreachableNodeCount = 0;
+            String workPercent = MyMathUtil.twoDecimalFormat(((double)(++nodeCount)/MyVars.directMarkovChain.getVertexCount())*100);
+            MyProgressBarWaitMessage.waitingMsgLabel.setText("Computing path lengths: "+ nodeCount + "/" + MyMathUtil.getCommaSeperatedNumber(MyVars.directMarkovChain.getVertexCount()) + "(" + workPercent + "%)");
+            for (MyDirectNode endNode : endNodes) {
+                if (startNode != endNode) {
+                    doGraphLevelDFSForAllPathSearch(endNode, startNode, new HashSet<MyDirectNode>(), new LinkedList<>());
+                    if (unreachable) unreachableNodeCount++;
+                    else unreachable = true;
+                }
+            }
+            startNode.setUnreachableNodeCount(unreachableNodeCount);
+            currentTotalWork += workfraction;
+            pb.updateValue((int)currentTotalWork, 100);
+        }
+        MyProgressBarWaitMessage.waitingMsgLabel.setText(MyProgressBarWaitMessage.waitMsg);
+    }
+
     private static boolean unreachable = true;
 
-    private static void doGraphLevelDFSForAllPathSearch(MyNode endNode, MyNode successor, Set<MyNode> visited, LinkedList<MyNode> currpath) {
+    private static void doGraphLevelDFSForAllPathSearch(MyDirectNode endNode, MyDirectNode successor, Set<MyDirectNode> visited, LinkedList<MyDirectNode> currpath) {
         try {
             if (visited.contains(successor)) {
                 return;
@@ -377,8 +357,8 @@ public class MySysUtil {
                 return;
             }
 
-            Collection<MyEdge> outEdges = MyVars.g.getOutEdges(successor);
-            for (MyEdge edge : outEdges) {;
+            Collection<MyDirectEdge> outEdges = MyVars.directMarkovChain.getOutEdges(successor);
+            for (MyDirectEdge edge : outEdges) {;
                 doGraphLevelDFSForAllPathSearch(endNode, edge.getDest(), visited, currpath);
             }
             currpath.removeLast();
@@ -388,18 +368,23 @@ public class MySysUtil {
         }
     }
 
-    public static int getUnWeightedBetweenNodeShortestPathLength(MyNode source, MyNode dest){
+    public static int getUnWeightedBetweenNodeShortestPathLength(MyDirectNode source, MyDirectNode dest){
         MyProgressBar pb = new MyProgressBar(false);
-        Queue<MyNode> Qu =  new LinkedList<>();
-        Set<MyNode> visited = new HashSet();
-        Map<MyNode, Integer> found =  new HashMap();
+        Queue<MyDirectNode> Qu =  new LinkedList<>();
+        Set<MyDirectNode> visited = new HashSet();
+        Map<MyDirectNode, Integer> found =  new HashMap();
 
         Qu.add(source);
         found.put(source, 0);
         while (!Qu.isEmpty()) {
-            MyNode vertex = Qu.remove();
-            Collection<MyNode> successors = MyVars.g.getSuccessors(vertex);
-            for (MyNode neighbor : successors) {
+            MyDirectNode vertex = Qu.remove();
+            Collection<MyDirectNode> successors = MyVars.directMarkovChain.getSuccessors(vertex);
+            if (successors == null) {
+                pb.updateValue(100, 100);
+                pb.dispose();
+                return 0;
+            }
+            for (MyDirectNode neighbor : successors) {
                 if (!found.keySet().contains(neighbor) && !visited.contains(neighbor)) {
                     found.put(neighbor, found.get(vertex) + 1);
                     Qu.add(neighbor);
@@ -412,22 +397,22 @@ public class MySysUtil {
         return (found.containsKey(dest) ? found.get(dest) : 0);
     }
 
-    public static void setAverageUnWeightedShortestPathLength(Graph g) {
+    public static void setAverageUnWeightedDirectGraphShortestPathLength(Graph g) {
         StringBuilder b =  new StringBuilder();
         long gTotalL = 0L;
         long gCount = 0L;
-        Collection<MyNode> nodes = g.getVertices();
-        for (MyNode start : nodes) {
-            Queue<MyNode> Qu =  new LinkedList<>();
-            Set<MyNode> visited = new HashSet();
-            Map<MyNode, Integer> found =  new HashMap();
+        Collection<MyDirectNode> nodes = g.getVertices();
+        for (MyDirectNode start : nodes) {
+            Queue<MyDirectNode> Qu =  new LinkedList<>();
+            Set<MyDirectNode> visited = new HashSet();
+            Map<MyDirectNode, Integer> found =  new HashMap();
 
             Qu.add(start);
             found.put(start, 0);
             while (!Qu.isEmpty()) {
-                MyNode vertex = Qu.remove();
-                Collection<MyNode> successors = g.getSuccessors(vertex);
-                for (MyNode neighbor : successors) {
+                MyDirectNode vertex = Qu.remove();
+                Collection<MyDirectNode> successors = g.getSuccessors(vertex);
+                for (MyDirectNode neighbor : successors) {
                     if (!found.keySet().contains(neighbor) && !visited.contains(neighbor)) {
                         found.put(neighbor, found.get(vertex) + 1);
                         Qu.add(neighbor);
@@ -458,7 +443,7 @@ public class MySysUtil {
 
             gTotalL += totalL;
             gCount += count;
-            start.setUnreachableNodeCount((MyVars.g.getVertexCount()-1)-count);
+            start.setUnreachableNodeCount((MyVars.directMarkovChain.getVertexCount()-1)-count);
         }
 
         if (gTotalL > 0) {
@@ -468,7 +453,5 @@ public class MySysUtil {
             MyVars.avgShortestPathLen = 0.0D;
         }
     }
-
-
 
 }

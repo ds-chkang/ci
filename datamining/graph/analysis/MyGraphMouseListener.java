@@ -1,6 +1,6 @@
 package datamining.graph.analysis;
 
-import datamining.graph.MyNode;
+import datamining.graph.MyDirectNode;
 import edu.uci.ics.jung.visualization.control.GraphMouseListener;
 
 import javax.swing.*;
@@ -10,7 +10,7 @@ public class MyGraphMouseListener
 implements GraphMouseListener {
 
     private MyNetworkAnalyzerViewer networkAnalyissGraphViewer;
-    public MyNode selectedNode;
+    public MyDirectNode selectedNode;
 
     public MyGraphMouseListener(MyNetworkAnalyzerViewer networkAnalyissGraphViewer) {
         this.networkAnalyissGraphViewer = networkAnalyissGraphViewer;
@@ -21,11 +21,11 @@ implements GraphMouseListener {
             @Override public void run() {
                 if (o != null && SwingUtilities.isLeftMouseButton(e)) {
                     networkAnalyissGraphViewer.mouseClickedLocation = e.getLocationOnScreen();
-                    selectedNode = (MyNode)o;
+                    selectedNode = (MyDirectNode)o;
                     networkAnalyissGraphViewer.revalidate();
                     networkAnalyissGraphViewer.repaint();
                 } else if (o != null && SwingUtilities.isRightMouseButton(e)) {
-                    MyNetworkNodeMenu funnelNodeMenu = new MyNetworkNodeMenu(networkAnalyissGraphViewer, ((MyNode)o));
+                    MyNetworkNodeMenu funnelNodeMenu = new MyNetworkNodeMenu(networkAnalyissGraphViewer, ((MyDirectNode)o));
                     funnelNodeMenu.show(networkAnalyissGraphViewer, e.getX(), e.getY());
                 }
             }

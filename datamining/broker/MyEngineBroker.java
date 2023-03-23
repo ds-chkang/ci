@@ -1,6 +1,6 @@
 package datamining.broker;
 
-import datamining.graph.element.MyRelationPropertyExtractionManager;
+import datamining.graph.engine.MyRelationPropertyExtractionManager;
 
 public class MyEngineBroker
 extends MyNodeLabelFeatureBroker {

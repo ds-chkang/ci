@@ -1,26 +1,25 @@
 package datamining.graph.analysis;
 
-import datamining.graph.MyEdge;
-import datamining.graph.MyNode;
+import datamining.graph.MyDirectEdge;
+import datamining.graph.MyDirectNode;
 import datamining.utils.system.MyVars;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
-import java.util.HashSet;
 
 public class MyNetworkNodeMenu
 extends JPopupMenu
 implements ActionListener {
 
     private MyNetworkAnalyzerViewer funnelViewer;
-    private MyNode currentSelectedNode;
+    private MyDirectNode currentSelectedNode;
     private JMenuItem deleteNode = new JMenuItem("DELETE NODE");
     private JMenuItem addAllSuccessors = new JMenuItem("ADD ALL SUCCESSORS");
     private JMenuItem addAllPredecessors = new JMenuItem("ADD ALL PREDECESSORS");
 
-    public MyNetworkNodeMenu(MyNetworkAnalyzerViewer funnelViewer, MyNode currentSelectedNode) {
+    public MyNetworkNodeMenu(MyNetworkAnalyzerViewer funnelViewer, MyDirectNode currentSelectedNode) {
         this.funnelViewer = funnelViewer;
         this.currentSelectedNode = currentSelectedNode;
         this.decorate();
@@ -47,9 +46,9 @@ implements ActionListener {
             @Override
             public void run() {
                 if (e.getSource() == deleteNode) {
-                    Collection<MyEdge> edges = funnelViewer.getGraphLayout().getGraph().getEdges();
+                    Collection<MyDirectEdge> edges = funnelViewer.getGraphLayout().getGraph().getEdges();
                     if (edges != null) {
-                        for (MyEdge edge : edges) {
+                        for (MyDirectEdge edge : edges) {
                             if (edge.getSource() == currentSelectedNode || edge.getDest() == currentSelectedNode) {
                                 funnelViewer.getGraphLayout().getGraph().removeEdge(edge);
                             }

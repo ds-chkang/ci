@@ -1,6 +1,5 @@
 package datamining.main;
 
-import datamining.graph.MyGraph;
 import datamining.utils.message.MyMessageUtil;
 import datamining.utils.system.MyVars;
 
@@ -46,7 +45,7 @@ implements ActionListener, Serializable{
             JFileChooser fc = new JFileChooser();
             fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
             fc.setPreferredSize(new Dimension(580, 460));
-            fc.showSaveDialog(MyVars.app);
+            fc.showSaveDialog(MyVars.main);
             if (fc.getSelectedFile() != null) {
                 MySerializableNetwork serializableNetwork = new MySerializableNetwork();
                 if (fc.getSelectedFile().exists()) {
@@ -68,13 +67,8 @@ implements ActionListener, Serializable{
 class MySerializableNetwork
 implements Serializable {
 
-    private MyGraph mainGraph;
 
-    public MySerializableNetwork() {
-        this.mainGraph = MyVars.g;
-    }
 
-    public MyGraph getMainGraph(){ return this.mainGraph; }
 }
 
 class MyNetworkLoaderMouseListener
