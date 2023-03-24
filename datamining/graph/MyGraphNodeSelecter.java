@@ -7,9 +7,9 @@ import datamining.utils.system.MyVars;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class MyGraphNodeSearcher {
+public class MyGraphNodeSelecter {
 
-    public MyGraphNodeSearcher() {}
+    public MyGraphNodeSelecter() {}
 
     public void setEdgeNodes(MyDirectNode source, MyDirectNode dest) {
         try {

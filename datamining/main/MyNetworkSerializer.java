@@ -27,8 +27,7 @@ implements ActionListener, Serializable{
     public void actionPerformed(ActionEvent e) {
         if (this.createGraph == e.getSource()) {
             new Thread(new Runnable() {
-                @Override
-                public void run() {
+                @Override public void run() {
                     deSerializeNetwork();;
                 }
             }).start();

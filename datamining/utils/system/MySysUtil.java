@@ -291,8 +291,6 @@ public class MySysUtil
         MyVars.sequenceWithObjectIDFileName = "";
         MyVars.sequenceFileName = "";
         MyVars.isDirectMarkovRelation = false;
-        MyVars.edgeOrderByComboBoxIdx = -1;
-        MyVars.nodeOrderByComboBoxIdx = -1;
         MyVars.currentGraphDepth = 0;
         MyVars.itemToIdMap = null;
 
@@ -301,7 +299,6 @@ public class MySysUtil
         MyVars.edgeLabels = new HashSet<>();
         MyVars.edgeValues = new HashMap<>();
         MyVars.variableToIdMap = new MyVariableMap();
-        MyVars.nodeNameMap = new HashMap<>();
         MyVars.pathLengthByDepthMap = new HashMap<>();
         MyVars.currentGraphDepth = 0;
     }

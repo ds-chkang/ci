@@ -9,17 +9,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 
-public class MyNetworkNodeMenu
+public class MyNodeMenu
 extends JPopupMenu
 implements ActionListener {
 
-    private MyNetworkAnalyzerViewer funnelViewer;
+    private MyGraphAnalyzerViewer funnelViewer;
     private MyDirectNode currentSelectedNode;
     private JMenuItem deleteNode = new JMenuItem("DELETE NODE");
     private JMenuItem addAllSuccessors = new JMenuItem("ADD ALL SUCCESSORS");
     private JMenuItem addAllPredecessors = new JMenuItem("ADD ALL PREDECESSORS");
 
-    public MyNetworkNodeMenu(MyNetworkAnalyzerViewer funnelViewer, MyDirectNode currentSelectedNode) {
+    public MyNodeMenu(MyGraphAnalyzerViewer funnelViewer, MyDirectNode currentSelectedNode) {
         this.funnelViewer = funnelViewer;
         this.currentSelectedNode = currentSelectedNode;
         this.decorate();
@@ -54,7 +54,7 @@ implements ActionListener {
                             }
                         }
                     }
-                    ((MyAnalyzerGraph)funnelViewer.getGraphLayout().getGraph()).vRefs.remove(currentSelectedNode.getName());
+                    ((MyGraph)funnelViewer.getGraphLayout().getGraph()).vRefs.remove(currentSelectedNode.getName());
                     funnelViewer.getGraphLayout().getGraph().removeVertex(currentSelectedNode);
                     funnelViewer.graphMouseListener.selectedNode = null;
                 }

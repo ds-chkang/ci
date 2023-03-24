@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MyDirectNode
-implements Serializable, Cloneable, Comparable<MyDirectNode> {
+implements Serializable {
 
     private String name;
     private String label;
@@ -103,20 +103,6 @@ implements Serializable, Cloneable, Comparable<MyDirectNode> {
     public int getInContribution() {return this.inContribution;}
     public void setOutContribution(int outContribution) {this.outContribution += outContribution;}
     public int getOutContribution() {return this.outContribution;}
-    @Override public int compareTo(MyDirectNode n) {
-        if (MyVars.nodeOrderByComboBoxIdx == 0) {
-            return (this.contribution - n.getContribution());
-        } else if (MyVars.nodeOrderByComboBoxIdx == 1) {
-            return (MyVars.directMarkovChain.getSuccessorCount(this) - MyVars.directMarkovChain.getSuccessorCount(n));
-        } else if (MyVars.nodeOrderByComboBoxIdx == 2) {
-            return (MyVars.directMarkovChain.getPredecessorCount(this) - MyVars.directMarkovChain.getPredecessorCount(n));
-        } else if (MyVars.nodeOrderByComboBoxIdx == 3) {
-            return (MyVars.directMarkovChain.getOutContributionByNode(this) - MyVars.directMarkovChain.getOutContributionByNode(n));
-        } else if (MyVars.nodeOrderByComboBoxIdx == 4) {
-            return (MyVars.directMarkovChain.getInContributionByNode(this) - MyVars.directMarkovChain.getInContributionByNode(n));
-        } else {
-            return (this.contribution - n.getContribution());
-        }
-    }
+
 
 }

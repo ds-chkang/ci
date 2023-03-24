@@ -2,6 +2,7 @@ package datamining.graph;
 
 import datamining.utils.message.MyMessageUtil;
 import datamining.utils.MyMathUtil;
+import datamining.utils.system.MySysUtil;
 import datamining.utils.system.MyVars;
 import datamining.utils.table.MyTableUtil;
 import datamining.main.MyProgressBar;
@@ -14,7 +15,9 @@ import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 
 public class MyDirectGraphNodeStatistic
 extends JPanel
@@ -32,7 +35,7 @@ implements ActionListener{
 
     public MyDirectGraphNodeStatistic() {
         this.decorate();
-        this.setNodeContributionStatistics();
+        this.setNodes();
         this.frame = new JFrame("NODE STATISTICS");
         this.frame.setLayout(new BorderLayout(3,3));
         this.frame.add(this, BorderLayout.CENTER);
@@ -47,12 +50,14 @@ implements ActionListener{
         this.setPreferredSize(new Dimension(800, 550));
         this.setLayout(new BorderLayout(3, 3));
         this.nodeStatPanel.setLayout(new BorderLayout(3,3));
-        this.model = new DefaultTableModel(new String[][]{}, new String[]{"NO.", "NODE", "SUCCESSORS", "PREDECESSORS", "OUT CONTRIBUTION", "IN CONTRIBUTION", "CONTRIBUTION"});
+        this.model = new DefaultTableModel(new String[][]{}, new String[]{"NO.", "NODE", "SUCCESSORS", "PREDECESSORS", "OUT CONTRIBUTION", "IN CONTRIBUTION", "CONTRIBUTION", "CLOSENESS", "BETWEENESS", "EIGENVECTOR"});
         this.table = new JTable(this.model);
         this.table.getTableHeader().setFont(MyVars.tahomaBoldFont12);
         this.table.setRowHeight(21);
         this.table.setFont(MyVars.f_pln_12);
         this.table.setBackground(Color.WHITE);
+        this.table.getTableHeader().setBackground(new Color(0,0,0,0));
+        this.table.getTableHeader().setOpaque(false);
         this.nodeStatSaveBtn = new JButton("SAVE");
         this.nodeStatSaveBtn.setFont(MyVars.tahomaPlainFont12);
         this.nodeSearchTxt = new JTextField();
@@ -71,25 +76,23 @@ implements ActionListener{
         nodeOrderByPanel.add(this.nodeOrderByComboBox, BorderLayout.CENTER);
         this.nodeOrderByComboBox.setFont(MyVars.tahomaPlainFont12);
         this.nodeOrderByComboBox.addItem("CONTRIBUTION");
-        this.nodeOrderByComboBox.addItem("SUCCESSOR");
-        this.nodeOrderByComboBox.addItem("PREDECESSOR");
+        this.nodeOrderByComboBox.addItem("SUCCESSORS");
+        this.nodeOrderByComboBox.addItem("PREDECESSORS");
         this.nodeOrderByComboBox.addItem("OUT-CONTRIBUTION");
         this.nodeOrderByComboBox.addItem("IN-CONTRIBUTION");
+        this.nodeOrderByComboBox.addItem("CLOSENESS");
+        this.nodeOrderByComboBox.addItem("BETWEENESS");
+        this.nodeOrderByComboBox.addItem("EIGENVECTOR");
         this.nodeOrderByComboBox.setFocusable(false);
         this.nodeStatPanel.add(nodeOrderByPanel, BorderLayout.NORTH);
         this.nodeStatPanel.add(new JScrollPane(this.table), BorderLayout.CENTER);
         this.nodeStatPanel.add(this.nodeStatDataSavePanel, BorderLayout.SOUTH);
         this.nodeOrderByComboBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+            @Override public void actionPerformed(ActionEvent e) {
                 new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        MyVars.nodeOrderByComboBoxIdx = nodeOrderByComboBox.getSelectedIndex();
+                    @Override public void run() {
                         frame.setAlwaysOnTop(true);
-                        setNodeContributionStatistics();
-                        revalidate();
-                        repaint();
+                        setNodes();
                         frame.setAlwaysOnTop(false);
                     }
                 }).start();
@@ -98,22 +101,49 @@ implements ActionListener{
         this.add(this.nodeStatPanel, BorderLayout.CENTER);
     }
 
-    private void setNodeContributionStatistics() {
+    private void setNodes() {
         if (!this.tableCreated) {
             MyProgressBar pb = new MyProgressBar(false);
-            MyVars.nodeOrderByComboBoxIdx = 0;
-            ArrayList<MyDirectNode> nodes = new ArrayList<>(MyVars.directMarkovChain.getVertices());
-            Collections.sort(nodes);
+            LinkedHashMap<String, Float> sortedNodeMap = new LinkedHashMap<>();
+            Collection<MyDirectNode> nodes = new ArrayList<>(MyVars.directMarkovChain.getVertices());
+            for (MyDirectNode n : nodes) {
+                if (nodeOrderByComboBox.getSelectedIndex() == 0) {
+                    sortedNodeMap.put(n.getName(), (float)n.getContribution());
+                } else if (nodeOrderByComboBox.getSelectedIndex()  == 1) {
+                    sortedNodeMap.put(n.getName(), (float) MyVars.directMarkovChain.getSuccessorCount(n));
+                } else if (nodeOrderByComboBox.getSelectedIndex() == 2) {
+                    sortedNodeMap.put(n.getName(), (float) MyVars.directMarkovChain.getPredecessorCount(n));
+                } else if (nodeOrderByComboBox.getSelectedIndex()  == 3) {
+                    sortedNodeMap.put(n.getName(), (float) n.getOutContribution());
+                } else if (nodeOrderByComboBox.getSelectedIndex()  == 4) {
+                    sortedNodeMap.put(n.getName(), (float) n.getInContribution());
+                } else if (nodeOrderByComboBox.getSelectedIndex()  == 5) {
+                    sortedNodeMap.put(n.getName(), (float) n.getCloseness());
+                } else if (nodeOrderByComboBox.getSelectedIndex()  == 6) {
+                    sortedNodeMap.put(n.getName(), (float) n.getBetweeness());
+                } else if (nodeOrderByComboBox.getSelectedIndex()  == 7) {
+                    sortedNodeMap.put(n.getName(), (float) n.getEignevector());
+                }
+            }
+            sortedNodeMap = MySysUtil.sortMapByFloatValue(sortedNodeMap);
+
+            for (int i = this.table.getRowCount()-1; i >= 0; i--) {
+                ((DefaultTableModel) this.table.getModel()).removeRow(i);
+            }
+
             int recCnt = 0;
-            for (int i = nodes.size()-1; i >= 0; i--) {
+            for (String n : sortedNodeMap.keySet()) {
                 this.model.addRow(new String[]{
                     String.valueOf(++recCnt),
-                    nodes.get(i).getLabel(),
-                    MyMathUtil.getCommaSeperatedNumber(MyVars.directMarkovChain.getSuccessorCount(nodes.get(i))),
-                    MyMathUtil.getCommaSeperatedNumber(MyVars.directMarkovChain.getPredecessorCount(nodes.get(i))),
-                    MyMathUtil.getCommaSeperatedNumber(MyVars.directMarkovChain.getOutContributionByNode(nodes.get(i))),
-                    MyMathUtil.getCommaSeperatedNumber(MyVars.directMarkovChain.getInContributionByNode(nodes.get(i))),
-                    MyMathUtil.getCommaSeperatedNumber(nodes.get(i).getContribution())
+                    n,
+                    MyMathUtil.getCommaSeperatedNumber(MyVars.directMarkovChain.getSuccessorCount(MyVars.directMarkovChain.vRefs.get(n))),
+                    MyMathUtil.getCommaSeperatedNumber(MyVars.directMarkovChain.getPredecessorCount(MyVars.directMarkovChain.vRefs.get(n))),
+                    MyMathUtil.getCommaSeperatedNumber(MyVars.directMarkovChain.getOutContributionByNode((MyDirectNode) MyVars.directMarkovChain.vRefs.get(n))),
+                    MyMathUtil.getCommaSeperatedNumber(MyVars.directMarkovChain.getInContributionByNode((MyDirectNode) MyVars.directMarkovChain.vRefs.get(n))),
+                    MyMathUtil.getCommaSeperatedNumber(((MyDirectNode) MyVars.directMarkovChain.vRefs.get(n)).getContribution()),
+                        MySysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(((MyDirectNode) MyVars.directMarkovChain.vRefs.get(n)).getCloseness())),
+                        MySysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(((MyDirectNode) MyVars.directMarkovChain.vRefs.get(n)).getBetweeness())),
+                        MySysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(((MyDirectNode) MyVars.directMarkovChain.vRefs.get(n)).getEignevector()))
                 });
                 pb.updateValue(recCnt, nodes.size());
             }
@@ -122,39 +152,59 @@ implements ActionListener{
             this.tableCreated = true;
         } else {
             MyProgressBar pb = new MyProgressBar(false);
-            ArrayList<MyDirectNode> nodes = new ArrayList<>(MyVars.directMarkovChain.getVertices());
-            Collections.sort(nodes);
-            int totalRowCount = nodes.size()*2;
-            int recCnt = 0;
-            for (int i=this.table.getRowCount()-1; i >= 0; i--) {
-                this.model.removeRow(i);
-                pb.updateValue(++recCnt, totalRowCount);
+            LinkedHashMap<String, Float> sortedNodeMap = new LinkedHashMap<>();
+            Collection<MyDirectNode> nodes = new ArrayList<>(MyVars.directMarkovChain.getVertices());
+            for (MyDirectNode n : nodes) {
+                if (nodeOrderByComboBox.getSelectedIndex() == 0) {
+                    sortedNodeMap.put(n.getName(), (float)n.getContribution());
+                } else if (nodeOrderByComboBox.getSelectedIndex()  == 1) {
+                    sortedNodeMap.put(n.getName(), (float) MyVars.directMarkovChain.getSuccessorCount(n));
+                } else if (nodeOrderByComboBox.getSelectedIndex() == 2) {
+                    sortedNodeMap.put(n.getName(), (float) MyVars.directMarkovChain.getPredecessorCount(n));
+                } else if (nodeOrderByComboBox.getSelectedIndex()  == 3) {
+                    sortedNodeMap.put(n.getName(), (float) n.getOutContribution());
+                } else if (nodeOrderByComboBox.getSelectedIndex()  == 4) {
+                    sortedNodeMap.put(n.getName(), (float) n.getInContribution());
+                } else if (nodeOrderByComboBox.getSelectedIndex()  == 5) {
+                    sortedNodeMap.put(n.getName(), (float) n.getCloseness());
+                } else if (nodeOrderByComboBox.getSelectedIndex()  == 6) {
+                    sortedNodeMap.put(n.getName(), (float) n.getBetweeness());
+                } else if (nodeOrderByComboBox.getSelectedIndex()  == 7) {
+                    sortedNodeMap.put(n.getName(), (float) n.getEignevector());
+                }
+            }
+            sortedNodeMap = MySysUtil.sortMapByFloatValue(sortedNodeMap);
+
+            for (int i = this.table.getRowCount()-1; i >= 0; i--) {
+                ((DefaultTableModel) this.table.getModel()).removeRow(i);
             }
 
-            int rowCnt = 0;
-            for (int i = nodes.size()-1; i >= 0; i--) {
+            int recCnt = 0;
+            for (String n : sortedNodeMap.keySet()) {
                 this.model.addRow(new String[]{
-                    String.valueOf(++rowCnt),
-                    nodes.get(i).getLabel(),
-                    MyMathUtil.getCommaSeperatedNumber(MyVars.directMarkovChain.getSuccessorCount(nodes.get(i))),
-                    MyMathUtil.getCommaSeperatedNumber(MyVars.directMarkovChain.getPredecessorCount(nodes.get(i))),
-                    MyMathUtil.getCommaSeperatedNumber(MyVars.directMarkovChain.getOutContributionByNode(nodes.get(i))),
-                    MyMathUtil.getCommaSeperatedNumber(MyVars.directMarkovChain.getInContributionByNode(nodes.get(i))),
-                    MyMathUtil.getCommaSeperatedNumber(nodes.get(i).getContribution())
+                        String.valueOf(++recCnt),
+                        n,
+                        MyMathUtil.getCommaSeperatedNumber(MyVars.directMarkovChain.getSuccessorCount(MyVars.directMarkovChain.vRefs.get(n))),
+                        MyMathUtil.getCommaSeperatedNumber(MyVars.directMarkovChain.getPredecessorCount(MyVars.directMarkovChain.vRefs.get(n))),
+                        MyMathUtil.getCommaSeperatedNumber(MyVars.directMarkovChain.getOutContributionByNode((MyDirectNode) MyVars.directMarkovChain.vRefs.get(n))),
+                        MyMathUtil.getCommaSeperatedNumber(MyVars.directMarkovChain.getInContributionByNode((MyDirectNode) MyVars.directMarkovChain.vRefs.get(n))),
+                        MyMathUtil.getCommaSeperatedNumber(((MyDirectNode) MyVars.directMarkovChain.vRefs.get(n)).getContribution()),
+                        MySysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(((MyDirectNode) MyVars.directMarkovChain.vRefs.get(n)).getCloseness())),
+                        MySysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(((MyDirectNode) MyVars.directMarkovChain.vRefs.get(n)).getBetweeness())),
+                        MySysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(((MyDirectNode) MyVars.directMarkovChain.vRefs.get(n)).getEignevector()))
                 });
-                pb.updateValue(++recCnt, totalRowCount);
+                pb.updateValue(recCnt, nodes.size());
             }
             pb.updateValue(100, 100);
             pb.dispose();
         }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
+    @Override public void actionPerformed(ActionEvent e) {
         new Thread(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 JFileChooser fc = new JFileChooser();
+                MyProgressBar pb = null;
                 BufferedWriter bw = null;
                 if (e.getSource() == nodeStatSaveBtn) {
                     try {
@@ -162,27 +212,34 @@ implements ActionListener{
                         fc.setMultiSelectionEnabled(false);
                         fc.setPreferredSize(new Dimension(600, 460));
                         fc.showSaveDialog(MyVars.main);
-                        MyProgressBar pb = new MyProgressBar(false);
+                        pb = new MyProgressBar(false);
                         int pbCnt = 0;
                         bw = new BufferedWriter(new FileWriter(fc.getSelectedFile()));
-                        bw.write("NO.,NODE,SUCCESSOR,PREDECESSOR,OUT-CONTRIBUTION,IN-CONTRIBUTION\n");
+                        bw.write("NO.,NODE, CONTRIBUTION, SUCCESSOR,PREDECESSOR,OUT-CONTRIBUTION,IN-CONTRIBUTION, BETWEENESS" + "\n");
                         for (int i = 0; i < table.getRowCount(); i++) {
                             bw.write(
                         table.getValueAt(i, 0).toString() + "," +
-                             table.getValueAt(i, 1).toString() + "," +
-                             table.getValueAt(i, 2).toString() + "," +
-                             table.getValueAt(i, 3).toString() + "," +
-                             table.getValueAt(i, 4).toString() + "," +
-                             table.getValueAt(i, 5).toString() + "\n");
+                            table.getValueAt(i, 1).toString() + "," +
+                            table.getValueAt(i, 2).toString() + "," +
+                            table.getValueAt(i, 3).toString() + "," +
+                            table.getValueAt(i, 4).toString() + "," +
+                            table.getValueAt(i, 5).toString() + "," +
+                            table.getValueAt(i, 6).toString() + "," +
+                                table.getValueAt(i, 7).toString() + "," +
+                                table.getValueAt(i, 8).toString() + "," +
+                            table.getValueAt(i, 9).toString() + "\n");
                             pb.updateValue(++pbCnt, table.getRowCount());
                         }
                         bw.close();
-                        Thread.sleep(200);
+                        pb.updateValue(100, 100);
                         pb.dispose();
-                        Thread.sleep(200);
                         MyMessageUtil.showInfoMsg("Node statistics have been successfully saved to storage.");
                     } catch (Exception ex) {
                         try {
+                            if (pb != null) {
+                                pb.updateValue(100, 100);
+                                pb.dispose();
+                            }
                             MyMessageUtil.showErrorMsg("An error has occurred while saving node statistics to storage!");
                             if (bw != null) bw.close();
                             if (fc.getSelectedFile().exists()) {fc.getSelectedFile().delete();}

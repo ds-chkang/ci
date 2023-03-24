@@ -216,7 +216,7 @@ extends JPanel {
                     numOfIntersectedNodeLabel.setBackground(Color.WHITE);
                     numOfIntersectedNodeLabel.setForeground(Color.BLACK);
                     String numOfIntersectedNodeValue = MyMathUtil.getCommaSeperatedNumber(intersectedNodeSet.size()) + "[" + MyMathUtil.twoDecimal(((double)intersectedNodeSet.size()/neighborNodeSet.size())*100)+ "]";
-                    numOfIntersectedNodeLabel.setText("INTERSECTED N.: " + numOfIntersectedNodeValue);
+                    numOfIntersectedNodeLabel.setText("INTER. N.: " + numOfIntersectedNodeValue);
 
                     JLabel selectedNodeLabel = new JLabel();
                     selectedNodeLabel.setFont(MyVars.f_pln_13);

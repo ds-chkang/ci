@@ -9,11 +9,9 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
-import edu.uci.ics.jung.visualization.renderers.EdgeArrowRenderingSupport;
 import edu.uci.ics.jung.visualization.renderers.Renderer;
 import org.apache.commons.collections15.Transformer;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
@@ -22,7 +20,7 @@ import java.util.Collection;
 
 import static java.awt.Cursor.HAND_CURSOR;
 
-public class MyNetworkAnalyzerViewer
+public class MyGraphAnalyzerViewer
 extends VisualizationViewer<MyDirectNode, MyDirectEdge>
 implements Serializable {
 
@@ -35,7 +33,7 @@ implements Serializable {
     protected Point mouseClickedLocation;
 
 
-    public MyNetworkAnalyzerViewer(VisualizationModel<MyDirectNode, MyDirectEdge> vm, MyGraphAnalyzer graphAnalyzer) {
+    public MyGraphAnalyzerViewer(VisualizationModel<MyDirectNode, MyDirectEdge> vm, MyGraphAnalyzer graphAnalyzer) {
         super(vm);
         try {
             this.setPreferredSize(new Dimension(4000, 4000));
@@ -61,7 +59,7 @@ implements Serializable {
             this.getRenderContext().setVertexShapeTransformer(this.nodeSizer);
             this.graphMouseListener = new MyGraphMouseListener(this);
             this.addGraphMouseListener(this.graphMouseListener);
-            this.addMouseListener(new MyNetworkViewerMouseListener(this, graphAnalyzer));
+            this.addMouseListener(new MyGraphViewerMouseListener(this, graphAnalyzer));
             this.getRenderContext().setVertexFontTransformer(new Transformer<MyDirectNode, Font>() {
                 @Override public synchronized Font transform(MyDirectNode n) {
                     if (n.getContribution() == 0) {return new Font("Noto Sans", Font.PLAIN, 0);
@@ -140,8 +138,8 @@ implements Serializable {
                     }
                 }
             }
-            if (((MyAnalyzerGraph)this.getGraphLayout().getGraph()).MAX_EDGE_VALUE < edgeContribution) {
-                ((MyAnalyzerGraph)this.getGraphLayout().getGraph()).MAX_EDGE_VALUE = edgeContribution;
+            if (((MyGraph)this.getGraphLayout().getGraph()).MAX_EDGE_VALUE < edgeContribution) {
+                ((MyGraph)this.getGraphLayout().getGraph()).MAX_EDGE_VALUE = edgeContribution;
             }
             edge.setCurrentValue(edgeContribution);
         }
@@ -161,8 +159,8 @@ implements Serializable {
                     }
                 }
             }
-            if (((MyAnalyzerGraph)this.getGraphLayout().getGraph()).MAX_EDGE_VALUE < edgeReachTime) {
-                ((MyAnalyzerGraph)this.getGraphLayout().getGraph()).MAX_EDGE_VALUE = edgeReachTime;
+            if (((MyGraph)this.getGraphLayout().getGraph()).MAX_EDGE_VALUE < edgeReachTime) {
+                ((MyGraph)this.getGraphLayout().getGraph()).MAX_EDGE_VALUE = edgeReachTime;
             }
             edge.setCurrentValue(edgeReachTime);
         }

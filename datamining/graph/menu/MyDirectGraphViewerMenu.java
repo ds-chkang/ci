@@ -65,8 +65,6 @@ extends JPopupMenu {
         this.add(new JSeparator());
         this.add(this.shakeGraph);
         this.add(new JSeparator());
-        this.add(this.searchNode);
-        this.add(new JSeparator());
         this.add(this.showNodeValueDistribution);
         if (MyVars.nodeLabels.size() > 0) {
             this.add(new JSeparator());
@@ -242,6 +240,7 @@ extends JPopupMenu {
                     MyDirectGraphEdgeStatistic directGraphEdgeStatistic = new MyDirectGraphEdgeStatistic();}}).start();
             }
         });
+
 
     }
 }

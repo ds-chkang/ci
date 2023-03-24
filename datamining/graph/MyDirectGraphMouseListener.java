@@ -14,7 +14,7 @@ implements GraphMouseListener {
             new Thread(new Runnable() {
                 @Override public void run() {
                 if (o != null && SwingUtilities.isLeftMouseButton(e)) {
-                    MyGraphNodeSearcher graphNodeSearcher = new MyGraphNodeSearcher();
+                    MyGraphNodeSelecter graphNodeSearcher = new MyGraphNodeSelecter();
                     graphNodeSearcher.setSelectedNode((MyDirectNode) o);
                 }
             }}).start();

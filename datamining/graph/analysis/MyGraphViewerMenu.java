@@ -18,11 +18,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
-public class MyNetworkViewerMenu
+public class MyGraphViewerMenu
 extends JPopupMenu
 implements ActionListener {
 
-    private MyNetworkAnalyzerViewer funnelViewer;
+    private MyGraphAnalyzerViewer funnelViewer;
     private JMenuItem showNodeContribution = new JMenuItem("SHOW NODE CONTRIBUTION");
     private JMenuItem hideContribution = new JMenuItem("HIDE NODE CONTRIBUTION");
     private JMenuItem showNodeLabel = new JMenuItem("SHOW NODE NAMES");
@@ -33,7 +33,7 @@ implements ActionListener {
     private JMenuItem hideEdgeReachTimeStrength = new JMenuItem("HIDE EDGE REACH TIME");
     private JMenuItem deleteNodes = new JMenuItem("DELETE NODES");
 
-    public MyNetworkViewerMenu(MyNetworkAnalyzerViewer funnelViewer) {
+    public MyGraphViewerMenu(MyGraphAnalyzerViewer funnelViewer) {
         this.funnelViewer = funnelViewer;
         this.setMenuItem(this.showNodeContribution);
         this.setMenuItem(this.hideContribution);
@@ -167,8 +167,8 @@ implements ActionListener {
                                 funnelViewer.getGraphLayout().getGraph().removeVertex(node);
                                 pb.updateValue(++pbCnt, nodes.size());
                             }
-                            ((MyAnalyzerGraph)funnelViewer.getGraphLayout().getGraph()).vRefs = new HashMap();
-                            ((MyAnalyzerGraph)funnelViewer.getGraphLayout().getGraph()).edRefs = new HashSet();
+                            ((MyGraph)funnelViewer.getGraphLayout().getGraph()).vRefs = new HashMap();
+                            ((MyGraph)funnelViewer.getGraphLayout().getGraph()).edRefs = new HashSet();
                             funnelViewer.revalidate();
                             funnelViewer.repaint();
                             pb.updateValue(100, 100);

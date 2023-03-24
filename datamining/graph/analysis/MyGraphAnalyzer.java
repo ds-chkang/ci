@@ -28,10 +28,10 @@ public class MyGraphAnalyzer
 extends JFrame
 implements ActionListener, WindowListener {
 
-    private MyAnalyzerGraph graph;
+    private MyGraph graph;
     protected JButton addBtn;
     private JTable table;
-    private MyNetworkAnalyzerViewer graphViewer;
+    private MyGraphAnalyzerViewer graphViewer;
     private DefaultTableModel model;
     private JTextField searchTxt = new JTextField();
     protected JComboBox nodeOptionComboBoxMenu = new JComboBox();
@@ -434,9 +434,9 @@ implements ActionListener, WindowListener {
         bottomPanel.add(bottomLeftPanel, BorderLayout.WEST);
         bottomPanel.add(bottomRightPanel, BorderLayout.CENTER);
 
-        this.graph = new MyAnalyzerGraph<>();
+        this.graph = new MyGraph<>();
         MyStaticLayout staticLayout = new MyStaticLayout(this.graph, new Dimension(400, 500));
-        this.graphViewer = new MyNetworkAnalyzerViewer(new DefaultVisualizationModel<>(staticLayout, new Dimension(400, 500)),  this);
+        this.graphViewer = new MyGraphAnalyzerViewer(new DefaultVisualizationModel<>(staticLayout, new Dimension(400, 500)),  this);
         leftPanel.add(topPanel, BorderLayout.NORTH);
         leftPanel.add(this.graphViewer, BorderLayout.CENTER);
         leftPanel.add(bottomPanel, BorderLayout.SOUTH);

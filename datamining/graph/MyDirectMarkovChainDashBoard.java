@@ -227,8 +227,8 @@ implements ActionListener {
                             if (pathFromTable.getSelectedRow() >= 0 && pathToTable.getSelectedRow() >= 0) {
                                 String fromTableNodeName = pathFromTable.getValueAt(pathFromTable.getSelectedRow(), 1).toString();
                                 String toTableNodeName = pathToTable.getValueAt(pathToTable.getSelectedRow(), 1).toString();
-                                MyDirectNode fromNode = (MyDirectNode) MyVars.directMarkovChain.vRefs.get(MyVars.nodeNameMap.get(fromTableNodeName));
-                                MyDirectNode toNode = (MyDirectNode) MyVars.directMarkovChain.vRefs.get(MyVars.nodeNameMap.get(toTableNodeName));
+                                MyDirectNode fromNode = (MyDirectNode) MyVars.directMarkovChain.vRefs.get(fromTableNodeName);
+                                MyDirectNode toNode = (MyDirectNode) MyVars.directMarkovChain.vRefs.get(toTableNodeName);
                                 String shortestPathLength = MyMathUtil.getCommaSeperatedNumber(MySysUtil.getUnWeightedBetweenNodeShortestPathLength(fromNode, toNode));
                                 try {
                                     Thread.sleep(500);
@@ -498,7 +498,7 @@ implements ActionListener {
                                     MyDirectNode n = (MyDirectNode) MyVars.directMarkovChain.vRefs.get(nodeListTable.getValueAt(nodeListTable.getSelectedRow(), 1));
                                     synchronized (n) {
                                         if (n != MyVars.getDirectGraphViewer().selectedSingleNode) {
-                                            MyGraphNodeSearcher graphNodeSearcher = new MyGraphNodeSearcher();
+                                            MyGraphNodeSelecter graphNodeSearcher = new MyGraphNodeSelecter();
                                             graphNodeSearcher.setSelectedNode(n);
                                         }
                                     }
@@ -723,7 +723,7 @@ implements ActionListener {
                                 isEdgeTableSelected = true;
                                 MyDirectNode source = (MyDirectNode) MyVars.directMarkovChain.vRefs.get(edgeTable.getValueAt(edgeTable.getSelectedRow(), 1));
                                 MyDirectNode dest = (MyDirectNode) MyVars.directMarkovChain.vRefs.get(edgeTable.getValueAt(edgeTable.getSelectedRow(), 2));
-                                MyGraphNodeSearcher graphNodeSearcher = new MyGraphNodeSearcher();
+                                MyGraphNodeSelecter graphNodeSearcher = new MyGraphNodeSelecter();
                                 graphNodeSearcher.setEdgeNodes(source, dest);
                                 isEdgeTableSelected = false;
                             }

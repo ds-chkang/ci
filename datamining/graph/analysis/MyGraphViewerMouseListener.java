@@ -4,13 +4,13 @@ import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class MyNetworkViewerMouseListener
+public class MyGraphViewerMouseListener
 implements MouseListener {
 
-    private MyNetworkAnalyzerViewer graphViewer;
+    private MyGraphAnalyzerViewer graphViewer;
     protected MyGraphAnalyzer graphAnalyzer;
 
-    public MyNetworkViewerMouseListener(MyNetworkAnalyzerViewer funnelViewer, MyGraphAnalyzer graphAnalyzer) {
+    public MyGraphViewerMouseListener(MyGraphAnalyzerViewer funnelViewer, MyGraphAnalyzer graphAnalyzer) {
         this.graphAnalyzer = graphAnalyzer;
         this.graphViewer = funnelViewer;
     }
@@ -21,7 +21,7 @@ implements MouseListener {
                 graphViewer.mouseClickedLocation = e.getLocationOnScreen();
                 if (SwingUtilities.isRightMouseButton(e) && graphViewer.getPickedVertexState().getPicked().size() == 0) {
                     if (graphViewer.getGraphLayout().getGraph().getVertexCount() > 0) {
-                        MyNetworkViewerMenu funnelViewerMenu = new MyNetworkViewerMenu(graphViewer);
+                        MyGraphViewerMenu funnelViewerMenu = new MyGraphViewerMenu(graphViewer);
                         funnelViewerMenu.show(graphViewer, e.getX(), e.getY());
                     }
                 } else if (SwingUtilities.isLeftMouseButton(e) && graphViewer.getPickedVertexState().getPicked().size() == 0) {

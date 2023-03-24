@@ -54,8 +54,7 @@ public class MyVars {
     public static boolean isSupplementaryOn = false;
     public static int totalRecords;
     public static boolean isDirectMarkovRelation = false;
-    public static int edgeOrderByComboBoxIdx = -1;
-    public static int nodeOrderByComboBoxIdx = -1;
+
     public static int BAR_CHART_RECORD_LIMIT = 35;
     public static boolean isAppStarted = false;
     public static java.util.List<Set<MyDirectNode>> connectedComponentCountsByGraph = new ArrayList<>();
@@ -65,8 +64,6 @@ public class MyVars {
     public static Set<String> nodeLabels = new HashSet<>();
     public static Map<String, String> nodeValues = new HashMap<>();
     public static Map<Integer, Long> pathLengthByDepthMap = new HashMap<>();
-    public static Map<String, String> nodeNameMap = new HashMap<>();
-    public static Set<String> edgeValueSet = new HashSet<>();
     public static MyDirectMarkovChainDashBoard directMarkovChainDashBoard;
     public static MyDirectMarkovChainViewer getDirectGraphViewer() {return MyVars.main.getMsgBroker().getDirectMarkovChainContainer();}
     public static String nodeLabelFileExt = ".nodelbl";

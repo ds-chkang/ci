@@ -422,7 +422,7 @@ implements Serializable {
         Collection<MyDirectEdge> edges = MyVars.directMarkovChain.getEdges();
         if (edges != null) {
             for (MyDirectEdge edge : edges) {
-                if (edge.getSource().getLabel().equals(node.getLabel())) {
+                if (edge.getSource().getName().equals(node.getName())) {
                     outContribution += edge.getContribution();
                 }
             }
@@ -431,12 +431,30 @@ implements Serializable {
     }
 
     public int getInContributionByNode(MyDirectNode node) {
-        int inContribution = 0;
-        Collection<MyDirectEdge> edges = MyVars.directMarkovChain.getEdges();
-        for (MyDirectEdge edge : edges) {
-            if (edge.getDest().getLabel().equals(node.getLabel())) {inContribution += edge.getContribution();}
+        int contribution = 0;
+        Collection<MyDirectNode> edges = MyVars.directMarkovChain.getVertices();
+        for (MyDirectNode n : edges) {
+            if (n.getName().equals(node.getName())) {contribution += n.getContribution();}
         }
-        return inContribution;
+        return contribution;
+    }
+
+    public int getClosenessByNode(MyDirectNode node) {
+        int closeness = 0;
+        Collection<MyDirectNode> nodes = MyVars.directMarkovChain.getVertices();
+        for (MyDirectNode n : nodes) {
+            if (n.getName().equals(node.getName())) {closeness += n.getCloseness();}
+        }
+        return closeness;
+    }
+
+    public int getBetweenessByNode(MyDirectNode node) {
+        int closeness = 0;
+        Collection<MyDirectNode> nodes = MyVars.directMarkovChain.getVertices();
+        for (MyDirectNode n : nodes) {
+            if (n.getName().equals(node.getName())) {closeness += n.getBetweeness();}
+        }
+        return closeness;
     }
 
     public float getAverageSuccessors() {

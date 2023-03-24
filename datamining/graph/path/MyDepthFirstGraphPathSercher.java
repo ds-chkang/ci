@@ -580,7 +580,6 @@ implements ComponentListener, ActionListener {
                         try {
                             synchronized (nodeSelectBtn) {
                                 String n = nodeTable.getValueAt(nodeTable.getSelectedRow(), 1).toString();
-                                n = MyVars.nodeNameMap.get(n);
                                 betweenPathGraphViewer.selectedNode = (MyDirectNode) integratedGraph.vRefs.get(n);
                                 betweenPathGraphViewer.setMaximumNodeValue();
                                 betweenPathGraphViewer.setMaximumNodeSize();

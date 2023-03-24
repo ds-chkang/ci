@@ -2,12 +2,14 @@ package datamining.graph;
 
 import datamining.main.MyProgressBar;
 import datamining.utils.message.MyMessageUtil;
+import datamining.utils.system.MySysUtil;
 import datamining.utils.system.MyVars;
 import edu.uci.ics.jung.algorithms.scoring.BetweennessCentrality;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Pair;
 import org.apache.commons.collections15.Transformer;
 
+import javax.media.j3d.Link;
 import java.util.*;
 
 /**
@@ -69,9 +71,6 @@ public class MyEdgeBetweennessComputer<V, E> implements Transformer<Graph<V, E>,
                                 pb.updateValue(100, 100);
                                 pb.dispose();
                                 MyMessageUtil.showErrorMsg("The current execution has been interrupted.");
-                                //MyVars.getDirectGraphViewer().directGraphViewerControlPanel.edgeValueComboBoxMenu.removeActionListener(MyVars.getDirectGraphViewer().directGraphViewerControlPanel);
-                                //MyVars.getDirectGraphViewer().directGraphViewerControlPanel.edgeValueComboBoxMenu.setSelectedIndex(0);
-                                //MyVars.getDirectGraphViewer().directGraphViewerControlPanel.edgeValueComboBoxMenu.addActionListener(MyVars.getDirectGraphViewer().directGraphViewerControlPanel);
                                 MyVars.getDirectGraphViewer().directGraphViewerMouseListener.setDefaultView();
                             }
                         }).start();
@@ -90,6 +89,47 @@ public class MyEdgeBetweennessComputer<V, E> implements Transformer<Graph<V, E>,
         } catch (Exception ex) {
             pb.updateValue(100, 100);
             pb.dispose();
+        }
+    }
+
+    public LinkedHashMap getRankedEdgeBetweeness() {
+        LinkedHashMap<String, Float> sortedEdgeMap = new LinkedHashMap();
+        MyProgressBar pb = new MyProgressBar(false);
+        try {
+            int edgeCount = MyVars.directMarkovChain.getEdgeCount();
+            edges.clear();
+            for (int k = 0; k < edgeCount; ) {
+                pb.updateValue(++k, edgeCount);
+                BetweennessCentrality<V, E> bc = new BetweennessCentrality<V, E>(MyVars.directMarkovChain);
+                for (Object e : MyVars.directMarkovChain.getEdges()) {
+                    String edge = ((MyDirectEdge)e).getSource().getName() + "-" + ((MyDirectEdge)e).getDest().getName();
+                    if (MyVars.currentThread.isInterrupted()) {
+                        new Thread(new Runnable() {
+                            @Override public void run() {
+                                pb.updateValue(100, 100);
+                                pb.dispose();
+                                MyMessageUtil.showErrorMsg("The current execution has been interrupted.");
+                                MyVars.getDirectGraphViewer().directGraphViewerMouseListener.setDefaultView();
+                            }
+                        }).start();
+                    }
+                    double score = bc.getEdgeScore((E) e);
+                    if (sortedEdgeMap.containsKey(((MyDirectEdge) e).getName())) {
+                        sortedEdgeMap.put(edge, sortedEdgeMap.get(edge) + 1f);
+                    } else {
+                        sortedEdgeMap.put(edge, (float)score);
+                    }
+                }
+            }
+            sortedEdgeMap = MySysUtil.sortMapByFloatValue(sortedEdgeMap);
+            pb.updateValue(100, 100);
+            pb.dispose();
+            return sortedEdgeMap;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            pb.updateValue(100, 100);
+            pb.dispose();
+            return null;
         }
     }
 

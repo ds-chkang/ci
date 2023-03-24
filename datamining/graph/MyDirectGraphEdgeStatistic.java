@@ -2,6 +2,7 @@ package datamining.graph;
 
 import datamining.utils.message.MyMessageUtil;
 import datamining.utils.MyMathUtil;
+import datamining.utils.system.MySysUtil;
 import datamining.utils.system.MyVars;
 import datamining.utils.table.MyTableUtil;
 import datamining.main.MyProgressBar;
@@ -14,7 +15,9 @@ import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 
 public class MyDirectGraphEdgeStatistic
 extends JPanel
@@ -43,17 +46,19 @@ implements ActionListener{
     }
 
     private void decorate() {
-        this.setPreferredSize(new Dimension(800, 550));
+        this.setPreferredSize(new Dimension(500, 550));
         this.setLayout(new BorderLayout(3, 3));
 
         this.edgeStatPanel.setLayout(new BorderLayout(3, 3));
-        this.model = new DefaultTableModel(new String[][]{}, new String[]{"NO.", "SOURCE", "DEST", "CONT.", "SUPPORT", "CONFIDENCE", "LIFT"});
+        this.model = new DefaultTableModel(new String[][]{}, new String[]{"NO.", "SOURCE", "DEST", "CONT.", "BETWEENESS"});
         this.table = new JTable(this.model);
 
         this.table.getTableHeader().setFont(MyVars.tahomaBoldFont12);
         this.table.setRowHeight(21);
         this.table.setFont(MyVars.f_pln_12);
         this.table.setBackground(Color.WHITE);
+        this.table.getTableHeader().setBackground(new Color(0,0,0,0));
+        this.table.getTableHeader().setOpaque(false);
         this.edgeStatSaveBtn = new JButton("SAVE");
         this.edgeStatSaveBtn.setFont(MyVars.tahomaPlainFont11);
         this.edgeSearchTxt = new JTextField();
@@ -71,28 +76,21 @@ implements ActionListener{
         edgeOrderByPanel.add(this.edgeOrderByComboBox, BorderLayout.CENTER);
         this.edgeOrderByComboBox.setFont(MyVars.tahomaPlainFont12);
         this.edgeOrderByComboBox.addItem("CONTRIBUTION");
-        this.edgeOrderByComboBox.addItem("SUPPORT");
-        this.edgeOrderByComboBox.addItem("CONFIDENCE");
-        this.edgeOrderByComboBox.addItem("LIFT");
+        this.edgeOrderByComboBox.addItem("BETWEENESS");
         this.edgeOrderByComboBox.setFocusable(false);
         this.edgeStatPanel.add(edgeOrderByPanel, BorderLayout.NORTH);
         this.edgeStatPanel.add(new JScrollPane(this.table), BorderLayout.CENTER);
         this.edgeStatPanel.add(this.edgeStatDataSavePanel, BorderLayout.SOUTH);
 
         this.edgeOrderByComboBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        MyVars.edgeOrderByComboBoxIdx = edgeOrderByComboBox.getSelectedIndex();
-                        frame.setAlwaysOnTop(true);
-                        setEdgeContributionStatistics();
-                        revalidate();
-                        repaint();
+            @Override public void actionPerformed(ActionEvent e) {
+                MyVars.currentThread = new Thread(new Runnable() {
+                    @Override public void run() {
                         frame.setAlwaysOnTop(false);
+                        setEdgeContributionStatistics();
                     }
-                }).start();
+                });
+                MyVars.currentThread.start();
             }
         });
         this.add(this.edgeStatPanel, BorderLayout.CENTER);
@@ -102,19 +100,30 @@ implements ActionListener{
     private void setEdgeContributionStatistics() {
         if (!this.tableCreated) {
             MyProgressBar pb = new MyProgressBar(false);
+            LinkedHashMap<String, Float> sortedEdgeMap = new LinkedHashMap<>();
+            Collection<MyDirectEdge> edges = new ArrayList<>(MyVars.directMarkovChain.getEdges());
+            for (MyDirectEdge e : edges) {
+                String edge = e.getSource().getName() + "-" + e.getDest().getName();
+                if (edgeOrderByComboBox.getSelectedIndex() == 0) {
+                    sortedEdgeMap.put(edge, (float)e.getContribution());
+                } else if (edgeOrderByComboBox.getSelectedIndex() == 1) {
+                    sortedEdgeMap.put(edge, e.betweeness);
+                }
+            }
+            sortedEdgeMap = MySysUtil.sortMapByFloatValue(sortedEdgeMap);
+
+            for (int i = this.table.getRowCount()-1; i >= 0; i--) {
+                ((DefaultTableModel) this.table.getModel()).removeRow(i);
+            }
 
             int recCnt = 0;
-            ArrayList<MyDirectEdge> edges = new ArrayList<>(MyVars.directMarkovChain.getEdges());
-            Collections.sort(edges);
-            for (int i = edges.size() - 1; i >= 0; i--) {
+            for (String edge : sortedEdgeMap.keySet()) {
                 this.model.addRow(new String[]{
                     String.valueOf(++recCnt),
-                    edges.get(i).getSource().getLabel(),
-                    edges.get(i).getDest().getLabel(),
-                    MyMathUtil.getCommaSeperatedNumber(edges.get(i).getContribution()),
-                    MyMathUtil.threeDecimalFormat(edges.get(i).getSupport()),
-                    MyMathUtil.threeDecimalFormat(edges.get(i).getConfidence()),
-                    MyMathUtil.threeDecimalFormat(edges.get(i).getLift())
+                    edge.split("-")[0],
+                    edge.split("-")[1],
+                        MySysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(sortedEdgeMap.get(edge))).split("\\.")[0],
+                    "0.00"
                 });
                 pb.updateValue(recCnt, edges.size());
             }
@@ -122,32 +131,46 @@ implements ActionListener{
             pb.updateValue(100, 100);
             pb.dispose();
         } else {
-            MyProgressBar pb = new MyProgressBar(false);
-            ArrayList<MyDirectEdge> edges = new ArrayList<>(MyVars.directMarkovChain.getEdges());
-            Collections.sort(edges);
-            int totalRowCount = edges.size()*2;
-            int recCnt = 0;
-            for (int i=this.table.getRowCount()-1; i >= 0; i--) {
-                this.model.removeRow(i);
-                pb.updateValue(++recCnt, totalRowCount);
-            }
+            if (edgeOrderByComboBox.getSelectedIndex() == 0) {
+                MyProgressBar pb = new MyProgressBar(false);
+                LinkedHashMap<String, Float> sortedEdgeMap = new LinkedHashMap<>();
+                Collection<MyDirectEdge> edges = new ArrayList<>(MyVars.directMarkovChain.getEdges());
+                for (MyDirectEdge e : edges) {
+                    String edge = e.getSource().getName() + "-" + e.getDest().getName();
+                    sortedEdgeMap.put(edge, (float) e.getContribution());
+                }
+                sortedEdgeMap = MySysUtil.sortMapByFloatValue(sortedEdgeMap);
+                for (int i = this.table.getRowCount()-1; i >= 0; i--) {((DefaultTableModel) this.table.getModel()).removeRow(i);}
 
-            int rowCnt = 0;
-            for (int i = edges.size() - 1; i >= 0; i--) {
-                this.model.addRow(new String[]{
-                    String.valueOf(++rowCnt),
-                    edges.get(i).getSource().getLabel(),
-                    edges.get(i).getDest().getLabel(),
-                    MyMathUtil.getCommaSeperatedNumber(edges.get(i).getContribution()),
-                    MyMathUtil.threeDecimalFormat(edges.get(i).getSupport()),
-                    MyMathUtil.threeDecimalFormat(edges.get(i).getConfidence()),
-                    MyMathUtil.threeDecimalFormat(edges.get(i).getLift())
-                });
-                pb.updateValue(++recCnt, totalRowCount);
-            }
+                int recCnt = 0;
+                for (String edge : sortedEdgeMap.keySet()) {
+                    this.model.addRow(new String[]{
+                        String.valueOf(++recCnt),
+                        edge.split("-")[0],
+                        edge.split("-")[1],
+                        MySysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(sortedEdgeMap.get(edge))).split("\\.")[0],
+                        "0.00"
+                    });
+                    pb.updateValue(recCnt, edges.size());
+                }
+                pb.updateValue(100, 100);
+                pb.dispose();
+            } else if (edgeOrderByComboBox.getSelectedIndex() == 1) {
+                MyEdgeBetweennessComputer edgeBetweennessComputer = new MyEdgeBetweennessComputer();
+                LinkedHashMap<String, Float> sortedEdgeMap = edgeBetweennessComputer.getRankedEdgeBetweeness();
+                for (int i = this.table.getRowCount()-1; i >= 0; i--) {((DefaultTableModel) this.table.getModel()).removeRow(i);}
 
-            pb.updateValue(100, 100);
-            pb.dispose();
+                int recCnt = 0;
+                for (String edge : sortedEdgeMap.keySet()) {
+                    this.model.addRow(new String[]{
+                        String.valueOf(++recCnt),
+                        edge.split("-")[0],
+                        edge.split("-")[1],
+                        MySysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(sortedEdgeMap.get(edge))).split("\\.")[0],
+                        MyMathUtil.twoDecimalFormat(sortedEdgeMap.get(edge))
+                    });
+                }
+            }
         }
     }
 
@@ -158,32 +181,35 @@ implements ActionListener{
             public void run() {
                 JFileChooser fc = new JFileChooser();
                 BufferedWriter bw = null;
+                MyProgressBar pb = null;
                 if (e.getSource() == edgeStatSaveBtn) {
                     try {
                         fc.setFont(MyVars.f_pln_12); //For hangul file names.
                         fc.setMultiSelectionEnabled(false);
                         fc.setPreferredSize(new Dimension(600, 460));
                         fc.showSaveDialog(MyVars.main);
-                        MyProgressBar pb = new MyProgressBar(false);
+                        pb = new MyProgressBar(false);
                         int pbCnt = 0;
                         bw = new BufferedWriter(new FileWriter(fc.getSelectedFile()));
                         bw.write("NO.,SOURCE,DEST,CONTRIBUTION,SUPPORT,CONFIDENCE,LIFT\n");
                         for (int i = 0; i < table.getRowCount(); i++) {
                             bw.write(table.getValueAt(i, 0).toString() + "," +
                                 table.getValueAt(i, 1).toString() + "," +
-                                table.getValueAt(i, 2).toString() + "," +
-                                table.getValueAt(i, 3).toString() + "," +
-                                table.getValueAt(i, 4).toString() + "," +
-                                table.getValueAt(i, 5).toString() + "\n");
+                                    table.getValueAt(i, 2).toString() + "," +
+                                    table.getValueAt(i, 3).toString() + "," +
+                                table.getValueAt(i, 4).toString() + "," + "\n");
                             pb.updateValue(++pbCnt, table.getRowCount());
                         }
                         bw.close();
-                        Thread.sleep(250);
+                        pb.updateValue(100, 100);
                         pb.dispose();
-                        Thread.sleep(200);
                         MyMessageUtil.showInfoMsg("Node statistics have been successfully saved to storage.");
                     } catch (Exception ex) {
                         try {
+                            if (pb != null) {
+                                pb.updateValue(100, 100);
+                                pb.dispose();
+                            }
                             MyMessageUtil.showErrorMsg("An error has occurred while saving node statistics to storage!");
                             if (bw != null) bw.close();
                             if (fc.getSelectedFile().exists()) {

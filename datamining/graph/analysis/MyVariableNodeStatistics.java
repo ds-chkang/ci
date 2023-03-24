@@ -22,7 +22,7 @@ import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MyNetworkVariableNodeStatistics
+public class MyVariableNodeStatistics
 extends JFrame
 implements ActionListener {
 
@@ -39,11 +39,11 @@ implements ActionListener {
     private DefaultTableModel model;
     private JTextField searchTxt = new JTextField();
     private JButton save = new JButton(" SAVE ");
-    private MyNetworkAnalyzerViewer funnelViewer;
+    private MyGraphAnalyzerViewer funnelViewer;
     private MyDirectNode currentSelectedNode;
     private JPanel contentPanel = new JPanel();
 
-    public MyNetworkVariableNodeStatistics(MyNetworkAnalyzerViewer funnelViewer, MyDirectNode currentSelectedNode) {
+    public MyVariableNodeStatistics(MyGraphAnalyzerViewer funnelViewer, MyDirectNode currentSelectedNode) {
         super("VARIABLE NODE STATISTICS");
         this.funnelViewer = funnelViewer;
         this.currentSelectedNode = currentSelectedNode;

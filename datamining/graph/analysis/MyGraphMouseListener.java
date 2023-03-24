@@ -9,10 +9,10 @@ import java.awt.event.MouseEvent;
 public class MyGraphMouseListener
 implements GraphMouseListener {
 
-    private MyNetworkAnalyzerViewer networkAnalyissGraphViewer;
+    private MyGraphAnalyzerViewer networkAnalyissGraphViewer;
     public MyDirectNode selectedNode;
 
-    public MyGraphMouseListener(MyNetworkAnalyzerViewer networkAnalyissGraphViewer) {
+    public MyGraphMouseListener(MyGraphAnalyzerViewer networkAnalyissGraphViewer) {
         this.networkAnalyissGraphViewer = networkAnalyissGraphViewer;
     }
 
@@ -25,7 +25,7 @@ implements GraphMouseListener {
                     networkAnalyissGraphViewer.revalidate();
                     networkAnalyissGraphViewer.repaint();
                 } else if (o != null && SwingUtilities.isRightMouseButton(e)) {
-                    MyNetworkNodeMenu funnelNodeMenu = new MyNetworkNodeMenu(networkAnalyissGraphViewer, ((MyDirectNode)o));
+                    MyNodeMenu funnelNodeMenu = new MyNodeMenu(networkAnalyissGraphViewer, ((MyDirectNode)o));
                     funnelNodeMenu.show(networkAnalyissGraphViewer, e.getX(), e.getY());
                 }
             }

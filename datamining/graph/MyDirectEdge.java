@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MyDirectEdge
-implements Serializable, Comparable<MyDirectEdge> {
+implements Serializable {
 
     private MyDirectNode source;
     private MyDirectNode dest;
@@ -68,29 +68,4 @@ implements Serializable, Comparable<MyDirectEdge> {
             (((float)this.getSource().getContribution()/MyVars.directMarkovChain.getTotalEdgeContribution())*((float)this.getDest().getContribution()/MyVars.directMarkovChain.getTotalEdgeContribution()));
     }
     public float getLift() {return this.lift;}
-    public int compareTo(MyDirectEdge e) {
-        if (MyVars.edgeOrderByComboBoxIdx == 1) {
-            this.setCurrentValue(this.contribution);
-            return (this.contribution - e.getContribution());
-        } else if (MyVars.edgeOrderByComboBoxIdx == 2) {
-            this.setCurrentValue((float)this.support);
-            double compareValue = this.support - e.getSupport();
-            return (int)(compareValue*1000000);
-        } else if (MyVars.edgeOrderByComboBoxIdx == 3) {
-            this.setCurrentValue((float)this.confidence);
-            double compareValue = this.confidence - e.getConfidence();
-            return (int)(compareValue*1000000);
-        } else if (MyVars.edgeOrderByComboBoxIdx == 4) {
-            this.setCurrentValue((float)this.lift);
-            double compareValue = this.lift - e.getLift();
-            return (int)(compareValue*1000000);
-        } else if (MyVars.edgeOrderByComboBoxIdx == 5) {
-            this.setCurrentValue((float)this.closeness);
-            double compareValue = this.lift - e.getCloseness();
-            return (int)(compareValue*1000000);
-        } else {
-            this.setCurrentValue(this.contribution);
-            return (this.contribution - e.getContribution());
-        }
-    }
 }

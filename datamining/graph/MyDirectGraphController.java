@@ -711,7 +711,6 @@ implements ActionListener {
                         MyProgressBar pb = new MyProgressBar(false);
                         try {
                             float max = 0f;
-                            MyVars.edgeOrderByComboBoxIdx = edgeValueComboBoxMenu.getSelectedIndex();
                             Collection<MyDirectEdge> edges = MyVars.directMarkovChain.getEdges();
                             int pbCnt = 0;
                             for (MyDirectEdge e : edges) {
@@ -732,7 +731,6 @@ implements ActionListener {
                     } else if (edgeValueComboBoxMenu.getSelectedIndex() == 2) {
                         try {
                             float max = 0f;
-                            MyVars.edgeOrderByComboBoxIdx = edgeValueComboBoxMenu.getSelectedIndex();
                             MyEdgeBetweennessComputer edgeBetweennessComputer = new MyEdgeBetweennessComputer();
                             edgeBetweennessComputer.compute();
                             Collection<MyDirectEdge> edges = MyVars.directMarkovChain.getEdges();
