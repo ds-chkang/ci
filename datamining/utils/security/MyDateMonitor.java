@@ -14,9 +14,8 @@ import java.util.concurrent.TimeUnit;
 public class MyDateMonitor {
 
     private static String donate_msg =
-            "\nYour free-trial-period has exceeded " + MyVars.freeTrialDays + " days." +
-            " Make a donation to support medousa.net and \n" +
-            " get a 1-year-license for it. \n\n Email at info@medousa.net for how to make a donation and get a 1-year-license.  \n\n";
+            "<html><body><br>Your free-trial-period has exceeded " + MyVars.freeTrialDays + " days. Make a donation to support medousa.net." +
+            " get a 1-year-license for it. <br>Email at info@medousa.net for how to make a donation and get a 1-year-license.</body></html>";
 
     public MyDateMonitor() {}
     public static void checkDate() {

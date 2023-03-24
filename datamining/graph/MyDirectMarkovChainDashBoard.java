@@ -196,7 +196,7 @@ implements ActionListener {
         runBtn.removeActionListener(this);
         runBtn.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
-                new Thread(new Runnable() {
+                MyVars.currentThread = new Thread(new Runnable() {
                     @Override public void run() {
                         if (pathMenu.getSelectedIndex() == 0) {
                             MyMessageUtil.showInfoMsg(MyVars.main, "Select a path option.");
@@ -245,7 +245,8 @@ implements ActionListener {
                             }
                         }
                     }
-                }).start();
+                });
+                MyVars.currentThread.start();
             }
         });
 
@@ -361,9 +362,10 @@ implements ActionListener {
 
         this.topLevelTabbedPane.setFont(MyVars.tahomaPlainFont11);
         this.topLevelTabbedPane.setFocusable(false);
-        this.topLevelTabbedPane.addTab("N.",  null, setNodeTable(), "NODES FOR THE CURRENT GRAPH");
-        this.topLevelTabbedPane.addTab("E.",  null, setEdgeTable(), "EDGES FOR THE CURRENT GRAPH");
-        this.topLevelTabbedPane.addTab("S.",  null, setTopLevelStatTable(), "STATISTICAL PROPERTIES FOR THE CURRENT GRAPH");
+        this.topLevelTabbedPane.addTab("N.",  null, setNodeTable(), "NODES FOR THE CURRENT GRAPH.");
+        this.topLevelTabbedPane.addTab("E.",  null, setEdgeTable(), "EDGES FOR THE CURRENT GRAPH.");
+        this.topLevelTabbedPane.addTab("S.",  null, setTopLevelStatTable(), "STATISTICAL PROPERTIES FOR THE CURRENT GRAPH.");
+        this.topLevelTabbedPane.addTab("P.",  null, setPathFindTable(), "EXPLORE BETWEEEN PATHS.");
         tablePanel.add(this.topLevelTabbedPane, BorderLayout.CENTER);
         return tablePanel;
     }
@@ -374,9 +376,9 @@ implements ActionListener {
         this.nodeLevelTabbedPane.setOpaque(false);
         this.nodeLevelTabbedPane.setPreferredSize(new Dimension(160, 2000));
         this.nodeLevelTabbedPane.setFont(MyVars.tahomaPlainFont11);
-        this.nodeLevelTabbedPane.addTab("N.", null, setNodeTable(), "NODES FOR THE CURRENT GRAPH");
-        this.nodeLevelTabbedPane.addTab("E.", null, setEdgeTable(), "EDGES FOR THE CURRENT GRAPH");
-        this.nodeLevelTabbedPane.addTab("S.", null, setNodeLevelStatTable(), "STATISTICAL PROPERTIES FOR THE CURRENT GRAPH");
+        this.nodeLevelTabbedPane.addTab("N.", null, setNodeTable(), "NODES FOR THE CURRENT GRAPH.");
+        this.nodeLevelTabbedPane.addTab("E.", null, setEdgeTable(), "EDGES FOR THE CURRENT GRAPH.");
+        this.nodeLevelTabbedPane.addTab("S.", null, setNodeLevelStatTable(), "STATISTICAL PROPERTIES FOR THE CURRENT GRAPH.");
         return this.nodeLevelTabbedPane;
     }
 
@@ -386,9 +388,9 @@ implements ActionListener {
         this.multiNodeLevelTabbedPane.setOpaque(false);
         this.multiNodeLevelTabbedPane.setPreferredSize(new Dimension(160, 2000));
         this.multiNodeLevelTabbedPane.setFont(MyVars.tahomaPlainFont11);
-        this.multiNodeLevelTabbedPane.addTab("N.", null, setNodeTable(), "NODES FOR THE CURRENT GRAPH");
-        this.multiNodeLevelTabbedPane.addTab("E.", null, setEdgeTable(), "EDGES FOR THE CURRENT GRAPH");
-        this.multiNodeLevelTabbedPane.addTab("S.", null, setMultiNodeLevelStatTable(), "STATISTICAL PROPERTIES FOR THE CURRENT GRAPH");
+        this.multiNodeLevelTabbedPane.addTab("N.", null, setNodeTable(), "NODES FOR THE CURRENT GRAPH.");
+        this.multiNodeLevelTabbedPane.addTab("E.", null, setEdgeTable(), "EDGES FOR THE CURRENT GRAPH.");
+        this.multiNodeLevelTabbedPane.addTab("S.", null, setMultiNodeLevelStatTable(), "STATISTICAL PROPERTIES FOR THE CURRENT GRAPH.");
         return this.multiNodeLevelTabbedPane;
     }
 

@@ -1,5 +1,6 @@
 package datamining.graph;
 
+import datamining.utils.system.MyVars;
 import edu.uci.ics.jung.visualization.control.GraphMouseListener;
 
 import javax.swing.*;
@@ -13,7 +14,11 @@ implements GraphMouseListener {
         try {
             new Thread(new Runnable() {
                 @Override public void run() {
-                if (o != null && SwingUtilities.isLeftMouseButton(e)) {
+                if (o != null && SwingUtilities.isLeftMouseButton(e) && MyVars.getDirectGraphViewer().selectedSingleNode == null) {
+                    MyGraphNodeSelecter graphNodeSearcher = new MyGraphNodeSelecter();
+                    graphNodeSearcher.setSelectedNode((MyDirectNode) o);
+                } else if (o != null && SwingUtilities.isLeftMouseButton(e) && MyVars.getDirectGraphViewer().selectedSingleNode != null) {
+                    MyVars.getDirectGraphViewer().selectedSingleNode = null;
                     MyGraphNodeSelecter graphNodeSearcher = new MyGraphNodeSelecter();
                     graphNodeSearcher.setSelectedNode((MyDirectNode) o);
                 }

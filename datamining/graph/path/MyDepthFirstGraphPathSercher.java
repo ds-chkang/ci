@@ -353,7 +353,6 @@ implements ComponentListener, ActionListener {
             this.pack();
             this.setTitle("ALL PATHS BETWEEN [" + fromChoice + "  AND  " + toChoice + "]");
             bw.close();
-            System.out.println(integratedGraph.getVertexCount());
             pb.updateValue(100, 100);
             pb.dispose();
         } catch (Exception ex) {ex.printStackTrace();}
@@ -371,6 +370,7 @@ implements ComponentListener, ActionListener {
 
             if (successor == endNode) {
                 int pathLength = currpath.size();
+                System.out.println(pathLength);
                 if (pathLengthByDepthMap.containsKey(pathLength)) {
                     pathLengthByDepthMap.put(pathLength, pathLengthByDepthMap.get(pathLength)+1);
                 } else {
@@ -379,7 +379,6 @@ implements ComponentListener, ActionListener {
 
                 int j=0;
                 for (MyDirectNode n : currpath) {
-                    //String decondedNodeName = MySysUtil.getDecodedNodeName(n.getName());
                     if (nodesByDepthMap.containsKey(j+1)) {
                         nodesByDepthMap.get(j+1).add(n.getName());
                     } else {
