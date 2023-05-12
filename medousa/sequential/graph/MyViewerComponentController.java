@@ -1192,6 +1192,7 @@ implements ActionListener {
                                 nodeValueBarChart.setSelected(false);
                                 nodeValueBarChart.addActionListener(viewerController);
                             }
+
                             if (edgeValueBarChart.isSelected()) {
                                 edgeValueBarChart.removeActionListener(viewerController);
                                 edgeValueBarChart.setSelected(false);

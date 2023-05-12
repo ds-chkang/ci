@@ -44,6 +44,7 @@ implements ActionListener, WindowListener {
     protected JCheckBox edgeWeightCheckBoxMenu = new JCheckBox("E. WGT.");
     protected JCheckBox nodeWeightCheckBoxMenu = new JCheckBox("N. WGT.");
     protected JLabel statisticLabel = new JLabel("");
+
     public MyGraphAnalyzer() {
         super("GRAPH RELATION EXPLORER");
         this.decorate();
@@ -152,6 +153,11 @@ implements ActionListener, WindowListener {
                             nodeWeightCheckBoxMenu.setEnabled(true);
                         } else {
                             nodeWeightCheckBoxMenu.setEnabled(false);
+                            networkViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyNode, String>() {
+                                @Override public String transform(MyNode n) {
+                                    return "";
+                                }
+                            });
                         }
                     }
                 }).start();
@@ -193,13 +199,18 @@ implements ActionListener, WindowListener {
                             if (nodeNameCheckBoxMenu.isSelected()) {
                                 networkViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyNode, String>() {
                                     @Override public String transform(MyNode n) {
-                                        return MySequentialGraphSysUtil.getDecodedNodeName(n.getName()) + "[" + MyMathUtil.getCommaSeperatedNumber(n.getContribution()) + "] ";
+                                        String inCont = "IN-C.: " + MyMathUtil.getCommaSeperatedNumber(n.getInContribution());
+                                        String outCont = "OUT-C.: " + MyMathUtil.getCommaSeperatedNumber(n.getOutContribution());
+                                        return MySequentialGraphSysUtil.getDecodedNodeName(n.getName()) + "[" +
+                                                inCont + "  " + outCont + "] ";
                                     }
                                 });
                             } else {
                                 networkViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyNode, String>() {
                                     @Override public String transform(MyNode n) {
-                                        return MyMathUtil.getCommaSeperatedNumber(n.getContribution());
+                                        String inCont = "IN-C.: " + MyMathUtil.getCommaSeperatedNumber(n.getInContribution());
+                                        String outCont = "OUT-C.: " + MyMathUtil.getCommaSeperatedNumber(n.getOutContribution());
+                                        return inCont + "  " + outCont;
                                     }
                                 });
                             }
@@ -236,7 +247,10 @@ implements ActionListener, WindowListener {
                             if (nodeValueCheckBoxMenu.isSelected()) {
                                 networkViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyNode, String>() {
                                     @Override public String transform(MyNode n) {
-                                        return MySequentialGraphSysUtil.getDecodedNodeName(n.getName()) + "[" + MyMathUtil.getCommaSeperatedNumber(n.getContribution()) + "] ";
+                                        String inCont = "IN-C.: " + MyMathUtil.getCommaSeperatedNumber(n.getInContribution());
+                                        String outCont = "OUT-C.: " + MyMathUtil.getCommaSeperatedNumber(n.getOutContribution());
+                                        return MySequentialGraphSysUtil.getDecodedNodeName(n.getName()) + "[" +
+                                                inCont + "  " + outCont + "] ";
                                     }
                                 });
                             } else {
@@ -452,6 +466,8 @@ implements ActionListener, WindowListener {
         this.table.getTableHeader().setOpaque(false);
         this.table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.table.setFont(MySequentialGraphVars.f_pln_12);
+        this.table.getTableHeader().setOpaque(false);
+        this.table.getTableHeader().setBackground(new Color(0,0,0,0));
         Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
         this.table.setCursor(cursor);
         this.table.setRowHeight(23);
@@ -719,8 +735,10 @@ implements ActionListener, WindowListener {
             }
         }
 
-        for (int i = table.getRowCount() - 1; i >= 0; i--) {
-            ((DefaultTableModel) table.getModel()).removeRow(i);
+        int row = table.getRowCount();
+        while (row > 0) {
+            ((DefaultTableModel) table.getModel()).removeRow(row-1);
+            row = table.getRowCount();
         }
 
         String statTxt = "N.: " + MyMathUtil.getCommaSeperatedNumber(graph.getVertexCount()) + "   " +

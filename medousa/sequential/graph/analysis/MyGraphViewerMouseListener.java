@@ -26,8 +26,8 @@ implements MouseListener {
                         funnelViewerMenu.show(graphViewer, e.getX(), e.getY());
                     }
                 } else if (SwingUtilities.isLeftMouseButton(e) && graphViewer.getPickedVertexState().getPicked().size() == 0) {
+                    graphViewer.remove(graphViewer.selectedNodEdgeValueBarChart);
                     graphViewer.graphMouseListener.selectedNode = null;
-
                 }
             }
         }).start();

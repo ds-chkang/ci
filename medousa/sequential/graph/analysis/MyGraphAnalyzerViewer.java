@@ -26,13 +26,14 @@ public class MyGraphAnalyzerViewer
 extends VisualizationViewer<MyNode, MyEdge>
 implements Serializable {
 
-    protected MyGraphMouseListener graphMouseListener;
+    protected MyAnalysisGraphMouseListener graphMouseListener;
     protected MyGraphAnalyzer plusNetworkAnalyzer;
     protected float MAX_EDGE_VALUE = 0f;
     protected float MAX_NODE_VALUE = 0f;
     protected float MAX_EDGE_SIZE = 26f;
     protected float MAX_NODE_SIZE = 40f;
     protected Point mouseClickedLocation;
+    protected MySelectedNodeEdgeValueBarChart selectedNodEdgeValueBarChart;
 
     public MyGraphAnalyzerViewer(VisualizationModel<MyNode, MyEdge> vm, JComboBox nodeOptionComboBox) {
         super(vm);
@@ -52,7 +53,8 @@ implements Serializable {
             this.getRenderContext().setVertexFillPaintTransformer(this.vertexColor);
             this.setVertexToolTipTransformer(this.defaultToolTipper);
             this.getRenderContext().setVertexShapeTransformer(this.nodeSizer);
-            this.graphMouseListener = new MyGraphMouseListener(this);
+            this.graphMouseListener = new MyAnalysisGraphMouseListener(this);
+            this.selectedNodEdgeValueBarChart = new MySelectedNodeEdgeValueBarChart(this);
             this.addGraphMouseListener(this.graphMouseListener);
             this.addMouseListener(new MyGraphViewerMouseListener(this, nodeOptionComboBox));
            this.getRenderContext().setEdgeArrowStrokeTransformer(new Transformer<MyEdge, Stroke>() {
@@ -64,23 +66,18 @@ implements Serializable {
 			this.getRenderContext().setVertexFontTransformer(new Transformer<MyNode, Font>() {
                 @Override public synchronized Font transform(MyNode n) {
                     if (n.getContribution() == 0) {return new Font("Noto Sans", Font.PLAIN, 0);
-                    } else {return new Font("Noto Sans", Font.BOLD, 24);}
+                    } else {return new Font("Noto Sans", Font.BOLD, 26);}
                 }
             });
 
             this.getRenderContext().setEdgeFontTransformer(new Transformer<MyEdge, Font>() {
                 @Override public synchronized Font transform(MyEdge e) {
                     if (e.getContribution() == 0) {return new Font("Noto Sans", Font.PLAIN, 0);
-                    } else {return new Font("Noto Sans", Font.BOLD, 24);}
+                    } else {return new Font("Noto Sans", Font.BOLD, 26);}
                 }
             });
             this.scale();
         } catch (Exception ex) {}
-    }
-
-    protected void setMaximumEdgeValue() {
-        float max = 0f;
-
     }
 
     private Transformer<MyNode, Shape> nodeSizer = new Transformer<MyNode, Shape>() {

@@ -6,13 +6,13 @@ import edu.uci.ics.jung.visualization.control.GraphMouseListener;
 import javax.swing.*;
 import java.awt.event.MouseEvent;
 
-public class MyGraphMouseListener
+public class MyAnalysisGraphMouseListener
 implements GraphMouseListener {
 
     private MyGraphAnalyzerViewer graphViewer;
     public MyNode selectedNode;
 
-    public MyGraphMouseListener(MyGraphAnalyzerViewer graphViewer) {
+    public MyAnalysisGraphMouseListener(MyGraphAnalyzerViewer graphViewer) {
         this.graphViewer = graphViewer;
     }
 
@@ -20,8 +20,13 @@ implements GraphMouseListener {
         new Thread(new Runnable() {
             @Override public void run() {
                 if (o != null && SwingUtilities.isLeftMouseButton(e)) {
-                    graphViewer.mouseClickedLocation = e.getLocationOnScreen();
                     selectedNode = (MyNode)o;
+                    graphViewer.mouseClickedLocation = e.getLocationOnScreen();
+                    if (graphViewer.selectedNodEdgeValueBarChart == null) {
+                        graphViewer.selectedNodEdgeValueBarChart = new MySelectedNodeEdgeValueBarChart(graphViewer);
+                    }
+                    graphViewer.selectedNodEdgeValueBarChart.setEdgeValueBarChartForSelectedNode();
+                    graphViewer.add(graphViewer.selectedNodEdgeValueBarChart);
                     graphViewer.revalidate();
                     graphViewer.repaint();
                 } else if (o != null && SwingUtilities.isRightMouseButton(e)) {

@@ -310,25 +310,6 @@ public class MySequentialGraphSysUtil {
         MySequentialGraphVars.variableToIdMap = new MyVariableMap();
         MySequentialGraphVars.nodeNameMap = new HashMap<>();
         MySequentialGraphVars.pathLengthByDepthMap = new HashMap<>();
-
-        MyGraphLevelAverageValuesByDepthLineChart.instances = 0;
-        MyGraphLevelContributionByDepthLineChart.instances = 0;
-        MySequenceLengthByDepthLineChart.instances = 0;
-        MyGraphLevelReachTimeByDepthLineChart.instances = 0;
-        MyGraphLevelUniqueNodesByDepthLineBarChart.instances = 0;
-        MyGraphLevelNodeAverageHopCountDistributionLineChart.instances = 0;
-        MyGraphLevelUniqueNodeDifferenceByDepthChart.instances = 0;
-        MySingleNodeUniqueNodeDifferenceByNodeLineChart.instances = 0;
-        MySingleNodeInContributionByDepthLineChart.instances = 0;
-        MySingleNodeOutContributionByDepthLineChart.instances = 0;
-        MySingleNodeAverageReachTimeByDepthLineChart.instances = 0;
-        MySingleNodeDurationByDepthLineChart.instances = 0;
-        MySingleNodeContributionByDepthLineChart.instances = 0;
-        MySingleNodeHopCountDistributionLineChart.instances = 0;
-        MyGraphLevelDurationByDepthLineChart.instances = 0;
-        MySingleNodeReachTimeByDepthLineChart.instances = 0;
-        MySingleNodeInOutUniqueNodeDifferenceByDepthChart.instances = 0;
-        MySequentialGraphVars.currentGraphDepth = 0;
     }
 
     public static void setNodeNameMap() {
