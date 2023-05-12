@@ -15,9 +15,9 @@ implements Serializable, Comparable<MyEdge> {
     public long totalTime;
     public float support;
     public float confidence;
-    public long contribution;
+    public int contribution;
     public float value = 4.8f;
-    public long uniqueContribution;
+    public int uniqueContribution;
     public float originalValue = 4.8f;
     public float tmpValue = 0.0f;
     public float avgTime = 0f;
@@ -75,7 +75,7 @@ implements Serializable, Comparable<MyEdge> {
         this.value = value;
     }
     public void setContribution(int contribution) {this.contribution += contribution;}
-    public long getContribution() {return this.contribution;}
+    public int getContribution() {return this.contribution;}
     public void setUniqueContribution(int uniqueContribution) {this.uniqueContribution += uniqueContribution;}
     public long getUniqueContribution() {return this.uniqueContribution;}
     public void setTotalTime(long totalTime) {this.totalTime += totalTime;}

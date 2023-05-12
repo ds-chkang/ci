@@ -60,11 +60,11 @@ implements ActionListener, WindowListener {
         viewerSplitPane.setDividerSize(5);
         viewerSplitPane.setLeftComponent(this.getLeftPanel());
         viewerSplitPane.setRightComponent(this.getRightPanel());
-        viewerSplitPane.setDividerLocation((int) (MySequentialGraphSysUtil.getViewerHeight()*0.82));
+        viewerSplitPane.setDividerLocation((int) (MySequentialGraphSysUtil.getViewerHeight()*0.835));
         viewerSplitPane.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent evt) {
                 viewerSplitPane.setDividerSize(5);
-                viewerSplitPane.setDividerLocation((int) (getWidth()*0.82));
+                viewerSplitPane.setDividerLocation((int) (getWidth()*0.835));
             }
         });
         this.getContentPane().add(viewerSplitPane, BorderLayout.CENTER);
@@ -165,6 +165,7 @@ implements ActionListener, WindowListener {
         });
 
         JLabel nodeOptionLabel = new JLabel(" N. O.: ");
+        nodeOptionLabel.setToolTipText("NODE OPTIONS");
         nodeOptionLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
         nodeOptionLabel.setBackground(Color.WHITE);
 
@@ -181,10 +182,10 @@ implements ActionListener, WindowListener {
         JPanel topRightPanel = new JPanel();
         topRightPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         topRightPanel.setBackground(Color.WHITE);
-        topRightPanel.add(nodeValueLabel);
-        topRightPanel.add(nodeValueComboBoxMenu);
-        topRightPanel.add(edgeValueLabel);
-        topRightPanel.add(this.edgeValueComboBoxMenu);
+        //topRightPanel.add(nodeValueLabel);
+        //topRightPanel.add(nodeValueComboBoxMenu);
+        //topRightPanel.add(edgeValueLabel);
+       // topRightPanel.add(this.edgeValueComboBoxMenu);
         topRightPanel.add(nodeOptionLabel);
         topRightPanel.add(this.nodeOptionComboBoxMenu);
 
@@ -290,16 +291,16 @@ implements ActionListener, WindowListener {
                 new Thread(new Runnable() {
                     @Override public void run() {
                         if (edgeValueCheckBoxMenu.isSelected()) {
-                            if (edgeValueComboBoxMenu.getSelectedIndex() == 0) {
-                                MyMessageUtil.showInfoMsg(networkViewer.plusNetworkAnalyzer, "Select an edge value, first.");
-                                edgeValueCheckBoxMenu.setSelected(false);
-                                return;
-                            }
+                           // if (edgeValueComboBoxMenu.getSelectedIndex() == 0) {
+                           //     MyMessageUtil.showInfoMsg(networkViewer.plusNetworkAnalyzer, "Select an edge value, first.");
+                           //     edgeValueCheckBoxMenu.setSelected(false);
+                           //     return;
+                           // }
 
                             networkViewer.getRenderContext().setEdgeLabelTransformer(new Transformer<MyEdge, String>() {
                                 @Override public String transform(MyEdge e) {
-                                    String edgeContributionRatio = MyMathUtil.twoDecimalFormat(((double) e.getContribution() / e.getSource().getContribution()) * 100) + "%";
-                                    return MyMathUtil.getCommaSeperatedNumber(e.getContribution()) + " / " + MyMathUtil.getCommaSeperatedNumber(e.getSource().getContribution()) + " = " + edgeContributionRatio + " ";
+                                    String edgeContributionRatio = MyMathUtil.twoDecimalFormat(((double) e.getContribution() / e.getSource().getOutContribution()) * 100) + "%";
+                                    return MyMathUtil.getCommaSeperatedNumber(e.getContribution()) + " / " + MyMathUtil.getCommaSeperatedNumber(e.getSource().getOutContribution()) + " = " + edgeContributionRatio + " ";
                                 }
                             });
 
@@ -330,31 +331,14 @@ implements ActionListener, WindowListener {
                     @Override public void run() {
                         try {
                             if (nodeWeightCheckBoxMenu.isSelected()) {
-                                if (nodeValueComboBoxMenu.getSelectedIndex() == 0) {
-                                    MyMessageUtil.showInfoMsg(networkViewer.plusNetworkAnalyzer, "Select a node value, first.");
-                                    nodeWeightCheckBoxMenu.setSelected(false);
-                                    return;
-                                }
-                                if (nodeValueComboBoxMenu.getSelectedIndex() == 1) {
-                                    edgeValueComboBoxMenu.setSelectedIndex(0);
-                                    networkViewer.getRenderContext().setVertexShapeTransformer(new Transformer<MyNode, Shape>() {
-                                        @Override public Shape transform(MyNode n) {
-                                            float sizeRatio = (float) n.getContribution() / networkViewer.MAX_NODE_VALUE;
-                                            float nodeSize = sizeRatio * (networkViewer.MAX_NODE_SIZE);
-                                            if (nodeSize < 25f) {
-                                                nodeSize = 15f;
-                                            }
+                                networkViewer.getRenderContext().setVertexShapeTransformer(new Transformer<MyNode, Shape>() {
+                                    @Override public Shape transform(MyNode n) {
+                                        float sizeRatio = (float) n.getContribution() / networkViewer.MAX_NODE_VALUE;
+                                        float nodeSize = sizeRatio * (networkViewer.MAX_NODE_SIZE);
+                                        if (nodeSize < 25f) {nodeSize = 15f;}
                                             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
                                         }
                                     });
-                                    edgeValueComboBoxMenu.setSelectedIndex(1);
-                                } else if (nodeValueComboBoxMenu.getSelectedIndex() == 0) {
-                                    networkViewer.getRenderContext().setVertexShapeTransformer(new Transformer<MyNode, Shape>() {
-                                        @Override public Shape transform(MyNode n) {
-                                            return new Ellipse2D.Double(-40, -40, 80, 80);
-                                        }
-                                    });
-                                }
                                 networkViewer.revalidate();
                                 networkViewer.repaint();
                             } else {
@@ -382,24 +366,11 @@ implements ActionListener, WindowListener {
                 new Thread(new Runnable() {
                     @Override public void run() {
                         if (edgeWeightCheckBoxMenu.isSelected()) {
-                            if (edgeValueComboBoxMenu.getSelectedIndex() == 0) {
-                                MyMessageUtil.showInfoMsg(networkViewer.plusNetworkAnalyzer, "Select a node value, first.");
-                                edgeWeightCheckBoxMenu.setSelected(false);
-                                return;
-                            }
-                            if (edgeValueComboBoxMenu.getSelectedIndex() == 0) {
-                                networkViewer.getRenderContext().setEdgeStrokeTransformer(new Transformer<MyEdge, Stroke>() {
-                                    @Override public Stroke transform(MyEdge e) {
-                                        return new BasicStroke(1f);
-                                    }
-                                });
-                            } else if (edgeValueComboBoxMenu.getSelectedIndex() == 1) {
-                                networkViewer.getRenderContext().setEdgeStrokeTransformer(new Transformer<MyEdge, Stroke>() {
-                                    @Override public Stroke transform(MyEdge e) {
-                                        return new BasicStroke((((float) e.getContribution() / networkViewer.MAX_EDGE_VALUE) * networkViewer.MAX_EDGE_SIZE)/2);
-                                    }
-                                });
-                            }
+                            networkViewer.getRenderContext().setEdgeStrokeTransformer(new Transformer<MyEdge, Stroke>() {
+                                @Override public Stroke transform(MyEdge e) {
+                                    return new BasicStroke(1f);
+                                }
+                            });
                             networkViewer.revalidate();
                             networkViewer.repaint();
                         } else {
@@ -462,7 +433,7 @@ implements ActionListener, WindowListener {
         String [][] data = {};
         this.model = new DefaultTableModel(data, columns);
         this.table = new JTable(this.model);
-        this.table.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont11);
+        this.table.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont12);
         this.table.getTableHeader().setOpaque(false);
         this.table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.table.setFont(MySequentialGraphVars.f_pln_12);

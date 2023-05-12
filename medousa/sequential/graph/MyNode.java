@@ -94,6 +94,10 @@ implements Serializable, Cloneable, Comparable<MyNode> {
         }
         return max;
     }
+
+    public void setContribution(int contribution) {
+        this.contribution += contribution;
+    }
     public int getMinRecursiveLength() {
         int min = 1000000000;
         for (int recursiveLength : this.recursiveLengthMap.keySet()) {
@@ -280,10 +284,6 @@ implements Serializable, Cloneable, Comparable<MyNode> {
     public long getMinReachTime() {
         if (this.minReachTime == 500000000000000L) {return 0L;}
         return this.minReachTime;
-    }
-    public void setContribution(long contribution) {
-        if (this.name.contains("x")) return;
-        this.contribution = contribution;
     }
     public void setUniqueContribution() {
         this.uniqueContribution++;

@@ -496,7 +496,7 @@ implements ActionListener {
                             MyPatternNode pn = (MyPatternNode) this.patternGraph.vRefs.get(ps);
                             MyPatternNode sn = (MyPatternNode) this.patternGraph.vRefs.get(ss);
                             MyPatternEdge edge = new MyPatternEdge(pn, sn);
-                            edge.contribution = pathNodeContributions[i];
+                            edge.contribution = (int) pathNodeContributions[i];
                             this.patternGraph.addEdge(edge, pn, sn);
                             this.edgeRefMap.put(edgeRef, edge);
                         } else {
@@ -556,7 +556,7 @@ implements ActionListener {
                         MyPatternNode pn = (MyPatternNode) this.patternGraph.vRefs.get(ps);
                         MyPatternNode sn = (MyPatternNode) this.patternGraph.vRefs.get(ss);
                         MyPatternEdge edge = new MyPatternEdge(pn, sn);
-                        edge.contribution = pathNodeContributions[i];
+                        edge.contribution = (int) pathNodeContributions[i];
                         this.patternGraph.addEdge(edge, pn, sn);
                         this.edgeRefMap.put(edgeRef, edge);
                     } else {

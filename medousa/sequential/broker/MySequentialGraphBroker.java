@@ -57,8 +57,7 @@ extends MySequentialGraphEngineBroker {
                 MySequentialGraphVars.g.edgeRefMap = null;
             } else {
                 MyTimeConstrainedBuilider timeConstrainedGraphBuilider = new MyTimeConstrainedBuilider();
-                timeConstrainedGraphBuilider.createNodes();
-                timeConstrainedGraphBuilider.createEdges();
+                timeConstrainedGraphBuilider.createGraph();
                 timeConstrainedGraphBuilider.setNodeDuration();
                 timeConstrainedGraphBuilider.setEndNodeCount();
                 timeConstrainedGraphBuilider.setNodeDepthInformation();
@@ -67,11 +66,6 @@ extends MySequentialGraphEngineBroker {
                 timeConstrainedGraphBuilider.setNodeRecursiveLength();
                 timeConstrainedGraphBuilider.setAverageRecursiveTime();
                 timeConstrainedGraphBuilider.setNodeRecurrence();
-                timeConstrainedGraphBuilider.setNodeInContribution();
-                timeConstrainedGraphBuilider.setNodeOutContribution();
-                timeConstrainedGraphBuilider.setEdgeContribution();
-                timeConstrainedGraphBuilider.setEngeUniqueContribution();
-                timeConstrainedGraphBuilider.setNodeUniqueContribution();
                 timeConstrainedGraphBuilider.setEdgeSupport();
                 timeConstrainedGraphBuilider.setEdgeConfidence();
                 timeConstrainedGraphBuilider.setEdgeLift();

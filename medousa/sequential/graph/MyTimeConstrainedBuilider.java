@@ -77,165 +77,218 @@ public class MyTimeConstrainedBuilider {
         MySequentialGraphVars.g = new MyGraph();
     }
 
-    public void createNodes() {
-        File [] patternFiles = MySequentialGraphSysUtil.getFileList(MySequentialGraphVars.outputDir);
-        for (File file : patternFiles) {
-            String [] nodeFileProperties = file.getName().split(MySequentialGraphVars.contributionSymbol);
-            String nodeName = nodeFileProperties[0];
-            nodeFileProperties = nodeFileProperties[1].split(MySequentialGraphVars.uniqueContributionSeparator);
-            long contribution = Long.valueOf(nodeFileProperties[0]);
-            nodeFileProperties = nodeFileProperties[1].split(MySequentialGraphVars.timeSeparator);
-            long uniqueContribution = Long.valueOf(nodeFileProperties[0]);
-            nodeFileProperties = nodeFileProperties[1].split(MySequentialGraphVars.durationSeparator);
-            long duration = Long.valueOf(nodeFileProperties[1]);
-            long totalReachTime = 0L;
-            MyNode n = new MyNode(nodeName, contribution, uniqueContribution);
-            n.setDuration(duration);
-            MySequentialGraphVars.g.addVertex(n);
-            MySequentialGraphVars.g.vRefs.put(nodeName, n);
-            if (uniqueContribution > MySequentialGraphVars.g.maxUniqueContribution) {
-                MySequentialGraphVars.g.maxUniqueContribution = uniqueContribution;}
-            if (uniqueContribution < MySequentialGraphVars.g.minUniqueContribution) {
-                MySequentialGraphVars.g.minUniqueContribution = uniqueContribution;}
-            if (contribution > MySequentialGraphVars.g.maxNodeContribution) {
-                MySequentialGraphVars.g.maxNodeContribution = contribution;}
-            if (contribution < MySequentialGraphVars.g.minNodeContribution) {
-                MySequentialGraphVars.g.minNodeContribution = contribution;}
-            if (totalReachTime > MySequentialGraphVars.g.maxTotalReachTime) {
-                MySequentialGraphVars.g.maxTotalReachTime = totalReachTime;}
-            if (totalReachTime < MySequentialGraphVars.g.minTotalReachTime) {
-                MySequentialGraphVars.g.minTotalReachTime = totalReachTime;}
-            MySequentialGraphVars.g.totalUniqueContribution += uniqueContribution;
-            MySequentialGraphVars.g.totalContribution += contribution;
-            MySequentialGraphVars.g.totalReachTime += totalReachTime;
-        }
-    }
-
-    private void createEdgesWithVariables() {
+    private void createGraphWithVariables() {
         try {
             BufferedReader br = new BufferedReader(new FileReader(MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "sequences.txt"));
             String line = "";
-            Map<MyEdge, Integer> globalEdgeUniqueContributionMap = new HashMap<>();
 
             /*******************************************************
              *  Create edges between variables and items.
              *******************************************************/
             while ((line = br.readLine()) != null) {
+
                 String [] itemsets = line.split(MySequentialGraphVars.hyphenDelimeter);
-                String p = itemsets[0].split(":")[0];
-                Map<MyEdge, Integer> localEdgeUniqueContributionMap = new HashMap<>();
-                ((MyNode) MySequentialGraphVars.g.vRefs.get(p)).updateContribution(itemsets.length-2);
+                Set<String> sequenceEdgeSet = new HashSet<>();
+                Set<String> sequenceNodeSet = new HashSet<>();
+
                 for (int i = 1; i < itemsets.length; i++) {
+                    String p = itemsets[0].split(":")[0];
                     String s = itemsets[i].split(":")[0];
                     String edgeName = p + "-" + s;
+
+                    sequenceNodeSet.add(p);
+                    sequenceNodeSet.add(s);
+                    sequenceEdgeSet.add(edgeName);
+
                     if (!MySequentialGraphVars.g.edgeRefMap.containsKey(edgeName)) {
-                        MyNode pN = (MyNode) MySequentialGraphVars.g.vRefs.get(p);
-                        MyNode sN = (MyNode) MySequentialGraphVars.g.vRefs.get(s);
-                        MyEdge edge = new MyEdge(pN, sN);
-                        MySequentialGraphVars.g.addEdge(edge, pN, sN);
-                        MySequentialGraphVars.g.edgeRefMap.put(edgeName, edge);
+                        MyNode pNode = (MyNode) MySequentialGraphVars.g.vRefs.get(p);
+                        MyNode sNode = (MyNode) MySequentialGraphVars.g.vRefs.get(s);
+
+                        pNode.setContribution(1);
+                        pNode.setOutContribution(1);
+                        sNode.setContribution(1);
+                        sNode.setInContribution(1);
+
+                        MyEdge edge = new MyEdge(pNode, sNode);
                         edge.setContribution(1);
+
+                        MySequentialGraphVars.g.addEdge(edge, pNode, sNode);
+                        MySequentialGraphVars.g.edgeRefMap.put(edgeName, edge);
                     } else {
+                        MyNode pNode = (MyNode) MySequentialGraphVars.g.vRefs.get(p);
+                        MyNode sNode = (MyNode) MySequentialGraphVars.g.vRefs.get(s);
+
+                        pNode.setContribution(1);
+                        pNode.setOutContribution(1);
+                        sNode.setContribution(1);
+                        sNode.setInContribution(1);
+
                         ((MyEdge) MySequentialGraphVars.g.edgeRefMap.get(edgeName)).setContribution(1);
-                        localEdgeUniqueContributionMap.put((MyEdge) MySequentialGraphVars.g.edgeRefMap.get(edgeName), 1);
                     }
                 }
 
-                for (MyEdge e : localEdgeUniqueContributionMap.keySet()) {
-                    if (globalEdgeUniqueContributionMap.containsKey(e)) {
-                        globalEdgeUniqueContributionMap.put(e, globalEdgeUniqueContributionMap.get(e)+1);
-                    } else {
-                        globalEdgeUniqueContributionMap.put(e, 1);
-                    }
+                /**********************************************************
+                 *  Set Node unique contribution.
+                 **********************************************************/
+                for (String n : sequenceNodeSet) {
+                    ((MyNode) MySequentialGraphVars.g.vRefs.get(n)).setUniqueContribution();
                 }
-            }
 
-            for (MyEdge e : globalEdgeUniqueContributionMap.keySet()) {
-                e.setUniqueContribution(globalEdgeUniqueContributionMap.get(e));
+                /**********************************************************
+                 *  Set Edge unique contribution.
+                 **********************************************************/
+                for (String e : sequenceEdgeSet) {
+                    ((MyEdge) MySequentialGraphVars.g.edgeRefMap.get(e)).setUniqueContribution(1);
+                }
             }
 
             /********************************************************
              * Create edges between items.
              ********************************************************/
-            globalEdgeUniqueContributionMap = new HashMap<>();
-            br = new BufferedReader(new FileReader(MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "sequences.txt"));
+            br = new BufferedReader(new FileReader(
+                 MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "sequences.txt"));
             while ((line = br.readLine()) != null) {
                 String [] itemsets = line.split(MySequentialGraphVars.hyphenDelimeter);
-                Map<MyEdge, Integer> localEdgeUniqueContributionMap = new HashMap<>();
+                Set<String> sequenceEdgeSet = new HashSet<>();
+                Set<String> sequenceNodeSet = new HashSet<>();
+
                 for (int i = 2; i < itemsets.length; i++) {
                     String p = itemsets[i-1].split(":")[0];
                     String s = itemsets[i].split(":")[0];
                     String edgeName = p + "-" + s;
+
+                    sequenceNodeSet.add(p);
+                    sequenceNodeSet.add(s);
+                    sequenceEdgeSet.add(edgeName);
+
                     if (!MySequentialGraphVars.g.edgeRefMap.containsKey(edgeName)) {
-                        MyNode pN = (MyNode) MySequentialGraphVars.g.vRefs.get(p);
-                        MyNode sN = (MyNode) MySequentialGraphVars.g.vRefs.get(s);
-                        MyEdge edge = new MyEdge(pN, sN);
-                        MySequentialGraphVars.g.addEdge(edge, pN, sN);
-                        MySequentialGraphVars.g.edgeRefMap.put(edgeName, edge);
+                        MyNode pNode = (MyNode) MySequentialGraphVars.g.vRefs.get(p);
+                        MyNode sNode = (MyNode) MySequentialGraphVars.g.vRefs.get(s);
+
+                        pNode.setContribution(1);
+                        pNode.setOutContribution(1);
+                        sNode.setContribution(1);
+                        sNode.setInContribution(1);
+
+                        MyEdge edge = new MyEdge(pNode, sNode);
                         edge.setContribution(1);
+
+                        MySequentialGraphVars.g.addEdge(edge, pNode, sNode);
+                        MySequentialGraphVars.g.edgeRefMap.put(edgeName, edge);
                     } else {
+                        MyNode pNode = (MyNode) MySequentialGraphVars.g.vRefs.get(p);
+                        MyNode sNode = (MyNode) MySequentialGraphVars.g.vRefs.get(s);
+
+                        pNode.setContribution(1);
+                        pNode.setOutContribution(1);
+                        sNode.setContribution(1);
+                        sNode.setInContribution(1);
+
                         ((MyEdge) MySequentialGraphVars.g.edgeRefMap.get(edgeName)).setContribution(1);
-                        localEdgeUniqueContributionMap.put((MyEdge) MySequentialGraphVars.g.edgeRefMap.get(edgeName), 1);
                     }
                 }
 
-                for (MyEdge e : localEdgeUniqueContributionMap.keySet()) {
-                    if (globalEdgeUniqueContributionMap.containsKey(e)) {
-                        globalEdgeUniqueContributionMap.put(e, globalEdgeUniqueContributionMap.get(e)+1);
-                    } else {
-                        globalEdgeUniqueContributionMap.put(e, 1);
-                    }
+                /**********************************************************
+                 *  Set Node unique contribution.
+                 **********************************************************/
+                for (String n : sequenceNodeSet) {
+                    ((MyNode) MySequentialGraphVars.g.vRefs.get(n)).setUniqueContribution();
                 }
-            }
 
-            for (MyEdge e : globalEdgeUniqueContributionMap.keySet()) {
-                e.setUniqueContribution(globalEdgeUniqueContributionMap.get(e));
+                /**********************************************************
+                 *  Set Edge unique contribution.
+                 **********************************************************/
+                for (String e : sequenceEdgeSet) {
+                    ((MyEdge) MySequentialGraphVars.g.edgeRefMap.get(e)).setUniqueContribution(1);
+                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
+    private void createNodes() {
+        File[] ptrnFiles = MySequentialGraphSysUtil.getFileList(MySequentialGraphVars.outputDir);
+        for (File file : ptrnFiles) {
+            String node = file.getName().split(MySequentialGraphVars.contributionSymbol)[0];
+            MyNode n = new MyNode(node);
+            MySequentialGraphVars.g.addVertex(n);
+            MySequentialGraphVars.g.vRefs.put(node, n);
+        }
+    }
 
-
-    public void createEdges() {
+    public void createGraph() {
         try {
+            createNodes();
             if (MySequentialGraphVars.isSupplementaryOn) {
-                this.createEdgesWithVariables();
-                //System.out.println(((MyPlusEdge)MyVars.plusMarkovChain.edgeRefMap.get("4x-20")).getContribution());
+                this.createGraphWithVariables();
             } else { // Not supplementary variables
-                BufferedReader br = new BufferedReader(new FileReader(MySequentialGraphSysUtil.getWorkingDir()+ MySequentialGraphSysUtil.getDirectorySlash()+"sequences.txt"));
-                String line = "";
-                Map<MyEdge, Integer> plusEdgeUniqueContributionMap = new HashMap<>();
-                while ((line = br.readLine()) != null) {
-                    Map<MyEdge, Integer> uniqueContributionMap = new HashMap<>();
-                    String [] itemsets = line.split(MySequentialGraphVars.hyphenDelimeter);
-                    for (int i=1; i < itemsets.length; i++) {
-                        String p = itemsets[i-1].split(":")[0];
-                        String s = itemsets[i].split(":")[0];
-                        String edgeRef = p + "-" + s;
-                        MyEdge plusEdge = (MyEdge) MySequentialGraphVars.g.edgeRefMap.get(edgeRef);
-                        if (plusEdge == null) {
-                            MyNode pN = (MyNode) MySequentialGraphVars.g.vRefs.get(p);
-                            MyNode sN = (MyNode) MySequentialGraphVars.g.vRefs.get(s);
-                            plusEdge = new MyEdge(pN, sN);
-                            MySequentialGraphVars.g.addEdge(plusEdge, pN, sN);
-                            MySequentialGraphVars.g.edgeRefMap.put(edgeRef, plusEdge);
-                        }
-                        plusEdge.setContribution(1);
-                        uniqueContributionMap.put(plusEdge, 1);
-                    }
-                    for (MyEdge e : uniqueContributionMap.keySet()) {
-                        if (plusEdgeUniqueContributionMap.containsKey(e)) {
-                            plusEdgeUniqueContributionMap.put(e, plusEdgeUniqueContributionMap.get(e)+1);
-                        } else {plusEdgeUniqueContributionMap.put(e, 1);}
-                    }
-                }
-                for (MyEdge e : plusEdgeUniqueContributionMap.keySet())  {
-                    e.setUniqueContribution(plusEdgeUniqueContributionMap.get(e));
-                }
+                createGraphWithoutVariables();
             }
         } catch (Exception ex) {ex.printStackTrace();}
+    }
+
+    private void createGraphWithoutVariables() {
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "sequences.txt"));
+            String line = "";
+
+            while ((line = br.readLine()) != null) {
+                String[] itemsets = line.split(MySequentialGraphVars.hyphenDelimeter);
+                Set<String> sequenceEdgeSet = new HashSet<>();
+                Set<String> sequenceNodeSet = new HashSet<>();
+
+                for (int i = 1; i < itemsets.length; i++) {
+                    String p = itemsets[i-1].split(":")[0];
+                    String s = itemsets[i].split(":")[0];
+                    String edgeName = p + "-" + s;
+
+                    sequenceNodeSet.add(p);
+                    sequenceNodeSet.add(s);
+                    sequenceEdgeSet.add(edgeName);
+
+                    if (!MySequentialGraphVars.g.edgeRefMap.containsKey(edgeName)) {
+                        MyNode pNode = (MyNode) MySequentialGraphVars.g.vRefs.get(p);
+                        MyNode sNode = (MyNode) MySequentialGraphVars.g.vRefs.get(s);
+
+                        pNode.setContribution(1);
+                        pNode.setOutContribution(1);
+                        sNode.setContribution(1);
+                        sNode.setInContribution(1);
+
+                        MyEdge edge = new MyEdge(pNode, sNode);
+                        MySequentialGraphVars.g.addEdge(edge, pNode, sNode);
+                        MySequentialGraphVars.g.edgeRefMap.put(edgeName, edge);
+                    } else {
+                        MyNode pNode = (MyNode) MySequentialGraphVars.g.vRefs.get(p);
+                        MyNode sNode = (MyNode) MySequentialGraphVars.g.vRefs.get(s);
+
+                        pNode.setContribution(1);
+                        pNode.setOutContribution(1);
+                        sNode.setContribution(1);
+                        sNode.setInContribution(1);
+
+                        ((MyEdge) MySequentialGraphVars.g.edgeRefMap.get(edgeName)).setContribution(1);
+                    }
+                }
+
+                /**********************************************************
+                 *  Set Node unique contribution.
+                 **********************************************************/
+                for (String n : sequenceNodeSet) {
+                    ((MyNode) MySequentialGraphVars.g.vRefs.get(n)).setUniqueContribution();
+                }
+
+                /**********************************************************
+                 *  Set Edge unique contribution.
+                 **********************************************************/
+                for (String e : sequenceEdgeSet) {
+                    ((MyEdge) MySequentialGraphVars.g.edgeRefMap.get(e)).setUniqueContribution(1);
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public void setTimeConstrainedEdgeValues() {
@@ -877,7 +930,7 @@ public class MyTimeConstrainedBuilider {
         }
     }
 
-    public void setEngeUniqueContribution() {
+    public void setEdgeUniqueContribution() {
         Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
         for (MyEdge e : edges) {
             for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {

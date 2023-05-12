@@ -51,7 +51,7 @@ extends JPanel {
                     MySequentialGraphSysUtil.decodeVariable(e.getDest().getName()):
                     MySequentialGraphSysUtil.decodeNodeName(e.getDest().getName()));
 
-                this.successors.put(successor, e.getContribution());
+                this.successors.put(successor, (long)e.getContribution());
                 final float hue = this.rand.nextFloat();
                 final float saturation = 0.9f;
                 final float luminance = 1.0f;
@@ -62,7 +62,7 @@ extends JPanel {
                         MySequentialGraphSysUtil.decodeVariable(e.getSource().getName()):
                         MySequentialGraphSysUtil.decodeNodeName(e.getSource().getName()));
 
-                this.predecessors.put(predecessor, e.getContribution());
+                this.predecessors.put(predecessor, (long)e.getContribution());
                 final float hue = this.rand.nextFloat();
                 final float saturation = 0.9f;
                 final float luminance = 1.0f;

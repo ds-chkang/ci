@@ -273,12 +273,12 @@ implements Serializable {
     protected void resetNodeContributionFromOriginalValue() {
         Collection<MyEdge> outEdges = pathGraph.getOutEdges(selectedNode);
         for (MyEdge e : outEdges) {
-            e.getDest().setContribution((long)e.getDest().getOriginalValue());
+            e.getDest().setContribution((int) e.getDest().getOriginalValue());
         }
 
         Collection<MyEdge> inEdges = pathGraph.getInEdges(selectedNode);
         for (MyEdge e : inEdges) {
-            e.getSource().setContribution((long)e.getSource().getOriginalValue());
+            e.getSource().setContribution((int) e.getSource().getOriginalValue());
         }
     }
 
