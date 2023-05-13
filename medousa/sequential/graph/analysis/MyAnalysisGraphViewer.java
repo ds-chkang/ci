@@ -22,22 +22,23 @@ import java.util.Collection;
 
 import static java.awt.Cursor.HAND_CURSOR;
 
-public class MyGraphAnalyzerViewer
+public class MyAnalysisGraphViewer
 extends VisualizationViewer<MyNode, MyEdge>
 implements Serializable {
 
     protected MyAnalysisGraphMouseListener graphMouseListener;
-    protected MyGraphAnalyzer plusNetworkAnalyzer;
+    protected MyAnalysisGraphApp analysisGraphApp;
     protected float MAX_EDGE_VALUE = 0f;
     protected float MAX_NODE_VALUE = 0f;
     protected float MAX_EDGE_SIZE = 26f;
     protected float MAX_NODE_SIZE = 40f;
     protected Point mouseClickedLocation;
-    protected MySelectedNodeEdgeValueBarChart selectedNodEdgeValueBarChart;
+    protected MyAnalysisGraphSelectedNodeEdgeValueBarChart selectedNodEdgeValueBarChart;
 
-    public MyGraphAnalyzerViewer(VisualizationModel<MyNode, MyEdge> vm, JComboBox nodeOptionComboBox) {
+    public MyAnalysisGraphViewer(VisualizationModel<MyNode, MyEdge> vm, MyAnalysisGraphApp analysisGraphApp) {
         super(vm);
         try {
+            this.analysisGraphApp = analysisGraphApp;
             this.setPreferredSize(new Dimension(400, 380));
             DefaultModalGraphMouse graphMouse = new DefaultModalGraphMouse();
             graphMouse.setMode(DefaultModalGraphMouse.Mode.PICKING);
@@ -54,9 +55,9 @@ implements Serializable {
             this.setVertexToolTipTransformer(this.defaultToolTipper);
             this.getRenderContext().setVertexShapeTransformer(this.nodeSizer);
             this.graphMouseListener = new MyAnalysisGraphMouseListener(this);
-            this.selectedNodEdgeValueBarChart = new MySelectedNodeEdgeValueBarChart(this);
+            this.selectedNodEdgeValueBarChart = new MyAnalysisGraphSelectedNodeEdgeValueBarChart(this);
             this.addGraphMouseListener(this.graphMouseListener);
-            this.addMouseListener(new MyGraphViewerMouseListener(this, nodeOptionComboBox));
+            this.addMouseListener(new MyAnalysisGraphViewerMouseListener(this));
            this.getRenderContext().setEdgeArrowStrokeTransformer(new Transformer<MyEdge, Stroke>() {
                 @Override public Stroke transform(MyEdge e) {
                     float edgeWidth = ((BasicStroke)getRenderContext().getEdgeStrokeTransformer().transform(e)).getLineWidth()/2;
@@ -73,7 +74,7 @@ implements Serializable {
             this.getRenderContext().setEdgeFontTransformer(new Transformer<MyEdge, Font>() {
                 @Override public synchronized Font transform(MyEdge e) {
                     if (e.getContribution() == 0) {return new Font("Noto Sans", Font.PLAIN, 0);
-                    } else {return new Font("Noto Sans", Font.BOLD, 26);}
+                    } else {return new Font("Noto Sans", Font.BOLD, 28);}
                 }
             });
             this.scale();
@@ -166,8 +167,8 @@ implements Serializable {
                     }
                 }
             }
-            if (((MyGraph)this.getGraphLayout().getGraph()).MAX_EDGE_VALUE < edgeContribution) {
-                ((MyGraph)this.getGraphLayout().getGraph()).MAX_EDGE_VALUE = edgeContribution;
+            if (((MyAnalysisGraph)this.getGraphLayout().getGraph()).MAX_EDGE_VALUE < edgeContribution) {
+                ((MyAnalysisGraph)this.getGraphLayout().getGraph()).MAX_EDGE_VALUE = edgeContribution;
             }
             edge.setCurrentValue(edgeContribution);
         }
@@ -187,8 +188,8 @@ implements Serializable {
                     }
                 }
             }
-            if (((MyGraph)this.getGraphLayout().getGraph()).MAX_EDGE_VALUE < edgeReachTime) {
-                ((MyGraph)this.getGraphLayout().getGraph()).MAX_EDGE_VALUE = edgeReachTime;
+            if (((MyAnalysisGraph)this.getGraphLayout().getGraph()).MAX_EDGE_VALUE < edgeReachTime) {
+                ((MyAnalysisGraph)this.getGraphLayout().getGraph()).MAX_EDGE_VALUE = edgeReachTime;
             }
             edge.setCurrentValue(edgeReachTime);
         }

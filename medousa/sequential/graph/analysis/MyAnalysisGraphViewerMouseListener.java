@@ -4,14 +4,12 @@ import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class MyGraphViewerMouseListener
+public class MyAnalysisGraphViewerMouseListener
 implements MouseListener {
 
-    private MyGraphAnalyzerViewer graphViewer;
-    protected JComboBox nodeOptionComboBox;
+    private MyAnalysisGraphViewer graphViewer;
 
-    public MyGraphViewerMouseListener(MyGraphAnalyzerViewer funnelViewer, JComboBox nodeOptionComboBox) {
-        this.nodeOptionComboBox = nodeOptionComboBox;
+    public MyAnalysisGraphViewerMouseListener(MyAnalysisGraphViewer funnelViewer) {
         this.graphViewer = funnelViewer;
     }
 

@@ -22,7 +22,7 @@ public class MyGraphViewerMenu
 extends JPopupMenu
 implements ActionListener {
 
-    private MyGraphAnalyzerViewer graphViewer;
+    private MyAnalysisGraphViewer graphViewer;
     private JMenuItem showNodeContribution = new JMenuItem("SHOW NODE CONTRIBUTION");
     private JMenuItem hideContribution = new JMenuItem("HIDE NODE CONTRIBUTION");
     private JMenuItem showNodeLabel = new JMenuItem("SHOW NODE NAMES");
@@ -33,7 +33,7 @@ implements ActionListener {
     private JMenuItem hideEdgeReachTimeStrength = new JMenuItem("HIDE EDGE REACH TIME");
     private JMenuItem deleteNodes = new JMenuItem("DELETE NODES");
 
-    public MyGraphViewerMenu(MyGraphAnalyzerViewer graphViewer) {
+    public MyGraphViewerMenu(MyAnalysisGraphViewer graphViewer) {
         this.graphViewer = graphViewer;
         this.setMenuItem(this.showNodeContribution);
         this.setMenuItem(this.hideContribution);
@@ -167,8 +167,8 @@ implements ActionListener {
                                 graphViewer.getGraphLayout().getGraph().removeVertex(node);
                                 pb.updateValue(++pbCnt, nodes.size());
                             }
-                            ((MyGraph) graphViewer.getGraphLayout().getGraph()).vRefs = new HashMap();
-                            ((MyGraph) graphViewer.getGraphLayout().getGraph()).edRefs = new HashSet();
+                            ((MyAnalysisGraph) graphViewer.getGraphLayout().getGraph()).vRefs = new HashMap();
+                            ((MyAnalysisGraph) graphViewer.getGraphLayout().getGraph()).edRefs = new HashSet();
                             graphViewer.revalidate();
                             graphViewer.repaint();
                             pb.updateValue(100, 100);

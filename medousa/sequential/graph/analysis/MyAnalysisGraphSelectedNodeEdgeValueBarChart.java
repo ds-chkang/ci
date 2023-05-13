@@ -1,7 +1,6 @@
 package medousa.sequential.graph.analysis;
 
 import medousa.sequential.graph.MyEdge;
-import medousa.sequential.graph.MyNode;
 import medousa.sequential.utils.MyMathUtil;
 import medousa.sequential.utils.MySequentialGraphSysUtil;
 import medousa.sequential.utils.MySequentialGraphVars;
@@ -10,7 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 
-public class MySelectedNodeEdgeValueBarChart
+public class MyAnalysisGraphSelectedNodeEdgeValueBarChart
 extends JPanel {
 
     private Image img;
@@ -25,9 +24,9 @@ extends JPanel {
     private ArrayList<Color> predecessorColors;
     private ArrayList<Color> successorColors;
     private int BAR_DISPLAY_LIMIT = 40;
-    private MyGraphAnalyzerViewer graphAnalyzerViewer;
+    private MyAnalysisGraphViewer graphAnalyzerViewer;
 
-    public MySelectedNodeEdgeValueBarChart(MyGraphAnalyzerViewer graphAnalyzerViewer) {
+    public MyAnalysisGraphSelectedNodeEdgeValueBarChart(MyAnalysisGraphViewer graphAnalyzerViewer) {
         this.graphAnalyzerViewer = graphAnalyzerViewer;
     }
 

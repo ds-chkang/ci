@@ -7,7 +7,7 @@ import medousa.message.MyMessageUtil;
 import medousa.direct.utils.MyDirectGraphSysUtil;
 import medousa.direct.utils.MyDirectGraphVars;
 import medousa.sequential.config.MySequentialGraphConfigPanel;
-import medousa.sequential.graph.analysis.MyGraphAnalyzer;
+import medousa.sequential.graph.analysis.MyAnalysisGraphApp;
 import medousa.sequential.graph.layout.MyFRLayout;
 import medousa.sequential.pattern.MyPatternMiner2;
 import medousa.sequential.utils.MySequentialGraphSysUtil;
@@ -351,7 +351,7 @@ implements ActionListener {
                         @Override public void run() {
                             new Thread(new Runnable() {
                                 @Override public void run() {
-                                    MyGraphAnalyzer networkAnalyzer = new MyGraphAnalyzer();
+                                    MyAnalysisGraphApp networkAnalyzer = new MyAnalysisGraphApp();
                                     networkAnalyzer.setAlwaysOnTop(false);
                                     // networkBtn.setEnabled(false);
 

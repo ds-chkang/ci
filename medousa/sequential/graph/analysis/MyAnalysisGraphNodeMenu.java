@@ -9,17 +9,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 
-public class MyGraphNodeMenu
+public class MyAnalysisGraphNodeMenu
 extends JPopupMenu
 implements ActionListener {
 
-    private MyGraphAnalyzerViewer funnelViewer;
+    private MyAnalysisGraphViewer funnelViewer;
     private MyNode currentSelectedNode;
     private JMenuItem deleteNode = new JMenuItem("DELETE NODE");
     private JMenuItem addAllSuccessors = new JMenuItem("ADD ALL SUCCESSORS");
     private JMenuItem addAllPredecessors = new JMenuItem("ADD ALL PREDECESSORS");
 
-    public MyGraphNodeMenu(MyGraphAnalyzerViewer funnelViewer, MyNode currentSelectedNode) {
+    public MyAnalysisGraphNodeMenu(MyAnalysisGraphViewer funnelViewer, MyNode currentSelectedNode) {
         this.funnelViewer = funnelViewer;
         this.currentSelectedNode = currentSelectedNode;
         this.decorate();
@@ -54,7 +54,7 @@ implements ActionListener {
                             }
                         }
                     }
-                    ((MyGraph)funnelViewer.getGraphLayout().getGraph()).vRefs.remove(currentSelectedNode.getName());
+                    ((MyAnalysisGraph)funnelViewer.getGraphLayout().getGraph()).vRefs.remove(currentSelectedNode.getName());
                     funnelViewer.getGraphLayout().getGraph().removeVertex(currentSelectedNode);
                     funnelViewer.graphMouseListener.selectedNode = null;
                 }
