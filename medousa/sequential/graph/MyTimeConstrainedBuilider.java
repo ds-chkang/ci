@@ -556,18 +556,16 @@ public class MyTimeConstrainedBuilider {
         }
     }
 
-    public void setOpenNodeCount() {
-        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
-        for (MyNode n : nodes) {
+    public void setStartPositionNodeCount() {
+        if (MySequentialGraphVars.isSupplementaryOn) {
             for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
-                if (MySequentialGraphVars.seqs[s].length == 1) {
-                    continue;
-                }
-
-                String itemset = MySequentialGraphVars.seqs[s][0].split(":")[0];
-                if (itemset.equals(n.getName())) {
-                    n.setOpenNodeCount(1);
-                }
+                String n = MySequentialGraphVars.seqs[s][1].split(":")[0];
+                ((MyNode) MySequentialGraphVars.g.vRefs.get(n)).setOpenNodeCount(1);
+            }
+        } else {
+            for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
+                String n = MySequentialGraphVars.seqs[s][0].split(":")[0];
+                ((MyNode) MySequentialGraphVars.g.vRefs.get(n)).setOpenNodeCount(1);
             }
         }
     }

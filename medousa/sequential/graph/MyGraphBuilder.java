@@ -405,7 +405,7 @@ public class MyGraphBuilder {
         }
     }
 
-    public void setOpenNodeCount() {
+    public void setStartPositionNodeCount() {
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
         for (MyNode n : nodes) {
             for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {

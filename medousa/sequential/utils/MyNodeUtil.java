@@ -204,7 +204,9 @@ public class MyNodeUtil {
         float maxVal = 0.00f;
         for (MyNode n : nodes) {
             n.setCurrentValue(n.getOpenNodeCount());
-            if (maxVal < n.getCurrentValue()) {maxVal = n.getCurrentValue();}
+            if (maxVal < n.getCurrentValue()) {
+                maxVal = n.getCurrentValue();
+            }
         }
         if (maxVal > 0) {
             MySequentialGraphVars.g.MX_N_VAL = maxVal;

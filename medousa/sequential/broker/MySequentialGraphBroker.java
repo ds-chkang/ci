@@ -24,7 +24,7 @@ extends MySequentialGraphEngineBroker {
                 graphBuilder.createEdges();
                 graphBuilder.setEndNodeCount();
                 graphBuilder.setNodeDepthInformation();
-                graphBuilder.setOpenNodeCount();
+                graphBuilder.setStartPositionNodeCount();
                 graphBuilder.setNodePropagationCount();
                 graphBuilder.setNodeRecursiveLength();
                 graphBuilder.setNodeRecurrenceCount();
@@ -59,9 +59,9 @@ extends MySequentialGraphEngineBroker {
                 MyTimeConstrainedBuilider timeConstrainedGraphBuilider = new MyTimeConstrainedBuilider();
                 timeConstrainedGraphBuilider.createGraph();
                 timeConstrainedGraphBuilider.setNodeDuration();
+                timeConstrainedGraphBuilider.setStartPositionNodeCount();
                 timeConstrainedGraphBuilider.setEndNodeCount();
                 timeConstrainedGraphBuilider.setNodeDepthInformation();
-                timeConstrainedGraphBuilider.setOpenNodeCount();
                 timeConstrainedGraphBuilider.setNodePropagationCount();
                 timeConstrainedGraphBuilider.setNodeRecursiveLength();
                 timeConstrainedGraphBuilider.setAverageRecursiveTime();
