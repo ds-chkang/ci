@@ -270,7 +270,7 @@ implements ActionListener {
         pathFromTable.setRowHeight(22);
         pathFromTable.setBackground(Color.WHITE);
         pathFromTable.setFont(MySequentialGraphVars.f_pln_10);
-        pathFromTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont12);
+        pathFromTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont10);
         pathFromTable.getTableHeader().setOpaque(false);
         pathFromTable.getTableHeader().setBackground(new Color(0,0,0,0f));
         pathFromTable.getColumnModel().getColumn(0).setPreferredWidth(35);
@@ -346,7 +346,7 @@ implements ActionListener {
         pathToTable.setRowHeight(22);
         pathToTable.setBackground(Color.WHITE);
         pathToTable.setFont(MySequentialGraphVars.f_pln_10);
-        pathToTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont12);
+        pathToTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont10);
         pathToTable.getTableHeader().setOpaque(false);
         pathToTable.getTableHeader().setBackground(new Color(0,0,0,0f));
         pathToTable.getColumnModel().getColumn(0).setPreferredWidth(35);

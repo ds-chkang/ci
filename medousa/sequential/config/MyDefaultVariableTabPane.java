@@ -108,13 +108,26 @@ implements Serializable {
             }
         });
 
+        JPanel headerDataPanel = new JPanel();
+        headerDataPanel.setPreferredSize(new Dimension(200, 29));
+        headerDataPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 3, 3));
+        headerDataPanel.add(this.headerBtn);
+        headerDataPanel.add(this.dataBtn);
+
+        JPanel runPanel = new JPanel();
+        runPanel.setPreferredSize(new Dimension(100, 29));
+        runPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
+        runPanel.add(runBtn);
+
+
         JPanel btnPanel = new JPanel();
         btnPanel.setPreferredSize(new Dimension(300, 29));
-        btnPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 3, 3));
-        btnPanel.add(this.headerBtn);
-        btnPanel.add(this.dataBtn);
-        btnPanel.add(this.runBtn);
+        btnPanel.setLayout(new BorderLayout(3, 3));
+        btnPanel.add(runPanel, BorderLayout.WEST);
+        btnPanel.add(headerDataPanel, BorderLayout.EAST);
+
         this.tablePanel.add(btnPanel, BorderLayout.SOUTH);
+
     }
 
     private void createNetwork() {

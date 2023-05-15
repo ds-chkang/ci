@@ -34,42 +34,6 @@ public class MySequentialGraphSysUtil {
         return sortedMap;
     }
 
-
-    public static void loadVariablesAndValues() {
-        try {
-            String variablesAndValuesFileName = "." + MySequentialGraphSysUtil.getDirectorySlash() + ".variablesAndValues.txt";
-            File variableAndValueFile = new File(variablesAndValuesFileName);
-            if (!variableAndValueFile.exists()) {
-                MyMessageUtil.showErrorMsg("The application property file does not exist.");
-            } else {
-                BufferedReader bw = new BufferedReader(new FileReader(variableAndValueFile));
-                MySequentialGraphVars.sequeceFeatureCount = Integer.valueOf(bw.readLine());
-                MySequentialGraphVars.totalOutputSize = Long.valueOf(bw.readLine());
-                MySequentialGraphVars.globalPatternCount = Long.valueOf(bw.readLine());
-                MySequentialGraphVars.mxDepth = Integer.valueOf(bw.readLine());
-                MySequentialGraphVars.totalRecords = Integer.valueOf(bw.readLine());
-                MySequentialGraphVars.outputDir = bw.readLine();
-                bw.readLine();
-                String value = "";
-                MySequentialGraphVars.itemToIdMap = new HashMap<>();
-
-                while ((value = bw.readLine()).length() > 0) {
-                    String[] keyValues = value.split("=");
-                    MySequentialGraphVars.itemToIdMap.put(keyValues[0], keyValues[1]);
-                }
-
-                while ((value = bw.readLine()).length() > 0) {
-                    String[] keyValues = value.split("=");
-                    MySequentialGraphVars.variableToIdMap.put(keyValues[0], keyValues[1]);
-                }
-
-                bw.close();
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
     public static double getAverageMultiNodeShortestPathLength() {
         double totalAverageLength = 0D;
         for (MyNode n : MySequentialGraphVars.getSequentialGraphViewer().multiNodes) {
@@ -153,16 +117,6 @@ public class MySequentialGraphSysUtil {
         return null;
     }
 
-    public static boolean deleteDirectory(File directoryToBeDeleted) {
-        File[] allContents = directoryToBeDeleted.listFiles();
-        if (allContents != null) {
-            for (File file : allContents) {
-                deleteDirectory(file);
-            }
-        }
-        return directoryToBeDeleted.delete();
-    }
-
     public static String decodeVariableSet(String variableItemSet) {
         String decodedItemSet = "";
         String variableItem = "" + variableItemSet.charAt(0);
@@ -220,22 +174,6 @@ public class MySequentialGraphSysUtil {
         }
         return encodedVariableItemset;
     }
-
-    /**
-    public static String encodeItemSet(String itemset) {
-        String encodedItemset = "";
-        String[] items = itemset.split(MyVars.commaDelimeter);
-        for (int i = 0; i < items.length; i++) {
-            for (Map.Entry<String, String> entry : MyVars.itemToIdMap.entrySet()) {
-                if (Objects.equals(entry.getValue(), items[i])) {
-                    if (encodedItemset.length() == 0) {encodedItemset = entry.getKey();
-                    } else {encodedItemset += "," + entry.getKey();}
-                    break;
-                }
-            }
-        }
-        return encodedItemset;
-    }*/
 
     public static String encodeItemSet(String itemset) {
         String encodedItemset = "";
@@ -347,39 +285,6 @@ public class MySequentialGraphSysUtil {
         return System.getProperty("user.dir");
     }
 
-    private static boolean unreachable = true;
-
-    private static void doGraphLevelDFSForAllPathSearch(MyNode endNode, MyNode successor, Set<MyNode> visited, LinkedList<MyNode> currpath) {
-        try {
-            if (visited.contains(successor)) {
-                return;
-            }
-            visited.add(successor);
-            currpath.addLast(successor);
-
-            if (successor == endNode) {
-                unreachable = false;
-                int pathLength = currpath.size();
-                if (MySequentialGraphVars.pathLengthByDepthMap.containsKey(pathLength)) {
-                    MySequentialGraphVars.pathLengthByDepthMap.put(pathLength, MySequentialGraphVars.pathLengthByDepthMap.get(pathLength)+1);
-                } else {
-                    MySequentialGraphVars.pathLengthByDepthMap.put(pathLength, 1L);
-                }
-                currpath.removeLast();
-                visited.remove(successor);
-                return;
-            }
-
-            Collection<MyEdge> outEdges = MySequentialGraphVars.g.getOutEdges(successor);
-            for (MyEdge edge : outEdges) {;
-                doGraphLevelDFSForAllPathSearch(endNode, edge.getDest(), visited, currpath);
-            }
-            currpath.removeLast();
-            visited.remove(successor);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
 
     public static int getUnWeightedBetweenNodeShortestPathLength(MyNode source, MyNode dest){
         MyProgressBar pb = new MyProgressBar(false);

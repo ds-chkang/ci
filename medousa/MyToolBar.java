@@ -292,7 +292,7 @@ implements ActionListener {
                                         pb.updateValue(5, 100);
                                         MySequentialGraphVars.app.getSequentialGraphMsgBroker().generateInputFeatures();
                                         pb.updateValue(10, 100);
-                                        MySequentialGraphVars.app.getSequentialGraphMsgBroker().runEngine();
+                                        //MySequentialGraphVars.app.getSequentialGraphMsgBroker().runEngine();
                                         pb.updateValue(20, 100);
                                         inputBtn.setEnabled(false);
                                         runBtn.setEnabled(false);
