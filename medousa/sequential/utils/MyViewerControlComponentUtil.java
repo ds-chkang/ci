@@ -598,8 +598,6 @@ public class MyViewerControlComponentUtil {
         DefaultTableModel dm = (DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel();
         dm.getDataVector().removeAllElements();
 
-        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{'\u03B5' + "(G)", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MySequentialGraphVars.g.graphEbasilon))});
-        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"CONNECTANCE", MyMathUtil.twoDecimalFormat(MySequentialGraphVars.g.connectance)});
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"NODES", MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.g.getGraphNodeCount())});
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"I. S.", MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.g.getIsolatedNodeCount())});
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"EDGES", MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.g.getGraphEdgeCount())});

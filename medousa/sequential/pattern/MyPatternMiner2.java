@@ -23,8 +23,6 @@ import medousa.sequential.graph.MyDepthNode;
 import medousa.sequential.graph.MyPatternEdge;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
@@ -42,7 +40,7 @@ implements ActionListener {
     private StaticLayout<MyPatternNode, MyPatternEdge> layout;
     private VisualizationViewer<MyPatternNode, MyPatternEdge> vv;
     private JTextField patternSearchTxt = new JTextField();
-    private JTable table;
+    private JTable nodeListTable;
     public float MAX_NODE_VALUE;
     public final float MAX_EDGE_STROKE = 20f;
     public final float MIN_NODE_SIZE = 22;
@@ -53,18 +51,15 @@ implements ActionListener {
     public long [] pathNodeUniqueContributions;
     public long [] times;
 
-    private boolean isExpoentialIncluded;
 
-    private JLabel statBoard;
+    JTable pathTable;
+
     public Map<String, MyPatternEdge> edgeRefMap = new HashMap<>();
 
     public MyPatternMiner2() {
         super("SEQUENTIAL PATTERN EXPLORATION");
         try {
-            this.statBoard = new JLabel();
-            this.statBoard.setFont(MySequentialGraphVars.tahomaPlainFont12);
-            this.statBoard.setBackground(Color.WHITE);
-            initiGraph();
+            initGraph();
             setViewer();
             decorate();
         } catch (Exception ex) {
@@ -72,7 +67,7 @@ implements ActionListener {
         }
     }
 
-    private void initiGraph() {
+    private void initGraph() {
         this.patternGraph = new MyDirectedSparseMultigraph<>();
         this.layout = new StaticLayout<>(this.patternGraph);
         this.vv = new VisualizationViewer<>(this.layout);
@@ -85,6 +80,8 @@ implements ActionListener {
         final MyPatternMiner2 pm = this;
         JPanel searchPatternPanel = new JPanel();
         searchPatternPanel.setLayout(new BorderLayout(3,3));
+        searchPatternPanel.setPreferredSize(new Dimension(200, 31));
+        patternSearchTxt.setBorder(BorderFactory.createEmptyBorder());
         patternSearchTxt.setFont(MySequentialGraphVars.f_pln_12);
         patternSearchTxt.setBackground(Color.WHITE);
         patternSearchTxt.addKeyListener(new KeyAdapter() {
@@ -96,7 +93,6 @@ implements ActionListener {
                             if (searchTxt.endsWith("-")) return;
                             searchItemsets = searchTxt.split("-");
                             for (int i = 0; i < searchItemsets.length; i++) { // Encode item names.
-                                if (searchItemsets[i].equals("!")) continue;
                                 if (MySequentialGraphVars.nodeNameMap.containsKey(searchItemsets[i])) {
                                     searchItemsets[i] = MySequentialGraphVars.nodeNameMap.get(searchItemsets[i]);
                                 } else {
@@ -117,8 +113,8 @@ implements ActionListener {
                                         matched++;
                                         if (matched == 1) {nextPos = j;}
                                         if (matched == searchItemsets.length) {
-                                            if ((j + 1) < MySequentialGraphVars.seqs[i].length) {
-                                                nodeSet.add(MySequentialGraphVars.seqs[i][j + 1].split(":")[0]);
+                                            if ((j+1) < MySequentialGraphVars.seqs[i].length) {
+                                                nodeSet.add(MySequentialGraphVars.seqs[i][j+1].split(":")[0]);
                                                 matched = 0;
                                                 j = nextPos;
                                             }
@@ -127,18 +123,20 @@ implements ActionListener {
                                         matched = 0;
                                     }
                                 }
-
                                 workDone = workDone + work;
                                 pb.updateValue((int) workDone, 100);
                             }
 
-                            for (int i = table.getRowCount() - 1; i >= 0; i--) {
-                                ((DefaultTableModel) table.getModel()).removeRow(i);
+                            for (int i = nodeListTable.getRowCount()-1; i >= 0; i--) {
+                                ((DefaultTableModel) nodeListTable.getModel()).removeRow(i);
                             }
 
                             int i = 0;
                             for (String n : nodeSet) {
-                                ((DefaultTableModel) table.getModel()).addRow(new String[]{"" + (++i), (n.contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n) : MySequentialGraphSysUtil.getDecodedNodeName(n))});
+                                ((DefaultTableModel) nodeListTable.getModel()).addRow(
+                                    new String[]{
+                                        "" + (++i), (n.contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n) : MySequentialGraphSysUtil.getDecodedNodeName(n))
+                                    });
                                 pb.updateValue(i, nodeSet.size());
                             }
 
@@ -147,14 +145,17 @@ implements ActionListener {
                         } else{
                             MyProgressBar pb = new MyProgressBar(false);
 
-                            for (int i = table.getRowCount() - 1; i >= 0; i--) {
-                                ((DefaultTableModel) table.getModel()).removeRow(i);
+                            for (int i = nodeListTable.getRowCount()-1; i >= 0; i--) {
+                                ((DefaultTableModel) nodeListTable.getModel()).removeRow(i);
                             }
 
                             int i = 0;
                             Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
                             for (MyNode n : nodes) {
-                                ((DefaultTableModel) table.getModel()).addRow(new String[]{"" + (++i), (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName()))});
+                                ((DefaultTableModel) nodeListTable.getModel()).addRow(
+                                    new String[]{
+                                        "" + (++i), (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName()))
+                                    });
                                 pb.updateValue(i, nodes.size());
                             }
                             pb.updateValue(100, 100);
@@ -178,56 +179,6 @@ implements ActionListener {
                 } else {
                     patternSearchTxt.setText(patternSearchTxt.getText() + "-" + "!");
                 }
-                /**
-                searchItemsets = patternSearchTxt.getText().replaceAll(" ", "").split("-");
-                for (int i = 0; i < searchItemsets.length; i++) { // Encode item names.
-                    if (searchItemsets[i].equals("!")) continue;
-                    if (MyVars.nodeNameMap.containsKey(searchItemsets[i])) {
-                        searchItemsets[i] = MyVars.nodeNameMap.get(searchItemsets[i]);
-                    } else {
-                        return;
-                    }
-                }
-                Set<String> nodeSet = new HashSet<>();
-                for (int i = 0; i < MyVars.seqs.length; i++) {
-                    int matched = 0;
-                    int nextPos = 0;
-                    for (int j = 0; j < MyVars.seqs[i].length; j++) {
-                        String [] n = MyVars.seqs[i][j].split(":");
-                        if (searchItemsets[matched].equals("!")) {
-                            matched++;
-                            if (matched == 1) {nextPos = j;}
-                            if (matched == searchItemsets.length) {
-                                if ((j+1) < MyVars.seqs[i].length) {
-                                    nodeSet.add(MyVars.seqs[i][j+1].split(":")[0]);
-                                    matched = 0;
-                                    j = nextPos;
-                                }
-                            }
-                        } else if (searchItemsets[matched].equals(n[0])) {
-                            matched++;
-                            if (matched == 1) {nextPos = j;}
-                            if (matched == searchItemsets.length) {
-                                if ((j+1) < MyVars.seqs[i].length) {
-                                    nodeSet.add(MyVars.seqs[i][j+1].split(":")[0]);
-                                    matched = 0;
-                                    j = nextPos;
-                                }
-                            }
-                        } else {
-                            matched = 0;
-                        }
-                    }
-                }
-                for (int i = table.getRowCount() - 1; i >= 0; i--) {
-                    ((DefaultTableModel) table.getModel()).removeRow(i);
-                }
-                int i = 0;
-                for (String n : nodeSet) {
-                    ((DefaultTableModel) table.getModel()).addRow(
-                            new String[]{"" + (++i), (n.contains("x") ? MySysUtil.decodeVariable(n) : MySysUtil.getDecodedNodeName(n))}
-                    );
-                }*/
             }
         });
 
@@ -249,10 +200,6 @@ implements ActionListener {
 
                             searchItemsets = patternSearchTxt.getText().replaceAll(" ", "").split("-");
                             for (int i = 0; i < searchItemsets.length; i++) { // Encode item names.
-                                if (searchItemsets[i].equals("!")) {
-                                    isExpoentialIncluded = true;
-                                    continue;
-                                }
                                 if (MySequentialGraphVars.nodeNameMap.containsKey(searchItemsets[i])) {
                                     searchItemsets[i] = MySequentialGraphVars.nodeNameMap.get(searchItemsets[i]);
                                 } else {
@@ -263,13 +210,11 @@ implements ActionListener {
                                 }
                             }
 
-                            //removeGraphElements();
-                            //resetGraphStats();
-
                             File patternFile = new File(MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "patterns.txt");
                             if (patternFile.exists()) {
                                 patternFile.delete();
                             }
+
                             BufferedWriter bw = new BufferedWriter(new FileWriter(patternFile));
                             times = new long[searchItemsets.length];
                             pathNodeUniqueContributions = new long[searchItemsets.length];
@@ -283,24 +228,7 @@ implements ActionListener {
                                 boolean [] isContributionChanged = new boolean[searchItemsets.length];
                                 for (int j = 0; j < MySequentialGraphVars.seqs[i].length; j++) {
                                     String [] n = MySequentialGraphVars.seqs[i][j].split(":");
-                                    if (searchItemsets[matched].equals("!")) {
-                                        times[matched] += Long.parseLong(n[1]);
-                                        pathNodeContributions[matched]++;
-                                        isContributionChanged[matched] = true;
-                                        matched++;
-                                        if (matched == 1) {
-                                            nextPos = j;
-                                            pattern = n[0];
-                                        } else {
-                                            pattern += "-" + n[0];
-                                        }
-                                        if (matched == searchItemsets.length) {
-                                            bw.write(pattern + "\n");
-                                            matched = 0;
-                                            j = nextPos;
-                                            pattern = "";
-                                        }
-                                    } else if (searchItemsets[matched].equals(n[0])) {
+                                    if (searchItemsets[matched].equals(n[0])) {
                                         times[matched] += Long.parseLong(n[1]);
                                         pathNodeContributions[matched]++;
                                         isContributionChanged[matched] = true;
@@ -333,6 +261,7 @@ implements ActionListener {
                                 pb.updateValue((int) workDone, 100);
                             }
                             bw.close();
+                            setPathContributionString();
                             createGraph();
                             setMaxNodeValue();
                             pb.updateValue(60, 100);
@@ -358,35 +287,11 @@ implements ActionListener {
 
         JPanel btnPanel = new JPanel();
         btnPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        //btnPanel.add(exBtn);
         btnPanel.add(runBtn);
 
         searchPatternPanel.add(patternSearchTxt, BorderLayout.CENTER);
         searchPatternPanel.add(btnPanel, BorderLayout.EAST);
         return searchPatternPanel;
-    }
-
-    private void removeGraphElements() {
-        Collection<MyPatternNode> nodes = new HashSet<>(patternGraph.getVertices());
-        if (nodes == null) return;
-        for (MyPatternNode n : nodes) {
-            patternGraph.vRefs.remove(n.getName());
-            patternGraph.removeVertex(n);
-        }
-
-        Collection<MyPatternEdge> edges = new HashSet<>(patternGraph.getEdges());
-        if (edges == null) return;
-        for (MyPatternEdge e : edges) {
-            patternGraph.edRefs.remove(e);
-            edgeRefMap.remove(e);
-            patternGraph.removeEdge(e);
-        }
-    }
-
-    private void resetGraphStats() {
-        pathNodeContributions = null;
-        pathNodeUniqueContributions = null;
-        times = null;
     }
 
     private void setNodeLocations() {
@@ -449,134 +354,81 @@ implements ActionListener {
         }
     }
 
+    private void setPathContributionString() {
+        String pathStr = "";
+        for (int i=1; i < searchItemsets.length; i++) {
+            if (pathStr.length() == 0) {
+                pathStr = MySequentialGraphSysUtil.getNodeName(searchItemsets[i-1]) + " - " + "[" + pathNodeContributions[i] + "]";
+            } else {
+                pathStr = pathStr + " - " + MySequentialGraphSysUtil.getNodeName(searchItemsets[i-1]) + " - " + "[" + pathNodeContributions[i] + "]";
+            }
+        }
+        pathStr += " - " + MySequentialGraphSysUtil.getNodeName(searchItemsets[searchItemsets.length-1]);
+        DefaultTableModel m = (DefaultTableModel) this.pathTable.getModel();
+        m.addRow(new String[]{"" + (this.pathTable.getRowCount()+1), pathStr});
+    }
+
     private void createGraph() {
         try {
-            if (isExpoentialIncluded) {
-                BufferedReader br = new BufferedReader(new FileReader(MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "patterns.txt"));
-                String line = "";
-                while ((line = br.readLine()) != null) {
-                    searchItemsets = line.split("-");
-                    for (int i = 1; i < searchItemsets.length; i++) {
-                        String ps = searchItemsets[i-1] + "-" + (i-1);
-                        String ss = searchItemsets[i] + "-" + i;
-                        String edgeRef = ps + "-" + ss;
+            for (int i = 1; i < searchItemsets.length; i++) {
+                String ps = searchItemsets[i-1] + "-" + (i-1);
+                String ss = searchItemsets[i] + "-" + i;
+                String edgeRef = ps + "-" + ss;
 
-                        if (!this.edgeRefMap.containsKey(edgeRef)) {
-                            if (!this.patternGraph.vRefs.containsKey(ps)) {
-                                MyPatternNode pn = new MyPatternNode(ps, i-1);
-                                pn.contribution = pathNodeContributions[i-1];
-                                pn.uniqueContribution = pathNodeUniqueContributions[i-1];
-                                pn.time = times[i-1];
-                                pn.paths++;
-                                this.patternGraph.addVertex(pn);
-                                this.patternGraph.vRefs.put(ps, pn);
-                            } else {
-                                patternGraph.vRefs.get(ps).contribution++;
-                                ((MyPatternNode) patternGraph.vRefs.get(ps)).paths++;
-                            }
-
-                            if (!this.patternGraph.vRefs.containsKey(ss)) {
-                                MyPatternNode sn = new MyPatternNode(ss, i);
-                                sn.uniqueContribution = pathNodeUniqueContributions[i];
-                                sn.time = times[i];
-                                if ((i+1) == searchItemsets.length) {
-                                    sn.contribution = pathNodeContributions[i];
-                                    sn.paths++;
-                                }
-                                this.patternGraph.addVertex(sn);
-                                this.patternGraph.vRefs.put(ss, sn);
-                            } else {
-                                if ((i + 1) == searchItemsets.length) {
-                                    patternGraph.vRefs.get(ss).contribution = pathNodeContributions[i];
-                                    ((MyPatternNode) patternGraph.vRefs.get(ss)).paths++;
-                                }
-                                patternGraph.vRefs.get(ss).contribution += pathNodeContributions[i];
-                            }
-
-                            MyPatternNode pn = (MyPatternNode) this.patternGraph.vRefs.get(ps);
-                            MyPatternNode sn = (MyPatternNode) this.patternGraph.vRefs.get(ss);
-                            MyPatternEdge edge = new MyPatternEdge(pn, sn);
-                            edge.contribution = (int) pathNodeContributions[i];
-                            this.patternGraph.addEdge(edge, pn, sn);
-                            this.edgeRefMap.put(edgeRef, edge);
-                        } else {
-                            MyPatternNode pn = (MyPatternNode) this.patternGraph.vRefs.get(ps);
-                            MyPatternNode sn = (MyPatternNode) this.patternGraph.vRefs.get(ss);
-                            pn.paths++;
-                            if ((i+1) == searchItemsets.length) {
-                                sn.contribution += pathNodeContributions[i];
-                                sn.paths++;
-                            }
-                            MyPatternEdge edge = patternGraph.findEdge(pn, sn);
-                            edge.contribution += pathNodeContributions[i];
-                            if (!pn.getName().contains("x")) pn.contribution += pathNodeContributions[i - 1];
-
-                        }
-                    }
-                }
-                br.close();
-            } else {
-                for (int i = 1; i < searchItemsets.length; i++) {
-                    String ps = searchItemsets[i - 1] + "-" + (i - 1);
-                    String ss = searchItemsets[i] + "-" + i;
-                    String edgeRef = ps + "-" + ss;
-
-                    if (!this.edgeRefMap.containsKey(edgeRef)) {
-                        if (!this.patternGraph.vRefs.containsKey(ps)) {
-                            MyPatternNode pn = new MyPatternNode(ps, i - 1);
-                            pn.contribution = pathNodeContributions[i - 1];
-                            pn.uniqueContribution = pathNodeUniqueContributions[i - 1];
-                            pn.time = times[i - 1];
-                            pn.paths++;
-                            this.patternGraph.addVertex(pn);
-                            this.patternGraph.vRefs.put(ps, pn);
-                        } else {
-                            patternGraph.vRefs.get(ps).contribution++;
-                            ((MyPatternNode) patternGraph.vRefs.get(ps)).paths++;
-                        }
-
-                        if (!this.patternGraph.vRefs.containsKey(ss)) {
-                            MyPatternNode sn = new MyPatternNode(ss, i);
-                            sn.uniqueContribution = pathNodeUniqueContributions[i];
-                            sn.time = times[i];
-                            if ((i + 1) == searchItemsets.length) {
-                                sn.contribution = pathNodeContributions[i];
-                                sn.paths++;
-                            }
-                            this.patternGraph.addVertex(sn);
-                            this.patternGraph.vRefs.put(ss, sn);
-                        } else {
-                            if ((i + 1) == searchItemsets.length) {
-                                patternGraph.vRefs.get(ss).contribution = pathNodeContributions[i];
-                                ((MyPatternNode) patternGraph.vRefs.get(ss)).paths++;
-                            }
-                            patternGraph.vRefs.get(ss).contribution += pathNodeContributions[i];
-                        }
-
-                        MyPatternNode pn = (MyPatternNode) this.patternGraph.vRefs.get(ps);
-                        MyPatternNode sn = (MyPatternNode) this.patternGraph.vRefs.get(ss);
-                        MyPatternEdge edge = new MyPatternEdge(pn, sn);
-                        edge.contribution = (int) pathNodeContributions[i];
-                        this.patternGraph.addEdge(edge, pn, sn);
-                        this.edgeRefMap.put(edgeRef, edge);
+                if (!this.edgeRefMap.containsKey(edgeRef)) {
+                    if (!this.patternGraph.vRefs.containsKey(ps)) {
+                        MyPatternNode predecessor = new MyPatternNode(ps, i-1);
+                        predecessor.contribution = pathNodeContributions[i-1];
+                        predecessor.uniqueContribution = pathNodeUniqueContributions[i-1];
+                        predecessor.time = times[i-1];
+                        predecessor.paths++;
+                        this.patternGraph.addVertex(predecessor);
+                        this.patternGraph.vRefs.put(ps, predecessor);
                     } else {
-                        MyPatternNode pn = (MyPatternNode) this.patternGraph.vRefs.get(ps);
-                        MyPatternNode sn = (MyPatternNode) this.patternGraph.vRefs.get(ss);
-                        pn.paths++;
-                        if ((i + 1) == searchItemsets.length) {
-                            sn.contribution += pathNodeContributions[i];
-                            sn.paths++;
-                        }
-                        MyPatternEdge edge = patternGraph.findEdge(pn, sn);
-                        edge.contribution += pathNodeContributions[i];
-                        if (!pn.getName().contains("x")) pn.contribution += pathNodeContributions[i - 1];
-
+                        patternGraph.vRefs.get(ps).contribution++;
+                        ((MyPatternNode) patternGraph.vRefs.get(ps)).paths++;
                     }
+
+                    if (!this.patternGraph.vRefs.containsKey(ss)) {
+                        MyPatternNode successor = new MyPatternNode(ss, i);
+                        successor.uniqueContribution = pathNodeUniqueContributions[i];
+                        successor.time = times[i];
+                        if ((i+1) == searchItemsets.length) {
+                            successor.contribution = pathNodeContributions[i];
+                            successor.paths++;
+                        }
+                        this.patternGraph.addVertex(successor);
+                        this.patternGraph.vRefs.put(ss, successor);
+                    } else {
+                        if ((i+1) == searchItemsets.length) {
+                            patternGraph.vRefs.get(ss).contribution = pathNodeContributions[i];
+                            ((MyPatternNode) patternGraph.vRefs.get(ss)).paths++;
+                        }
+                        patternGraph.vRefs.get(ss).contribution += pathNodeContributions[i];
+                    }
+
+                    MyPatternNode predecessor = (MyPatternNode) this.patternGraph.vRefs.get(ps);
+                    MyPatternNode successor = (MyPatternNode) this.patternGraph.vRefs.get(ss);
+                    MyPatternEdge edge = new MyPatternEdge(predecessor, successor);
+                    edge.contribution = (int) pathNodeContributions[i];
+                    this.patternGraph.addEdge(edge, predecessor, successor);
+                    this.edgeRefMap.put(edgeRef, edge);
+                } else {
+                    MyPatternNode predecessor = (MyPatternNode) this.patternGraph.vRefs.get(ps);
+                    MyPatternNode successor = (MyPatternNode) this.patternGraph.vRefs.get(ss);
+                    predecessor.paths++;
+
+                    if ((i+1) == searchItemsets.length) {
+                        successor.contribution += pathNodeContributions[i];
+                        successor.paths++;
+                    }
+
+                    MyPatternEdge edge = patternGraph.findEdge(predecessor, successor);
+                    edge.contribution += pathNodeContributions[i];
+                    if (!predecessor.getName().contains("x")) predecessor.contribution += pathNodeContributions[i-1];
                 }
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        } catch (Exception ex) {ex.printStackTrace();}
     }
 
     private void setViewer() {
@@ -705,32 +557,23 @@ implements ActionListener {
 
     private JSplitPane setContentPanel() {
         JPanel contentPanel = new JPanel();
-        Border blackline = BorderFactory.createLineBorder(Color.black);
-        TitledBorder titledBorder = BorderFactory.createTitledBorder(blackline, "");
-        titledBorder.setTitleJustification(TitledBorder.LEFT);
-        titledBorder.setTitleFont(new Font("Arial", Font.PLAIN, 0));
-        titledBorder.setTitleColor(Color.DARK_GRAY);
-
         contentPanel.setBackground(Color.WHITE);
         contentPanel.setLayout(new BorderLayout(3,3));
-        contentPanel.add(setSearchPatternPanel(), BorderLayout.NORTH);
-        vv.setBorder(titledBorder);
-        contentPanel.add(vv, BorderLayout.CENTER);
-        contentPanel.add(this.statBoard, BorderLayout.SOUTH);
+        contentPanel.setPreferredSize(new Dimension(700, 800));
 
         String [] columns = {"NO.", "NODE"};
         String [][] data = {};
 
         DefaultTableModel m = new DefaultTableModel(data, columns);
-        this.table = new JTable(m);
-        table.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont12);
-        table.getTableHeader().setOpaque(false);
-        table.getTableHeader().setBackground(new Color(0,0,0,0));
-        table.getColumnModel().getColumn(0).setPreferredWidth(45);
-        table.getColumnModel().getColumn(0).setMaxWidth(55);
-        table.setRowHeight(20);
-        table.setFont(MySequentialGraphVars.f_pln_11);
-        table.setBackground(Color.WHITE);
+        this.nodeListTable = new JTable(m);
+        nodeListTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont12);
+        nodeListTable.getTableHeader().setOpaque(false);
+        nodeListTable.getTableHeader().setBackground(new Color(0,0,0,0));
+        nodeListTable.getColumnModel().getColumn(0).setPreferredWidth(45);
+        nodeListTable.getColumnModel().getColumn(0).setMaxWidth(55);
+        nodeListTable.setRowHeight(23);
+        nodeListTable.setFont(MySequentialGraphVars.f_pln_12);
+        nodeListTable.setBackground(Color.WHITE);
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
         int i=0;
         for (MyNode n : nodes) {
@@ -746,17 +589,17 @@ implements ActionListener {
         JPanel tablePanel = new JPanel();
         tablePanel.setLayout(new BorderLayout(3,3));
         tablePanel.setBackground(Color.WHITE);
-        JPanel bottomPanel = MyTableUtil.searchAndSelectPanelForJTable(this, searchNodeTxt, selectBtn, m, table);
+        JPanel bottomPanel = MyTableUtil.searchAndSelectPanelForJTable(this, searchNodeTxt, selectBtn, m, nodeListTable);
         selectBtn.setPreferredSize(new Dimension(53, 25));
         selectBtn.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
-                if (table.getSelectedRow() == -1) return;
+                if (nodeListTable.getSelectedRow() == -1) return;
                 String searchTxt = patternSearchTxt.getText();
                 if (searchTxt.length() > 0) {
                     if (searchTxt.endsWith("-")) {
-                        patternSearchTxt.setText(searchTxt + table.getValueAt(table.getSelectedRow(), 1).toString());
+                        patternSearchTxt.setText(searchTxt + nodeListTable.getValueAt(nodeListTable.getSelectedRow(), 1).toString());
                     } else {
-                        patternSearchTxt.setText(searchTxt + "-" + table.getValueAt(table.getSelectedRow(), 1).toString());
+                        patternSearchTxt.setText(searchTxt + "-" + nodeListTable.getValueAt(nodeListTable.getSelectedRow(), 1).toString());
                     }
 
                     searchItemsets = patternSearchTxt.getText().replaceAll(" ", "").split("-");
@@ -766,12 +609,12 @@ implements ActionListener {
                     }
                 } else {
                     searchItemsets = new String[1];
-                    searchItemsets[0] = MySequentialGraphVars.nodeNameMap.get(table.getValueAt(table.getSelectedRow(), 1).toString());
-                    patternSearchTxt.setText(table.getValueAt(table.getSelectedRow(), 1).toString());
+                    searchItemsets[0] = MySequentialGraphVars.nodeNameMap.get(nodeListTable.getValueAt(nodeListTable.getSelectedRow(), 1).toString());
+                    patternSearchTxt.setText(nodeListTable.getValueAt(nodeListTable.getSelectedRow(), 1).toString());
                 }
 
-                for (int i = table.getRowCount() - 1; i >= 0; i--) {
-                    ((DefaultTableModel) table.getModel()).removeRow(i);
+                for (int i = nodeListTable.getRowCount() - 1; i >= 0; i--) {
+                    ((DefaultTableModel) nodeListTable.getModel()).removeRow(i);
                 }
 
                 Set<String> nodeSet = new HashSet<>();
@@ -813,18 +656,54 @@ implements ActionListener {
                 }
             }
         });
-        JScrollPane tableScrollPane = new JScrollPane(table);
+
+        JScrollPane tableScrollPane = new JScrollPane(nodeListTable);
         tableScrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(8, 0));
         tableScrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 8));
         tablePanel.add(tableScrollPane, BorderLayout.CENTER);
         tablePanel.add(bottomPanel, BorderLayout.SOUTH);
+
+        String [] pathTableColumns = {"NO.", "PATH"};
+        String [][] pathTableData = {};
+
+        DefaultTableModel pm = new DefaultTableModel(pathTableData, pathTableColumns);
+        pathTable = new JTable(pm);
+        pathTable.setFont(MySequentialGraphVars.f_bold_14);
+        pathTable.getTableHeader().setBackground(new Color(0,0,0,0));
+        pathTable.getTableHeader().setOpaque(false);
+        pathTable.setBackground(Color.WHITE);
+        pathTable.setRowHeight(26);
+        pathTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont12);
+        pathTable.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(50);
+        pathTable.getTableHeader().getColumnModel().getColumn(0).setMaxWidth(50);
+        pathTable.getTableHeader().getColumnModel().getColumn(1).setPreferredWidth(300);
+        pathTable.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+
+        JScrollPane pathTableScrollPane = new JScrollPane(pathTable);
+        pathTableScrollPane.setBorder(BorderFactory.createLoweredSoftBevelBorder());
+
+        contentPanel.add(setSearchPatternPanel(), BorderLayout.NORTH);
+        contentPanel.add(vv, BorderLayout.CENTER);
+
+        JSplitPane graphTableSplitPane = new JSplitPane();
+        graphTableSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+        graphTableSplitPane.setDividerSize(5);
+        graphTableSplitPane.setTopComponent(contentPanel);
+        graphTableSplitPane.setBottomComponent(pathTableScrollPane);
+        graphTableSplitPane.setResizeWeight(0.84);
+        graphTableSplitPane.addComponentListener(new ComponentAdapter() {
+            @Override public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                graphTableSplitPane.setResizeWeight(0.84);
+            }
+        });
 
         JSplitPane splitPane = new JSplitPane();
         splitPane.setDividerLocation(0.13);
         splitPane.setDividerSize(5);
         splitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
         splitPane.setLeftComponent(tablePanel);
-        splitPane.setRightComponent(contentPanel);
+        splitPane.setRightComponent(graphTableSplitPane);
         this.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent evt) {
                 splitPane.setDividerSize(4);
@@ -843,23 +722,10 @@ implements ActionListener {
     private void decorate() {
         this.setLayout(new BorderLayout(3,3));
         this.setBackground(Color.WHITE);
-        this.setPreferredSize(new Dimension(850, 650));
+        this.setPreferredSize(new Dimension(900, 650));
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.getContentPane().add(this.setContentPanel(), BorderLayout.CENTER);
         this.pack();
-        this.addMouseListener(new MouseAdapter() {
-            @Override public void mouseEntered(MouseEvent e) {
-                super.mouseEntered(e);
-                setAlwaysOnTop(true);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                super.mouseExited(e);
-                setAlwaysOnTop(false);
-            }
-        });
-        this.setAlwaysOnTop(true);
         this.setVisible(true);
     }
 

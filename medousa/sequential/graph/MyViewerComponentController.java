@@ -915,8 +915,6 @@ implements ActionListener {
         DefaultTableModel statTableModel = new DefaultTableModel(statTableData, statTableColumns);
 
         String [] tablePropertyTooltips = {
-            '\u03B5' + "(G)",
-            "CONNECTANCE",
             "NODES",
             "ISOLATED NODES",
             "EDGES",
@@ -2209,39 +2207,6 @@ implements ActionListener {
                                 MySequentialGraphSysUtil.getNodeName(pairNames[1]),
                                 MyMathUtil.getCommaSeperatedNumber(edgeMap.get(edgeName))});
             }
-        }
-    }
-
-    private void updateStatTable() {
-        int row = this.edgeListTable.getRowCount();
-        while (row > 0) {
-            ((DefaultTableModel) edgeListTable.getModel()).removeRow(row-1);
-            row = this.edgeListTable.getRowCount();
-        }
-
-        if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
-            ((DefaultTableModel) statTable.getModel()).addRow(new String[]{"N.", MySequentialGraphSysUtil.getDecodedNodeName(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName())});
-            ((DefaultTableModel) statTable.getModel()).addRow(new String[]{"NO. N.", MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.g.getNeighborCount(MySequentialGraphVars.getSequentialGraphViewer().selectedNode)+1)});
-            ((DefaultTableModel) statTable.getModel()).addRow(new String[]{"E.", MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.g.getIncidentEdges(MySequentialGraphVars.getSequentialGraphViewer().selectedNode).size())});
-            ((DefaultTableModel) statTable.getModel()).addRow(new String[]{"P.", MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.g.getPredecessorCount(MySequentialGraphVars.getSequentialGraphViewer().selectedNode))});
-            ((DefaultTableModel) statTable.getModel()).addRow(new String[]{"S.", MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.g.getSuccessorCount(MySequentialGraphVars.getSequentialGraphViewer().selectedNode))});
-            ((DefaultTableModel) statTable.getModel()).addRow(new String[]{"U. C.", MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getUniqueContribution())});
-            ((DefaultTableModel) statTable.getModel()).addRow(new String[]{"C.:", MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getContribution())});
-            ((DefaultTableModel) statTable.getModel()).addRow(new String[]{"IN-C.:", MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getInContribution())});
-            ((DefaultTableModel) statTable.getModel()).addRow(new String[]{"MAX. IN-C.:", MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getMaxInContribution())});
-            ((DefaultTableModel) statTable.getModel()).addRow(new String[]{"AVG. IN-C.:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getAverageInContribution()))});
-            ((DefaultTableModel) statTable.getModel()).addRow(new String[]{"OUT-C.:", MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getOutContribution())});
-            ((DefaultTableModel) statTable.getModel()).addRow(new String[]{"MAX. OUT-C.:", MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getMaxOutContribution())});
-            ((DefaultTableModel) statTable.getModel()).addRow(new String[]{"AVG. OUT-C.:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getAverageOutContribution()))});
-        } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null) {
-            ((DefaultTableModel) statTable.getModel()).addRow(new String[]{"SEL. N.", MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size())});
-            ((DefaultTableModel) statTable.getModel()).addRow(new String[]{"N.", MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.getSequentialGraphViewer().multiNodePredecessors.size()+ MySequentialGraphVars.getSequentialGraphViewer().multiNodeSuccessors.size()+ MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size())});
-            ((DefaultTableModel) statTable.getModel()).addRow(new String[]{"P.", MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.getSequentialGraphViewer().multiNodePredecessors.size())});
-            ((DefaultTableModel) statTable.getModel()).addRow(new String[]{"S.", MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.getSequentialGraphViewer().multiNodeSuccessors.size())});
-            ((DefaultTableModel) statTable.getModel()).addRow(new String[]{"SHR P.", MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.getSequentialGraphViewer().sharedPredecessors.size())});
-            ((DefaultTableModel) statTable.getModel()).addRow(new String[]{"SHR S.", MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.getSequentialGraphViewer().sharedSuccessors.size())});
-        } else {
-            MyViewerControlComponentUtil.setGraphLevelTableStatistics();
         }
     }
 

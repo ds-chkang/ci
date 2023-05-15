@@ -122,8 +122,9 @@ implements Serializable {
             @Override public void run() {
                 try {
                     MyProgressBar pb = new MyProgressBar(false);
-                    runBtn.setForeground(Color.BLACK);
+                    //runBtn.setForeground(Color.BLACK);
                     dataBtn.setEnabled(false);
+                    runBtn.setForeground(dataBtn.getForeground());
                     runBtn.setEnabled(false);
                     MySequentialGraphVars.outputDir = MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "elements" + MySequentialGraphSysUtil.getDirectorySlash();
                     MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getDefaultVariableTable().isTimeVariableOn();
@@ -147,6 +148,7 @@ implements Serializable {
 
                                 pb.updateValue(60, 100);
                                 MySequentialGraphVars.app.getToolBar().networkBtn.setEnabled(true);
+                                MySequentialGraphVars.app.getToolBar().getSearchPathButton().setEnabled(true);
                                 MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
                                 MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.setSelectedIndex(1); // DEFAULT VALUE.
                                 MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
