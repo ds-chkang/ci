@@ -28,10 +28,6 @@ implements GraphMouseListener {
             pb.updateValue(35, 100);
             MySelectedNodeUtil.adjustSelectedNodeNeighborNodeValues(MySequentialGraphVars.getSequentialGraphViewer().selectedNode);
             pb.updateValue(65, 100);
-
-            MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
-            pb.updateValue(85, 100);
-
             MyViewerControlComponentUtil.setDepthOptionForSelectedNode();
             pb.updateValue(90, 100);
 

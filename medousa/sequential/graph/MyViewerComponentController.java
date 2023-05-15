@@ -1248,8 +1248,8 @@ implements ActionListener {
         multiNodeStatTableModel.addRow(new String[]{"R. N.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getRedNodeCount()) + "[" + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getRedNodePercent()*100)) + "]"});
         multiNodeStatTableModel.addRow(new String[]{"B. N.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getBlueNodeCount()) + "[" + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getBlueNodePercent()*100)) + "]"});
         multiNodeStatTableModel.addRow(new String[]{"G. N.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getGreenNodeCount()) + "[" + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getGreenNodePercent()*100)) + "]"});
-        multiNodeStatTableModel.addRow(new String[]{"SHA. P.", MyMathUtil.getCommaSeperatedNumber(sharedPredecessors) + "[" + sharedPredecessorPercentStr + "]"});
-        multiNodeStatTableModel.addRow(new String[]{"SHA. S.", MyMathUtil.getCommaSeperatedNumber(sharedSuccessors) + "[" + sharedSuccessorPercentStr + "]"});
+        multiNodeStatTableModel.addRow(new String[]{"SHA. P.", sharedPredecessorStr + "[" + sharedPredecessorPercentStr + "]"});
+        multiNodeStatTableModel.addRow(new String[]{"SHA. S.", sharedSuccessorStr + "[" + sharedSuccessorPercentStr + "]"});
 
         // Edge stats.
         multiNodeStatTableModel.addRow(new String[]{"AVG. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getAverageEdgeValue()))});
@@ -1333,10 +1333,6 @@ implements ActionListener {
         tablePanel.setLayout(new BorderLayout(3,3));
         tablePanel.setBackground(Color.WHITE);
 
-        JPanel bottomTablePanel = new JPanel();
-        bottomTablePanel.setLayout(new BorderLayout(3,3));
-        bottomTablePanel.setBackground(Color.WHITE);
-
         String [] bottomTableColumns = {"SOURCE", "DEST", "V."};
         String [][] bottomTableData = {};
         DefaultTableModel bottomTableModel = new DefaultTableModel(bottomTableData, bottomTableColumns);
@@ -1365,16 +1361,15 @@ implements ActionListener {
             sortedEdges.put(ename, (float)e.getContribution());
         }
         sortedEdges = MySequentialGraphSysUtil.sortMapByFloatValue(sortedEdges);
-        int i=-0;
         for (String e : sortedEdges.keySet()) {
             String source = MySequentialGraphSysUtil.getDecodedNodeName(e.split("-")[0]);
             String dest = MySequentialGraphSysUtil.getDecodedNodeName(e.split("-")[1]);
             bottomTableModel.addRow(
-                    new String[]{
-                            source,
-                            dest,
-                            MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(sortedEdges.get(e)))
-                    });
+                new String[]{
+                    source,
+                    dest,
+                    MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(sortedEdges.get(e)))
+                });
         }
 
         edgeListTable.setRowHeight(22);
@@ -1674,8 +1669,13 @@ implements ActionListener {
         this.pathToTable.setAutoCreateRowSorter(false);
 
         this.updateNodeTable();
+        this.nodeListTable.revalidate();
+        this.nodeListTable.repaint();
         this.updateEdgeTable();
-        this.updateStatTable();
+        this.nodeListTable.revalidate();
+        this.nodeListTable.repaint();
+        //this.updateStatTable();
+
 
         // Get the existing currentNodeListTable RowSorter
         TableRowSorter<DefaultTableModel> sorter = (TableRowSorter<DefaultTableModel>) currentNodeListTable.getRowSorter();
@@ -2141,7 +2141,8 @@ implements ActionListener {
         }
 
         if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
-            if (MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly || MySequentialGraphVars.getSequentialGraphViewer().successorsOnly) {
+            if (MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly ||
+                MySequentialGraphVars.getSequentialGraphViewer().successorsOnly) {
                 LinkedHashMap<String, Long> edgeValueMap = new LinkedHashMap<>();
                 Collection<MyEdge> edges = MySequentialGraphVars.g.getIncidentEdges(MySequentialGraphVars.getSequentialGraphViewer().selectedNode);
                 for (MyEdge e : edges) {
@@ -2154,12 +2155,11 @@ implements ActionListener {
                 edgeValueMap = MySequentialGraphSysUtil.sortMapByLongValue(edgeValueMap);
 
                 for (String edgeName : edgeValueMap.keySet()) {
-                    String[] pairNames = edgeName.split("-");
-                    ((DefaultTableModel) edgeListTable.getModel()).addRow(
-                            new String[]{
-                                    MySequentialGraphSysUtil.getDecodedNodeName(pairNames[0]),
-                                    MySequentialGraphSysUtil.getDecodedNodeName(pairNames[1]),
-                                    MyMathUtil.getCommaSeperatedNumber(edgeValueMap.get(edgeName))});
+                    String [] pairNames = edgeName.split("-");
+                    ((DefaultTableModel) edgeListTable.getModel()).addRow(new String[]{
+                        MySequentialGraphSysUtil.getNodeName(pairNames[0]),
+                        MySequentialGraphSysUtil.getNodeName(pairNames[1]),
+                        MyMathUtil.getCommaSeperatedNumber(edgeValueMap.get(edgeName))});
                 }
             } else {
                 LinkedHashMap<String, Long> edgeValueMap = new LinkedHashMap<>();
@@ -2170,12 +2170,11 @@ implements ActionListener {
                 edgeValueMap = MySequentialGraphSysUtil.sortMapByLongValue(edgeValueMap);
 
                 for (String edgeName : edgeValueMap.keySet()) {
-                    String[] pairNames = edgeName.split("-");
-                    ((DefaultTableModel) edgeListTable.getModel()).addRow(
-                            new String[]{
-                                    MySequentialGraphSysUtil.getDecodedNodeName(pairNames[0]),
-                                    MySequentialGraphSysUtil.getDecodedNodeName(pairNames[1]),
-                                    MyMathUtil.getCommaSeperatedNumber(edgeValueMap.get(edgeName))});
+                    String [] pairNames = edgeName.split("-");
+                    ((DefaultTableModel) edgeListTable.getModel()).addRow(new String[]{
+                        MySequentialGraphSysUtil.getNodeName(pairNames[0]),
+                        MySequentialGraphSysUtil.getNodeName(pairNames[1]),
+                        MyMathUtil.getCommaSeperatedNumber(edgeValueMap.get(edgeName))});
                 }
             }
         } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null) {
@@ -2191,8 +2190,8 @@ implements ActionListener {
                 String[] pairNames = edgeName.split("-");
                 ((DefaultTableModel) edgeListTable.getModel()).addRow(
                         new String[]{
-                                MySequentialGraphSysUtil.getDecodedNodeName(pairNames[0]),
-                                MySequentialGraphSysUtil.getDecodedNodeName(pairNames[1]),
+                                MySequentialGraphSysUtil.getNodeName(pairNames[0]),
+                                MySequentialGraphSysUtil.getNodeName(pairNames[1]),
                                 MyMathUtil.getCommaSeperatedNumber(edgeMap.get(edgeName))});
             }
         } else {
@@ -2206,8 +2205,8 @@ implements ActionListener {
                 String [] pairNames = edgeName.split("-");
                 ((DefaultTableModel) edgeListTable.getModel()).addRow(
                         new String[]{
-                                MySequentialGraphSysUtil.getDecodedNodeName(pairNames[0]),
-                                MySequentialGraphSysUtil.getDecodedNodeName(pairNames[1]),
+                                MySequentialGraphSysUtil.getNodeName(pairNames[0]),
+                                MySequentialGraphSysUtil.getNodeName(pairNames[1]),
                                 MyMathUtil.getCommaSeperatedNumber(edgeMap.get(edgeName))});
             }
         }
