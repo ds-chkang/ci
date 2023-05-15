@@ -560,7 +560,7 @@ implements ActionListener {
         this.vv.setVertexToolTipTransformer(new Transformer<MyDepthNode, String>() {
             @Override public String transform(MyDepthNode n) {
                 return  "<html><body>" +
-                        (n.getName().split("-")[0].contains("x") ? MySequentialGraphSysUtil.decodeVariable(n.getName().split("-")[0]) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName().split("-")[0])) +
+                        (n.getName().split("-")[0].contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName().split("-")[0]) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName().split("-")[0])) +
                         "<br>CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(n.contribution) +
                         "<br>IN-CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(n.inContribution) +
                         "<br>OUT-CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(n.outContribution) +
@@ -572,7 +572,7 @@ implements ActionListener {
         this.vv.getRenderContext().setVertexLabelTransformer(new Transformer<MyDepthNode, String>() {
             @Override public String transform(MyDepthNode n) {
                 return  "<html><body>" +
-                        (n.getName().split("-")[0].contains("x") ? MySequentialGraphSysUtil.decodeVariable(n.getName().split("-")[0]) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName().split("-")[0])) + "</body></html>";
+                        (n.getName().split("-")[0].contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName().split("-")[0]) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName().split("-")[0])) + "</body></html>";
             }
         });
 

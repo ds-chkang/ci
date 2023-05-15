@@ -1,7 +1,5 @@
 package medousa.sequential.graph.stats.barchart;
 
-import medousa.direct.utils.MyDirectGraphMathUtil;
-import medousa.direct.utils.MyDirectGraphSysUtil;
 import medousa.direct.utils.MyDirectGraphVars;
 import medousa.sequential.graph.MyEdge;
 import medousa.sequential.utils.MyMathUtil;
@@ -47,7 +45,7 @@ public class MySingleNodeNeighborNodeValueBarChart extends JPanel {
         Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
         for (MyEdge e : edges) {
             if (e.getDest() == MySequentialGraphVars.getSequentialGraphViewer().selectedNode && e.getCurrentValue() > 0) {
-                String pName = (e.getSource().getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(e.getSource().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getSource().getName()));
+                String pName = (e.getSource().getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(e.getSource().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getSource().getName()));
                 this.predecessors.put(pName, e.getSource().getCurrentValue());
                 final float hue = this.rand.nextFloat();
                 final float saturation = 0.9f;
@@ -57,7 +55,7 @@ public class MySingleNodeNeighborNodeValueBarChart extends JPanel {
             }
 
             if (e.getSource() == MySequentialGraphVars.getSequentialGraphViewer().selectedNode && e.getCurrentValue() > 0) {
-                String sName = (e.getDest().getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(e.getDest().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getDest().getName()));
+                String sName = (e.getDest().getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(e.getDest().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getDest().getName()));
                 this.successors.put(sName, e.getDest().getCurrentValue());
                 final float hue = this.rand.nextFloat();
                 final float saturation = 0.9f;
@@ -85,7 +83,7 @@ public class MySingleNodeNeighborNodeValueBarChart extends JPanel {
         this.successorColors = new ArrayList<>();
 
         for (String nn : MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodeSuccessorDepthNodeMap.keySet()) {
-            this.successors.put((nn.contains("x") ? MySequentialGraphSysUtil.decodeVariable(nn) : MySequentialGraphSysUtil.decodeNodeName(nn)), (float) MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodeSuccessorDepthNodeMap.get(nn));
+            this.successors.put((nn.contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(nn) : MySequentialGraphSysUtil.decodeNodeName(nn)), (float) MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodeSuccessorDepthNodeMap.get(nn));
             final float hue = this.rand.nextFloat();
             final float saturation = 0.9f;
             final float luminance = 1.0f;
@@ -107,7 +105,7 @@ public class MySingleNodeNeighborNodeValueBarChart extends JPanel {
         this.successorColors = new ArrayList<>();
 
         for (String nn : MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodePredecessorDepthNodeMap.keySet()) {
-            this.predecessors.put((nn.contains("x") ? MySequentialGraphSysUtil.decodeVariable(nn) : MySequentialGraphSysUtil.decodeNodeName(nn)), (float) MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodePredecessorDepthNodeMap.get(nn));
+            this.predecessors.put((nn.contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(nn) : MySequentialGraphSysUtil.decodeNodeName(nn)), (float) MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodePredecessorDepthNodeMap.get(nn));
             final float hue = this.rand.nextFloat();
             final float saturation = 0.9f;
             final float luminance = 1.0f;

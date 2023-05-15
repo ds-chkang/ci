@@ -54,7 +54,7 @@ implements ActionListener {
                     int count = 0;
                     LinkedHashMap<String, Long> multiNodeNameValueMap = new LinkedHashMap<>();
                     for (MyNode n : MySequentialGraphVars.getSequentialGraphViewer().multiNodes) {
-                        String nn = (n.getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(n.getName()) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName()));
+                        String nn = (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName()));
                         multiNodeNameValueMap.put(nn, (long)n.getCurrentValue());
                         if (!MAXIMIZED && ++count == 6) {
                             break;

@@ -37,8 +37,8 @@ extends JPanel {
             if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes.contains(e.getDest()) || MySequentialGraphVars.getSequentialGraphViewer().multiNodes.contains(e.getSource())) {
                 if (MySequentialGraphVars.g.getSuccessors(e.getSource()).containsAll(MySequentialGraphVars.getSequentialGraphViewer().multiNodes) ||
                     MySequentialGraphVars.g.getPredecessors(e.getDest()).containsAll(MySequentialGraphVars.getSequentialGraphViewer().multiNodes)) {
-                    String predecessor = (e.getSource().getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(e.getSource().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getSource().getName()));
-                    String successor = (e.getDest().getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(e.getDest().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getDest().getName()));
+                    String predecessor = (e.getSource().getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(e.getSource().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getSource().getName()));
+                    String successor = (e.getDest().getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(e.getDest().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getDest().getName()));
                     String edgeName = predecessor + "-" + successor;
                     this.data.put(edgeName, e.getCurrentValue());
                     final float hue = this.rand.nextFloat();

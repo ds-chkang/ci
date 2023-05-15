@@ -37,8 +37,8 @@ extends JPanel {
                     for (String depthNode : depthNodeSuccessorMaps.keySet()) {
                         Map<String, Integer> successorSet = depthNodeSuccessorMaps.get(depthNode);
                         if (successorSet.containsKey(e.getDest().getName())) {
-                            String predecessor = (e.getSource().getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(e.getSource().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getSource().getName()));
-                            String successor = (e.getDest().getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(e.getDest().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getDest().getName()));
+                            String predecessor = (e.getSource().getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(e.getSource().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getSource().getName()));
+                            String successor = (e.getDest().getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(e.getDest().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getDest().getName()));
                             String name = predecessor + "-" + successor;
                             this.data.put(name, (float) e.getDest().getNodeDepthInfo(MySequentialGraphVars.currentGraphDepth+1).getInContribution());
                             e.setCurrentValue((float) e.getDest().getNodeDepthInfo(MySequentialGraphVars.currentGraphDepth+1).getInContribution());
@@ -61,8 +61,8 @@ extends JPanel {
                     for (String depthNode : depthNodePredecessorSetMap.keySet()) {
                         Map<String, Integer> predecessorMap = depthNodePredecessorSetMap.get(depthNode);
                         if (predecessorMap.containsKey(e.getSource().getName())) {
-                            String predecessor = (e.getSource().getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(e.getSource().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getSource().getName()));
-                            String successor = (e.getDest().getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(e.getDest().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getDest().getName()));
+                            String predecessor = (e.getSource().getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(e.getSource().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getSource().getName()));
+                            String successor = (e.getDest().getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(e.getDest().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getDest().getName()));
                             String name = predecessor + "-" + successor;
                             this.data.put(name, (float) e.getDest().getNodeDepthInfo(MySequentialGraphVars.currentGraphDepth -1).getInContribution());
                             e.setCurrentValue((float) e.getSource().getNodeDepthInfo(MySequentialGraphVars.currentGraphDepth -1).getInContribution());
@@ -97,8 +97,8 @@ extends JPanel {
         for (MyEdge e : edges) {
             if (MySequentialGraphVars.getSequentialGraphViewer().edgeValName.contains("NONE")) {continue;}
             else if (e.getDest().getCurrentValue() ==0 || e.getSource().getCurrentValue() == 0) continue;
-            String predecessor = (e.getSource().getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(e.getSource().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getSource().getName()));
-            String successor = (e.getDest().getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(e.getDest().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getDest().getName()));
+            String predecessor = (e.getSource().getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(e.getSource().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getSource().getName()));
+            String successor = (e.getDest().getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(e.getDest().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getDest().getName()));
             String name = predecessor+"-"+successor;
             this.data.put(name, e.getCurrentValue());
             final float hue = this.rand.nextFloat();
@@ -123,8 +123,8 @@ extends JPanel {
         for (MyEdge e : edges) {
             if (e.getSource() != MySequentialGraphVars.getSequentialGraphViewer().selectedNode && e.getDest() != MySequentialGraphVars.getSequentialGraphViewer().selectedNode) continue;
             else if (e.getDest().getCurrentValue() ==0 || e.getSource().getCurrentValue() == 0) continue;
-            String predecessor = (e.getSource().getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(e.getSource().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getSource().getName()));
-            String successor = (e.getDest().getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(e.getDest().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getDest().getName()));
+            String predecessor = (e.getSource().getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(e.getSource().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getSource().getName()));
+            String successor = (e.getDest().getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(e.getDest().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getDest().getName()));
             String name = predecessor+"-"+successor;
             this.data.put(name, e.getCurrentValue());
             final float hue = this.rand.nextFloat();

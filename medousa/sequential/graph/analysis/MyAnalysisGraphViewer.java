@@ -13,7 +13,6 @@ import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.renderers.Renderer;
 import org.apache.commons.collections15.Transformer;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
@@ -98,7 +97,7 @@ implements Serializable {
                         "<BR>" +
                         "UNIQUE CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(n.getUniqueContribution()) +
                         "<BR>" +
-                        "END NODE COUNT: " + MySequentialGraphSysUtil.getCommaSeperateString(n.getEndNodeCount()) +
+                        "END NODE COUNT: " + MySequentialGraphSysUtil.getCommaSeperateString(n.getEndPositionNodeCount()) +
                         "<BR>" +
                         "PRDECESSORS: " + MySequentialGraphSysUtil.getCommaSeperateString(n.getPredecessorCount()) +
                         "<BR>" +
@@ -115,7 +114,7 @@ implements Serializable {
                         "<BR>" +
                         "UNIQUE CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(n.getUniqueContribution()) +
                         "<BR>" +
-                        "END NODE COUNT: " + MySequentialGraphSysUtil.getCommaSeperateString(n.getEndNodeCount()) +
+                        "END NODE COUNT: " + MySequentialGraphSysUtil.getCommaSeperateString(n.getEndPositionNodeCount()) +
                         "<BR>" +
                         "PRDECESSORS: " + MySequentialGraphSysUtil.getCommaSeperateString(n.getPredecessorCount()) +
                         "<BR>" +

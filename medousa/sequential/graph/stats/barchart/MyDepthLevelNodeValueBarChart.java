@@ -37,7 +37,7 @@ public class MyDepthLevelNodeValueBarChart extends JPanel {
         this.colors = new ArrayList<>();
         Collection<MyNode> nodes = MySequentialGraphVars.g.getDepthNodes();
         for (MyNode n : nodes) {
-            String name = (n.getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName()));
+            String name = (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName()));
             this.data.put(name, n.getCurrentValue());
             final float hue = this.rand.nextFloat();
             final float saturation = 0.9f;

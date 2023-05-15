@@ -3,9 +3,9 @@ package medousa.sequential.utils;
 import medousa.sequential.graph.MyClusteringConfig;
 import medousa.sequential.graph.MyEdge;
 import medousa.sequential.graph.MyNode;
-import medousa.sequential.graph.MyViewerComponentController;
 import medousa.sequential.graph.stats.barchart.MyGraphLevelEdgeValueBarChart;
 import medousa.sequential.graph.stats.barchart.MyGraphLevelNodeValueBarChart;
+import medousa.sequential.graph.stats.barchart.MySingleNodeNeighborNodeValueBarChart;
 
 import java.util.*;
 
@@ -190,7 +190,7 @@ public class MyNodeUtil {
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
         float maxVal = 0.00f;
         for (MyNode n : nodes) {
-            n.setCurrentValue(n.getEndNodeCount());
+            n.setCurrentValue(n.getEndPositionNodeCount());
             if (maxVal < n.getCurrentValue()) {maxVal = n.getCurrentValue();}
         }
         if (maxVal > 0) {
@@ -203,7 +203,7 @@ public class MyNodeUtil {
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
         float maxVal = 0.00f;
         for (MyNode n : nodes) {
-            n.setCurrentValue(n.getOpenNodeCount());
+            n.setCurrentValue(n.getStartPositionNodeCount());
             if (maxVal < n.getCurrentValue()) {
                 maxVal = n.getCurrentValue();
             }
@@ -243,9 +243,74 @@ public class MyNodeUtil {
     public static void setContributionToNodes() {
         MySequentialGraphVars.getSequentialGraphViewer().nodeValueName = "CONTRIBUTION";
         float maxVal = 0.00f;
+
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
         for (MyNode n : nodes) {
             n.setCurrentValue((float) n.getContribution());
+            if (maxVal < n.getCurrentValue()) {
+                maxVal = n.getCurrentValue();
+            }
+        }
+
+        if (maxVal > 0) {
+            MySequentialGraphVars.g.MX_N_VAL = maxVal;
+        }
+    }
+
+    public static void setInContributionToNodes() {
+        MySequentialGraphVars.getSequentialGraphViewer().nodeValueName = "IN-CONTRIBUTION";
+        float maxVal = 0.00f;
+
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        for (MyNode n : nodes) {
+            if (n.getInContribution() == 0) {
+                n.setCurrentValue(0f);
+            } else if (n.getCurrentValue() == 0) {
+                n.setCurrentValue(0f);
+            } else {
+                n.setCurrentValue(n.getInContribution());
+                if (maxVal < n.getCurrentValue()) {
+                       maxVal = n.getInContribution();
+                }
+            }
+        }
+
+        if (maxVal > 0) {
+            MySequentialGraphVars.g.MX_N_VAL = maxVal;
+        }
+    }
+
+    public static void setAverageInContributionToNodes() {
+        MySequentialGraphVars.getSequentialGraphViewer().nodeValueName = "AVERAGE-IN-CONTRIBUTION";
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        float maxVal = 0.00f;
+
+        for (MyNode n : nodes) {
+            n.setCurrentValue(n.getAverageInContribution());
+            if (maxVal < n.getCurrentValue()) {
+                maxVal = n.getAverageInContribution();
+            }
+        }
+
+        if (maxVal > 0) {
+            MySequentialGraphVars.g.MX_N_VAL = maxVal;
+        }
+    }
+
+    public static void setOutContributionToNodes() {
+        MySequentialGraphVars.getSequentialGraphViewer().nodeValueName = "OUT-CONTRIBUTION";
+        float maxVal = 0.00f;
+
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        for (MyNode n : nodes) {
+            if (n.getOutContribution() == 0) {
+                    n.setCurrentValue(0f);
+            } else if (n.getCurrentValue() == 0) {
+                    n.setCurrentValue(0f);
+            } else {
+                n.setCurrentValue(n.getOutContribution());
+            }
+
             if (maxVal < n.getCurrentValue()) {
                 maxVal = n.getCurrentValue();
             }
@@ -265,34 +330,6 @@ public class MyNodeUtil {
             if (maxVal < n.getCurrentValue()) {
                 maxVal = n.getCurrentValue();
             }
-        }
-
-        if (maxVal > 0) {
-            MySequentialGraphVars.g.MX_N_VAL = maxVal;
-        }
-    }
-
-    public static void setInContributionToNodes() {
-        MySequentialGraphVars.getSequentialGraphViewer().nodeValueName = "IN-CONTRIBUTION";
-        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
-        float maxVal = 0.00f;
-        for (MyNode n : nodes) {
-            n.setCurrentValue(n.getInContribution());
-            if (maxVal < n.getCurrentValue()) {maxVal = n.getInContribution();}
-        }
-
-        if (maxVal > 0) {
-            MySequentialGraphVars.g.MX_N_VAL = maxVal;
-        }
-    }
-
-    public static void setAverageInContributionToNodes() {
-        MySequentialGraphVars.getSequentialGraphViewer().nodeValueName = "AVG.-IN-CONTRIBUTION";
-        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
-        float maxVal = 0.00f;
-        for (MyNode n : nodes) {
-            n.setCurrentValue(n.getAverageInContribution());
-            if (maxVal < n.getCurrentValue()) {maxVal = n.getAverageInContribution();}
         }
 
         if (maxVal > 0) {
@@ -323,20 +360,6 @@ public class MyNodeUtil {
             if (n.getCurrentValue() > maxVal) {
                 maxVal = n.getCurrentValue();
             }
-        }
-
-        if (maxVal > 0) {
-            MySequentialGraphVars.g.MX_N_VAL = maxVal;
-        }
-    }
-
-    public static void setOutContributionToNodes() {
-        MySequentialGraphVars.getSequentialGraphViewer().nodeValueName = "OUT-CONTRIBUTION";
-        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
-        float maxVal = 0.00f;
-        for (MyNode n : nodes) {
-            n.setCurrentValue(n.getOutContribution());
-            if (maxVal < n.getCurrentValue()) {maxVal = n.getCurrentValue();}
         }
 
         if (maxVal > 0) {
@@ -401,6 +424,8 @@ public class MyNodeUtil {
             MySequentialGraphVars.g.MX_N_VAL = maxVal;
         }
     }
+
+
 
     public static void setMinReachTimeToNodes() {
         MySequentialGraphVars.getSequentialGraphViewer().nodeValueName = "MIN-REACH-TIME";
@@ -578,6 +603,92 @@ public class MyNodeUtil {
         }
     }
 
+    public static void setContributionToSelectedNodeNeighbors() {
+        MyNode selectedNode = MySequentialGraphVars.getSequentialGraphViewer().selectedNode;
+        Collection<MyEdge> inEdges = MySequentialGraphVars.g.getInEdges(selectedNode);
+        for (MyEdge e : inEdges) {
+            e.getSource().setCurrentValue(e.getContribution());
+        }
+
+        Collection<MyEdge> outEdges = MySequentialGraphVars.g.getOutEdges(selectedNode);
+        for (MyEdge e : outEdges) {
+            if (e.getSource() == e.getDest() && e.getSource() == selectedNode) {
+                selectedNode.setCurrentValue(e.getContribution());
+            } else {
+                e.getDest().setCurrentValue(e.getContribution());
+            }
+        }
+        selectedNode.setCurrentValue(selectedNode.getContribution());
+        MySequentialGraphVars.g.MX_N_VAL = (float) selectedNode.getContribution();
+    }
+
+    public static void setInContributionToSelectedNodeNeighbors() {
+        float maxVal = 0f;
+        MyNode selectedNode = MySequentialGraphVars.getSequentialGraphViewer().selectedNode;
+        Collection<MyEdge> inEdges = MySequentialGraphVars.g.getInEdges(selectedNode);
+        for (MyEdge e : inEdges) {
+            e.getSource().setCurrentValue(e.getContribution());
+        }
+
+        Collection<MyEdge> outEdges = MySequentialGraphVars.g.getOutEdges(selectedNode);
+        for (MyEdge e : outEdges) {
+            if (e.getSource() == e.getDest() && e.getSource() == selectedNode) continue;
+            e.getDest().setCurrentValue(0f);
+        }
+
+        selectedNode.setCurrentValue(selectedNode.getInContribution());
+        MySequentialGraphVars.g.MX_N_VAL = (float) selectedNode.getInContribution();
+    }
+
+    public static void setOutContributionToSelectedNodeNeighbors() {
+        MyNode selectedNode = MySequentialGraphVars.getSequentialGraphViewer().selectedNode;
+        Collection<MyEdge> inEdges = MySequentialGraphVars.g.getInEdges(selectedNode);
+        for (MyEdge e : inEdges) {
+            if (e.getSource() == e.getDest() && e.getSource() == selectedNode) continue;
+            e.getSource().setCurrentValue(0f);
+        }
+
+        Collection<MyEdge> outEdges = MySequentialGraphVars.g.getOutEdges(selectedNode);
+        for (MyEdge e : outEdges) {
+            e.getDest().setCurrentValue(e.getContribution());
+        }
+        selectedNode.setCurrentValue(selectedNode.getOutContribution());
+        MySequentialGraphVars.g.MX_N_VAL = (float) selectedNode.getOutContribution();
+    }
+
+    public static void setUniqueInContributionToSelectedNodeNeighbors() {
+        MyNode selectedNode = MySequentialGraphVars.getSequentialGraphViewer().selectedNode;
+        Collection<MyEdge> inEdges = MySequentialGraphVars.g.getInEdges(selectedNode);
+        for (MyEdge e : inEdges) {
+            e.getSource().setCurrentValue(e.getUniqueContribution());
+        }
+
+        Collection<MyEdge> outEdges = MySequentialGraphVars.g.getOutEdges(selectedNode);
+        for (MyEdge e : outEdges) {
+            if (e.getSource() == e.getDest() && e.getSource() == selectedNode) continue;
+            e.getDest().setCurrentValue(0f);
+        }
+
+        selectedNode.setCurrentValue(selectedNode.getUniqueContribution());
+        MySequentialGraphVars.g.MX_N_VAL = (float) selectedNode.getUniqueContribution();
+    }
+
+    public static void setUniqueOutContributionToSelectedNodeNeighbors() {
+        MyNode selectedNode = MySequentialGraphVars.getSequentialGraphViewer().selectedNode;
+        Collection<MyEdge> inEdges = MySequentialGraphVars.g.getInEdges(selectedNode);
+        for (MyEdge e : inEdges) {
+            if (e.getSource() == e.getDest() && e.getSource() == selectedNode) continue;
+            e.getSource().setCurrentValue(0f);
+        }
+
+        Collection<MyEdge> outEdges = MySequentialGraphVars.g.getOutEdges(selectedNode);
+        for (MyEdge e : outEdges) {
+            e.getDest().setCurrentValue(e.getUniqueContribution());
+        }
+        selectedNode.setCurrentValue(selectedNode.getUniqueContribution());
+        MySequentialGraphVars.g.MX_N_VAL = (float) selectedNode.getUniqueContribution();
+    }
+
     public static void setNodeValue() {
         try {
             if (MySequentialGraphVars.isTimeOn) {
@@ -618,40 +729,38 @@ public class MyNodeUtil {
                 } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 17) {
                     setDurationToNodes();
                 } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 18) {
-                    setDurationToNodes();
-                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 19) {
                     setAverageDurationToNodes();
-                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 20) {
+                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 19) {
                     setMaxDurationToNodes();
-                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 21) {
+                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 20) {
                     setMinDurationToNodes();
-                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 22) {
+                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 21) {
                     setAverageReachTimeToNodes();
-                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 23) {
+                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 22) {
                     setTotalTimeToNodes();
-                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 24) {
+                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 23) {
                     setRecurrenceCountToNodes();
-                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 25) {
+                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 24) {
                     setTotalRecurrenceTimeToNodes();
-                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 26) {
+                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 25) {
                     setMaxReachTimeToNodes();
-                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 27) {
+                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 26) {
                     setMinReachTimeToNodes();
-                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 28) {
+                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 27) {
                     setItemsetLengthToNodes();
-                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 29) {
+                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 28) {
                     setBetweenessCentralityToNodes();
-                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 30) {
+                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 29) {
                     setClosenessCentralityToNodes();
-                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 31) {
+                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 30) {
                     setEigenVectorCentralityToNodes();
-                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 32) {
+                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 31) {
                     setPageRankScoresToNodes();
-                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 33) {
+                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 32) {
                     setStartNodeCountToNodes();
-                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 34) {
+                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() == 33) {
                     setUnReachableNodeCountToNodes();
-                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() > 34) {
+                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() > 33) {
                     setUserDefinedNodeValuesToNodes();
                 }
             } else {
@@ -707,8 +816,12 @@ public class MyNodeUtil {
                     setUserDefinedNodeValuesToNodes();
                 }
             }
-            MyViewerControlComponentUtil.setGraphLevelTableStatistics();
-            //MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelNodeValueDistributionLineGraph.decorate();
+
+            if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
+                MySequentialGraphVars.getSequentialGraphViewer().vc.updateSelectedNodeStatTable();
+            } else {
+                MyViewerControlComponentUtil.setGraphLevelTableStatistics();
+            }
 
             if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() > 1) {
                 MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.setSelectedIndex(
@@ -717,14 +830,16 @@ public class MyNodeUtil {
 
             if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.isSelected()) {
                 MyViewerControlComponentUtil.removeBarChartsFromViewer();
-                MySequentialGraphVars.getSequentialGraphViewer().graphLevelNodeValueBarChart = new MyGraphLevelNodeValueBarChart();
-                MySequentialGraphVars.getSequentialGraphViewer().add(MySequentialGraphVars.getSequentialGraphViewer().graphLevelNodeValueBarChart);
+                MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
+                MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.setSelected(false);
+                MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
             }
 
             if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueBarChart.isSelected()) {
                 MyViewerControlComponentUtil.removeEdgeValueBarChartFromViewer();
-                MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart = new MyGraphLevelEdgeValueBarChart();
-                MySequentialGraphVars.getSequentialGraphViewer().add(MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart);
+                MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueBarChart.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
+                MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueBarChart.setSelected(false);
+                MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueBarChart.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
             }
 
             MySequentialGraphVars.getSequentialGraphViewer().revalidate();
@@ -927,17 +1042,17 @@ public class MyNodeUtil {
 
     public static double getAverageUnreachableNodeCount() {
         long total = 0L;
-        int ncnt = 0;
+        int count = 0;
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
         for (MyNode n : nodes) {
             if (n.getCurrentValue() == 0) continue;
             int val = n.getUnreachableNodeCount();
             if (val > 0) {
                 total += val;
-                ncnt++;
+                count++;
             }
         }
-        return (double)total/ncnt;
+        return (double)total/count;
     }
 
     public static double getAverageUniqueContribution() {
@@ -996,14 +1111,47 @@ public class MyNodeUtil {
         return Math.sqrt(std/numNodes);
     }
 
-    public static long getTotalUnreachableNodeCount() {
+    public static long getMaxUnreachableNodeCount() {
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
-        long count = 0L;
+        long max = 0L;
         for (MyNode n : nodes) {
             if (n.getCurrentValue() == 0) continue;;
-            count += n.getUnreachableNodeCount();
+            if (n.getUnreachableNodeCount() > max) {
+                max = n.getUnreachableNodeCount();
+            }
         }
-        return count;
+        return max;
     }
+
+    public static float getUnreachableNodeCountStandardDeviation() {
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        double sum = 0.00d;
+        int numNodes = 0;
+        for (MyNode n : nodes) {
+            if (n.getCurrentValue() == 0) {continue;}
+            numNodes++;
+            sum += n.getUnreachableNodeCount();
+        }
+        double mean = sum/numNodes;
+        sum = 0;
+        for(MyNode n : nodes) {
+            sum += Math.pow(n.getUnreachableNodeCount()-mean, 2);
+        }
+        return (float) Math.sqrt(sum/numNodes);
+    }
+
+    public static long getMinUnreachableNodeCount() {
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        long min = 10000000000L;
+        for (MyNode n : nodes) {
+            if (n.getCurrentValue() == 0) continue;;
+            if (n.getUnreachableNodeCount() < min) {
+                min = n.getUnreachableNodeCount();
+            }
+        }
+        return min;
+    }
+
+
 
 }

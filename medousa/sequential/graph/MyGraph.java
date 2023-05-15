@@ -22,7 +22,7 @@ implements Serializable {
     public Float MX_N_VAL = 0f;
     public double MN_X_VAL = 0f;
     public Float MX_E_VAL = 42f;
-    public float DEFALUT_EDGE_VALUE = 4.8f;
+    public float DEFALUT_EDGE_VALUE = 3.8f;
     public long minNodeContribution = 1000000000L;
     public long minTotalReachTime = 10000000000000L;
     public long minUniqueContribution = 1000000000L;
@@ -119,6 +119,14 @@ implements Serializable {
             }
         }
         return max;
+    }
+
+    public int getGraphPredecessorCount() {
+        return MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors.size();
+    }
+
+    public int getGraphSuccessorCount() {
+        return MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors.size();
     }
 
     public float getClusteredAverageNodeValue() {
@@ -483,7 +491,6 @@ implements Serializable {
         return count;
     }
 
-
     public int getGraphNodeCount() {
         int count = 0;
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
@@ -498,17 +505,37 @@ implements Serializable {
         int count = 0;
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
         for (MyNode n : nodes) {
-            if (n.getCurrentValue() == 0 || MyClusteringConfig.selectedClusterColor != null && (MyClusteringConfig.selectedClusterColor != n.clusteringColor)) continue;
+            if (MyClusteringConfig.selectedClusterColor != null && (MyClusteringConfig.selectedClusterColor != n.clusteringColor)) {
+                continue;
+            } else if (n.getCurrentValue() == 0) {
+                continue;
+            }
             count++;
         }
         return count;
+    }
+
+    public static int getTotalMultiNodeEdges() {
+        Set<MyNode> nodes = new HashSet<>();
+        for (MyNode n : MySequentialGraphVars.getSequentialGraphViewer().multiNodes) {
+            nodes.addAll(MySequentialGraphVars.g.getNeighbors(n));
+        }
+        return nodes.size();
+    }
+
+    public static int getTotalMultiNodeNeighbors() {
+        Set<MyNode> nodes = new HashSet<>();
+        for (MyNode n : MySequentialGraphVars.getSequentialGraphViewer().multiNodes) {
+            nodes.addAll(MySequentialGraphVars.g.getNeighbors(n));
+        }
+        return nodes.size();
     }
 
     public int getGraphEdgeCount() {
         int count = 0;
         Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
         for (MyEdge e : edges) {
-            if (e.getCurrentValue() == 0) continue;;
+            if (e.getCurrentValue() == 0 || e.getSource().getCurrentValue() == 0 || e.getDest().getCurrentValue() == 0) continue;;
             count++;
         }
         return count;

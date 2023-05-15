@@ -1,7 +1,10 @@
 package medousa.sequential.config;
 
 
+import medousa.MyProgressBar;
 import medousa.message.MyMessageUtil;
+import medousa.sequential.graph.layout.MyFRLayout;
+import medousa.sequential.utils.MySequentialGraphSysUtil;
 import medousa.sequential.utils.MySequentialGraphVars;
 
 import javax.swing.*;
@@ -27,6 +30,7 @@ implements Serializable {
     private String [] headers;
     private JButton headerBtn;
     private JButton dataBtn;
+    private JButton runBtn;
     public File dataFile;
     public MyDefaultVariableTabPane() {
         super();
@@ -69,7 +73,9 @@ implements Serializable {
             @Override public void actionPerformed(ActionEvent e) {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override public void run() {
+
                         setHeaderFile();
+
                 }
             });
         }});
@@ -82,7 +88,22 @@ implements Serializable {
             @Override public void actionPerformed(ActionEvent e) {
                 new Thread(new Runnable() {
                     @Override public void run() {
-                        setDataFile();}
+                        setDataFile();
+                    }
+                }).start();
+            }
+        });
+
+        this.runBtn = new JButton("  RUN  ");
+        this.runBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.runBtn.setFocusable(false);
+        this.runBtn.setEnabled(false);
+        this.runBtn.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                new Thread(new Runnable() {
+                    @Override public void run() {
+                        createNetwork();
+                    }
                 }).start();
             }
         });
@@ -92,7 +113,73 @@ implements Serializable {
         btnPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 3, 3));
         btnPanel.add(this.headerBtn);
         btnPanel.add(this.dataBtn);
+        btnPanel.add(this.runBtn);
         this.tablePanel.add(btnPanel, BorderLayout.SOUTH);
+    }
+
+    private void createNetwork() {
+        new Thread(new Runnable() {
+            @Override public void run() {
+                try {
+                    MyProgressBar pb = new MyProgressBar(false);
+                    runBtn.setEnabled(false);
+                    runBtn.setForeground(Color.BLACK);
+                    dataBtn.setEnabled(false);
+                    MySequentialGraphVars.outputDir = MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "elements" + MySequentialGraphSysUtil.getDirectorySlash();
+                    MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getDefaultVariableTable().isTimeVariableOn();
+                    MySequentialGraphVars.app.getSequentialGraphMsgBroker().categorize();
+                    pb.updateValue(5, 100);
+                    MySequentialGraphVars.app.getSequentialGraphMsgBroker().generateInputFeatures();
+                    pb.updateValue(10, 100);
+                    MySequentialGraphVars.app.getSequentialGraphMsgBroker().runEngine();
+                    pb.updateValue(20, 100);
+                    new Thread(new Runnable() {
+                        @Override public void run() {
+                            MySequentialGraphVars.app.getContentTabbedPane().setSelectedIndex(1);
+                        }
+                    }).start();
+
+                    new Thread(new Runnable() {
+                        @Override public void run() {
+                            try {
+                                MyFRLayout layout = new MyFRLayout<>(MySequentialGraphVars.app.getSequentialGraphMsgBroker().createGraph(pb), new Dimension(5500, 4500));
+                                MySequentialGraphVars.app.setSequentialGrpahViewer(MySequentialGraphVars.app.getSequentialGraphMsgBroker().createSequentialGraphView(layout, new Dimension(5500, 4500)));
+
+                                pb.updateValue(60, 100);
+                                MySequentialGraphVars.app.getToolBar().networkBtn.setEnabled(true);
+                                MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
+                                MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.setSelectedIndex(1); // DEFAULT VALUE.
+                                MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
+                                MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
+
+                                pb.updateValue(80, 100);
+                                MySequentialGraphVars.app.getSequentialGraphDashboard().setDashboard();
+                                // System.out.println(MyVars.inputSequenceFile);
+
+                                pb.updateValue(100, 100);
+                                pb.dispose();
+                                MySequentialGraphVars.app.revalidate();
+                                MySequentialGraphVars.app.repaint();
+
+                                if (MySequentialGraphVars.g.getVertices().size() == 0) {
+                                    pb.updateValue(100, 100);
+                                    pb.dispose();
+                                    MyMessageUtil.showInfoMsg("<html><body>An exception has occurred while creating a network.<br>Please, check the information provided in the configuration panel.</body></html>");
+                                } else {
+                                    MyMessageUtil.showInfoMsg("Network has successfully been built!");
+                                }
+                            } catch (Exception ex) {
+                                pb.updateValue(100, 100);
+                                pb.dispose();
+                                MyMessageUtil.showInfoMsg("<html><body>An exception has occurred while creating a network.<br>Please, check the information provided in the configuration panel.</body></html>");
+                            }
+                        }
+                    }).start();
+                } catch (Exception ex) {
+                        runBtn.setEnabled(true);
+                }
+            }
+        }).start();
     }
 
     private void setDataFile() {
@@ -108,7 +195,10 @@ implements Serializable {
                 MySequentialGraphVars.app.getSequentialGraphMsgBroker().setInputFiles(fc.getSelectedFiles());
                 MyMessageUtil.showInfoMsg("Data have been successfully loaded!");
                 this.dataBtn.setBackground(Color.WHITE);
-                MySequentialGraphVars.app.getToolBar().runBtn.setEnabled(true);
+                //MySequentialGraphVars.app.getToolBar().runBtn.setEnabled(true);
+                this.runBtn.setEnabled(true);
+                this.runBtn.setBackground(Color.RED);
+                this.runBtn.setForeground(Color.WHITE);
             } else {MyMessageUtil.showErrorMsg("Failed to load data file!");}
             this.dataBtn.setEnabled(true);
         } catch (Exception ex) {ex.printStackTrace();}

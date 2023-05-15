@@ -37,8 +37,8 @@ implements Serializable, Cloneable, Comparable<MyNode> {
     protected float maxDuration;
     public long minDuration = 100000000000000L;
 
-    public int endNodeCount;
-    public int openNodeCount;
+    public int endPositionNodeCount;
+    public int startPositionNodeCount;
 
     public int nodeRecurrentCount;
     public float avgRecurrenceLength;
@@ -184,7 +184,9 @@ implements Serializable, Cloneable, Comparable<MyNode> {
         } else {this.nodeNumericValueMap.put(variable, value);}
     }
     public void setNodeDistinctValue(String variable, float value) {
-        if (!this.nodeNumericValueMap.containsKey(variable)) {this.nodeNumericValueMap.put(variable, value);}
+        if (!this.nodeNumericValueMap.containsKey(variable)) {
+            this.nodeNumericValueMap.put(variable, value);
+        }
     }
     public Map<Integer, MyNodeDepthInfo> getNodeDepthInfoMap() {return this.nodeDepthInfoMap;}
     public void setInContribution(int inContribution) {this.inContribution += inContribution;}
@@ -275,12 +277,12 @@ implements Serializable, Cloneable, Comparable<MyNode> {
     public double getCloseness() { return this.closeness; }
     public double getEignevector() { return this.eignevector; }
     public long getDuration() {return this.duration;}
-    public void setEndNodeCount(int endNodeCount) {
-        this.endNodeCount += endNodeCount;
+    public void setEndPositionNodeCount(int endPositionNodeCount) {
+        this.endPositionNodeCount += endPositionNodeCount;
     }
-    public int getEndNodeCount() {return this.endNodeCount;}
-    public void setOpenNodeCount(int openNodeCount) {this.openNodeCount += openNodeCount;}
-    public int getOpenNodeCount() { return this.openNodeCount; }
+    public int getEndPositionNodeCount() {return this.endPositionNodeCount;}
+    public void setStartPositionNodeCount(int startPositionNodeCount) {this.startPositionNodeCount += startPositionNodeCount;}
+    public int getStartPositionNodeCount() { return this.startPositionNodeCount; }
     public long getMinReachTime() {
         if (this.minReachTime == 500000000000000L) {return 0L;}
         return this.minReachTime;
@@ -336,8 +338,8 @@ implements Serializable, Cloneable, Comparable<MyNode> {
                 case 1: return (this.getInContribution() - n.getInContribution());
                 case 2: return (this.getOutContribution() - n.getOutContribution());
                 case 3: return (int) (this.getUniqueContribution() - n.getUniqueContribution());
-                case 4: return (this.getOpenNodeCount() - n.getOpenNodeCount());
-                case 5: return (this.getEndNodeCount() - n.getEndNodeCount());
+                case 4: return (this.getStartPositionNodeCount() - n.getStartPositionNodeCount());
+                case 5: return (this.getEndPositionNodeCount() - n.getEndPositionNodeCount());
                 case 6: return (this.getSuccessorCount() - n.getSuccessorCount());
                 case 7: return (this.getPredecessorCount() - n.getPredecessorCount());
                 case 8: return (Math.abs(this.getSuccessorCount() - this.getPredecessorCount()) - Math.abs(n.getSuccessorCount() - n.getPredecessorCount()));
@@ -355,8 +357,8 @@ implements Serializable, Cloneable, Comparable<MyNode> {
                 case 1: return (this.getInContribution() - n.getInContribution());
                 case 2: return (this.getOutContribution() - n.getOutContribution());
                 case 3: return (int) (this.getUniqueContribution() - n.getUniqueContribution());
-                case 4: return (this.getOpenNodeCount() - n.getOpenNodeCount());
-                case 5: return (this.getEndNodeCount() - n.getEndNodeCount());
+                case 4: return (this.getStartPositionNodeCount() - n.getStartPositionNodeCount());
+                case 5: return (this.getEndPositionNodeCount() - n.getEndPositionNodeCount());
                 case 6: return (this.getSuccessorCount() - n.getSuccessorCount());
                 case 7: return (this.getPredecessorCount() - n.getPredecessorCount());
                 case 8: return (Math.abs(this.getSuccessorCount() - this.getPredecessorCount()) - Math.abs(n.getSuccessorCount() - n.getPredecessorCount()));

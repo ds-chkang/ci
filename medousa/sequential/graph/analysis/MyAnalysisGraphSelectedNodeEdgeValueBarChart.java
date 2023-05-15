@@ -47,7 +47,7 @@ extends JPanel {
         for (MyEdge e : edges) {
             if (e.getSource() == graphAnalyzerViewer.graphMouseListener.selectedNode) {
                 String successor = (e.getDest().getName().contains("x") ?
-                    MySequentialGraphSysUtil.decodeVariable(e.getDest().getName()):
+                    MySequentialGraphSysUtil.getDecodeVariableNodeName(e.getDest().getName()):
                     MySequentialGraphSysUtil.decodeNodeName(e.getDest().getName()));
 
                 this.successors.put(successor, (long)e.getContribution());
@@ -58,7 +58,7 @@ extends JPanel {
                 this.successorColors.add(randomColor);
             } else if (e.getDest() == graphAnalyzerViewer.graphMouseListener.selectedNode) {
                 String predecessor = (e.getSource().getName().contains("x") ?
-                        MySequentialGraphSysUtil.decodeVariable(e.getSource().getName()):
+                        MySequentialGraphSysUtil.getDecodeVariableNodeName(e.getSource().getName()):
                         MySequentialGraphSysUtil.decodeNodeName(e.getSource().getName()));
 
                 this.predecessors.put(predecessor, (long)e.getContribution());

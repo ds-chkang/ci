@@ -1,5 +1,6 @@
 package medousa.sequential.graph;
 
+import edu.uci.ics.jung.visualization.renderers.DefaultVertexLabelRenderer;
 import medousa.sequential.graph.listener.MyMotionListener;
 import medousa.sequential.graph.stats.barchart.*;
 import medousa.sequential.graph.listener.MyGraphMouseListener;
@@ -44,7 +45,7 @@ implements Serializable {
     public boolean sharedNeighborsOnly;
     public boolean excluded;
     private ScalingControl viewScaler;
-    public final float MX_E_STK = 30.0f;
+    public final float MX_E_STK = 32.0f;
     public final float MIN_NODE_SZ = 54.0f;
     public Map<String, Integer> endNodesMap;
     public Set<String> nodesBetweenTwoNodes;
@@ -58,8 +59,8 @@ implements Serializable {
     public Set<MyNode> sharedPredecessors;
     public Set<MyNode> sharedSuccessors;
     public boolean isClustered;
-    public Font nodeFont = new Font("Noto Sans", Font.BOLD, 44);
-    public Font edgeFont = new Font("Noto Sans", Font.BOLD, 44);
+    public Font nodeFont = new Font("Noto Sans", Font.PLAIN, 50);
+    public Font edgeFont = new Font("Noto Sans", Font.PLAIN, 50);
     public MyGraphLevelNodeValueBarChart graphLevelNodeValueBarChart;
     public MyGraphLevelEdgeValueBarChart graphLelvelEdgeValueBarChart;
     public MySingleNodeNeighborNodeValueBarChart nodeLevelNeighborNodeValueBarChart;
@@ -115,6 +116,19 @@ implements Serializable {
                 }
             });
 
+            final Color vertexLabelColor = Color.BLACK;
+            DefaultVertexLabelRenderer vertexLabelRenderer = new DefaultVertexLabelRenderer(vertexLabelColor) {
+                @Override public <MyNode> Component getVertexLabelRendererComponent(
+                        JComponent vv, Object value, Font font,
+                        boolean isSelected, MyNode vertex) {
+                    super.getVertexLabelRendererComponent(
+                            vv, value, font, isSelected, vertex);
+                    setForeground(vertexLabelColor);
+                    return this;
+                }
+            };
+
+            this.getRenderContext().setVertexLabelRenderer(vertexLabelRenderer);
             this.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.S);
             this.getRenderContext().setVertexLabelTransformer(this.nodeLabeller);
             this.getRenderContext().setEdgeLabelTransformer(new Transformer<MyEdge, String>() {
@@ -141,11 +155,11 @@ implements Serializable {
             this.vc = new MyViewerComponentController();
 
             Border blackline = BorderFactory.createLineBorder(Color.black);
-            TitledBorder titledBorder = BorderFactory.createTitledBorder(blackline, "");
+            TitledBorder titledBorder = BorderFactory.createTitledBorder(blackline, "NETWORK");
             titledBorder.setTitleJustification(TitledBorder.LEFT);
-            titledBorder.setTitleFont(MySequentialGraphVars.f_pln_6);
+            titledBorder.setTitleFont(MySequentialGraphVars.tahomaBoldFont12);
             titledBorder.setTitleColor(Color.DARK_GRAY);
-            //this.vc.setBorder(titledBorder);
+            this.vc.setBorder(titledBorder);
 
             this.addComponentListener(new ComponentAdapter() {
                 @Override public void componentResized(ComponentEvent e) {
@@ -190,7 +204,7 @@ implements Serializable {
             String name = "";
 
             if (n.getName().contains("x")) {
-                name = MySequentialGraphSysUtil.decodeVariable(n.getName());
+                name = MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName());
             } else {
                 name = MySequentialGraphSysUtil.decodeNodeName(n.getName());
             }
@@ -285,7 +299,7 @@ implements Serializable {
                     if (selectedSingleNodePredecessors.contains(e.getSource())) {
                         float edgeStroke = edgeStrokeWeight * MX_E_STK;
                         if (edgeStroke < 1) {
-                            edgeStroke = 0.5f;
+                            edgeStroke = 0.2f;
                         }
                         return new BasicStroke(edgeStroke);
                     } else {
@@ -295,7 +309,8 @@ implements Serializable {
                     if (selectedSingleNodeSuccessors.contains(e.getDest())) {
                         float edgeStroke = edgeStrokeWeight * MX_E_STK;
                         if (edgeStroke < 1) {
-                            edgeStroke = 0.5f;
+                            edgeStroke = 0.2f;
+                            edgeStroke = 0.2f;
                         }
                         return new BasicStroke(edgeStroke);
                     } else {
@@ -305,7 +320,7 @@ implements Serializable {
                     if (selectedSingleNodeSuccessors.contains(e.getDest()) || selectedSingleNodePredecessors.contains(e.getSource())) {
                         float edgeStroke = edgeStrokeWeight * MX_E_STK;
                         if (edgeStroke < 1) {
-                            edgeStroke = 0.5f;
+                            edgeStroke = 0.2f;
                         }
                         return new BasicStroke(edgeStroke);
                     } else {
@@ -316,7 +331,7 @@ implements Serializable {
                 } else {
                     float edgeStroke = edgeStrokeWeight * MX_E_STK;
                     if (edgeStroke < 1) {
-                        edgeStroke = 0.5f;
+                        edgeStroke = 0.2f;
                     }
                     return new BasicStroke(edgeStroke);
                 }
@@ -325,7 +340,7 @@ implements Serializable {
                     if (multiNodes.contains(e.getDest()) && multiNodePredecessors.contains(e.getSource())) {
                         float edgeStroke = edgeStrokeWeight * MX_E_STK;
                         if (edgeStroke < 1) {
-                            edgeStroke = 0.5f;
+                            edgeStroke = 0.2f;
                         }
                         return new BasicStroke(edgeStroke);
                     } else {
@@ -335,7 +350,7 @@ implements Serializable {
                     if (multiNodes.contains(e.getSource()) && multiNodeSuccessors.contains(e.getDest())) {
                         float edgeStroke = edgeStrokeWeight * MX_E_STK;
                         if (edgeStroke < 1) {
-                            edgeStroke = 0.5f;
+                            edgeStroke = 0.2f;
                         }
                         return new BasicStroke(edgeStroke);
                     } else {
@@ -345,7 +360,7 @@ implements Serializable {
                     if (multiNodeSuccessors.contains(e.getDest()) || multiNodePredecessors.contains(e.getSource())) {
                         float edgeStroke = edgeStrokeWeight * MX_E_STK;
                         if (edgeStroke < 1) {
-                            edgeStroke = 0.5f;
+                            edgeStroke = 0.2f;
                         }
                         return new BasicStroke(edgeStroke);
                     } else {
@@ -355,7 +370,7 @@ implements Serializable {
                     if (multiNodes.contains(e.getDest()) && multiNodePredecessors.contains(e.getSource())) {
                         float edgeStroke = edgeStrokeWeight * MX_E_STK;
                         if (edgeStroke < 1) {
-                            edgeStroke = 0.5f;
+                            edgeStroke = 0.2f;
                         }
                         return new BasicStroke(edgeStroke);
                     } else {
@@ -365,7 +380,7 @@ implements Serializable {
                     if (multiNodes.contains(e.getSource()) && sharedSuccessors.contains(e.getDest())) {
                         float edgeStroke = edgeStrokeWeight * MX_E_STK;
                         if (edgeStroke < 1) {
-                            edgeStroke = 0.5f;
+                            edgeStroke = 0.2f;
                         }
                         return new BasicStroke(edgeStroke);
                     } else {
@@ -375,7 +390,7 @@ implements Serializable {
                     if (sharedSuccessors.contains(e.getDest()) || sharedPredecessors.contains(e.getSource())) {
                         float edgeStroke = edgeStrokeWeight * MX_E_STK;
                         if (edgeStroke < 1) {
-                            edgeStroke = 0.5f;
+                            edgeStroke = 0.2f;
                         }
                         return new BasicStroke(edgeStroke);
                     } else {
@@ -386,7 +401,7 @@ implements Serializable {
                 } else {
                     float edgeStroke = edgeStrokeWeight * MX_E_STK;
                     if (edgeStroke < 1) {
-                        edgeStroke = 0.5f;
+                        edgeStroke = 0.2f;
                     }
                     return new BasicStroke(edgeStroke);
                 }
@@ -394,13 +409,13 @@ implements Serializable {
                 if (vc.selectedNodeNeighborNodeTypeSelector.isShowing()) {
                     float edgeStroke = edgeStrokeWeight * MX_E_STK;
                     if (edgeStroke < 1) {
-                        edgeStroke = 0.5f;
+                        edgeStroke = 0.2f;
                     }
                     return new BasicStroke(edgeStroke);
                 } else {
                     float edgeStroke = edgeStrokeWeight * MX_E_STK;
                     if (edgeStroke < 1) {
-                        edgeStroke = 0.5f;
+                        edgeStroke = 0.2f;
                     }
                     return new BasicStroke(edgeStroke);
                 }
@@ -536,6 +551,8 @@ implements Serializable {
                     } else {
                         return new Ellipse2D.Double(0, 0, 0, 0);
                     }
+                } else if (n.getCurrentValue() == 0) {
+                    return new Ellipse2D.Double(0, 0, 0, 0);
                 } else if (n != selectedNode && !selectedSingleNodePredecessors.contains(n) && !selectedSingleNodeSuccessors.contains(n)) {
                     return new Ellipse2D.Double(0, 0, 0, 0);
                 } else {
@@ -705,14 +722,14 @@ implements Serializable {
             } else if (vc.depthNeighborNodeTypeSelector.getSelectedItem().toString().equals("S.")) {
                 if (vc.depthNodeSuccessorMaps != null && vc.depthNodeSuccessorMaps.containsKey(e.getSource().getName()) &&
                         vc.depthNodeSuccessorMaps.get(e.getSource().getName()).containsKey(e.getDest().getName())) {
-                    return new Color(0f, 0f, 0.0f, 0.7f);
+                    return new Color(1,1,1, 0.56f);
                 } else {
                     return new Color(0f, 0f, 0.0f, 0.0f);
                 }
             } else if (vc.depthNeighborNodeTypeSelector.getSelectedItem().toString().equals("P.")) {
                 if (vc.depthNodePredecessorMaps != null && vc.depthNodePredecessorMaps.containsKey(e.getDest().getName()) &&
                         vc.depthNodePredecessorMaps.get(e.getDest().getName()).containsKey(e.getSource().getName())) {
-                    return new Color(0f, 0f, 0.0f, 0.7f);
+                    return new Color(1,1,1, 0.56f);
                 } else {
                     return new Color(0f, 0f, 0.0f, 0.0f);
                 }
@@ -722,41 +739,41 @@ implements Serializable {
         } else if (multiNodes != null) {
             if (predecessorsOnly) {
                 if (multiNodePredecessors.contains(e.getSource()) && multiNodes.contains(e.getDest())) {
-                    return new Color(1f, 0f, 0f, 1.0f);
+                    return new Color(1,0,0, 0.35f);
                 } else {
                     return new Color(0f, 0f, 0f, 0f);
                 }
             } else if (successorsOnly) {
                 if (multiNodeSuccessors.contains(e.getDest()) && multiNodes.contains(e.getSource())) {
-                    return new Color(0f, 0f, 1f, 1.0f);
+                    return new Color(0f, 0f, 1f, 0.35f);
                 } else {
                     return new Color(0f, 0f, 0f, 0f);
                 }
             } else if (neighborsOnly) {
                 if (multiNodePredecessors.contains(e.getSource()) && multiNodes.contains(e.getDest())) {
-                    return new Color(1f, 0f, 0f, 1f);
+                    return new Color(1f, 0f, 0f, 0.35f);
                 } else if (multiNodeSuccessors.contains(e.getDest()) && multiNodes.contains(e.getSource())) {
-                    return new Color(0f, 0f, 1f, 1f);
+                    return new Color(0f, 0f, 1f, 0.35f);
                 } else {
                     return new Color(0f, 0f, 0f, 0f);
                 }
             } else if (sharedPredecessorsOly) {
                 if (sharedPredecessors.contains(e.getSource()) && multiNodes.contains(e.getDest())) {
-                    return new Color(1f, 0f, 0f, 1.0f);
+                    return new Color(1f, 0f, 0f, 0.35f);
                 } else {
                     return new Color(0f, 0f, 0f, 0f);
                 }
             } else if (sharedSuccessorsOnly) {
                 if (sharedSuccessors.contains(e.getDest()) && multiNodes.contains(e.getSource())) {
-                    return new Color(0f, 0f, 1f, 1.0f);
+                    return new Color(0f, 0f, 1f, 0.35f);
                 } else {
                     return new Color(0f, 0f, 0f, 0f);
                 }
             } else if (sharedNeighborsOnly) {
                 if (sharedPredecessors.contains(e.getSource()) && multiNodes.contains(e.getDest())) {
-                    return new Color(1f, 0f, 0f, 1f);
+                    return new Color(1f, 0f, 0f, 0.35f);
                 } else if (sharedSuccessors.contains(e.getDest()) && multiNodes.contains(e.getSource())) {
-                    return new Color(0f, 0f, 1f, 1f);
+                    return new Color(0f, 0f, 1f, 0.35f);
                 } else {
                     return new Color(0f, 0f, 0f, 0f);
                 }
@@ -765,20 +782,20 @@ implements Serializable {
             } else if (e.getDest() == e.getSource() && multiNodes.contains(e.getDest()) && multiNodes.contains(e.getSource())) {
                 return Color.YELLOW;
             } else if (multiNodePredecessors.contains(e.getSource()) && multiNodes.contains(e.getDest())) {
-                return new Color(1f, 0f, 0f, 0.25f);
+                return new Color(1f, 0f, 0f, 0.35f);
             } else if (multiNodeSuccessors.contains(e.getDest()) && multiNodes.contains(e.getSource())) {
-                return new Color(0f, 0f, 1f, 0.25f);
+                return new Color(0f, 0f, 1f, 0.35f);
             } else if (e.getDest() != e.getSource() && multiNodes.contains(e.getDest()) && multiNodes.contains(e.getSource())) {
-                return new Color(0f, 1f, 0f, 0.25f);
+                return new Color(0f, 1f, 0f, 0.35f);
             } else {
                 return new Color(0f, 0f, 0f, 0f);
             }
         } else if (selectedNode != null) {
             if (predecessorsOnly) {
                 if (e.getSource() == selectedNode && e.getDest() == selectedNode) {
-                    return Color.BLACK;
+                    return Color.ORANGE;
                 } else if (e.getDest() == selectedNode && selectedSingleNodePredecessors.contains(e.getSource())) {
-                    return new Color(1.0f, 0, 0, 0.25f);
+                    return new Color(1.0f, 0, 0, 0.35f);
                 } else {
                     return new Color(0, 0, 0, 0f);
                 }
@@ -786,7 +803,7 @@ implements Serializable {
                 if (e.getSource() == selectedNode && e.getDest() == selectedNode) {
                     return Color.BLACK;
                 } else if (e.getSource() == selectedNode && selectedSingleNodeSuccessors.contains(e.getDest())) {
-                    return new Color(0, 0, 1.0f, 0.25f);
+                    return new Color(0, 0, 1.0f, 0.35f);
                 } else {
                     return new Color(0, 0, 0, 0f);
                 }
@@ -794,9 +811,9 @@ implements Serializable {
                 if (e.getSource() == selectedNode && e.getDest() == selectedNode) {
                     return Color.BLACK;
                 } else if (e.getSource() == selectedNode && selectedSingleNodeSuccessors.contains(e.getDest())) {
-                    return new Color(0, 0, 1.0f, 0.25f);
+                    return new Color(0, 0, 1.0f, 0.35f);
                 } else if (e.getDest() == selectedNode && selectedSingleNodePredecessors.contains(e.getSource())) {
-                    return new Color(1.0f, 0, 0, 0.25f);
+                    return new Color(1.0f, 0, 0, 0.35f);
                 } else {
                     return new Color(0, 0, 0, 0f);
                 }
@@ -807,9 +824,9 @@ implements Serializable {
             } else if (e.getSource() == selectedNode && e.getDest() == selectedNode) {
                 return Color.ORANGE;
             } else if (e.getSource() == selectedNode) {
-                return new Color(0f, 0f, 1f, 0.25f);
+                return new Color(0f, 0f, 1f, 1f);
             } else if (e.getDest() == selectedNode) {
-                return new Color(1f, 0f, 0f, 0.25f);
+                return new Color(1f, 0f, 0f, 1f);
             } else {
                 return new Color(0, 0, 0, 0f);
             }
@@ -1035,14 +1052,14 @@ implements Serializable {
             if (vc.depthNodeNameSet != null && vc.depthNodeNameSet.contains(n.getName())) {
                 tooltip =
                         "<HTML><BODY>" +
-                                "NODE: " + (n.getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName())) +  "&nbsp;&nbsp;" +
+                                "NODE: " + (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName())) +  "&nbsp;&nbsp;" +
                                 "<BR>CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(((MyNode) MySequentialGraphVars.g.vRefs.get(vc.depthNodeNameSet.iterator().next())).getContribution()) +
                                 "<BR>DEPTH: " + depth + " &nbsp;&nbsp;</BODY></HTML>";
             } else {
                 tooltip =
                         "<HTML>" +
                                 "<BODY>" +
-                                "NODE: " + (n.getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName())) + "&nbsp;&nbsp;" +
+                                "NODE: " + (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName())) + "&nbsp;&nbsp;" +
                                 "<BR>CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(vc.depthNodeSuccessorMaps.get(vc.depthNodeNameSet.iterator().next()).get(n.getName())) +
                                 "<BR>DEPTH: " + depth + " &nbsp;&nbsp;</BODY></HTML>";
             }
@@ -1050,20 +1067,20 @@ implements Serializable {
             if (vc.depthNodeNameSet != null && vc.depthNodeNameSet.contains(n.getName())) {
                 tooltip =
                         "<HTML><BODY>" +
-                                "NODE: " + (n.getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName())) + "&nbsp;&nbsp;" +
+                                "NODE: " + (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName())) + "&nbsp;&nbsp;" +
                                 "<BR>CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(n.getNodeDepthInfo(MySequentialGraphVars.currentGraphDepth).getContribution()) +
                                 "<BR>DEPTH: " + depth + " &nbsp;&nbsp;</BODY></HTML>";
             } else {
                 tooltip =
                         "<HTML><BODY>" +
-                                "NODE: " + (n.getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName())) + "&nbsp;&nbsp;" +
+                                "NODE: " + (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName())) + "&nbsp;&nbsp;" +
                                 "<BR>CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(vc.depthNodePredecessorMaps.get(vc.depthNodeNameSet.iterator().next()).get(n.getName())) +
                                 "<BR>DEPTH: " + depth + " &nbsp;&nbsp;</BODY></HTML>";
             }
         } else if (n == selectedNode) {
             tooltip =
                 "<HTML><BODY>" +
-                "NODE: " + (n.getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName())) +  "&nbsp;&nbsp;" +
+                "NODE: " + (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName())) +  "&nbsp;&nbsp;" +
                 "<BR>CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(n.getNodeDepthInfo(depth).getContribution()) +  "&nbsp;&nbsp;</BODY></HTML>";
         }
         return tooltip;
@@ -1072,7 +1089,7 @@ implements Serializable {
     private String setDepthNodeToolTip(MyNode n, int depth) {
         String toolTip = "<HTML>" +
             "<BODY>" +
-            "NODE: " +(n.getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName())) +  "&nbsp;&nbsp;" +
+            "NODE: " +(n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName())) +  "&nbsp;&nbsp;" +
             "<BR>CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(n.getNodeDepthInfo(depth).getContribution()) +  "&nbsp;&nbsp;" +
             "<BR>IN CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(n.getNodeDepthInfo(depth).getInContribution()) +  "&nbsp;&nbsp;" +
             "<BR>OUT CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(n.getNodeDepthInfo(depth).getOutContribution()) +  "&nbsp;&nbsp;" +
@@ -1090,7 +1107,7 @@ implements Serializable {
 
     private String setTopNodeToolTip(MyNode n) {
         String toolTip = "<HTML>" +
-            "<BODY>NODE: " + (n.getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName())) +
+            "<BODY>NODE: " + (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName())) +
             (MySequentialGraphVars.isSupplementaryOn && !n.getName().contains("x") ? "<BR>RELATED VARIABLES: " + MyMathUtil.getCommaSeperatedNumber(n.getVariableStrengthMap().size()) : "") +
             (MySequentialGraphVars.isSupplementaryOn && !n.getName().contains("x") ? "<BR>VARIABLE STRENGTH: "  +  MyMathUtil.getCommaSeperatedNumber(n.getTotalVariableStrength()) : "") +
             "<BR>CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(n.getContribution()) +
@@ -1109,8 +1126,8 @@ implements Serializable {
                 "<BR>AVG. DURATION: " + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(n.getAverageDuration()));
         }
 
-        toolTip += "<BR>STARTING POISITION COUNT: " + MySequentialGraphSysUtil.getCommaSeperateString(n.getOpenNodeCount()) +
-            "<BR>END POSITION COUNT: " + MySequentialGraphSysUtil.getCommaSeperateString(n.getEndNodeCount()) +
+        toolTip += "<BR>STARTING POISITION COUNT: " + MySequentialGraphSysUtil.getCommaSeperateString(n.getStartPositionNodeCount()) +
+            "<BR>END POSITION COUNT: " + MySequentialGraphSysUtil.getCommaSeperateString(n.getEndPositionNodeCount()) +
             "<BR>PRDECESSORS: " + MySequentialGraphSysUtil.getCommaSeperateString(n.getPredecessorCount()) +
             "<BR>SUCCESSORS: " + MySequentialGraphSysUtil.getCommaSeperateString(n.getSuccessorCount()) +
             "<BR>RECURRENCE COUNT: " + MySequentialGraphSysUtil.getCommaSeperateString(n.getTotalNodeRecurrentCount()) +

@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
-public class MyGraphViewerMenu
+public class MyAnalysisGraphViewerMenu
 extends JPopupMenu
 implements ActionListener {
 
@@ -33,7 +33,7 @@ implements ActionListener {
     private JMenuItem hideEdgeReachTimeStrength = new JMenuItem("HIDE EDGE REACH TIME");
     private JMenuItem deleteNodes = new JMenuItem("DELETE NODES");
 
-    public MyGraphViewerMenu(MyAnalysisGraphViewer graphViewer) {
+    public MyAnalysisGraphViewerMenu(MyAnalysisGraphViewer graphViewer) {
         this.graphViewer = graphViewer;
         this.setMenuItem(this.showNodeContribution);
         this.setMenuItem(this.hideContribution);

@@ -15,31 +15,25 @@ public class MySequentialGraphVars {
     public static Font f_pln_10 = new Font( "Noto Sans", Font.PLAIN, 10);
     public static Font f_pln_11 = new Font( "Noto Sans", Font.PLAIN, 11);
     public static Font f_pln_12 = new Font( "Noto Sans", Font.PLAIN, 12);
-    public static Font f_pln_14 = new Font("Noto Sans", Font.PLAIN, 14);
-    public static Font f_bold_14 = new Font("Noto Sans", Font.BOLD, 14);
     public static Font f_bold_16 = new Font("Noto Sans", Font.BOLD, 16);
-    public static Font f_pln_16 = new Font("Noto Sans", Font.PLAIN, 16);
-    public static Font f_bold_13 = new Font("Noto Sans", Font.BOLD, 13);
     public static Font f_bold_12 = new Font("Noto Sans", Font.BOLD, 12);
     public static Font f_bold_11 = new Font("Noto Sans", Font.BOLD, 11);
     public static Font f_bold_10 = new Font("Noto Sans", Font.BOLD, 10);
-    public static Font f_bold_9 = new Font("Noto Sans", Font.BOLD, 9);
     public static Font f_pln_6 = new Font("Noto Sans", Font.PLAIN, 6);
     public static Font f_pln_13 = new Font("Noto Sans", Font.PLAIN, 13);
-    public static Font f_bold_22 = new Font("Tahoma", Font.BOLD, 22);
-    public static Font f_bold_25 = new Font("Noto Sans", Font.BOLD, 25);
     public final static Font tahomaPlainFont12 = new Font("Tahoma", Font.PLAIN, 12);
-    public final static Font tahomaPlainFont0 = new Font("Tahoma", Font.PLAIN, 0);
     public final static Font tahomaPlainFont13 = new Font("Tahoma", Font.PLAIN, 13);
     public final static Font tahomaPlainFont11 = new Font("Tahoma", Font.PLAIN, 11);
     public final static Font tahomaPlainFont10 = new Font("Tahoma", Font.PLAIN, 10);
-    public final static Font tahomaPlainFont9 = new Font("Tahoma", Font.PLAIN, 9);
     public final static Font tahomaPlainFont7 = new Font("Tahoma", Font.PLAIN, 7);
     public final static Font tahomaBoldFont13 = new Font("Tahoma", Font.BOLD, 13);
     public final static Font tahomaBoldFont14 = new Font("Tahoma", Font.BOLD, 14);
     public final static Font tahomaBoldFont12 = new Font("Tahoma", Font.BOLD, 12);
     public final static Font tahomaBoldFont10 = new Font("Tahoma", Font.BOLD, 10);
     public final static Font tahomaBoldFont11 = new Font("Tahoma", Font.BOLD, 11);
+    public final static Font tahomaBoldFont28 = new Font("Tahoma", Font.BOLD, 28);
+    public final static Font tahomaPlainFont18 = new Font("Tahoma", Font.PLAIN, 18);
+    public final static Font tahomaPlainFont16 = new Font("Tahoma", Font.PLAIN, 16);
 
     public static int numberOfGraphs;
     public static String outputDir = "";
@@ -51,7 +45,6 @@ public class MySequentialGraphVars {
     public static int diameter = 0;
     public static double avgShortestPathLen = 0.0D;
     public static int currentGraphDepth = -1;
-    public static short freeTrialDays = 7;
     public static String mergedFileLocation;
     public static int accesssTimeColumnIdx;
 

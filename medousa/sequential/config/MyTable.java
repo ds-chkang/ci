@@ -32,7 +32,9 @@ implements Serializable {
      * sets column header renderer.
      * @param columnIndex
      */
-    public void setColumnCellRenderer(int columnIndex) {getColumnModel().getColumn(columnIndex).setCellRenderer(new MyTableCellRenderer());}
+    public void setColumnCellRenderer(int columnIndex) {
+        getColumnModel().getColumn(columnIndex).setCellRenderer(new MyTableCellRenderer());
+    }
 
     /**
      * set table row height with default height.

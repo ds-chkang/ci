@@ -167,7 +167,7 @@ implements ActionListener {
                     LinkedHashMap<String, Long> successorValueMap = new LinkedHashMap<>();
                     for (MyNode n : MySequentialGraphVars.getSequentialGraphViewer().multiNodeSuccessors) {
                         if (n.getCurrentValue() == 0) continue;
-                        String nn = (n.getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(n.getName()) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName()));
+                        String nn = (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName()));
                         successorValueMap.put(nn, (long)n.getCurrentValue());
 
                         if (!MAXIMIZED && successorValueMap.size() == 6) {

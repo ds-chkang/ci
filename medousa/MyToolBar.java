@@ -8,6 +8,7 @@ import medousa.direct.utils.MyDirectGraphSysUtil;
 import medousa.direct.utils.MyDirectGraphVars;
 import medousa.sequential.config.MySequentialGraphConfigPanel;
 import medousa.sequential.graph.analysis.MyAnalysisGraphApp;
+import medousa.sequential.graph.funnel.MyFunnelAnalysisApp;
 import medousa.sequential.graph.layout.MyFRLayout;
 import medousa.sequential.pattern.MyPatternMiner2;
 import medousa.sequential.utils.MySequentialGraphSysUtil;
@@ -29,12 +30,12 @@ implements ActionListener {
     private  JButton inputBtn = new JButton();
     public  JButton runBtn = new JButton();
     public  JButton funnelBtn = new JButton();
-    private  JButton searchPathBtn = new JButton();
+    private  JButton searchSequentialPatternBtn = new JButton();
     private  JButton nodeSummaryBtn = new JButton();
     public JButton networkBtn = new JButton();
     private final ImageIcon run_img_icon = new ImageIcon(getClass().getResource(MyDirectGraphVars.imgDir +"run2.png"));
     private final ImageIcon logo_img_icon = new ImageIcon(getClass().getResource(MyDirectGraphVars.imgDir +"medousa.jpg"));
-    private final ImageIcon funnel_img_icon = new ImageIcon(getClass().getResource(MyDirectGraphVars.imgDir +"searchPath.png"));
+    private final ImageIcon funnel_img_icon = new ImageIcon(getClass().getResource(MyDirectGraphVars.imgDir +"funnel.png"));
     private final ImageIcon network_img_icon = new ImageIcon(getClass().getResource(MyDirectGraphVars.imgDir +"searchPath.png"));
     private final ImageIcon pathfinder_img_icon = new ImageIcon(getClass().getResource(MyDirectGraphVars.imgDir + "network.png"));
 
@@ -197,16 +198,17 @@ implements ActionListener {
                                 if (MySequentialGraphVars.app.getContentTabbedPane().getTabCount() > 0) {
                                     MySequentialGraphVars.app.getContentTabbedPane().removeAll();
                                     runBtn.setEnabled(false);
-                                    searchPathBtn.setEnabled(false);
+                                    searchSequentialPatternBtn.setEnabled(false);
                                     networkBtn.setEnabled(false);
                                 }
                                 MySequentialGraphVars.app.getContentTabbedPane().addTab("      CONFIGURATION       ", sequentialGraphConfigPanel);
                                 MySequentialGraphVars.app.getContentTabbedPane().addTab("      DASHBOARD       ", MySequentialGraphVars.app.resetSequentialGraphDashboard());
 
 
-                                setButton(runBtn, run_img_icon, "Discover relations", false);
-                                setButton(searchPathBtn, pathfinder_img_icon, "Behavioral Pattern Mining", false);
+                                //setButton(runBtn, run_img_icon, "Discover relations", false);
+                                setButton(searchSequentialPatternBtn, pathfinder_img_icon, "Behavioral Pattern Mining", false);
                                 setButton(networkBtn, network_img_icon, "Network Analyses", false);
+                               // setButton(funnelBtn, funnel_img_icon, "Funnel Analyses", false);
                             }
 
                             add(toolBar, BorderLayout.CENTER);
@@ -279,8 +281,6 @@ implements ActionListener {
                 this.doDirectRelationOperations(evt);
             } else if (projectMenuComboBox.getSelectedIndex() == 2) {
                 if (evt.getSource() == runBtn) {
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override public void run() {
                             new Thread(new Runnable() {
                                 @Override public void run() {
                                     try {
@@ -309,8 +309,9 @@ implements ActionListener {
                                                     MySequentialGraphVars.app.setSequentialGrpahViewer(MySequentialGraphVars.app.getSequentialGraphMsgBroker().createSequentialGraphView(layout, new Dimension(5500, 4500)));
 
                                                     pb.updateValue(60, 100);
-                                                    searchPathBtn.setEnabled(true);
+                                                    searchSequentialPatternBtn.setEnabled(true);
                                                     networkBtn.setEnabled(true);
+                                                    funnelBtn.setEnabled(true);
                                                     MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
                                                     MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.setSelectedIndex(1); // DEFAULT VALUE.
                                                     MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
@@ -343,8 +344,7 @@ implements ActionListener {
                                         runBtn.setEnabled(true);
                                     }
                                 }
-                            }).start();
-                        }
+
                     });
                 } else if (evt.getSource() == networkBtn) {
                     SwingUtilities.invokeLater(new Runnable() {
@@ -353,13 +353,11 @@ implements ActionListener {
                                 @Override public void run() {
                                     MyAnalysisGraphApp networkAnalyzer = new MyAnalysisGraphApp();
                                     networkAnalyzer.setAlwaysOnTop(false);
-                                    // networkBtn.setEnabled(false);
-
                                 }
                             }).start();
                         }
                     });
-                } else if (evt.getSource() == searchPathBtn) {
+                } else if (evt.getSource() == searchSequentialPatternBtn) {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override public void run() {
                             new Thread(new Runnable() {
@@ -369,12 +367,22 @@ implements ActionListener {
                             }).start();
                         }
                     });
+                } else if (evt.getSource() == funnelBtn) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override public void run() {
+                            new Thread(new Runnable() {
+                                @Override public void run() {
+                                    MyFunnelAnalysisApp funnelAnalysisApp = new MyFunnelAnalysisApp();
+                                }
+                            }).start();
+                        }
+                    });
                 }
             }
         }
     }
 
-    public JButton getSearchPathButton() { return this.searchPathBtn; }
+    public JButton getSearchPathButton() { return this.searchSequentialPatternBtn; }
 
        private void doDirectRelationOperations(ActionEvent evt) {
         SwingUtilities.invokeLater(new Runnable() {

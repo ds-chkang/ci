@@ -1,6 +1,7 @@
 package medousa;
 
 import medousa.direct.utils.MyDirectGraphVars;
+import medousa.sequential.utils.MySequentialGraphVars;
 import org.jfree.ui.RefineryUtilities;
 
 import javax.imageio.ImageIO;
@@ -34,13 +35,13 @@ extends JPanel {
         Graphics2D g2d = (Graphics2D)g.create();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.drawImage(this.logoImage, 10, 25, this);
-        g2d.setFont(MyDirectGraphVars.f_bold_22);
+        g2d.setFont(MySequentialGraphVars.tahomaBoldFont28);
         g2d.drawString("medousa.net", 230, 90);
-        g2d.setFont(MyDirectGraphVars.f_pln_16);
+        g2d.setFont(MySequentialGraphVars.tahomaPlainFont18);
         g2d.drawString("Ver 1.0", 230, 150);
-        g2d.setFont(MyDirectGraphVars.f_pln_16);
+        g2d.setFont(MySequentialGraphVars.tahomaPlainFont18);
         g2d.drawString("Developed by medousa.net in Oct, 2013", 230, 170);
-        g2d.setFont(MyDirectGraphVars.f_pln_16);
+        g2d.setFont(MySequentialGraphVars.tahomaPlainFont18);
         g2d.drawString("", 370, 165);
     }
 

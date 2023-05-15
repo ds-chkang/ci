@@ -220,7 +220,7 @@ extends JPanel {
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
         for (MyNode n : nodes) {
             if (n.getCurrentValue() == 0) continue;
-            String nodeName = (n.getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(n.getName()) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName()));
+            String nodeName = (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName()));
             valueMap.put(nodeName, (long)n.getCurrentValue());
             final float hue = rand.nextFloat();
             final float saturation = 0.9f;

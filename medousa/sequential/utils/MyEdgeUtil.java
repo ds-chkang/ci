@@ -4,6 +4,7 @@ import medousa.sequential.graph.MyClusteringConfig;
 import medousa.sequential.graph.MyEdge;
 import medousa.sequential.graph.MyNode;
 import edu.uci.ics.jung.algorithms.importance.BetweennessCentrality;
+import medousa.sequential.graph.MyViewerComponentController;
 import org.apache.commons.collections15.Transformer;
 
 import java.awt.*;
@@ -162,7 +163,7 @@ public class MyEdgeUtil {
                 } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() > 11) {
                     MySequentialGraphVars.getSequentialGraphViewer().edgeValName = MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedItem().toString().replaceAll(" ", "");
                 }
-                MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
+                //MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
                 MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                 MySequentialGraphVars.getSequentialGraphViewer().repaint();
             } else {
@@ -186,7 +187,7 @@ public class MyEdgeUtil {
                 } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() > 7) {
                     MySequentialGraphVars.getSequentialGraphViewer().edgeValName = MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedItem().toString().replaceAll(" ", "");
                 }
-                MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
+                //MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
                 MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                 MySequentialGraphVars.getSequentialGraphViewer().repaint();
             }
@@ -201,43 +202,33 @@ public class MyEdgeUtil {
                 } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() == 2) {
                     MySequentialGraphVars.getSequentialGraphViewer().edgeValName = "CONTRIBUTION";
                     setContributionToEdges();
-                    MyViewerControlComponentUtil.setGraphLevelTableStatistics();
                 } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() == 3) {
                     MySequentialGraphVars.getSequentialGraphViewer().edgeValName = "UNIQUE-CONTRIBUTION";
                     setUniqueContributionToEdges();
-                    MyViewerControlComponentUtil.setGraphLevelTableStatistics();
                 } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() == 4) {
                     MySequentialGraphVars.getSequentialGraphViewer().edgeValName = "AVERAGE-TIME";
                     setAverageTimeToEdges();
-                    MyViewerControlComponentUtil.setGraphLevelTableStatistics();
                 } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() == 5) {
                     MySequentialGraphVars.getSequentialGraphViewer().edgeValName = "TOTAL-TIME";
                     setTotalTimeToEdges();
-                    MyViewerControlComponentUtil.setGraphLevelTableStatistics();
                 } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() == 6) {
                     MySequentialGraphVars.getSequentialGraphViewer().edgeValName = "MAXIMUM-TIME";
                     setMaximumTimeToEdges();
-                    MyViewerControlComponentUtil.setGraphLevelTableStatistics();
                 } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() == 7) {
                     MySequentialGraphVars.getSequentialGraphViewer().edgeValName = "MINIMUM-TIME";
                     setMinimumTimeToEdges();
-                    MyViewerControlComponentUtil.setGraphLevelTableStatistics();
                 } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() == 8) {
                     MySequentialGraphVars.getSequentialGraphViewer().edgeValName = "SUPPORT";
                     setSupportValueToEdges();
-                    MyViewerControlComponentUtil.setGraphLevelTableStatistics();
                 } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() == 9) {
                     MySequentialGraphVars.getSequentialGraphViewer().edgeValName = "CONFIDENCE";
                     setConfidenceValueToEdges();
-                    MyViewerControlComponentUtil.setGraphLevelTableStatistics();
                 } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() == 10) {
                     MySequentialGraphVars.getSequentialGraphViewer().edgeValName = "LIFT";
                     setLiftValueToEdges();
-                    MyViewerControlComponentUtil.setGraphLevelTableStatistics();
                 } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() == 11) {
                     MySequentialGraphVars.getSequentialGraphViewer().edgeValName = "BETWEENESS";
                     setEdgeBetweenessToEdges();
-                    MyViewerControlComponentUtil.setGraphLevelTableStatistics();
                 } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() > 11) {
                     MySequentialGraphVars.getSequentialGraphViewer().edgeValName = MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedItem().toString().replaceAll(" ", "");
                     Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
@@ -252,9 +243,14 @@ public class MyEdgeUtil {
                         }
                     }
                     MySequentialGraphVars.g.MX_E_VAL = maxVal;
+                }
+                if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
+                    MySequentialGraphVars.getSequentialGraphViewer().vc.updateSelectedNodeStatTable();
+                } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null) {
+                    MySequentialGraphVars.getSequentialGraphViewer().vc.updateMultiNodeStatTable();
+                } else {
                     MyViewerControlComponentUtil.setGraphLevelTableStatistics();
                 }
-                MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
                 MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                 MySequentialGraphVars.getSequentialGraphViewer().repaint();
             } else {
@@ -267,27 +263,21 @@ public class MyEdgeUtil {
                 } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() == 2) {
                     MySequentialGraphVars.getSequentialGraphViewer().edgeValName = "CONTRIBUTION";
                     setContributionToEdges();
-                    MyViewerControlComponentUtil.setGraphLevelTableStatistics();
                 } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() == 3) {
                     MySequentialGraphVars.getSequentialGraphViewer().edgeValName = "UNIQUE CONTRIBUTION";
                     setUniqueContributionToEdges();
-                    MyViewerControlComponentUtil.setGraphLevelTableStatistics();
                 }  else if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() == 4) {
                     MySequentialGraphVars.getSequentialGraphViewer().edgeValName = "SUPPORT";
                     setSupportValueToEdges();
-                    MyViewerControlComponentUtil.setGraphLevelTableStatistics();
                 } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() == 5) {
                     MySequentialGraphVars.getSequentialGraphViewer().edgeValName = "CONFIDENCE";
                     setConfidenceValueToEdges();
-                    MyViewerControlComponentUtil.setGraphLevelTableStatistics();
                 } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() == 6) {
                     MySequentialGraphVars.getSequentialGraphViewer().edgeValName = "LIFT";
                     setLiftValueToEdges();
-                    MyViewerControlComponentUtil.setGraphLevelTableStatistics();
                 }  else if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() == 7) {
                     MySequentialGraphVars.getSequentialGraphViewer().edgeValName = "BETWEENESS";
                     setEdgeBetweenessToEdges();
-                    MyViewerControlComponentUtil.setGraphLevelTableStatistics();
                 } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() > 7) {
                     MySequentialGraphVars.getSequentialGraphViewer().edgeValName = MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedItem().toString().replaceAll(" ", "");
                     Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
@@ -298,9 +288,14 @@ public class MyEdgeUtil {
                         if (maxVal < edgeValue) {maxVal = e.getCurrentValue();}
                     }
                     MySequentialGraphVars.g.MX_E_VAL = maxVal;
+                }
+                if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
+                    MySequentialGraphVars.getSequentialGraphViewer().vc.updateSelectedNodeStatTable();
+                } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null) {
+                    MySequentialGraphVars.getSequentialGraphViewer().vc.updateMultiNodeStatTable();
+                } else {
                     MyViewerControlComponentUtil.setGraphLevelTableStatistics();
                 }
-                MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
                 MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                 MySequentialGraphVars.getSequentialGraphViewer().repaint();
             }
@@ -431,7 +426,8 @@ public class MyEdgeUtil {
     }
 
     public static double getAverageEdgeValue() {
-        if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() == 0) {return 0.00D;
+        if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() < 2) {
+            return 0.00D;
         } else {
             float totalValue = 0.00f;
             Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
@@ -580,7 +576,7 @@ public class MyEdgeUtil {
     }
 
     public static double getMinimumEdgeValue() {
-        if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() == 0) {
+        if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() < 2) {
             return 0.00D;
         } else {
             Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
@@ -598,7 +594,8 @@ public class MyEdgeUtil {
 
     public static double getMaximumEdgeValue() {
         double maxVal = 0d;
-        if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() == 0) {return 0.00D;
+        if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() < 2) {
+            return 0.00D;
         } else {
             Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
             for (MyEdge e : edges) {
@@ -641,8 +638,9 @@ public class MyEdgeUtil {
     }
 
     public static double getEdgeValueStandardDeviation() {
-        if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() < 2) {return 0.00D;}
-        else {
+        if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() < 2) {
+            return 0.00D;
+        } else {
             int numEdges = 0;
             Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
             double sum = 0.00d;

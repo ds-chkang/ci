@@ -60,7 +60,7 @@ extends JPanel {
             if (MySequentialGraphVars.getSequentialGraphViewer().isClustered) {
                 if (n.clusteringColor != MyClusteringConfig.selectedClusterColor) continue;
             } else if (n.getCurrentValue() == 0) continue;
-            String nodeName = (n.getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(n.getName()) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName()));
+            String nodeName = (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName()));
             valueMap.put(nodeName, n.getUniqueContribution());
             final float hue = rand.nextFloat();
             final float saturation = 0.9f;

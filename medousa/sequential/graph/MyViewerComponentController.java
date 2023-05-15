@@ -4,6 +4,7 @@ import medousa.MyProgressBar;
 import medousa.message.MyMessageUtil;
 import medousa.sequential.graph.listener.MyEdgeLabelSelecterListener;
 import medousa.sequential.graph.listener.MyNodeLabelSelecterListener;
+import medousa.sequential.graph.stats.MyGrayCellRenderer;
 import medousa.sequential.graph.stats.barchart.MyClusteredGraphLevelEdgeValueBarChart;
 import medousa.sequential.graph.stats.barchart.MyClusteredGraphLevelNodeValueBarChart;
 import medousa.sequential.graph.path.MyDepthFirstGraphPathSercher;
@@ -22,6 +23,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.*;
@@ -49,23 +51,23 @@ implements ActionListener {
         "MAX. RECURSIVE LENGTH", //15
         "AVG. RECURSIVE LENGTH", //16
         "AVG. RECURSIVE TIME", //17
-        "DURATION", //17
-        "AVG. DURATION", //18
-        "MAX. DURATION", //19
-        "MIN. DURATION", //20
-        "AVG. REACH TIME", //21
-        "TOTAL REACH TIME", //22
-        "TOTAL RECURRENCE COUNT",  //23
-        "TOTAL RECURRENCE TIME", //24
-        "MAX. RECURRENCE TIME",  //25
-        "MIN. RECURRENCE TIME",  //26
-        "ITEMSET LENGTH",    //27
-        "BETWEENESS",     //28
-        "CLOSENESS",   //29
-        "EIGENVECTOR",   //30
-        "PAGERANK",  //31
-        "START POSITION COUNT",  //32
-        "UNREACHABLE NODE CCOUNT"  //33
+        "DURATION", //18
+        "AVG. DURATION", //19
+        "MAX. DURATION", //20
+        "MIN. DURATION", //21
+        "AVG. REACH TIME", //22
+        "TOTAL REACH TIME", //23
+        "TOTAL RECURRENCE COUNT",  //24
+        "TOTAL RECURRENCE TIME", //25
+        "MAX. RECURRENCE TIME",  //26
+        "MIN. RECURRENCE TIME",  //27
+        "ITEMSET LENGTH",    //28
+        "BETWEENESS",     //29
+        "CLOSENESS",   //30
+        "EIGENVECTOR",   //31
+        "PAGERANK",  //32
+        "START POSITION COUNT",  //33
+        "UNREACHABLE NODE CCOUNT"  //34
     };
 
     public final String [] depthNodeValueItems = {
@@ -150,6 +152,7 @@ implements ActionListener {
     public Map<String, Map<String, Integer>> depthNodePredecessorMaps;
     public Set<String> depthNodeNameSet;
     public Set<String> depthNeighborSet;
+    public JLabel nodeValueSelecterLabel = new JLabel("  N. V.");
     public JSplitPane graphTableSplitPane = new JSplitPane();
     public JTabbedPane tableTabbedPane = new JTabbedPane();
     public JTable pathFromTable;
@@ -457,6 +460,7 @@ implements ActionListener {
 
     public void decorateGraphViewer(JPanel graphViewer) {
         this.setLayout(new BorderLayout());
+        this.setBorder(BorderFactory.createLoweredSoftBevelBorder());
         this.setBackground(Color.WHITE);
         this.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
@@ -507,10 +511,9 @@ implements ActionListener {
         edgeValueExcludeSymbolSelecter.setFocusable(false);
         edgeValueExcludeSymbolSelecter.setBackground(Color.WHITE);
 
-        JLabel nodeValueLabel = new JLabel("  N. V.");
-        nodeValueLabel.setToolTipText("NODE VALUE");
-        nodeValueLabel.setBackground(Color.WHITE);
-        nodeValueLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        nodeValueSelecterLabel.setToolTipText("NODE VALUE");
+        nodeValueSelecterLabel.setBackground(Color.WHITE);
+        nodeValueSelecterLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.nodeValueSelecter.setBackground(Color.WHITE);
         this.nodeValueSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.nodeValueSelecter.setFocusable(false);
@@ -649,7 +652,7 @@ implements ActionListener {
 
         JPanel topPanel = new JPanel();
         topPanel.setBackground(Color.WHITE);
-        topPanel.setLayout(new BorderLayout(5,5));
+        topPanel.setLayout(new BorderLayout(0,0));
 
         this.setNodeValueExcludeSymbolComboBox();
         this.setEdgeValueExcludeSymbolComboBox();
@@ -667,9 +670,6 @@ implements ActionListener {
         this.excludeBtn.setFocusable(false);
         this.excludeBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.excludeBtn.addActionListener(new MyNodeEdgeExclusionActionListener(this));
-
-        this.topLeftPanel.setBackground(Color.WHITE);
-        this.topLeftPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
         JLabel removeEdgeEmptyLabel = new JLabel("  ");
         removeEdgeEmptyLabel.setBackground(Color.WHITE);
@@ -696,14 +696,15 @@ implements ActionListener {
         nodeValueExcludeOptionLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
         nodeValueExcludeOptionLabel.setBackground(Color.WHITE);
 
-        this.topLeftPanel.add(nodeValueExcludeOptionLabel);
-        this.topLeftPanel.add(this.nodeValueExcludeSymbolSelecter);
-        this.topLeftPanel.add(this.nodeValueExcludeTxt);
-
         JLabel edgeValueExludeLabel = new JLabel("  E. V.");
         edgeValueExludeLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
         edgeValueExludeLabel.setBackground(Color.WHITE);
 
+        this.topLeftPanel.setBackground(Color.WHITE);
+        this.topLeftPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        this.topLeftPanel.add(nodeValueExcludeOptionLabel);
+        this.topLeftPanel.add(this.nodeValueExcludeSymbolSelecter);
+        this.topLeftPanel.add(this.nodeValueExcludeTxt);
         this.topLeftPanel.add(edgeValueExludeLabel);
         this.topLeftPanel.add(this.edgeValueExcludeSymbolSelecter);
         this.topLeftPanel.add(this.edgeValueExcludeTxt);
@@ -784,9 +785,7 @@ implements ActionListener {
         this.topLeftPanel.add(this.excludeBtn);
 
         bottomPanel.setBackground(Color.WHITE);
-        bottomPanel.setLayout(new BorderLayout(3,3));
-
-        this.vTxtStat.setTextStatistics();
+        bottomPanel.setLayout(new BorderLayout(0,0));
 
         clusteringSectorLabel.setBackground(Color.WHITE);
         clusteringSectorLabel.setToolTipText("FIND CLUSTERS");
@@ -807,7 +806,7 @@ implements ActionListener {
         clusteringSelectorTooltips[2] = "CLUSTERING WITH MODULARITY";
         this.clusteringSelector.setRenderer(new MyComboBoxTooltipRenderer(clusteringSelectorTooltips));
 
-        this.bottomLeftControlPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 3,3));
+        this.bottomLeftControlPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0,0));
         this.bottomLeftControlPanel.setBackground(Color.WHITE);
 
         this.weightedNodeColor.setFocusable(false);
@@ -821,11 +820,11 @@ implements ActionListener {
         this.bottomLeftControlPanel.add(this.edgeValueBarChart);
 
         this.bottomRightPanel.setBackground(Color.WHITE);
-        this.bottomRightPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 3,3));
+        this.bottomRightPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0,0));
         this.bottomRightPanel.add(this.depthSelecter);
         this.bottomRightPanel.add(this.depthNeighborNodeTypeSelector);
         this.bottomRightPanel.add(this.selectedNodeNeighborNodeTypeSelector);
-        this.bottomRightPanel.add(nodeValueLabel);
+        this.bottomRightPanel.add(nodeValueSelecterLabel);
         this.bottomRightPanel.add(this.nodeValueSelecter);
         this.bottomRightPanel.add(nodeLabelLabel) ;
         this.bottomRightPanel.add(this.nodeLabelSelecter);
@@ -840,7 +839,7 @@ implements ActionListener {
 
         JPanel topRightPanel = new JPanel();
         topRightPanel.setBackground(Color.WHITE);
-        topRightPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 3, 3));
+        topRightPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 
         JLabel graphGroupNodeNumberPercentLabel = new JLabel();
         graphGroupNodeNumberPercentLabel.setBackground(Color.WHITE);
@@ -855,23 +854,26 @@ implements ActionListener {
 
         this.tableTabbedPane.setFocusable(false);
         this.tableTabbedPane.setOpaque(false);
+        this.tableTabbedPane.setBackground(new Color(0,0,0,0));
         this.tableTabbedPane.setPreferredSize(new Dimension(200, 1000));
         this.tableTabbedPane.setFont(MySequentialGraphVars.tahomaPlainFont12);
 
         this.tableTabbedPane.addTab("N.", null, setNodeTable(), "NODES");
         this.tableTabbedPane.addTab("E.", null, setEdgeTable(), "EDGES");
-        this.tableTabbedPane.addTab("S.", null, setStatTable(), "GRAPH STATISTICS");
         this.tableTabbedPane.addTab("P.", null, setPathFindTable(), "PATH ANALYSIS BETWEEN TWO NODES");
 
         JPanel graphPanel = new JPanel();
         graphPanel.setBackground(Color.WHITE);
-        graphPanel.setLayout(new BorderLayout(3,3));
+        graphPanel.setLayout(new BorderLayout(0,0));
         graphPanel.add(graphViewer, BorderLayout.CENTER);
         graphPanel.add(bottomPanel, BorderLayout.SOUTH);
 
         this.graphTableSplitPane.setDividerSize(4);
         this.graphTableSplitPane.setLeftComponent(tableTabbedPane);
         this.graphTableSplitPane.setRightComponent(graphPanel);
+        this.graphTableSplitPane.getLeftComponent().setBackground(Color.WHITE);
+        this.graphTableSplitPane.setBackground(Color.WHITE);
+        this.graphTableSplitPane.getRightComponent().setBackground(Color.WHITE);
         this.graphTableSplitPane.setDividerLocation(0.11);
         this.graphTableSplitPane.setMinimumSize(new Dimension(200, 500));
         this.graphTableSplitPane.addComponentListener(new ComponentAdapter() {
@@ -901,7 +903,6 @@ implements ActionListener {
 
         this.add(topPanel, BorderLayout.NORTH);
         this.add(this.graphTableSplitPane, BorderLayout.CENTER);
-        //this.add(this.vTxtStat, BorderLayout.SOUTH);
     }
 
     public JPanel setStatTable() {
@@ -909,7 +910,7 @@ implements ActionListener {
         tablePanel.setLayout(new BorderLayout(3,3));
         tablePanel.setBackground(Color.WHITE);
 
-        String [] statTableColumns = {"PROPERTY.", "V."};
+        String [] statTableColumns = {"PROPERTY.", "VALUE"};
         String [][] statTableData = {};
         DefaultTableModel statTableModel = new DefaultTableModel(statTableData, statTableColumns);
 
@@ -920,9 +921,10 @@ implements ActionListener {
             "ISOLATED NODES",
             "EDGES",
             "DIAMETER",
-            "AVERAGE PATH LENGTH",
             "AVERAGE UNREACHABLE NODES",
-            "TOTAL UNRECHABLE NODES",
+            "MAX. UNREACHABLE NODES",
+            "MIN. UNREACHABLE NODES",
+            "STD. UNREACHABLE NODES",
             "RED NODES",
             "BLUE NODES",
             "GREEN NODES",
@@ -932,16 +934,16 @@ implements ActionListener {
             "NODE VALUE STANDARD DEVIATION",
             "AVG. IN-NODES",
             "AVG. OUT-NODES",
-            "AVG. IN-CONT.",
-            "AVG. OUT-CONT.",
-            "AVG. UNIQUE NODE CONT.",
-            "MAX. UNIQUE NODE CONT.",
-            "MIN. UNIQUE NODE CONT.",
+            "AVG. IN-CONTRIBUTION",
+            "AVG. OUT-CONTRIBUTION",
+            "AVG. UNIQUE NODE CONTRIBUTION",
+            "MAX. UNIQUE NODE CONTRIBUTION",
+            "MIN. UNIQUE NODE CONTRIBUTION",
             "UNIQUE NODE CONT. STANDARD DEVIATION",
-            "AVG. UNIQUE EDGE CONT.",
-            "MAX. UNIQUE EDGE CONT.",
-            "MIN. UNIQUE EDGE CONT.",
-            "STD. UNIQUE EDGE CONT.",
+            "AVG. UNIQUE EDGE CONTRIBUTION",
+            "MAX. UNIQUE EDGE CONTRIBUTION",
+            "MIN. UNIQUE EDGE CONTRIBUTION",
+            "STD. UNIQUE EDGE CONTRIBUTION",
             "AVG. EDGE VALUE",
             "MAX. EDGE VALUE",
             "MIN. EDGE VALUE",
@@ -970,18 +972,23 @@ implements ActionListener {
 
         this.statTable.setRowHeight(22);
         this.statTable.setBackground(Color.WHITE);
-        this.statTable.setFont(MySequentialGraphVars.tahomaPlainFont10);
+        this.statTable.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.statTable.setFocusable(false);
-        this.statTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont10);
+        this.statTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont12);
         this.statTable.getTableHeader().setOpaque(false);
         this.statTable.getTableHeader().setBackground(new Color(0,0,0,0f));
         this.statTable.getColumnModel().getColumn(0).setPreferredWidth(80);
-        this.statTable.setPreferredSize(new Dimension(145, 800));
+        this.statTable.setPreferredSize(new Dimension(145, 1500));
         this.statTable.setForeground(Color.BLACK);
-        this.statTable.getColumnModel().getColumn(0).setPreferredWidth(55);
+        this.statTable.getColumnModel().getColumn(0).setPreferredWidth(65);
         this.statTable.getColumnModel().getColumn(1).setPreferredWidth(50);
         this.statTable.setSelectionForeground(Color.BLACK);
         this.statTable.setSelectionBackground(Color.LIGHT_GRAY);
+
+        // Set the custom renderer for the first column
+        TableColumnModel columnModel = this.statTable.getColumnModel();
+        columnModel.getColumn(0).setCellRenderer(new MyGrayCellRenderer());
+
         MyViewerControlComponentUtil.setGraphLevelTableStatistics();
 
         JScrollPane graphStatTableScrollPane = new JScrollPane(this.statTable);
@@ -993,6 +1000,332 @@ implements ActionListener {
 
         tablePanel.add(graphStatTableScrollPane, BorderLayout.CENTER);
         return tablePanel;
+    }
+
+    public JTable selectedNodeStatTable;
+    public JTable multiNodeStatTable;
+
+    public JPanel setSelectedNodeStatTable() {
+        JPanel tablePanel = new JPanel();
+        tablePanel.setLayout(new BorderLayout(3,3));
+        tablePanel.setBackground(Color.WHITE);
+
+        String [] statTableColumns = {"PROPERTY.", "VALUE"};
+        String [][] statTableData = {};
+        DefaultTableModel selectedNodeStatTableModel = new DefaultTableModel(statTableData, statTableColumns);
+
+        String [] tablePropertyTooltips = {
+                "NODES",
+                "PREDECESSORS",
+                "SUCCESSORS",
+                "EDGES",
+                "RED NODES",
+                "BLUE NODES",
+                "GREEN NODES",
+                "AVG. EDGE VALUE",
+                "MAX. EDGE VALUE",
+                "MIN. EDGE VALUE",
+                "EDGE VALUE STANDARD DEVIATION"
+        };
+
+        this.selectedNodeStatTable = new JTable(selectedNodeStatTableModel) {
+            public String getToolTipText(MouseEvent e) {
+                String tip = null;
+                Point p = e.getPoint();
+                int rowIndex = rowAtPoint(p);
+                int colIndex = columnAtPoint(p);
+                try {
+                    tip = tablePropertyTooltips[rowIndex];//getValueAt(rowIndex, colIndex).toString();
+                } catch (RuntimeException e1) {}
+                return tip;
+            }
+        };
+
+        String [] toolTips = {"PROPERTY.", "VALUE"};
+        MyTableToolTipper tooltipHeader = new MyTableToolTipper(this.selectedNodeStatTable.getColumnModel());
+        tooltipHeader.setToolTipStrings(toolTips);
+        this.selectedNodeStatTable.setTableHeader(tooltipHeader);
+
+        this.selectedNodeStatTable.setRowHeight(22);
+        this.selectedNodeStatTable.setBackground(Color.WHITE);
+        this.selectedNodeStatTable.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.selectedNodeStatTable.setFocusable(false);
+        this.selectedNodeStatTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont12);
+        this.selectedNodeStatTable.getTableHeader().setOpaque(false);
+        this.selectedNodeStatTable.getTableHeader().setBackground(new Color(0,0,0,0f));
+        this.selectedNodeStatTable.getColumnModel().getColumn(0).setPreferredWidth(80);
+        this.selectedNodeStatTable.setPreferredSize(new Dimension(145, 800));
+        this.selectedNodeStatTable.setForeground(Color.BLACK);
+        this.selectedNodeStatTable.getColumnModel().getColumn(0).setPreferredWidth(65);
+        this.selectedNodeStatTable.getColumnModel().getColumn(1).setPreferredWidth(50);
+        this.selectedNodeStatTable.setSelectionForeground(Color.BLACK);
+        this.selectedNodeStatTable.setSelectionBackground(Color.LIGHT_GRAY);
+
+        int nodes = MySequentialGraphVars.g.getGraphNodeCount();
+        String nodeStr = MyMathUtil.getCommaSeperatedNumber(nodes);
+        float nodePercent = (float) nodes / MySequentialGraphVars.g.getVertexCount();
+        String nodePercentStr = MyMathUtil.twoDecimalFormat((nodePercent*100));
+
+        int predecessors = MySequentialGraphVars.g.getGraphPredecessorCount();
+        String predecessorStr = MyMathUtil.getCommaSeperatedNumber(predecessors);
+        float predecessorPercent = (float) predecessors / MySequentialGraphVars.g.getVertexCount();
+        String predecessorPercentStr = MyMathUtil.twoDecimalFormat((predecessorPercent*100));
+
+        int successors = MySequentialGraphVars.g.getGraphSuccessorCount();
+        String successorStr = MyMathUtil.getCommaSeperatedNumber(successors);
+        float successorPercent = (float) successors / MySequentialGraphVars.g.getVertexCount();
+        String successorPercentStr = MyMathUtil.twoDecimalFormat((successorPercent*100));
+
+        int edges = MySequentialGraphVars.g.getGraphEdgeCount();
+        String edgeStr = MyMathUtil.getCommaSeperatedNumber(edges);
+        float edgePercent = (float) edges / MySequentialGraphVars.g.getEdgeCount();
+        String edgePercentStr = MyMathUtil.twoDecimalFormat((edgePercent*100));
+
+        selectedNodeStatTableModel.addRow(new String[]{"NODES", nodeStr + "[" + nodePercentStr + "]"});
+        selectedNodeStatTableModel.addRow(new String[]{"P.", predecessorStr + "[" + predecessorPercentStr + "]"});
+        selectedNodeStatTableModel.addRow(new String[]{"S.", successorStr + "[" + successorPercentStr + "]"});
+        selectedNodeStatTableModel.addRow(new String[]{"EDGES", edgeStr + "[" + edgePercentStr + "]"});
+        selectedNodeStatTableModel.addRow(new String[]{"R. N.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getRedNodeCount()) + "[" + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getRedNodePercent()*100)) + "]"});
+        selectedNodeStatTableModel.addRow(new String[]{"B. N.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getBlueNodeCount()) + "[" + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getBlueNodePercent()*100)) + "]"});
+        selectedNodeStatTableModel.addRow(new String[]{"G. N.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getGreenNodeCount()) + "[" + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getGreenNodePercent()*100)) + "]"});
+
+        // Edge stats.
+        selectedNodeStatTableModel.addRow(new String[]{"AVG. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getAverageEdgeValue()))});
+        selectedNodeStatTableModel.addRow(new String[]{"MAX. E. V.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getMaximumEdgeValue()))});
+        selectedNodeStatTableModel.addRow(new String[]{"MIN. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getMinimumEdgeValue()))});
+        selectedNodeStatTableModel.addRow(new String[]{"STD. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getEdgeValueStandardDeviation()))});
+
+        // Set the custom renderer for the first column
+        TableColumnModel columnModel = this.selectedNodeStatTable.getColumnModel();
+        columnModel.getColumn(0).setCellRenderer(new MyGrayCellRenderer());
+
+        JScrollPane graphStatTableScrollPane = new JScrollPane(this.selectedNodeStatTable);
+        graphStatTableScrollPane.setOpaque(false);
+        graphStatTableScrollPane.setPreferredSize(new Dimension(150, 1500));
+        graphStatTableScrollPane.setBackground(new Color(0,0,0,0f));
+        graphStatTableScrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(6, 0));
+        graphStatTableScrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 6));
+
+        tablePanel.add(graphStatTableScrollPane, BorderLayout.CENTER);
+        return tablePanel;
+    }
+
+    public void updateSelectedNodeStatTable() {
+        DefaultTableModel selectedNodeStatTableModel = ((DefaultTableModel) selectedNodeStatTable.getModel());
+        int row = selectedNodeStatTable.getRowCount();
+        while (row > 0) {
+            selectedNodeStatTableModel.removeRow(row-1);
+            row = selectedNodeStatTableModel.getRowCount();
+        }
+
+        int nodes = MySequentialGraphVars.g.getGraphNodeCount();
+        String nodeStr = MyMathUtil.getCommaSeperatedNumber(nodes);
+        float nodePercent = (float) nodes / MySequentialGraphVars.g.getVertexCount();
+        String nodePercentStr = MyMathUtil.twoDecimalFormat((nodePercent*100));
+
+        int predecessors = MySequentialGraphVars.g.getGraphPredecessorCount();
+        String predecessorStr = MyMathUtil.getCommaSeperatedNumber(predecessors);
+        float predecessorPercent = (float) predecessors / MySequentialGraphVars.g.getVertexCount();
+        String predecessorPercentStr = MyMathUtil.twoDecimalFormat((predecessorPercent*100));
+
+        int successors = MySequentialGraphVars.g.getGraphSuccessorCount();
+        String successorStr = MyMathUtil.getCommaSeperatedNumber(successors);
+        float successorPercent = (float) successors / MySequentialGraphVars.g.getVertexCount();
+        String successorPercentStr = MyMathUtil.twoDecimalFormat((successorPercent*100));
+
+        int edges = MySequentialGraphVars.g.getGraphEdgeCount();
+        String edgeStr = MyMathUtil.getCommaSeperatedNumber(edges);
+        float edgePercent = (float) edges / MySequentialGraphVars.g.getEdgeCount();
+        String edgePercentStr = MyMathUtil.twoDecimalFormat((edgePercent*100));
+
+        selectedNodeStatTableModel.addRow(new String[]{"NODES", nodeStr + "[" + nodePercentStr + "]"});
+        selectedNodeStatTableModel.addRow(new String[]{"PREDECESSORS", predecessorStr + "[" + predecessorPercentStr + "]"});
+        selectedNodeStatTableModel.addRow(new String[]{"SUCCESSORS", successorStr + "[" + successorPercentStr + "]"});
+        selectedNodeStatTableModel.addRow(new String[]{"EDGES", edgeStr + "[" + edgePercentStr + "]"});
+        selectedNodeStatTableModel.addRow(new String[]{"R. N.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getRedNodeCount()) + "[" + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getRedNodePercent()*100)) + "]"});
+        selectedNodeStatTableModel.addRow(new String[]{"B. N.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getBlueNodeCount()) + "[" + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getBlueNodePercent()*100)) + "]"});
+        selectedNodeStatTableModel.addRow(new String[]{"G. N.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getGreenNodeCount()) + "[" + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getGreenNodePercent()*100)) + "]"});
+
+        // Edge stats.
+        selectedNodeStatTableModel.addRow(new String[]{"AVG. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getAverageEdgeValue()))});
+        selectedNodeStatTableModel.addRow(new String[]{"MAX. E. V.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getMaximumEdgeValue()))});
+        selectedNodeStatTableModel.addRow(new String[]{"MIN. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getMinimumEdgeValue()))});
+        selectedNodeStatTableModel.addRow(new String[]{"STD. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getEdgeValueStandardDeviation()))});
+    }
+
+    public JPanel setMultiNodeStatTable() {
+        JPanel tablePanel = new JPanel();
+        tablePanel.setLayout(new BorderLayout(3,3));
+        tablePanel.setBackground(Color.WHITE);
+
+        String [] statTableColumns = {"PROPERTY.", "VALUE"};
+        String [][] statTableData = {};
+        DefaultTableModel multiNodeStatTableModel = new DefaultTableModel(statTableData, statTableColumns);
+
+        String [] tablePropertyTooltips = {
+                "SELECTED NODES",
+                "PREDECESSORS",
+                "SUCCESSORS",
+                "EDGES",
+                "RED NODES",
+                "BLUE NODES",
+                "GREEN NODES",
+                "SHARERD PREDECESSORS",
+                "SHARERD SUCCESSOR",
+                "AVG. EDGE VALUE",
+                "MAX. EDGE VALUE",
+                "MIN. EDGE VALUE",
+                "EDGE VALUE STANDARD DEVIATION"
+        };
+
+        this.multiNodeStatTable = new JTable(multiNodeStatTableModel) {
+            public String getToolTipText(MouseEvent e) {
+                String tip = null;
+                Point p = e.getPoint();
+                int rowIndex = rowAtPoint(p);
+                int colIndex = columnAtPoint(p);
+                try {
+                    tip = tablePropertyTooltips[rowIndex];//getValueAt(rowIndex, colIndex).toString();
+                } catch (RuntimeException e1) {}
+                return tip;
+            }
+        };
+
+        String [] toolTips = {"PROPERTY.", "VALUE"};
+        MyTableToolTipper tooltipHeader = new MyTableToolTipper(this.multiNodeStatTable.getColumnModel());
+        tooltipHeader.setToolTipStrings(toolTips);
+        this.multiNodeStatTable.setTableHeader(tooltipHeader);
+
+        this.multiNodeStatTable.setRowHeight(22);
+        this.multiNodeStatTable.setBackground(Color.WHITE);
+        this.multiNodeStatTable.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.multiNodeStatTable.setFocusable(false);
+        this.multiNodeStatTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont12);
+        this.multiNodeStatTable.getTableHeader().setOpaque(false);
+        this.multiNodeStatTable.getTableHeader().setBackground(new Color(0,0,0,0f));
+        this.multiNodeStatTable.getColumnModel().getColumn(0).setPreferredWidth(80);
+        this.multiNodeStatTable.setPreferredSize(new Dimension(145, 800));
+        this.multiNodeStatTable.setForeground(Color.BLACK);
+        this.multiNodeStatTable.getColumnModel().getColumn(0).setPreferredWidth(65);
+        this.multiNodeStatTable.getColumnModel().getColumn(1).setPreferredWidth(50);
+        this.multiNodeStatTable.setSelectionForeground(Color.BLACK);
+        this.multiNodeStatTable.setSelectionBackground(Color.LIGHT_GRAY);
+
+        int predecessors = MySequentialGraphVars.getSequentialGraphViewer().multiNodePredecessors.size();
+        String predecessorStr = MyMathUtil.getCommaSeperatedNumber(predecessors);
+        float predecessorPercent = (float) predecessors / MySequentialGraphVars.g.getVertexCount();
+        String predecessorPercentStr = MyMathUtil.twoDecimalFormat((predecessorPercent*100));
+
+        int successors = MySequentialGraphVars.getSequentialGraphViewer().multiNodeSuccessors.size();
+        String successorStr = MyMathUtil.getCommaSeperatedNumber(successors);
+        float successorPercent = (float) successors / MySequentialGraphVars.g.getVertexCount();
+        String successorPercentStr = MyMathUtil.twoDecimalFormat((successorPercent*100));
+
+        int sharedPredecessors = MySequentialGraphVars.getSequentialGraphViewer().sharedPredecessors.size();
+        String sharedPredecessorStr = MyMathUtil.getCommaSeperatedNumber(sharedPredecessors);
+        float sharedPredecessorPercent = (float) sharedPredecessors / MySequentialGraphVars.g.getVertexCount();
+        String sharedPredecessorPercentStr = MyMathUtil.twoDecimalFormat((sharedPredecessorPercent*100));
+
+        int sharedSuccessors = MySequentialGraphVars.getSequentialGraphViewer().sharedSuccessors.size();
+        String sharedSuccessorStr = MyMathUtil.getCommaSeperatedNumber(sharedSuccessors);
+        float sharedSuccessorPercent = (float) sharedSuccessors / MySequentialGraphVars.g.getVertexCount();
+        String sharedSuccessorPercentStr = MyMathUtil.twoDecimalFormat((sharedSuccessorPercent*100));
+
+        int edges = MySequentialGraphVars.g.getTotalMultiNodeEdges();
+        String edgeStr = MyMathUtil.getCommaSeperatedNumber(edges);
+        float edgePercent = (float) edges / MySequentialGraphVars.g.getEdgeCount();
+        String edgePercentStr = MyMathUtil.twoDecimalFormat((edgePercent*100));
+
+        int selectedNodes = MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size();
+        String selectedNodeStr = MyMathUtil.getCommaSeperatedNumber(selectedNodes);
+        float selectedNodePercent = (float) selectedNodes / MySequentialGraphVars.g.getVertexCount();
+        String selectedNodePercentStr = MyMathUtil.twoDecimalFormat((selectedNodePercent*100));
+
+        multiNodeStatTableModel.addRow(new String[]{"SELECTED N.", selectedNodeStr + "[" + selectedNodePercentStr + "]"});
+        multiNodeStatTableModel.addRow(new String[]{"P.", predecessorStr + "[" + predecessorPercentStr + "]"});
+        multiNodeStatTableModel.addRow(new String[]{"S.", successorStr + "[" + successorPercentStr + "]"});
+        multiNodeStatTableModel.addRow(new String[]{"EDGES", edgeStr + "[" + edgePercentStr + "]"});
+        multiNodeStatTableModel.addRow(new String[]{"R. N.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getRedNodeCount()) + "[" + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getRedNodePercent()*100)) + "]"});
+        multiNodeStatTableModel.addRow(new String[]{"B. N.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getBlueNodeCount()) + "[" + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getBlueNodePercent()*100)) + "]"});
+        multiNodeStatTableModel.addRow(new String[]{"G. N.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getGreenNodeCount()) + "[" + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getGreenNodePercent()*100)) + "]"});
+        multiNodeStatTableModel.addRow(new String[]{"SHA. P.", MyMathUtil.getCommaSeperatedNumber(sharedPredecessors) + "[" + sharedPredecessorPercentStr + "]"});
+        multiNodeStatTableModel.addRow(new String[]{"SHA. S.", MyMathUtil.getCommaSeperatedNumber(sharedSuccessors) + "[" + sharedSuccessorPercentStr + "]"});
+
+        // Edge stats.
+        multiNodeStatTableModel.addRow(new String[]{"AVG. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getAverageEdgeValue()))});
+        multiNodeStatTableModel.addRow(new String[]{"MAX. E. V.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getMaximumEdgeValue()))});
+        multiNodeStatTableModel.addRow(new String[]{"MIN. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getMinimumEdgeValue()))});
+        multiNodeStatTableModel.addRow(new String[]{"STD. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getEdgeValueStandardDeviation()))});
+
+        // Set the custom renderer for the first column
+        TableColumnModel columnModel = this.multiNodeStatTable.getColumnModel();
+        columnModel.getColumn(0).setCellRenderer(new MyGrayCellRenderer());
+
+        JScrollPane graphStatTableScrollPane = new JScrollPane(this.multiNodeStatTable);
+        graphStatTableScrollPane.setOpaque(false);
+        graphStatTableScrollPane.setPreferredSize(new Dimension(150, 1500));
+        graphStatTableScrollPane.setBackground(new Color(0,0,0,0f));
+        graphStatTableScrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(6, 0));
+        graphStatTableScrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 6));
+
+        tablePanel.add(graphStatTableScrollPane, BorderLayout.CENTER);
+        return tablePanel;
+    }
+
+    public void updateMultiNodeStatTable() {
+        DefaultTableModel multiNodeStatTableModel = ((DefaultTableModel) multiNodeStatTable.getModel());
+        int row = multiNodeStatTable.getRowCount();
+        while (row > 0) {
+            multiNodeStatTableModel.removeRow(row-1);
+            row = multiNodeStatTable.getRowCount();
+        }
+
+        int predecessors = MySequentialGraphVars.getSequentialGraphViewer().multiNodePredecessors.size();
+        String predecessorStr = MyMathUtil.getCommaSeperatedNumber(predecessors);
+        float predecessorPercent = (float) predecessors / MySequentialGraphVars.g.getVertexCount();
+        String predecessorPercentStr = MyMathUtil.twoDecimalFormat((predecessorPercent*100));
+
+        int successors = MySequentialGraphVars.getSequentialGraphViewer().multiNodeSuccessors.size();
+        String successorStr = MyMathUtil.getCommaSeperatedNumber(successors);
+        float successorPercent = (float) successors / MySequentialGraphVars.g.getVertexCount();
+        String successorPercentStr = MyMathUtil.twoDecimalFormat((successorPercent*100));
+
+        int sharedPredecessors = MySequentialGraphVars.getSequentialGraphViewer().sharedPredecessors.size();
+        String sharedPredecessorStr = MyMathUtil.getCommaSeperatedNumber(sharedPredecessors);
+        float sharedPredecessorPercent = (float) sharedPredecessors / MySequentialGraphVars.g.getVertexCount();
+        String sharedPredecessorPercentStr = MyMathUtil.twoDecimalFormat((sharedPredecessorPercent*100));
+
+        int sharedSuccessors = MySequentialGraphVars.getSequentialGraphViewer().sharedSuccessors.size();
+        String sharedSuccessorStr = MyMathUtil.getCommaSeperatedNumber(sharedSuccessors);
+        float sharedSuccessorPercent = (float) sharedSuccessors / MySequentialGraphVars.g.getVertexCount();
+        String sharedSuccessorPercentStr = MyMathUtil.twoDecimalFormat((sharedSuccessorPercent*100));
+
+        int edges = MySequentialGraphVars.g.getTotalMultiNodeEdges();
+        String edgeStr = MyMathUtil.getCommaSeperatedNumber(edges);
+        float edgePercent = (float) edges / MySequentialGraphVars.g.getEdgeCount();
+        String edgePercentStr = MyMathUtil.twoDecimalFormat((edgePercent*100));
+
+        int selectedNodes = MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size();
+        String selectedNodeStr = MyMathUtil.getCommaSeperatedNumber(selectedNodes);
+        float selectedNodePercent = (float) selectedNodes / MySequentialGraphVars.g.getVertexCount();
+        String selectedNodePercentStr = MyMathUtil.twoDecimalFormat((selectedNodePercent*100));
+
+        multiNodeStatTableModel.addRow(new String[]{"SELECTED N.", selectedNodeStr + "[" + selectedNodePercentStr + "]"});
+        multiNodeStatTableModel.addRow(new String[]{"P.", predecessorStr + "[" + predecessorPercentStr + "]"});
+        multiNodeStatTableModel.addRow(new String[]{"S.", successorStr + "[" + successorPercentStr + "]"});
+        multiNodeStatTableModel.addRow(new String[]{"EDGES", edgeStr + "[" + edgePercentStr + "]"});
+        multiNodeStatTableModel.addRow(new String[]{"R. N.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getRedNodeCount()) + "[" + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getRedNodePercent()*100)) + "]"});
+        multiNodeStatTableModel.addRow(new String[]{"B. N.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getBlueNodeCount()) + "[" + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getBlueNodePercent()*100)) + "]"});
+        multiNodeStatTableModel.addRow(new String[]{"G. N.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getGreenNodeCount()) + "[" + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getGreenNodePercent()*100)) + "]"});
+        multiNodeStatTableModel.addRow(new String[]{"SHA. P.", MyMathUtil.getCommaSeperatedNumber(sharedPredecessors) + "[" + sharedPredecessorPercentStr + "]"});
+        multiNodeStatTableModel.addRow(new String[]{"SHA. S.", MyMathUtil.getCommaSeperatedNumber(sharedSuccessors) + "[" + sharedSuccessorPercentStr + "]"});
+
+        // Edge stats.
+        multiNodeStatTableModel.addRow(new String[]{"AVG. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getAverageEdgeValue()))});
+        multiNodeStatTableModel.addRow(new String[]{"MAX. E. V.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getMaximumEdgeValue()))});
+        multiNodeStatTableModel.addRow(new String[]{"MIN. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getMinimumEdgeValue()))});
+        multiNodeStatTableModel.addRow(new String[]{"STD. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getEdgeValueStandardDeviation()))});
+
     }
 
     public JPanel setEdgeTable() {
@@ -1989,7 +2322,11 @@ implements ActionListener {
         } else if (ae.getSource() == edgeLabelSelecter) {
             new Thread(new Runnable() {
                 @Override public void run() {
-
+                    new Thread(new Runnable() {
+                        @Override public void run() {
+                            MyViewerControlComponentUtil.showEdgeLabel();
+                        }
+                    }).start();
                 }
             }).start();
         } else if (ae.getSource() == nodeLabelSelecter) {
@@ -2067,30 +2404,30 @@ implements ActionListener {
                 }
             }).start();
         } else if (ae.getSource() == nodeValueSelecter) {
-            new Thread(new Runnable() {
-                @Override public void run() {
-                    MyProgressBar pb = new MyProgressBar(false);
-                    if (selectedNodeNeighborNodeTypeSelector.isShowing()) {
-                        pb.updateValue(100, 100);
-                        pb.dispose();
-                        return;
-                    }
+          new Thread(new Runnable() {
+              @Override public void run() {
+                  MyProgressBar pb = new MyProgressBar(false);
+                  if (selectedNodeNeighborNodeTypeSelector.isShowing()) {
+                      pb.updateValue(100, 100);
+                      pb.dispose();
+                      return;
+                  }
 
-                    if (MySequentialGraphVars.currentGraphDepth > 0) {
-                        MyDepthNodeUtil.setDepthNodeValue();
-                    } else {
-                        MyNodeUtil.setNodeValue();
-                    }
+                  if (MySequentialGraphVars.currentGraphDepth > 0) {
+                      MyDepthNodeUtil.setDepthNodeValue();
+                  } else {
+                      MyNodeUtil.setNodeValue();
+                  }
 
-                    MyViewerControlComponentUtil.setBottomCharts();
-                    vTxtStat.setTextStatistics();
-                    updateNodeTable();
-                    pb.updateValue(100, 100);
-                    pb.dispose();
-                    nodeValueSelecter.setToolTipText("NODE VALUE: " + nodeValueSelecter.getSelectedItem().toString());
-                }
-            }).start();
-        } else if (ae.getSource() == edgeValueSelecter) {
+                  //MyViewerControlComponentUtil.setBottomCharts();
+                  vTxtStat.setTextStatistics();
+                  updateNodeTable();
+                  pb.updateValue(100, 100);
+                  pb.dispose();
+                  nodeValueSelecter.setToolTipText("NODE VALUE: " + nodeValueSelecter.getSelectedItem().toString());
+              }
+          }).start();
+      } else if (ae.getSource() == edgeValueSelecter) {
             new Thread(new Runnable() {
                 @Override public void run() {
                     if ((depthNeighborNodeTypeSelector.isShowing() && depthNeighborNodeTypeSelector.getSelectedIndex() == 0) ||
@@ -2104,20 +2441,14 @@ implements ActionListener {
 
                     MySequentialGraphVars.getSequentialGraphViewer().edgeValName = edgeValueSelecter.getSelectedItem().toString().replaceAll(" ", "");
                     MyProgressBar pb = new MyProgressBar(false);
-                    pb.updateValue(10, 100);
                     MyEdgeUtil.setEdgeValue();
-                    pb.updateValue(50, 100);
-                    pb.updateValue(85, 100);
-                    MyViewerControlComponentUtil.setBottomCharts();
-                    pb.updateValue(95, 100);
-                    vTxtStat.setTextStatistics();
+                    //vTxtStat.setTextStatistics();
                     updateNodeTable();
-                    pb.updateValue(100, 100);
-                    pb.dispose();
                     edgeValueSelecter.setToolTipText("EDGE VALUE: " + edgeValueSelecter.getSelectedItem().toString());
-
                     MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                     MySequentialGraphVars.getSequentialGraphViewer().repaint();
+                    pb.updateValue(100, 100);
+                    pb.dispose();
                 }
             }).start();
         } else if (ae.getSource() == depthSelecter) {
@@ -2130,7 +2461,6 @@ implements ActionListener {
                         clusteringSelector.setEnabled(true);
                         tableTabbedPane.setEnabledAt(1, true);
                         tableTabbedPane.setEnabledAt(2, true);
-                        tableTabbedPane.setEnabledAt(3, true);
 
                         MyViewerControlComponentUtil.setDefaultViewerLook();
                         return;
@@ -2142,12 +2472,11 @@ implements ActionListener {
                             MyViewerControlComponentUtil.setDefaultViewerLook();
                             tableTabbedPane.setEnabledAt(1, true);
                             tableTabbedPane.setEnabledAt(2, true);
-                            tableTabbedPane.setEnabledAt(3, true);
                         } else {
+
                             nodeValueBarChart.setText("DEPTH N. V. B.");
                             tableTabbedPane.setEnabledAt(1, false);
                             tableTabbedPane.setEnabledAt(2, false);
-                            tableTabbedPane.setEnabledAt(3, false);
                             MyViewerControlComponentUtil.removeBarChartsFromViewer();
                             MyViewerControlComponentUtil.removeEdgeValueBarChartFromViewer();
                             depthNodeNameSet = new HashSet<>();
@@ -2161,7 +2490,7 @@ implements ActionListener {
                             }
                             updateNodeTable();
                             MyViewerControlComponentUtil.setSelectedNodeNeighborNodeTypeOption();
-                            MyViewerControlComponentUtil.setBottomCharts();
+                           // MyViewerControlComponentUtil.setBottomCharts();
                             MySequentialGraphVars.getSequentialGraphViewer().selectedNode = null;
                         }
                     } else if (selectedNodeNeighborNodeTypeSelector.isShowing()) {
@@ -2170,7 +2499,6 @@ implements ActionListener {
                         clusteringSelector.setEnabled(false);
                         tableTabbedPane.setEnabledAt(1, false);
                         tableTabbedPane.setEnabledAt(2, false);
-                        tableTabbedPane.setEnabledAt(3, false);
 
                         nodeValueBarChart.setText("DEPTH N. V. B.");
                         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
@@ -2182,7 +2510,7 @@ implements ActionListener {
                         updateNodeTable();
                         MyViewerControlComponentUtil.setSelectedNodeNeighborNodeTypeOption();
                         MyViewerControlComponentUtil.setSelectedNodeVisibleOnly();
-                        MyViewerControlComponentUtil.setBottomCharts();
+                        //MyViewerControlComponentUtil.setBottomCharts();
                         MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                         MySequentialGraphVars.getSequentialGraphViewer().repaint();
                     } else {
@@ -2192,13 +2520,12 @@ implements ActionListener {
                         clusteringSelector.setEnabled(false);
                         tableTabbedPane.setEnabledAt(1, false);
                         tableTabbedPane.setEnabledAt(2, false);
-                        tableTabbedPane.setEnabledAt(3, false);
                         nodeValueBarChart.setText("DEPTH N. V. B.");
                         MyViewerControlComponentUtil.setDepthNodeNameSet();
                         MyViewerControlComponentUtil.setDepthNodeNeighborNodeTypeOption();
                         MyDepthNodeUtil.setDepthNodeValue();
                         MySequentialGraphVars.app.getSequentialGraphDashboard().setDepthNodeDashBoard();
-                        vTxtStat.setTextStatistics();
+                        //vTxtStat.setTextStatistics();
                         updateNodeTable();
                         pb.updateValue(100, 100);
                         pb.dispose();

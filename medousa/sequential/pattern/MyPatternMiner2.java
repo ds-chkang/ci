@@ -138,7 +138,7 @@ implements ActionListener {
 
                             int i = 0;
                             for (String n : nodeSet) {
-                                ((DefaultTableModel) table.getModel()).addRow(new String[]{"" + (++i), (n.contains("x") ? MySequentialGraphSysUtil.decodeVariable(n) : MySequentialGraphSysUtil.getDecodedNodeName(n))});
+                                ((DefaultTableModel) table.getModel()).addRow(new String[]{"" + (++i), (n.contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n) : MySequentialGraphSysUtil.getDecodedNodeName(n))});
                                 pb.updateValue(i, nodeSet.size());
                             }
 
@@ -154,7 +154,7 @@ implements ActionListener {
                             int i = 0;
                             Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
                             for (MyNode n : nodes) {
-                                ((DefaultTableModel) table.getModel()).addRow(new String[]{"" + (++i), (n.getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(n.getName()) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName()))});
+                                ((DefaultTableModel) table.getModel()).addRow(new String[]{"" + (++i), (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName()))});
                                 pb.updateValue(i, nodes.size());
                             }
                             pb.updateValue(100, 100);
@@ -620,7 +620,7 @@ implements ActionListener {
             @Override public String transform(MyPatternNode n) {
                 if (MySequentialGraphVars.isTimeOn) {
                     return "<html><body>" +
-                            (n.getName().split("-")[0].contains("x") ? MySequentialGraphSysUtil.decodeVariable(n.getName().split("-")[0]) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName().split("-")[0])) +
+                            (n.getName().split("-")[0].contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName().split("-")[0]) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName().split("-")[0])) +
                             "<br>GRAPH CONT.: " + MyMathUtil.getCommaSeperatedNumber(((MyNode) MySequentialGraphVars.g.vRefs.get(n.getName().split("-")[0])).getContribution()) +
                             "<br>PATH CONT.: " + MyMathUtil.getCommaSeperatedNumber(n.contribution) +
                             "<br>U. CONT.:" + MyMathUtil.getCommaSeperatedNumber(n.uniqueContribution) + "[" + MyMathUtil.twoDecimalFormat(((double) n.contribution / MySequentialGraphVars.seqs.length) * 100) + "%]" +
@@ -629,7 +629,7 @@ implements ActionListener {
                             "</body></html>";
                 } else {
                     return "<html><body>" +
-                            (n.getName().split("-")[0].contains("x") ? MySequentialGraphSysUtil.decodeVariable(n.getName().split("-")[0]) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName().split("-")[0])) +
+                            (n.getName().split("-")[0].contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName().split("-")[0]) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName().split("-")[0])) +
                             "<br>GRAPH CONT.: " + MyMathUtil.getCommaSeperatedNumber(((MyNode) MySequentialGraphVars.g.vRefs.get(n.getName().split("-")[0])).getContribution()) +
                             "<br>PATH CONT.: " + MyMathUtil.getCommaSeperatedNumber(n.contribution) +
                             "<br>U. CONT.:" + MyMathUtil.getCommaSeperatedNumber(n.uniqueContribution) + "[" + MyMathUtil.twoDecimalFormat(((double) n.contribution / MySequentialGraphVars.seqs.length) * 100) + "%]" +
@@ -644,7 +644,7 @@ implements ActionListener {
             @Override public String transform(MyPatternNode n) {
                 if (MySequentialGraphVars.isTimeOn) {
                     return "<html><body>" +
-                            (n.getName().split("-")[0].contains("x") ? MySequentialGraphSysUtil.decodeVariable(n.getName().split("-")[0]) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName().split("-")[0])) +
+                            (n.getName().split("-")[0].contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName().split("-")[0]) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName().split("-")[0])) +
                             "<br>GRAPH CONT.: " + MyMathUtil.getCommaSeperatedNumber(((MyNode) MySequentialGraphVars.g.vRefs.get(n.getName().split("-")[0])).getContribution()) +
                             "<br>PATH CONT.: " + MyMathUtil.getCommaSeperatedNumber(n.contribution) +
                             "<br>U. CONT.:" + MyMathUtil.getCommaSeperatedNumber(n.uniqueContribution) + "[" + MyMathUtil.twoDecimalFormat(((double) n.contribution / MySequentialGraphVars.seqs.length) * 100) + "%]" +
@@ -653,7 +653,7 @@ implements ActionListener {
                             "</body></html>";
                 } else {
                     return "<html><body>" +
-                            (n.getName().split("-")[0].contains("x") ? MySequentialGraphSysUtil.decodeVariable(n.getName().split("-")[0]) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName().split("-")[0])) +
+                            (n.getName().split("-")[0].contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName().split("-")[0]) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName().split("-")[0])) +
                             "<br>GRAPH CONT.: " + MyMathUtil.getCommaSeperatedNumber(((MyNode) MySequentialGraphVars.g.vRefs.get(n.getName().split("-")[0])).getContribution()) +
                             "<br>PATH CONT.: " + MyMathUtil.getCommaSeperatedNumber(n.contribution) +
                             "<br>U. CONT.:" + MyMathUtil.getCommaSeperatedNumber(n.uniqueContribution) + "[" + MyMathUtil.twoDecimalFormat(((double) n.contribution / MySequentialGraphVars.seqs.length) * 100) + "%]" +
@@ -734,7 +734,7 @@ implements ActionListener {
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
         int i=0;
         for (MyNode n : nodes) {
-            m.addRow(new String[]{""+(++i), (n.getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(n.getName()): MySequentialGraphSysUtil.getDecodedNodeName(n.getName()))});
+            m.addRow(new String[]{""+(++i), (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()): MySequentialGraphSysUtil.getDecodedNodeName(n.getName()))});
         }
 
         JButton selectBtn = new JButton("SEL.");
@@ -809,7 +809,7 @@ implements ActionListener {
 
                 int i=0;
                 for (String n : nodeSet) {
-                    m.addRow(new String[]{""+(++i), (n.contains("x") ? MySequentialGraphSysUtil.decodeVariable(n): MySequentialGraphSysUtil.getDecodedNodeName(n))});
+                    m.addRow(new String[]{""+(++i), (n.contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n): MySequentialGraphSysUtil.getDecodedNodeName(n))});
                 }
             }
         });

@@ -46,7 +46,7 @@ implements ActionListener, WindowListener {
     protected JLabel statisticLabel = new JLabel("");
 
     public MyAnalysisGraphApp() {
-        super("GRAPH RELATION EXPLORER");
+        super("GRAPH EXPLORER");
         this.decorate();
     }
 
@@ -71,17 +71,7 @@ implements ActionListener, WindowListener {
         this.pack();
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setAlwaysOnTop(true);
-        this.addWindowListener(new WindowListener() {
-            @Override public void windowOpened(WindowEvent e) {}
-            @Override public void windowClosing(WindowEvent e) {
-
-            }
-            @Override public void windowClosed(WindowEvent e) {}
-            @Override public void windowIconified(WindowEvent e) {}
-            @Override public void windowDeiconified(WindowEvent e) {}
-            @Override public void windowActivated(WindowEvent e) {}
-            @Override public void windowDeactivated(WindowEvent e) {}
-        });
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setVisible(true);
     }
 
@@ -653,7 +643,7 @@ implements ActionListener, WindowListener {
                         }
                     }
                 } else {
-                    String selectedNodeName = (graphViewer.graphMouseListener.selectedNode.getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(graphViewer.graphMouseListener.selectedNode.getName()) : MySequentialGraphSysUtil.getDecodedNodeName(graphViewer.graphMouseListener.selectedNode.getName()));
+                    String selectedNodeName = (graphViewer.graphMouseListener.selectedNode.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(graphViewer.graphMouseListener.selectedNode.getName()) : MySequentialGraphSysUtil.getDecodedNodeName(graphViewer.graphMouseListener.selectedNode.getName()));
                     MyMessageUtil.showInfoMsg(this, "An edge between " + selectedNodeName + " and " + n.getName() + " already exists.");
                 }
             }

@@ -1,5 +1,8 @@
 package medousa.sequential.graph.analysis;
 
+import medousa.sequential.graph.funnel.MyFunnelGraphNodeMenu;
+import medousa.sequential.graph.funnel.MyFunnelViewerMenu;
+
 import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -15,20 +18,20 @@ implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        graphViewer.mouseClickedLocation = e.getLocationOnScreen();
+        /**
         new Thread(new Runnable() {
             @Override public void run() {
                 graphViewer.mouseClickedLocation = e.getLocationOnScreen();
                 if (SwingUtilities.isRightMouseButton(e) && graphViewer.getPickedVertexState().getPicked().size() == 0) {
-                    if (graphViewer.getGraphLayout().getGraph().getVertexCount() > 0) {
-                        MyGraphViewerMenu funnelViewerMenu = new MyGraphViewerMenu(graphViewer);
-                        funnelViewerMenu.show(graphViewer, e.getX(), e.getY());
-                    }
+                        MyAnalysisGraphViewerMenu analysisGraphViewerMenu = new MyAnalysisGraphViewerMenu(graphViewer);
+                        analysisGraphViewerMenu.show(graphViewer, e.getX(), e.getY());
                 } else if (SwingUtilities.isLeftMouseButton(e) && graphViewer.getPickedVertexState().getPicked().size() == 0) {
-                    graphViewer.remove(graphViewer.selectedNodEdgeValueBarChart);
                     graphViewer.graphMouseListener.selectedNode = null;
                 }
             }
         }).start();
+         */
     }
 
     @Override public void mousePressed(MouseEvent e) {}

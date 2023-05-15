@@ -62,7 +62,7 @@ extends JPanel {
                 if (e.getSource().clusteringColor != MyClusteringConfig.selectedClusterColor || e.getDest().clusteringColor != MyClusteringConfig.selectedClusterColor)
                     continue;
             } else if (e.getCurrentValue() == 0) continue;
-            String p = (e.getSource().getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(e.getSource().getName()) : MySequentialGraphSysUtil.getDecodedNodeName(e.getSource().getName()));
+            String p = (e.getSource().getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(e.getSource().getName()) : MySequentialGraphSysUtil.getDecodedNodeName(e.getSource().getName()));
             String edge = p + "-" + MySequentialGraphSysUtil.getDecodedNodeName(e.getDest().getName());
             valueMap.put(edge, e.getUniqueContribution());
             final float hue = rand.nextFloat();

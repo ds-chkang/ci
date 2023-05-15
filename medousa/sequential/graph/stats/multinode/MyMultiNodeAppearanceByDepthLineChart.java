@@ -245,7 +245,7 @@ extends JPanel {
                     final float luminance = 1.0f;
                     Color randomColor = Color.getHSBColor(hue, saturation, luminance);
                     colors.add(randomColor);
-                    String node = (selectedNode.getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(selectedNode.getName()) : MySequentialGraphSysUtil.getDecodedNodeName(selectedNode.getName()));
+                    String node = (selectedNode.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(selectedNode.getName()) : MySequentialGraphSysUtil.getDecodedNodeName(selectedNode.getName()));
                     multiNodeAppearanceMap.put(node, (long) selectedNode.getCurrentValue());
                     if (!MAXIMIZED && multiNodeCnt == 6) {
                         break;

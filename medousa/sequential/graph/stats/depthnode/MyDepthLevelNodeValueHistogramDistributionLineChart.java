@@ -43,7 +43,7 @@ implements ActionListener {
                         colors = new ArrayList<>();
                         for (String depthNodeName : MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeNameSet) {
                             MyNode depthNode = (MyNode) MySequentialGraphVars.g.vRefs.get(depthNodeName);
-                            String decodedDepthNodeName = (depthNodeName.contains("x") ? MySequentialGraphSysUtil.decodeVariable(depthNodeName) : MySequentialGraphSysUtil.getDecodedNodeName(depthNodeName));
+                            String decodedDepthNodeName = (depthNodeName.contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(depthNodeName) : MySequentialGraphSysUtil.getDecodedNodeName(depthNodeName));
                             depthNodeValueMap.put(decodedDepthNodeName, (long) depthNode.getNodeDepthInfo(MySequentialGraphVars.currentGraphDepth).getContribution());
                             final float hue = rand.nextFloat();
                             final float saturation = 0.9f;

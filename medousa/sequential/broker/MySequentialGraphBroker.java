@@ -20,19 +20,13 @@ extends MySequentialGraphEngineBroker {
         try {
             if (!MySequentialGraphVars.isTimeOn) {
                 MyGraphBuilder graphBuilder = new MyGraphBuilder();
-                graphBuilder.createNodes();
-                graphBuilder.createEdges();
+                graphBuilder.createGraph();
                 graphBuilder.setEndNodeCount();
                 graphBuilder.setNodeDepthInformation();
                 graphBuilder.setStartPositionNodeCount();
                 graphBuilder.setNodePropagationCount();
                 graphBuilder.setNodeRecursiveLength();
                 graphBuilder.setNodeRecurrenceCount();
-                graphBuilder.setNodeInContributionCount();
-                graphBuilder.setNodeOutContributionCount();
-                graphBuilder.setNodeUniqueContribution();
-                graphBuilder.setEdgeContribution();
-                graphBuilder.setEngeUniqueContribution();
                 graphBuilder.setEdgeSupport();
                 graphBuilder.setEdgeConfidence();
                 graphBuilder.setEdgeLift();
@@ -40,12 +34,11 @@ extends MySequentialGraphEngineBroker {
                 graphBuilder.setNodeClosenessCentrality();
                 graphBuilder.setNodeEigenVectorCentrality();
                 graphBuilder.setEdgeValues();
-                graphBuilder.setEdgeTimeValues();
                 graphBuilder.setEdgeLabels();
                 graphBuilder.setNodeValues();
                 graphBuilder.setNodeLabels();
                 graphBuilder.setMaxNodeValue();
-                graphBuilder.setAverageUnWeightedGraphShortestPathLength(MySequentialGraphVars.g);
+                graphBuilder.setAverageShortestDistance(MySequentialGraphVars.g);
                 graphBuilder.setAverageNodeRecurrenceLength();
                 graphBuilder.setVariableNodeStrength();
                 graphBuilder.setConnectance();
@@ -95,7 +88,6 @@ extends MySequentialGraphEngineBroker {
                 MySequentialGraphVars.g.edRefs = null;
                 MySequentialGraphVars.g.edgeRefMap = null;
             }
-            //System.out.println(MySequentialGraphVars.sequenceFileName);
             MySequentialGraphSysUtil.setNodeNameMap();
         } catch (Exception ex) {ex.printStackTrace();}
         return MySequentialGraphVars.g;

@@ -47,7 +47,7 @@ implements ActionListener {
                             if (n.equals(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName())) {
                                 if ((i + 1) != MySequentialGraphVars.seqs[s].length) {
                                     String endingNode = MySequentialGraphVars.seqs[s][MySequentialGraphVars.seqs[s].length-1].split(":")[0];
-                                    endingNode = (endingNode.contains("x") ? MySequentialGraphSysUtil.decodeVariable(endingNode) : MySequentialGraphSysUtil.getDecodedNodeName(endingNode));
+                                    endingNode = (endingNode.contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(endingNode) : MySequentialGraphSysUtil.getDecodedNodeName(endingNode));
                                     if (endingNodeValueMap.containsKey(endingNode)) {
                                         endingNodeValueMap.put(endingNode, endingNodeValueMap.get(endingNode) + 1);
                                     } else {

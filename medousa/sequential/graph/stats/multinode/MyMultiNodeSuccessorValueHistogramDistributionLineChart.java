@@ -44,7 +44,7 @@ implements ActionListener {
                     colors = new ArrayList<>();
                     LinkedHashMap<String, Long> successorNodeValueMap = new LinkedHashMap<>();
                     for (MyNode successor : MySequentialGraphVars.getSequentialGraphViewer().multiNodeSuccessors) {
-                        String sName = (successor.getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(successor.getName()) : MySequentialGraphSysUtil.getDecodedNodeName(successor.getName()));
+                        String sName = (successor.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(successor.getName()) : MySequentialGraphSysUtil.getDecodedNodeName(successor.getName()));
                         successorNodeValueMap.put(sName, (long)successor.getCurrentValue());
                         final float hue = rand.nextFloat();
                         final float saturation = 0.9f;

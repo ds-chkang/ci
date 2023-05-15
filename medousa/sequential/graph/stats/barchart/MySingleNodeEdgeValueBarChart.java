@@ -36,8 +36,8 @@ extends JPanel {
             if (MySequentialGraphVars.getSequentialGraphViewer().edgeValName.contains("NONE")) {continue;}
             else if (e.getDest().getCurrentValue() ==0 || e.getSource().getCurrentValue() == 0) continue;
             else if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != e.getSource() && MySequentialGraphVars.getSequentialGraphViewer().selectedNode != e.getDest()) continue;
-            String predecessor = (e.getSource().getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(e.getSource().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getSource().getName()));
-            String successor = (e.getDest().getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(e.getDest().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getDest().getName()));
+            String predecessor = (e.getSource().getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(e.getSource().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getSource().getName()));
+            String successor = (e.getDest().getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(e.getDest().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getDest().getName()));
             String name = predecessor+"-"+successor;
            // System.out.println(name + "   " + e.getValue());
             this.data.put(name, e.getCurrentValue());

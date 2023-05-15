@@ -190,7 +190,7 @@ extends JPanel{
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
         for (MyNode n : nodes) {
             if (n.getNodeDepthInfoMap().containsKey(selectedChart)) {
-                String pName = (n.getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(n.getName()) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName()));
+                String pName = (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName()));
                 depthUniqueNodeMap.put(pName, (long) n.getCurrentValue());
                 final float hue = rand.nextFloat();
                 final float saturation = 0.9f;

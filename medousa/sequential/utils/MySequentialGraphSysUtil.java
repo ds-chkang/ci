@@ -4,11 +4,9 @@ import medousa.message.MyMessageUtil;
 import medousa.security.MyOSMonitor;
 import medousa.sequential.feature.MyVariableMap;
 import medousa.sequential.graph.MyGraph;
-import medousa.sequential.graph.stats.*;
 import medousa.MyProgressBar;
 import medousa.sequential.graph.MyEdge;
 import medousa.sequential.graph.MyNode;
-import medousa.sequential.graph.stats.singlenode.*;
 
 import java.io.*;
 import java.text.NumberFormat;
@@ -94,7 +92,7 @@ public class MySequentialGraphSysUtil {
     }
 
     public static String getDecodedNodeName(String encodedNodeName) {
-        return (encodedNodeName.contains("x") ? decodeVariable(encodedNodeName) : decodeNodeName(encodedNodeName));
+        return (encodedNodeName.contains("x") ? getDecodeVariableNodeName(encodedNodeName) : decodeNodeName(encodedNodeName));
     }
     public static String formatAverageValue(String avgrageValueStr) {
         String avgValueHeader = "";
@@ -179,7 +177,7 @@ public class MySequentialGraphSysUtil {
         return decodedItemSet;
     }
 
-    public static String decodeVariable(String variables) {
+    public static String getDecodeVariableNodeName(String variables) {
         String [] variableItems = variables.split(",");
         String decryptedVariable = "";
         for (String encryptedVariable : variableItems) {
@@ -464,6 +462,12 @@ public class MySequentialGraphSysUtil {
         }
     }
 
-
+    public static String getNodeName(String encodedNodeName) {
+        if (encodedNodeName.contains("x")) {
+            return getDecodeVariableNodeName(encodedNodeName);
+        } else {
+            return getDecodedNodeName(encodedNodeName);
+        }
+    }
 
 }

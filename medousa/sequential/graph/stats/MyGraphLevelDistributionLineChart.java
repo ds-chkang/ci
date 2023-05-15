@@ -45,7 +45,7 @@ extends JPanel {
                     Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
                     for (MyNode n : nodes) {
                         if (n.getCurrentValue() <= 0) continue;
-                        int value = n.getOpenNodeCount();
+                        int value = n.getStartPositionNodeCount();
                         if (openNodeCountMap.containsKey(value)) {
                             openNodeCountMap.put(value, openNodeCountMap.get(value) + 1);
                         } else {
@@ -62,7 +62,7 @@ extends JPanel {
                     TreeMap<Integer, Integer> endNodeCountMap = new TreeMap<>();
                     for (MyNode n : nodes) {
                         if (n.getCurrentValue() <= 0) continue;
-                        int value = n.getEndNodeCount();
+                        int value = n.getEndPositionNodeCount();
                         if (endNodeCountMap.containsKey(value)) {
                             endNodeCountMap.put(value, endNodeCountMap.get(value) + 1);
                         } else {

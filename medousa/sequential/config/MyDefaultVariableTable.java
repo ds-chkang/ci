@@ -1,9 +1,11 @@
 package medousa.sequential.config;
 
+import medousa.sequential.graph.stats.MyGrayCellRenderer;
 import medousa.sequential.utils.MySequentialGraphVars;
 import medousa.table.MyVariableBindingColumnEditor;
 
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.io.Serializable;
 

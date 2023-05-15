@@ -43,7 +43,7 @@ public class MyClusteredGraphLevelNodeValueBarChart extends JPanel {
         for (MyNode n : nodes) {
             if (MySequentialGraphVars.getSequentialGraphViewer().isClustered && n.clusteringColor != MyClusteringConfig.selectedClusterColor) continue;
             if (n.getCurrentValue() == 0) continue;
-            String name = (n.getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName()));
+            String name = (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName()));
             this.data.put(name, n.getCurrentValue());
             final float hue = this.rand.nextFloat();
             final float saturation = 0.9f;
@@ -72,7 +72,7 @@ public class MyClusteredGraphLevelNodeValueBarChart extends JPanel {
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
         for (MyNode n : nodes) {
             if (n.getCurrentValue() == 0) continue;
-            String name = (n.getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName()));
+            String name = (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName()));
             this.data.put(name, n.getCurrentValue());
             final float hue = this.rand.nextFloat();
             final float saturation = 0.9f;

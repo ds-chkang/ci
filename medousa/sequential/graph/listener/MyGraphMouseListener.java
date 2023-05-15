@@ -89,11 +89,13 @@ implements GraphMouseListener {
                             MySequentialGraphVars.getSequentialGraphViewer().selectedNode != MySequentialGraphVars.getSequentialGraphViewer().getPickedVertexState().getPicked().iterator().next()) {
                         setSingleNodeDashBoard(obj);
                     } else if (SwingUtilities.isLeftMouseButton(e) &&
-                            MySequentialGraphVars.getSequentialGraphViewer().selectedNode == null &&
-                            MySequentialGraphVars.getSequentialGraphViewer().getPickedVertexState().getPicked().size() == 1 &&
-                            MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.getSelectedIndex() == 0) {
+                        MySequentialGraphVars.getSequentialGraphViewer().selectedNode == null &&
+                        MySequentialGraphVars.getSequentialGraphViewer().getPickedVertexState().getPicked().size() == 1 &&
+                        MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.getSelectedIndex() == 0) {
                         new Thread(new Runnable() {
                             @Override public void run() {
+                                MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.setVisible(false);
+                                MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecterLabel.setVisible(false);
                                 MySequentialGraphVars.getSequentialGraphViewer().selectedTableNodeSet = null;
                                 setSingleNodeDashBoard(obj);
                             }

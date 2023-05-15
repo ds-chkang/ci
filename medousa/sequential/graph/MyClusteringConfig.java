@@ -341,8 +341,8 @@ implements ActionListener {
         float TOTAL_EDGE_VALUE = 0f;
         LinkedHashMap<String, Float> valueMap = new LinkedHashMap<>();
         for (MyEdge e : scoresByRemovedEdge.keySet()) {
-            String source = (e.getSource().getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(e.getSource().getName()) : MySequentialGraphSysUtil.getDecodedNodeName(e.getSource().getName()));
-            String dest = (e.getDest().getName().contains("x") ? MySequentialGraphSysUtil.decodeVariable(e.getDest().getName()) : MySequentialGraphSysUtil.getDecodedNodeName(e.getDest().getName()));
+            String source = (e.getSource().getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(e.getSource().getName()) : MySequentialGraphSysUtil.getDecodedNodeName(e.getSource().getName()));
+            String dest = (e.getDest().getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(e.getDest().getName()) : MySequentialGraphSysUtil.getDecodedNodeName(e.getDest().getName()));
             String edgeName = source + "-" + dest;
             valueMap.put(edgeName, scoresByRemovedEdge.get(e));
             if (MAX_EDGE_VALUE < scoresByRemovedEdge.get(e)) {
@@ -435,7 +435,7 @@ implements ActionListener {
 
         int count = 0;
         for (String n : valueMap.keySet()) {
-            String nodeName = (n.contains("x") ? MySequentialGraphSysUtil.decodeVariable(n) : MySequentialGraphSysUtil.getDecodedNodeName(n));
+            String nodeName = (n.contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n) : MySequentialGraphSysUtil.getDecodedNodeName(n));
             m.addRow(new String[]{"" + (++count), nodeName, MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(valueMap.get(n)))});
         }
 
