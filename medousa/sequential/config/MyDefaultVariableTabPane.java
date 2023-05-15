@@ -122,9 +122,9 @@ implements Serializable {
             @Override public void run() {
                 try {
                     MyProgressBar pb = new MyProgressBar(false);
-                    runBtn.setEnabled(false);
                     runBtn.setForeground(Color.BLACK);
                     dataBtn.setEnabled(false);
+                    runBtn.setEnabled(false);
                     MySequentialGraphVars.outputDir = MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "elements" + MySequentialGraphSysUtil.getDirectorySlash();
                     MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getDefaultVariableTable().isTimeVariableOn();
                     MySequentialGraphVars.app.getSequentialGraphMsgBroker().categorize();
