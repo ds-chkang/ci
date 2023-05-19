@@ -1,4 +1,4 @@
-package medousa.sequential.graph.analysis;
+package medousa.sequential.graph.funnel;
 
 import medousa.MyProgressBar;
 import medousa.sequential.graph.MyNode;
@@ -22,7 +22,7 @@ implements GraphMouseListener {
         new Thread(new Runnable() {
             @Override public void run() {
                 if (o != null && SwingUtilities.isLeftMouseButton(e)) {
-                    MyProgressBar pb = new MyProgressBar(false);
+                    //MyProgressBar pb = new MyProgressBar(false);
                     graphViewer.analysisGraphApp.nodeOptionComboBoxMenu.removeActionListener(graphViewer.analysisGraphApp);
                     graphViewer.analysisGraphApp.nodeOptionComboBoxMenu.setSelectedIndex(0);
                     graphViewer.analysisGraphApp.nodeOptionComboBoxMenu.addActionListener(graphViewer.analysisGraphApp);
@@ -35,16 +35,10 @@ implements GraphMouseListener {
 
                     selectedNode = (MyNode)o;
                     graphViewer.mouseClickedLocation = e.getLocationOnScreen();
-                    if (graphViewer.selectedNodEdgeValueBarChart == null) {
-                        graphViewer.selectedNodEdgeValueBarChart = new MyAnalysisGraphSelectedNodeEdgeValueBarChart(graphViewer);
-                    }
-
-                    graphViewer.selectedNodEdgeValueBarChart.setEdgeValueBarChartForSelectedNode();
-                    graphViewer.add(graphViewer.selectedNodEdgeValueBarChart);
                     graphViewer.revalidate();
                     graphViewer.repaint();
-                    pb.updateValue(100, 100);
-                    pb.dispose();
+                    //pb.updateValue(100, 100);
+                    //pb.dispose();
                 } else if (o != null && SwingUtilities.isRightMouseButton(e)) {
                     MyAnalysisGraphNodeMenu funnelNodeMenu = new MyAnalysisGraphNodeMenu(graphViewer, ((MyNode)o));
                     funnelNodeMenu.show(graphViewer, e.getX(), e.getY());

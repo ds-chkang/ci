@@ -1,4 +1,4 @@
-package medousa.sequential.graph.analysis;
+package medousa.sequential.graph.funnel;
 
 import medousa.sequential.graph.MyEdge;
 import medousa.sequential.utils.MyMathUtil;

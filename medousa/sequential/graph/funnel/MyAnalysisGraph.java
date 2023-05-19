@@ -1,4 +1,4 @@
-package medousa.sequential.graph.analysis;
+package medousa.sequential.graph.funnel;
 
 import edu.uci.ics.jung.graph.util.EdgeType;
 import medousa.sequential.graph.layout.MyDirectedSparseMultigraph;

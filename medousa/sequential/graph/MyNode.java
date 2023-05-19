@@ -40,6 +40,9 @@ implements Serializable, Cloneable, Comparable<MyNode> {
     public int endPositionNodeCount;
     public int startPositionNodeCount;
 
+    public float shortestOutDistance;
+    public float shortestInDistance;
+
     public int nodeRecurrentCount;
     public float avgRecurrenceLength;
     public long totalRecurrenceTime;

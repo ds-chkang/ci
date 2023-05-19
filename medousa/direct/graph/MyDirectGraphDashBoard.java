@@ -209,7 +209,7 @@ implements ActionListener {
 
                                 int i = 0;
                                 for (String n : valueMap.keySet()) {
-                                    ((MyDirectNode) MyDirectGraphVars.directGraph.vRefs.get(n)).setCurrentValue(valueMap.get(n));
+                                    (MyDirectGraphVars.directGraph.vRefs.get(n)).setCurrentValue(valueMap.get(n));
                                     ((DefaultTableModel) destTable.getModel()).addRow(new String[]{"" + (++i), n, MyDirectGraphMathUtil.getCommaSeperatedNumber(valueMap.get(n))});
                                 }
 
@@ -514,7 +514,9 @@ implements ActionListener {
             destTablePanel.add(distanceMenu, BorderLayout.NORTH);
 
             if (maxNodeVal > 0) {
-                MyDirectGraphVars.directGraph.maxNodeValue = maxNodeVal;}
+                MyDirectGraphVars.directGraph.maxNodeValue = maxNodeVal;
+            }
+
             destTablePanel.add(distanceMenu, BorderLayout.NORTH);
             MyDirectGraphVars.getDirectGraphViewer().vc.removeBarCharts();
             MyDirectGraphVars.getDirectGraphViewer().nodesByShortestDistanceBarChart = new MyDirectGraphNodesByShortestDistanceBarChart(visitedNodes);

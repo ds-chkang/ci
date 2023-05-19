@@ -1,4 +1,4 @@
-package medousa.sequential.graph.analysis;
+package medousa.sequential.graph.funnel;
 
 import medousa.sequential.graph.MyEdge;
 import medousa.sequential.graph.MyNode;
@@ -29,8 +29,7 @@ implements Serializable {
     protected MyAnalysisGraphApp analysisGraphApp;
     protected float MAX_EDGE_VALUE = 0f;
     protected float MAX_NODE_VALUE = 0f;
-    protected float MAX_EDGE_SIZE = 26f;
-    protected float MAX_NODE_SIZE = 40f;
+    protected float MAX_NODE_SIZE = 46f;
     protected Point mouseClickedLocation;
     protected MyAnalysisGraphSelectedNodeEdgeValueBarChart selectedNodEdgeValueBarChart;
 
@@ -66,14 +65,14 @@ implements Serializable {
 			this.getRenderContext().setVertexFontTransformer(new Transformer<MyNode, Font>() {
                 @Override public synchronized Font transform(MyNode n) {
                     if (n.getContribution() == 0) {return new Font("Noto Sans", Font.PLAIN, 0);
-                    } else {return new Font("Noto Sans", Font.BOLD, 26);}
+                    } else {return new Font("Noto Sans", Font.BOLD, 30);}
                 }
             });
 
             this.getRenderContext().setEdgeFontTransformer(new Transformer<MyEdge, Font>() {
                 @Override public synchronized Font transform(MyEdge e) {
                     if (e.getContribution() == 0) {return new Font("Noto Sans", Font.PLAIN, 0);
-                    } else {return new Font("Noto Sans", Font.BOLD, 28);}
+                    } else {return new Font("Noto Sans", Font.BOLD, 30);}
                 }
             });
             this.scale();

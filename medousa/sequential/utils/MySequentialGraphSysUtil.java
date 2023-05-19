@@ -285,31 +285,6 @@ public class MySequentialGraphSysUtil {
         return System.getProperty("user.dir");
     }
 
-
-    public static int getUnWeightedBetweenNodeShortestPathLength(MyNode source, MyNode dest){
-        MyProgressBar pb = new MyProgressBar(false);
-        Queue<MyNode> Qu =  new LinkedList<>();
-        Set<MyNode> visited = new HashSet();
-        Map<MyNode, Integer> found =  new HashMap();
-
-        Qu.add(source);
-        found.put(source, 0);
-        while (!Qu.isEmpty()) {
-            MyNode vertex = Qu.remove();
-            Collection<MyNode> successors = MySequentialGraphVars.g.getSuccessors(vertex);
-            for (MyNode neighbor : successors) {
-                if (!found.keySet().contains(neighbor) && !visited.contains(neighbor)) {
-                    found.put(neighbor, found.get(vertex) + 1);
-                    Qu.add(neighbor);
-                }
-            }
-            visited.add(vertex);
-        }
-        pb.updateValue(100, 100);
-        pb.dispose();
-        return (found.containsKey(dest) ? found.get(dest) : 0);
-    }
-
     public static void setAverageShortestDistance(MyGraph<MyNode, MyEdge> g) {
         StringBuilder b =  new StringBuilder();
         long gTotalL = 0L;

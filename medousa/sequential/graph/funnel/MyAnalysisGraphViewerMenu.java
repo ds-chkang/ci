@@ -1,4 +1,4 @@
-package medousa.sequential.graph.analysis;
+package medousa.sequential.graph.funnel;
 
 import medousa.MyProgressBar;
 import medousa.message.MyMessageUtil;

@@ -1140,16 +1140,212 @@ public class MyNodeUtil {
         return (float) Math.sqrt(sum/numNodes);
     }
 
+    public static int getMaximumInNodeCount() {
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        int max = 0;
+        for (MyNode n : nodes) {
+            if (n.getCurrentValue() == 0) continue;
+            int value = MySequentialGraphVars.g.getPredecessorCount(n);
+            if (value > max) {
+                max = value;
+            }
+        }
+        return max;
+    }
+
+    public static int getMinimumInNodeCount() {
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        int min = 1000000000;
+        for (MyNode n : nodes) {
+            if (n.getCurrentValue() == 0) continue;
+            int value = MySequentialGraphVars.g.getPredecessorCount(n);
+            if (value > 0 && value < min) {
+                min = value;
+            }
+        }
+        return (min == 1000000000 ? 0 : min);
+    }
+
+    public static float getInNodeCountStandardDeviation() {
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        double sum = 0.00d;
+        int count = 0;
+        for (MyNode n : nodes) {
+            if (n.getCurrentValue() == 0 || MySequentialGraphVars.g.getPredecessorCount(n) == 0) {continue;}
+            count++;
+            sum += MySequentialGraphVars.g.getPredecessorCount(n);
+        }
+        double mean = sum/count;
+
+        sum = 0;
+        for(MyNode n : nodes) {
+            int value = MySequentialGraphVars.g.getPredecessorCount(n);
+            if (value == 0) continue;
+            sum += Math.pow(value-mean, 2);
+        }
+        return (float) Math.sqrt(sum/count);
+    }
+
+    public static float getAverageInNodeCount() {
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        float sum = 0.00f;
+        int count = 0;
+        for (MyNode n : nodes) {
+            if (n.getCurrentValue() == 0 || MySequentialGraphVars.g.getSuccessorCount(n) == 0) {continue;}
+            count++;
+            sum += MySequentialGraphVars.g.getPredecessorCount(n);
+        }
+        return (count == 0 ? 0.00f : sum/count);
+    }
+
+    public static int getMaximumOutNodeCount() {
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        int max = 0;
+        for (MyNode n : nodes) {
+            if (n.getCurrentValue() == 0) continue;
+            int value = MySequentialGraphVars.g.getSuccessorCount(n);
+            if (value > max) {
+                max = value;
+            }
+        }
+        return max;
+    }
+
+    public static int getMinimumOutNodeCount() {
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        int min = 1000000000;
+        for (MyNode n : nodes) {
+            if (n.getCurrentValue() == 0) continue;
+            int value = MySequentialGraphVars.g.getSuccessorCount(n);
+            if (value > 0 && value < min) {
+                min = value;
+            }
+        }
+        return (min == 1000000000 ? 0 : min);
+    }
+
+    public static float getOutNodeCountStandardDeviation() {
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        double sum = 0.00d;
+        int count = 0;
+        for (MyNode n : nodes) {
+            if (n.getCurrentValue() == 0 || MySequentialGraphVars.g.getSuccessorCount(n) == 0) {continue;}
+            count++;
+            sum += MySequentialGraphVars.g.getSuccessorCount(n);
+        }
+        double mean = sum/count;
+
+        sum = 0;
+        for(MyNode n : nodes) {
+            int value = MySequentialGraphVars.g.getSuccessorCount(n);
+            if (value == 0) continue;
+            sum += Math.pow(value-mean, 2);
+        }
+        return (float) Math.sqrt(sum/count);
+    }
+
+    public static int getMaximumInContribution() {
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        int max = 0;
+        for (MyNode n : nodes) {
+            if (n.getCurrentValue() == 0) continue;
+            int value = n.getInContribution();
+            if (value > max) {
+                max = value;
+            }
+        }
+        return max;
+    }
+
+    public static int getMinimumInContribution() {
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        int min = 1000000000;
+        for (MyNode n : nodes) {
+            if (n.getCurrentValue() == 0) continue;
+            int value = n.getInContribution();
+            if (value > 0 && value < min) {
+                min = value;
+            }
+        }
+        return (min == 1000000000 ? 0 : min);
+    }
+
+    public static float getInContributionStandardDeviation() {
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        double sum = 0.00d;
+        int count = 0;
+        for (MyNode n : nodes) {
+            if (n.getCurrentValue() == 0 || n.getInContribution() == 0) {continue;}
+            count++;
+            sum += n.getInContribution();
+        }
+        double mean = sum/count;
+
+        sum = 0;
+        for(MyNode n : nodes) {
+            int value = n.getInContribution();
+            if (value == 0) continue;
+            sum += Math.pow(value-mean, 2);
+        }
+        return (float) Math.sqrt(sum/count);
+    }
+
+    public static int getMaximumOutContribution() {
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        int max = 0;
+        for (MyNode n : nodes) {
+            if (n.getCurrentValue() == 0) continue;
+            int value = n.getOutContribution();
+            if (value > max) {
+                max = value;
+            }
+        }
+        return max;
+    }
+
+    public static int getMinimumOutContribution() {
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        int min = 1000000000;
+        for (MyNode n : nodes) {
+            if (n.getCurrentValue() == 0) continue;
+            int value = n.getOutContribution();
+            if (value > 0 && value < min) {
+                min = value;
+            }
+        }
+        return (min == 1000000000 ? 0 : min);
+    }
+
+    public static float getOutContributionStandardDeviation() {
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        double sum = 0.00d;
+        int count = 0;
+        for (MyNode n : nodes) {
+            if (n.getCurrentValue() == 0 || n.getOutContribution() == 0) {continue;}
+            count++;
+            sum += n.getOutContribution();
+        }
+        double mean = sum/count;
+
+        sum = 0;
+        for(MyNode n : nodes) {
+            int value = n.getOutContribution();
+            if (value == 0) continue;
+            sum += Math.pow(value-mean, 2);
+        }
+        return (float) Math.sqrt(sum/count);
+    }
+
     public static long getMinUnreachableNodeCount() {
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
         long min = 10000000000L;
         for (MyNode n : nodes) {
-            if (n.getCurrentValue() == 0) continue;;
-            if (n.getUnreachableNodeCount() < min) {
+            if (n.getCurrentValue() == 0) continue;
+            if (n.getUnreachableNodeCount() > 0 && n.getUnreachableNodeCount() < min) {
                 min = n.getUnreachableNodeCount();
             }
         }
-        return min;
+        return (min == 1000000000 ? 0 : min);
     }
 
 

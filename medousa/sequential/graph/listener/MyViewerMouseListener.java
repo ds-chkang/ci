@@ -1,5 +1,6 @@
 package medousa.sequential.graph.listener;
 
+import medousa.direct.utils.MyDirectGraphVars;
 import medousa.sequential.graph.MyNode;
 import medousa.sequential.graph.MySequentialGraphViewer;
 import medousa.sequential.graph.menu.MyDepthNodeMenu;
@@ -38,7 +39,8 @@ implements MouseListener {
                         if (!MySequentialGraphVars.getSequentialGraphViewer().isClustered) {
                             if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null ||
                                 MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null ||
-                                MySequentialGraphVars.getSequentialGraphViewer().excluded) {
+                                MySequentialGraphVars.getSequentialGraphViewer().excluded ||
+                                MySequentialGraphVars.getSequentialGraphViewer().vc.tableTabbedPane.getSelectedIndex() == 2) {
                                 MyViewerControlComponentUtil.setDefaultViewerLook();
                             }
                         } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() > 0 ||

@@ -465,6 +465,7 @@ public class MyViewerControlComponentUtil {
             MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelSelecter.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
             MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodeNeighborNodeTypeSelector.setVisible(false);
             MySequentialGraphVars.getSequentialGraphViewer().vc.depthNeighborNodeTypeSelector.setVisible(false);
+            MySequentialGraphVars.getSequentialGraphViewer().vc.tableTabbedPane.setSelectedIndex(0);
 
             pb.updateValue(80, 100);
             MySequentialGraphVars.sequentialGraphDashBoard.setGraphLevelDashBoard();
@@ -474,8 +475,8 @@ public class MyViewerControlComponentUtil {
             MySequentialGraphVars.getSequentialGraphViewer().vc.currentNodeListTable.clearSelection();
             MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.clearSelection();
             MySequentialGraphVars.getSequentialGraphViewer().vc.edgeListTable.clearSelection();
-            MySequentialGraphVars.getSequentialGraphViewer().vc.pathFromTable.clearSelection();
-            MySequentialGraphVars.getSequentialGraphViewer().vc.pathToTable.clearSelection();
+//            MySequentialGraphVars.getSequentialGraphViewer().vc.pathSourceTable.clearSelection();
+//            MySequentialGraphVars.getSequentialGraphViewer().vc.pathDestTable.clearSelection();
 
             MyNodeUtil.setDefaultValuesToNodes();
             MyEdgeUtil.setDefaultValuesToEdges();
@@ -488,7 +489,9 @@ public class MyViewerControlComponentUtil {
             MyViewerControlComponentUtil.removeEdgeValueBarChartFromViewer();
             MySequentialGraphVars.getSequentialGraphViewer().getRenderContext().setEdgeDrawPaintTransformer(MySequentialGraphVars.getSequentialGraphViewer().edgeColor);
 
-            MySequentialGraphVars.getSequentialGraphViewer().vc.graphRemovalPanel.setVisible(true);
+            if (MySequentialGraphVars.getSequentialGraphViewer().vc.graphRemovalPanel != null) {
+                MySequentialGraphVars.getSequentialGraphViewer().vc.graphRemovalPanel.setVisible(true);
+            }
             MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.setVisible(true);
             MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecterLabel.setVisible(true);
 
@@ -569,8 +572,8 @@ public class MyViewerControlComponentUtil {
             MySequentialGraphVars.getSequentialGraphViewer().vc.currentNodeListTable.clearSelection();
             MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.clearSelection();
             MySequentialGraphVars.getSequentialGraphViewer().vc.edgeListTable.clearSelection();
-            MySequentialGraphVars.getSequentialGraphViewer().vc.pathFromTable.clearSelection();
-            MySequentialGraphVars.getSequentialGraphViewer().vc.pathToTable.clearSelection();
+            MySequentialGraphVars.getSequentialGraphViewer().vc.pathSourceTable.clearSelection();
+            MySequentialGraphVars.getSequentialGraphViewer().vc.pathDestTable.clearSelection();
 
             MyNodeUtil.setClusteringDefaultValuesToNodes();
             MyEdgeUtil.setClusteringDefaultValuesToEdges();
@@ -602,39 +605,60 @@ public class MyViewerControlComponentUtil {
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"I. S.", MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.g.getIsolatedNodeCount())});
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"EDGES", MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.g.getGraphEdgeCount())});
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"DIAMETER", MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.diameter)});
+
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"AVG. U. N.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getAverageUnreachableNodeCount()))});
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"MAX. U. N.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getMaxUnreachableNodeCount())});
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"MIN. U. N.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getMinUnreachableNodeCount())});
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"STD. U. N.", MyMathUtil.twoDecimalFormat(MyNodeUtil.getUnreachableNodeCountStandardDeviation())});
+
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"R. N.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getRedNodeCount()) + "[" + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getRedNodePercent()*100)) + "]"});
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"B. N.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getBlueNodeCount()) + "[" + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getBlueNodePercent()*100)) + "]"});
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"G. N.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getGreenNodeCount()) + "[" + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getGreenNodePercent()*100)) + "]"});
+
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"AVG. N. V.", MySequentialGraphSysUtil.formatAverageValue(MyNodeUtil.getAverageNodeValue())});
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"MAX. N. V.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getMaximumNodeValue()))});
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"MIN. N. V.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getMinimumNodeValue()))});
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"STD. N. V.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getNodeValueStandardDeviation()))});
-        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"AVG. IN-N.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getAveragePredecessorCount()))});
-        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"AVG. OUT.N.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getAverageSuccessorCount()))});
+
+        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"MAX. IN-N.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getMaximumInNodeCount())});
+        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"MIN. IN-N.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getMinimumInNodeCount())});
+        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"AVG. IN-N.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getAverageInNodeCount()))});
+        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"STD. IN-N.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getInNodeCountStandardDeviation()))});
+
+        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"MAX. OUT-N.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getMaximumOutNodeCount())});
+        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"MIN. OUT-N.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getMinimumOutNodeCount())});
+        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"AVG. OUT-N.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getAverageSuccessorCount()))});
+        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"STD. OUT.N.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getOutNodeCountStandardDeviation()))});
+
+        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"MAX. IN-C.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getMaximumInContribution())});
+        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"MIN. IN-C.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getMinimumInContribution())});
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"AVG. IN-C.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getAverageInContribution()))});
+        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"STD. IN-C.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getInContributionStandardDeviation()))});
+
+        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"MAX. OUT-C.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getMaximumOutContribution())});
+        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"MIN. OUT-C.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getMinimumOutContribution())});
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"AVG. OUT-C.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getAverageOutContribution()))});
+        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"STD. OUT-C.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getOutContributionStandardDeviation()))});
+
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"AVG. UNIQ. N. C.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getAverageUniqueContribution()))});
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"MIN. UNIQ. N. C.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getMaximumUniqueContribution()))});
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"MAX. UNIQ. N. C.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getMinimumUniqueContribution()))});
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"STD. UNIQ. N. C.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getUniqueContributionStandardDeviation()))});
+
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"AVG. UNIQ. E. C.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getAverageUniqueContribution()))});
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"MAX. UNIQ. E. C.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getMaximumUniqueContribution()))});
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"MIN. UNIQ. E. C.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getMinimumUniqueContribution()))});
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"STD. UNIQ. E. C.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getUniqueContributionStandardDeviation()))});
 
         // Edge stats.
-        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"AVG. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getAverageEdgeValue()))});
+        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"AVG. E. V.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getAverageEdgeValue()))});
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"MAX. E. V.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getMaximumEdgeValue()))});
-        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"MIN. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getMinimumEdgeValue()))});
-        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"STD. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getEdgeValueStandardDeviation()))});
+        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"MIN. E. V.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getMinimumEdgeValue()))});
+        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"STD. E. V.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getEdgeValueStandardDeviation()))});
 
         // Avg. shortest distance.
-        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"AVG. SHORT. D.:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MySequentialGraphSysUtil.getAverageShortestDistance()))});
-        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"NO. OF GRAPHS:", MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.numberOfGraphs)});
+        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"AVG. SHORT. D.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MySequentialGraphSysUtil.getAverageShortestDistance()))});
+        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"NO. OF GRAPHS", MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.numberOfGraphs)});
 
         dm.fireTableDataChanged();
         MySequentialGraphVars.getSequentialGraphViewer().revalidate();

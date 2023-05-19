@@ -126,7 +126,7 @@ implements Serializable {
         btnPanel.add(runPanel, BorderLayout.WEST);
         btnPanel.add(headerDataPanel, BorderLayout.EAST);
 
-        this.tablePanel.add(btnPanel, BorderLayout.SOUTH);
+       // this.tablePanel.add(btnPanel, BorderLayout.SOUTH);
 
     }
 
@@ -165,7 +165,7 @@ implements Serializable {
                                 MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
                                 MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.setSelectedIndex(1); // DEFAULT VALUE.
                                 MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-                                MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
+                                //MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
 
                                 pb.updateValue(80, 100);
                                 MySequentialGraphVars.app.getSequentialGraphDashboard().setDashboard();
@@ -212,8 +212,7 @@ implements Serializable {
                 this.dataBtn.setBackground(Color.WHITE);
                 //MySequentialGraphVars.app.getToolBar().runBtn.setEnabled(true);
                 this.runBtn.setEnabled(true);
-                this.runBtn.setBackground(Color.RED);
-                this.runBtn.setForeground(Color.WHITE);
+                this.runBtn.setBackground(Color.GREEN);
             } else {MyMessageUtil.showErrorMsg("Failed to load data file!");}
             this.dataBtn.setEnabled(true);
         } catch (Exception ex) {ex.printStackTrace();}

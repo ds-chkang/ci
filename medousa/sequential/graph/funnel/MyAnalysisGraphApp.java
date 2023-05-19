@@ -1,7 +1,8 @@
-package medousa.sequential.graph.analysis;
+package medousa.sequential.graph.funnel;
 
 import medousa.MyProgressBar;
 import medousa.message.MyMessageUtil;
+import medousa.sequential.graph.MyGraph;
 import medousa.sequential.graph.layout.MyStaticLayout;
 import medousa.sequential.graph.MyEdge;
 import medousa.sequential.graph.MyNode;
@@ -21,8 +22,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
-import java.util.Collection;
-import java.util.LinkedHashMap;
+import java.util.*;
+import java.util.List;
 
 public class MyAnalysisGraphApp
 extends JFrame
@@ -35,7 +36,6 @@ implements ActionListener, WindowListener {
     private DefaultTableModel model;
     private JTextField searchTxt = new JTextField();
     protected JComboBox nodeOptionComboBoxMenu = new JComboBox();
-    private JComboBox depthOptionComboBox = new JComboBox();
     protected JComboBox edgeValueComboBoxMenu = new JComboBox();
     protected JComboBox nodeValueComboBoxMenu = new JComboBox();
     protected JCheckBox nodeValueCheckBoxMenu = new JCheckBox("N. V.");
@@ -46,7 +46,7 @@ implements ActionListener, WindowListener {
     protected JLabel statisticLabel = new JLabel("");
 
     public MyAnalysisGraphApp() {
-        super("GRAPH EXPLORER");
+        super("FUNNEL EXPLORER");
         this.decorate();
     }
 
@@ -63,8 +63,8 @@ implements ActionListener, WindowListener {
         viewerSplitPane.setDividerLocation((int) (MySequentialGraphSysUtil.getViewerHeight()*0.835));
         viewerSplitPane.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent evt) {
-                viewerSplitPane.setDividerSize(5);
-                viewerSplitPane.setDividerLocation((int) (getWidth()*0.835));
+            viewerSplitPane.setDividerSize(5);
+            viewerSplitPane.setDividerLocation((int) (getWidth()*0.835));
             }
         });
         this.getContentPane().add(viewerSplitPane, BorderLayout.CENTER);
@@ -87,7 +87,7 @@ implements ActionListener, WindowListener {
         this.addBtn = new JButton("ADD");
         this.addBtn.setBackground(Color.WHITE);
         this.addBtn.setFocusable(false);
-        this.addBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.addBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.addBtn.addActionListener(this);
         this.addBtn.setEnabled(false);
         addPanel.add(this.searchTxt, BorderLayout.CENTER);
@@ -161,10 +161,10 @@ implements ActionListener, WindowListener {
 
         this.nodeOptionComboBoxMenu.setFocusable(false);
         this.nodeOptionComboBoxMenu.setBackground(Color.WHITE);
-        this.nodeOptionComboBoxMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.nodeOptionComboBoxMenu.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.nodeOptionComboBoxMenu.addItem("");
         this.nodeOptionComboBoxMenu.addItem("NODES");
-        this.nodeOptionComboBoxMenu.addItem("PREDECESSORS");
+        //this.nodeOptionComboBoxMenu.addItem("PREDECESSORS");
         this.nodeOptionComboBoxMenu.addItem("SUCCESSORS");
         this.nodeOptionComboBoxMenu.setSelectedIndex(0);
         this.nodeOptionComboBoxMenu.addActionListener(this);
@@ -180,7 +180,7 @@ implements ActionListener, WindowListener {
         topRightPanel.add(this.nodeOptionComboBoxMenu);
 
         this.nodeValueCheckBoxMenu.setBackground(Color.WHITE);
-        this.nodeValueCheckBoxMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.nodeValueCheckBoxMenu.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.nodeValueCheckBoxMenu.setFocusable(false);
         this.nodeValueCheckBoxMenu.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
@@ -190,18 +190,14 @@ implements ActionListener, WindowListener {
                             if (nodeNameCheckBoxMenu.isSelected()) {
                                 graphViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyNode, String>() {
                                     @Override public String transform(MyNode n) {
-                                        String inCont = "IN-C.: " + MyMathUtil.getCommaSeperatedNumber(n.getInContribution());
-                                        String outCont = "OUT-C.: " + MyMathUtil.getCommaSeperatedNumber(n.getOutContribution());
-                                        return MySequentialGraphSysUtil.getDecodedNodeName(n.getName()) + "[" +
-                                                inCont + "  " + outCont + "] ";
+                                        String cont = MyMathUtil.getCommaSeperatedNumber(n.getContribution());
+                                        return MySequentialGraphSysUtil.getDecodedNodeName(n.getName()) + "[" + cont + "] ";
                                     }
                                 });
                             } else {
                                 graphViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyNode, String>() {
                                     @Override public String transform(MyNode n) {
-                                        String inCont = "IN-C.: " + MyMathUtil.getCommaSeperatedNumber(n.getInContribution());
-                                        String outCont = "OUT-C.: " + MyMathUtil.getCommaSeperatedNumber(n.getOutContribution());
-                                        return inCont + "  " + outCont;
+                                        return MyMathUtil.getCommaSeperatedNumber(n.getContribution());
                                     }
                                 });
                             }
@@ -228,7 +224,7 @@ implements ActionListener, WindowListener {
         });
 
         this.nodeNameCheckBoxMenu.setBackground(Color.WHITE);
-        this.nodeNameCheckBoxMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.nodeNameCheckBoxMenu.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.nodeNameCheckBoxMenu.setFocusable(false);
         this.nodeNameCheckBoxMenu.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
@@ -274,7 +270,7 @@ implements ActionListener, WindowListener {
         });
 
         this.edgeValueCheckBoxMenu.setBackground(Color.WHITE);
-        this.edgeValueCheckBoxMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.edgeValueCheckBoxMenu.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.edgeValueCheckBoxMenu.setFocusable(false);
         this.edgeValueCheckBoxMenu.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
@@ -289,8 +285,8 @@ implements ActionListener, WindowListener {
 
                             graphViewer.getRenderContext().setEdgeLabelTransformer(new Transformer<MyEdge, String>() {
                                 @Override public String transform(MyEdge e) {
-                                    String edgeContributionRatio = MyMathUtil.twoDecimalFormat(((double) e.getContribution() / e.getSource().getOutContribution()) * 100) + "%";
-                                    return MyMathUtil.getCommaSeperatedNumber(e.getContribution()) + " / " + MyMathUtil.getCommaSeperatedNumber(e.getSource().getOutContribution()) + " = " + edgeContributionRatio + " ";
+                                    String edgeContributionRatio = MyMathUtil.twoDecimalFormat(((double) e.getContribution() / e.getSource().getContribution()) * 100) + "%";
+                                    return MyMathUtil.getCommaSeperatedNumber(e.getContribution()) + " / " + e.getSource().getContribution() + " = " + edgeContributionRatio + " ";
                                 }
                             });
 
@@ -313,7 +309,7 @@ implements ActionListener, WindowListener {
         topLeftPanel.setLayout(new FlowLayout(FlowLayout.LEFT,3,3));
 
         this.nodeWeightCheckBoxMenu.setBackground(Color.WHITE);
-        this.nodeWeightCheckBoxMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.nodeWeightCheckBoxMenu.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.nodeWeightCheckBoxMenu.setFocusable(false);
         this.nodeWeightCheckBoxMenu.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
@@ -350,7 +346,7 @@ implements ActionListener, WindowListener {
 
         this.edgeWeightCheckBoxMenu.setBackground(Color.WHITE);
         this.edgeWeightCheckBoxMenu.setFocusable(false);
-        this.edgeWeightCheckBoxMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.edgeWeightCheckBoxMenu.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.edgeWeightCheckBoxMenu.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 new Thread(new Runnable() {
@@ -391,7 +387,7 @@ implements ActionListener, WindowListener {
         bottomPanel.setLayout(new BorderLayout(3,3));
 
         this.statisticLabel.setBackground(Color.WHITE);
-        this.statisticLabel.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.statisticLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.statisticLabel.setHorizontalAlignment(JLabel.RIGHT);
 
         JPanel bottomLeftPanel = new JPanel();
@@ -431,7 +427,7 @@ implements ActionListener, WindowListener {
         this.table.getTableHeader().setBackground(new Color(0,0,0,0));
         Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
         this.table.setCursor(cursor);
-        this.table.setRowHeight(23);
+        this.table.setRowHeight(25);
         this.table.setFocusable(false);
         this.table.setBackground(Color.WHITE);
         this.table.setSelectionBackground(Color.LIGHT_GRAY);
@@ -444,24 +440,23 @@ implements ActionListener, WindowListener {
             }
         });
         this.table.getColumnModel().getColumn(0).setPreferredWidth(45);
-        this.table.getColumnModel().getColumn(0).setMaxWidth(55);
         this.table.getColumnModel().getColumn(1).setPreferredWidth(100);
-        this.table.getColumnModel().getColumn(2).setPreferredWidth(45);
+        this.table.getColumnModel().getColumn(2).setPreferredWidth(50);
         this.table.getColumnModel().getColumn(2).setMaxWidth(60);
         TableRowSorter sorter = MyTableUtil.setJTableRowSorterWithTextField(this.model, this.searchTxt);
         this.searchTxt.setPreferredSize(new Dimension(100, 20));
         this.searchTxt.setBorder(BorderFactory.createEtchedBorder());
-        this.searchTxt.setFont(MySequentialGraphVars.f_bold_11);
+        this.searchTxt.setFont(MySequentialGraphVars.f_bold_12);
         this.table.setRowSorter(sorter);
-        //this.loadNodes(new MyProgressBar(false));
         JScrollPane tableScrollPane = new JScrollPane(this.table);
         tableScrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(9, 0));
         tableScrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 9));
-        tableScrollPane.setBackground(Color.WHITE);
         return tableScrollPane;
     }
 
-    private void loadNodes(MyProgressBar pb) {
+
+    private void loadNodes() {
+        MyProgressBar pb = new MyProgressBar(false);
         try {
             int cnt = 0;
             Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
@@ -471,38 +466,33 @@ implements ActionListener, WindowListener {
             }
 
             sortedNodes = MySequentialGraphSysUtil.sortMapByLongValue(sortedNodes);
-            double work = (double) 50 / nodes.size();
-            double totalWork = 0;
             for (String n : sortedNodes.keySet()) {
                 this.model.addRow(
                     new String[]{
-                            String.valueOf(++cnt),
-                            MySequentialGraphSysUtil.decodeNodeName(n),
-                            MyMathUtil.getCommaSeperatedNumber(((MyNode) MySequentialGraphVars.g.vRefs.get(n)).getContribution())});
-                totalWork += work;
-                pb.updateValue((int) totalWork, nodes.size());
+                        String.valueOf(++cnt),
+                        MySequentialGraphSysUtil.getNodeName(n),
+                        MyMathUtil.getCommaSeperatedNumber(((MyNode) MySequentialGraphVars.g.vRefs.get(n)).getContribution())});
             }
 
             pb.updateValue(100, 100);
             pb.dispose();
-        } catch (Exception ex) {}
-    }
-
-    private void removeTableRecords(MyProgressBar pb) {
-        int cnt = 0;
-        int totalRecord = this.table.getRowCount();
-
-        for (int i=this.table.getRowCount()-1; i >= 0; i--) {
-            this.model.removeRow(i);
-            pb.updateValue(++cnt, totalRecord);
+        } catch (Exception ex) {
+            pb.updateValue(100, 100);
+            pb.dispose();
+            ex.printStackTrace();
         }
-
-        this.table.revalidate();
-        this.table.repaint();
-        pb.updateValue(50, 100);
     }
 
-    private void loadPredecessors(MyProgressBar pb) {
+    private void removeTableRecords() {
+        int row = this.table.getRowCount();
+        while (row > 0) {
+            ((DefaultTableModel)this.table.getModel()).removeRow(row-1);
+            row = this.table.getRowCount();
+        }
+    }
+
+    private void loadPredecessors() {
+        MyProgressBar pb = new MyProgressBar(false);
         try {
             int cnt = 0;
             LinkedHashMap<String, Long> sortedNodes = new LinkedHashMap<>();
@@ -525,212 +515,238 @@ implements ActionListener, WindowListener {
             sortedNodes = MySequentialGraphSysUtil.sortMapByLongValue(sortedNodes);
             pb.updateValue(75, 100);
             for (String n : sortedNodes.keySet()) {
-                this.model.addRow(new String[]{String.valueOf(++cnt), MySequentialGraphSysUtil.decodeNodeName(n), MyMathUtil.getCommaSeperatedNumber(sortedNodes.get(n))});
+                this.model.addRow(new String[]{String.valueOf(++cnt), MySequentialGraphSysUtil.getNodeName(n), MyMathUtil.getCommaSeperatedNumber(sortedNodes.get(n))});
             }
 
             pb.updateValue(100, 100);
             pb.dispose();
-        } catch (Exception ex) {}
+        } catch (Exception ex) {
+            pb.updateValue(100, 100);
+            pb.dispose();
+            ex.printStackTrace();
+        }
     }
 
-    private void loadSuccessors(MyProgressBar pb) {
+    private void loadSuccessors() {
+        MyProgressBar pb = new MyProgressBar(false);
         try {
-            int cnt = 0;
-            LinkedHashMap<String, Long> sortedNodes = new LinkedHashMap<>();
-            Collection<MyEdge> originalGraphOutEdges = MySequentialGraphVars.g.getOutEdges(MySequentialGraphVars.g.vRefs.get(graphViewer.graphMouseListener.selectedNode.getName()));
-            Collection<MyEdge> analysisGraphOutEdges = graph.getOutEdges(graphViewer.graphMouseListener.selectedNode);
-            for (MyEdge oe : originalGraphOutEdges) {
-                boolean alreadExists = false;
-                for (MyEdge ae : analysisGraphOutEdges) {
-                    if (oe.getSource().getName().equals(ae.getSource().getName()) && oe.getDest().getName().equals(ae.getDest().getName())) {
-                        alreadExists = true;
-                        break;
+            Set<String> pathSet = new HashSet<>();
+            MyAnalysisGraphSuccessorPathExtractor successorPathExtractor =
+                new MyAnalysisGraphSuccessorPathExtractor(graph, graphViewer.graphMouseListener.selectedNode);
+            Collection<MyNode> nodes = graph.getVertices();
+            for (MyNode n : nodes) {
+                if (graph.getPredecessorCount(n) == 0) {
+                    for (List<MyNode> path : successorPathExtractor.run(n)) {
+                        String pathStr = "";
+                        for (MyNode pn : path) {
+                            if (pathStr.length() == 0) {
+                                pathStr = pn.getName();
+                            } else {
+                                pathStr = pathStr + "-" + pn.getName();
+                            }
+                        }
+                        pathSet.add(pathStr);
                     }
-                }
-
-                if (!alreadExists) {
-                    sortedNodes.put(oe.getDest().getName(), (long) oe.getContribution());
                 }
             }
 
-            sortedNodes = MySequentialGraphSysUtil.sortMapByLongValue(sortedNodes);
-            pb.updateValue(75, 100);
-            for (String n : sortedNodes.keySet()) {
-                this.model.addRow(new String[]{String.valueOf(++cnt), MySequentialGraphSysUtil.decodeNodeName(n), MyMathUtil.getCommaSeperatedNumber(sortedNodes.get(n))});
+            MySuccessorScanManager successorScanManager = new MySuccessorScanManager(pathSet);
+            successorScanManager.run();
+            LinkedHashMap<String, Long> successors = new LinkedHashMap<>(successorScanManager.getSuccessors());
+            successors = MySequentialGraphSysUtil.sortMapByLongValue(successors);
+
+            if (successors.size() == 0) {
+                pb.updateValue(100, 100);
+                pb.dispose();
+                nodeOptionComboBoxMenu.removeActionListener(graphViewer.analysisGraphApp);
+                nodeOptionComboBoxMenu.setSelectedIndex(0);
+                nodeOptionComboBoxMenu.addActionListener(graphViewer.analysisGraphApp);
+                MyMessageUtil.showInfoMsg(graphViewer.analysisGraphApp, "No successors exist.");
+                return;
+            }
+
+            int cnt = 0;
+            for (String n : successors.keySet()) {
+                if (graph.vRefs.containsKey(n)) continue;
+                model.addRow(new String[]{"" + (++cnt),
+                    MySequentialGraphSysUtil.getNodeName(n),
+                    MyMathUtil.getCommaSeperatedNumber(successors.get(n))
+                });
             }
 
             pb.updateValue(100, 100);
             pb.dispose();
-        } catch (Exception ex) {}
+        } catch (Exception ex) {
+            pb.updateValue(100, 100);
+            pb.dispose();
+            ex.printStackTrace();
+        }
     }
 
     @Override public void actionPerformed(ActionEvent e) {
         final MyAnalysisGraphApp plusNetworkAnalyzer = this;
-        try {
-            new Thread(new Runnable() {
-                @Override public void run() {
-                    try {
-                        if (e.getSource() == addBtn) {
-                            if (graphViewer.graphMouseListener.selectedNode == null && nodeOptionComboBoxMenu.getSelectedIndex() > 1) {
-                                MyMessageUtil.showInfoMsg(plusNetworkAnalyzer, "Select a node, first.");
-                                nodeOptionComboBoxMenu.removeActionListener(plusNetworkAnalyzer);
-                                nodeOptionComboBoxMenu.setSelectedIndex(0);
-                                nodeOptionComboBoxMenu.addActionListener(plusNetworkAnalyzer);
-                            } else if (graphViewer.graphMouseListener.selectedNode != null && nodeOptionComboBoxMenu.getSelectedIndex() < 2) {
-                                MyMessageUtil.showInfoMsg(plusNetworkAnalyzer, "Select a predecessor or successor.");
-                                nodeOptionComboBoxMenu.removeActionListener(plusNetworkAnalyzer);
-                                nodeOptionComboBoxMenu.setSelectedIndex(0);
-                                nodeOptionComboBoxMenu.addActionListener(plusNetworkAnalyzer);
-                            }  else {
-                                addNodeToGraph();
-                                graphViewer.setEdgeContributionValue();
-                               // networkViewer.graphMouseListener.selectedNode = null;
-                            }
+        new Thread(new Runnable() {
+            @Override public void run() {
+                try {
+                    if (e.getSource() == addBtn) {
+                        if (graphViewer.graphMouseListener.selectedNode == null && nodeOptionComboBoxMenu.getSelectedIndex() > 1) {
+                            MyMessageUtil.showInfoMsg(plusNetworkAnalyzer, "Select a node, first.");
                             nodeOptionComboBoxMenu.removeActionListener(plusNetworkAnalyzer);
                             nodeOptionComboBoxMenu.setSelectedIndex(0);
                             nodeOptionComboBoxMenu.addActionListener(plusNetworkAnalyzer);
-                        } else if (e.getSource() == nodeOptionComboBoxMenu) {
-                            if (graph.getVertexCount() == 0 && graphViewer.graphMouseListener.selectedNode == null  && nodeOptionComboBoxMenu.getSelectedIndex() > 1) {
-                                MyMessageUtil.showInfoMsg(plusNetworkAnalyzer, "Add a node to the graph.");
-                                nodeOptionComboBoxMenu.removeActionListener(plusNetworkAnalyzer);
-                                nodeOptionComboBoxMenu.setSelectedIndex(0);
-                                nodeOptionComboBoxMenu.addActionListener(plusNetworkAnalyzer);
-                            } else if (graphViewer.graphMouseListener.selectedNode != null && nodeOptionComboBoxMenu.getSelectedIndex() < 2) {
-                                MyMessageUtil.showInfoMsg(plusNetworkAnalyzer, "Select a predecessor or successor.");
-                                nodeOptionComboBoxMenu.removeActionListener(plusNetworkAnalyzer);
-                                nodeOptionComboBoxMenu.setSelectedIndex(0);
-                                nodeOptionComboBoxMenu.addActionListener(plusNetworkAnalyzer);
-                            } if (graphViewer.graphMouseListener.selectedNode == null && nodeOptionComboBoxMenu.getSelectedIndex() > 1) {
-                                MyMessageUtil.showInfoMsg(plusNetworkAnalyzer, "Select a node, first.");
-                            } else if (nodeOptionComboBoxMenu.getSelectedItem().toString().contains("NODE")) {
-                                MyProgressBar pb = new MyProgressBar(false);
-                                removeTableRecords(pb);
-                                loadNodes(pb);
-                            } else if (nodeOptionComboBoxMenu.getSelectedItem().toString().contains("PREDECESSOR")) {
-                                MyProgressBar pb = new MyProgressBar(false);
-                                removeTableRecords(pb);
-                                loadPredecessors(pb);
-                            } else if (nodeOptionComboBoxMenu.getSelectedItem().toString().contains("SUCCESSOR")) {
-                                MyProgressBar pb = new MyProgressBar(false);
-                                removeTableRecords(pb);
-                                loadSuccessors(pb);
-                            } else {
-                                addBtn.setEnabled(false);
-                            }
+                        }/** else if (graphViewer.graphMouseListener.selectedNode != null && nodeOptionComboBoxMenu.getSelectedIndex() < 2) {
+                            MyMessageUtil.showInfoMsg(plusNetworkAnalyzer, "Select a predecessor or successor.");
+                            nodeOptionComboBoxMenu.removeActionListener(plusNetworkAnalyzer);
+                            nodeOptionComboBoxMenu.setSelectedIndex(0);
+                            nodeOptionComboBoxMenu.addActionListener(plusNetworkAnalyzer);
+                        }*/ else {
+                            addNodeToGraph();
                         }
-                    } catch (Exception ex) {}
+                        nodeOptionComboBoxMenu.removeActionListener(plusNetworkAnalyzer);
+                        nodeOptionComboBoxMenu.setSelectedIndex(0);
+                        nodeOptionComboBoxMenu.addActionListener(plusNetworkAnalyzer);
+
+                    } else if (e.getSource() == nodeOptionComboBoxMenu) {
+                        if (graph.getVertexCount() == 0 && graphViewer.graphMouseListener.selectedNode == null && nodeOptionComboBoxMenu.getSelectedIndex() > 1) {
+                            MyMessageUtil.showInfoMsg(plusNetworkAnalyzer, "Add a node to the graph.");
+                            nodeOptionComboBoxMenu.removeActionListener(plusNetworkAnalyzer);
+                            nodeOptionComboBoxMenu.setSelectedIndex(0);
+                            nodeOptionComboBoxMenu.addActionListener(plusNetworkAnalyzer);
+                        } else if (graphViewer.graphMouseListener.selectedNode != null && nodeOptionComboBoxMenu.getSelectedIndex() < 2) {
+                            MyMessageUtil.showInfoMsg(plusNetworkAnalyzer, "Select a predecessor or successor.");
+                            nodeOptionComboBoxMenu.removeActionListener(plusNetworkAnalyzer);
+                            nodeOptionComboBoxMenu.setSelectedIndex(0);
+                            nodeOptionComboBoxMenu.addActionListener(plusNetworkAnalyzer);
+                        }
+
+                        if (graphViewer.graphMouseListener.selectedNode == null && nodeOptionComboBoxMenu.getSelectedIndex() > 1) {
+                            MyMessageUtil.showInfoMsg(plusNetworkAnalyzer, "Select a node, first.");
+                        } else if (nodeOptionComboBoxMenu.getSelectedItem().toString().contains("NODE")) {
+                            removeTableRecords();
+                            loadNodes();
+                        }/** else if (nodeOptionComboBoxMenu.getSelectedItem().toString().contains("PREDECESSOR")) {
+                            removeTableRecords();
+                            loadPredecessors();
+                        }*/ else if (nodeOptionComboBoxMenu.getSelectedItem().toString().contains("SUCCESSOR")) {
+                            removeTableRecords();
+                            loadSuccessors();
+                        } else {
+                            addBtn.setEnabled(false);
+                        }
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
-            }).start();
-        } catch (Exception ex) {ex.printStackTrace();}
+            }
+        }).start();
     }
 
     protected void addNodeToGraph() {
-        String tableNodeName = this.table.getValueAt(table.getSelectedRow(), 1).toString();
-        MyNode n = ((MyNode) MySequentialGraphVars.g.vRefs.get(MySequentialGraphVars.nodeNameMap.get(tableNodeName)));
-        if (this.graph.vRefs.containsKey(n.getName())) {
-            if (nodeOptionComboBoxMenu.getSelectedIndex() <= 1) {
-                MyMessageUtil.showInfoMsg(this, "The selected node already exists in the graph.");
-                return;
-            } else if (nodeOptionComboBoxMenu.getSelectedItem().toString().contains("SUCCESSOR")) {
-                String edge = graphViewer.graphMouseListener.selectedNode.getName() + "-" + n.getName();
-                if (!this.graph.edRefs.contains(edge)) {
-                    Collection<MyEdge> outEdges = MySequentialGraphVars.g.getOutEdges(graphViewer.graphMouseListener.selectedNode);
-                    for (MyEdge e : outEdges) {
-                        if (e.getDest() == n) {
-                            this.graph.addEdge(e, graphViewer.graphMouseListener.selectedNode, n);
-                            this.graph.edRefs.add(edge);
-                            break;
-                        }
-                    }
-                } else {
-                    String selectedNodeName = (graphViewer.graphMouseListener.selectedNode.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(graphViewer.graphMouseListener.selectedNode.getName()) : MySequentialGraphSysUtil.getDecodedNodeName(graphViewer.graphMouseListener.selectedNode.getName()));
-                    MyMessageUtil.showInfoMsg(this, "An edge between " + selectedNodeName + " and " + n.getName() + " already exists.");
-                }
-            }
-        } else if (this.nodeOptionComboBoxMenu.getSelectedItem().toString().contains("NODE")) {
-            this.graph.vRefs.put(n.getName(), n);
-            if (graphViewer.mouseClickedLocation != null) {
-                graphViewer.getGraphLayout().setLocation(n, new Point2D.Double(graphViewer.mouseClickedLocation.getX()+150, graphViewer.mouseClickedLocation.getY()));
-                this.graph.addVertex(n);
-            } else {
-                graphViewer.getGraphLayout().setLocation(n, new Point2D.Double(getWidth()/2, getHeight()/2));
-                this.graph.addVertex(n);
-            }
-            graphViewer.mouseClickedLocation = null;
-
-            if (graphViewer.MAX_NODE_VALUE < n.getContribution()) {
-                graphViewer.MAX_NODE_VALUE = n.getContribution();
-            }
-        } else if (nodeOptionComboBoxMenu.getSelectedItem().toString().contains("PREDECESSOR")) {
-            this.graph.vRefs.put(n.getName(), n);
-            if (graphViewer.mouseClickedLocation != null) {
-                graphViewer.getGraphLayout().setLocation(n, new Point2D.Double(graphViewer.mouseClickedLocation.getX()+100, graphViewer.mouseClickedLocation.getY()+150));
-                this.graph.addVertex(n);
-            } else {
-                graphViewer.getGraphLayout().setLocation(n, new Point2D.Double(getWidth()/2, getHeight()/2));
-                this.graph.addVertex(n);
-            }
-            graphViewer.mouseClickedLocation = null;
-
-            if (graphViewer.MAX_NODE_VALUE < n.getContribution()) {
-                graphViewer.MAX_NODE_VALUE = n.getContribution();
-            }
-
-            Collection<MyEdge> inEdges = MySequentialGraphVars.g.getInEdges(this.graphViewer.graphMouseListener.selectedNode);
-            for (MyEdge e : inEdges) {
-                if (n.getName().equals(e.getSource().getName()) && e.getDest().getName().equals(graphViewer.graphMouseListener.selectedNode.getName())) {
-                    this.graph.addEdge(e, n, graphViewer.graphMouseListener.selectedNode);
-                    this.graph.edRefs.add(e.getSource().getName() + "-" + e.getDest().getName());
-                    if (this.graphViewer.MAX_EDGE_VALUE < e.getContribution()) {
-                        this.graphViewer.MAX_EDGE_VALUE = e.getContribution();
-                    }
-                    break;
-                }
-            }
-        } else if (this.nodeOptionComboBoxMenu.getSelectedItem().toString().contains("SUCCESSOR")) {
-            this.graph.vRefs.put(n.getName(), n);
-            if (graphViewer.mouseClickedLocation != null) {
-                graphViewer.getGraphLayout().setLocation(n, new Point2D.Double(graphViewer.mouseClickedLocation.getX()+800, graphViewer.mouseClickedLocation.getY()+150));
-                this.graph.addVertex(n);
-            } else {
-                graphViewer.getGraphLayout().setLocation(n, new Point2D.Double(getWidth()/2, getHeight()/2));
-                this.graph.addVertex(n);
-            }
-            graphViewer.mouseClickedLocation = null;
-            if (graphViewer.MAX_NODE_VALUE < n.getContribution()) {
-                graphViewer.MAX_NODE_VALUE = n.getContribution();
-            }
-
-            String userSelectedEdgeName = graphViewer.graphMouseListener.selectedNode.getName() + "-" + n.getName();
-            if (!this.graph.edRefs.contains(userSelectedEdgeName)) {
-                Collection<MyEdge> outEdges = MySequentialGraphVars.g.getOutEdges(graphViewer.graphMouseListener.selectedNode);
-                for (MyEdge e : outEdges) {
-                    String exEdName = e.getSource().getName() + "-" + e.getDest().getName();
-                    if (exEdName.equals(userSelectedEdgeName)) {
+        try {
+            String nodeName = this.table.getValueAt(table.getSelectedRow(), 1).toString();
+            String contribution = this.table.getValueAt(table.getSelectedRow(), 2).toString();
+            System.out.println(contribution);
+            MyNode n = new MyNode(MySequentialGraphVars.nodeNameMap.get(nodeName));
+            n.contribution = Long.parseLong(contribution);
+            if (this.graph.vRefs.containsKey(n.getName())) {
+                if (nodeOptionComboBoxMenu.getSelectedItem().toString().contains("SUCCESSOR")) {
+                    String edge = graphViewer.graphMouseListener.selectedNode.getName() + "-" + n.getName();
+                    if (!this.graph.edRefs.contains(edge)) {
+                        MyEdge e = new MyEdge(0, graphViewer.graphMouseListener.selectedNode, n);
                         this.graph.addEdge(e, graphViewer.graphMouseListener.selectedNode, n);
-                        this.graph.edRefs.add(userSelectedEdgeName);
+                        this.graph.edRefs.add(edge);
+                    } else {
+                        String selectedNodeName = (graphViewer.graphMouseListener.selectedNode.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(graphViewer.graphMouseListener.selectedNode.getName()) : MySequentialGraphSysUtil.getDecodedNodeName(graphViewer.graphMouseListener.selectedNode.getName()));
+                        MyMessageUtil.showInfoMsg(this, "An edge between " + MySequentialGraphSysUtil.getNodeName(selectedNodeName) + " and " + MySequentialGraphSysUtil.getNodeName(n.getName()) + " already exists.");
+                    }
+                }
+            } else if (this.nodeOptionComboBoxMenu.getSelectedItem().toString().contains("NODE")) {
+                this.graph.vRefs.put(n.getName(), n);
+                if (graphViewer.mouseClickedLocation != null) {
+                    graphViewer.getGraphLayout().setLocation(n,
+                        new Point2D.Double(graphViewer.mouseClickedLocation.getX()+150, graphViewer.mouseClickedLocation.getY()));
+                    this.graph.addVertex(n);
+                } else {
+                    graphViewer.getGraphLayout().setLocation(n,
+                        new Point2D.Double(getWidth()/2, getHeight()/2));
+                    this.graph.addVertex(n);
+                }
+                graphViewer.mouseClickedLocation = null;
+
+                if (graphViewer.MAX_NODE_VALUE < n.getContribution()) {
+                    graphViewer.MAX_NODE_VALUE = n.getContribution();
+                }
+            }
+            /** else if (nodeOptionComboBoxMenu.getSelectedItem().toString().contains("PREDECESSOR")) {
+                this.graph.vRefs.put(n.getName(), n);
+                if (graphViewer.mouseClickedLocation != null) {
+                    graphViewer.getGraphLayout().setLocation(n, new Point2D.Double(graphViewer.mouseClickedLocation.getX()+100, graphViewer.mouseClickedLocation.getY()+150));
+                    this.graph.addVertex(n);
+                } else {
+                    graphViewer.getGraphLayout().setLocation(n, new Point2D.Double(getWidth()/2, getHeight()/2));
+                    this.graph.addVertex(n);
+                }
+                graphViewer.mouseClickedLocation = null;
+
+                if (graphViewer.MAX_NODE_VALUE < n.getContribution()) {
+                    graphViewer.MAX_NODE_VALUE = n.getContribution();
+                }
+
+                Collection<MyEdge> inEdges = MySequentialGraphVars.g.getInEdges(this.graphViewer.graphMouseListener.selectedNode);
+                for (MyEdge e : inEdges) {
+                    if (n.getName().equals(e.getSource().getName()) && e.getDest().getName().equals(graphViewer.graphMouseListener.selectedNode.getName())) {
+                        this.graph.addEdge(e, n, graphViewer.graphMouseListener.selectedNode);
+                        this.graph.edRefs.add(e.getSource().getName() + "-" + e.getDest().getName());
                         if (this.graphViewer.MAX_EDGE_VALUE < e.getContribution()) {
                             this.graphViewer.MAX_EDGE_VALUE = e.getContribution();
                         }
                         break;
                     }
                 }
+            }*/
+            else if (this.nodeOptionComboBoxMenu.getSelectedItem().toString().contains("SUCCESSOR")) {
+                this.graph.vRefs.put(n.getName(), n);
+                if (graphViewer.mouseClickedLocation != null) {
+                    graphViewer.getGraphLayout().setLocation(n, new Point2D.Double(graphViewer.mouseClickedLocation.getX() + 800, graphViewer.mouseClickedLocation.getY() + 150));
+                    graphViewer.mouseClickedLocation = null;
+                } else {
+                    graphViewer.getGraphLayout().setLocation(n, new Point2D.Double(getWidth() / 2, getHeight() / 2));
+                }
+
+                this.graph.addVertex(n);
+
+                if (graphViewer.MAX_NODE_VALUE < n.getContribution()) {
+                    graphViewer.MAX_NODE_VALUE = n.getContribution();
+                }
+
+                String edgeName = graphViewer.graphMouseListener.selectedNode.getName() + "-" + n.getName();
+                if (!this.graph.edRefs.contains(edgeName)) {
+                    MyEdge e = new MyEdge((int) n.getContribution(), graphViewer.graphMouseListener.selectedNode, n);
+                    this.graph.addEdge(e, graphViewer.graphMouseListener.selectedNode, n);
+                    this.graph.edRefs.add(edgeName);
+                    if (this.graphViewer.MAX_EDGE_VALUE < e.getContribution()) {
+                        this.graphViewer.MAX_EDGE_VALUE = e.getContribution();
+                    }
+                }
             }
-        }
 
-        int row = table.getRowCount();
-        while (row > 0) {
-            ((DefaultTableModel) table.getModel()).removeRow(row-1);
-            row = table.getRowCount();
-        }
+            int row = table.getRowCount();
+            while (row > 0) {
+                ((DefaultTableModel) table.getModel()).removeRow(row-1);
+                row = table.getRowCount();
+            }
 
-        String statTxt = "N.: " + MyMathUtil.getCommaSeperatedNumber(graph.getVertexCount()) + "   " +
-                         "E.: " + MyMathUtil.getCommaSeperatedNumber(graph.getEdgeCount()) + "   " +
-                         "MAX. N. V.: " + MyMathUtil.twoDecimalFormat(graphViewer.MAX_NODE_VALUE) + "   " +
-                         "MAX. E. V.: " + MyMathUtil.twoDecimalFormat(graphViewer.MAX_EDGE_VALUE);
-        this.statisticLabel.setText(statTxt);
-        this.graphViewer.revalidate();
-        this.graphViewer.repaint();
+            String statTxt = "N.: " + MyMathUtil.getCommaSeperatedNumber(graph.getVertexCount()) + "   " +
+                             "E.: " + MyMathUtil.getCommaSeperatedNumber(graph.getEdgeCount()) + "   " +
+                             "MAX. N. V.: " + MyMathUtil.twoDecimalFormat(graphViewer.MAX_NODE_VALUE) + "   " +
+                             "MAX. E. V.: " + MyMathUtil.twoDecimalFormat(graphViewer.MAX_EDGE_VALUE);
+
+            this.statisticLabel.setText(statTxt);
+            this.graphViewer.revalidate();
+            this.graphViewer.repaint();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override public void windowOpened(WindowEvent e) {dispose();}

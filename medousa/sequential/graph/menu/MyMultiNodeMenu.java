@@ -44,7 +44,6 @@ implements ActionListener {
         this.add(new JSeparator());
         this.setMenuItem(null, this.nodeFont);
         this.setMenuItem(null, this.edgeFont);
-        this.add(new JSeparator());
         this.download.setEnabled(false);
     }
 

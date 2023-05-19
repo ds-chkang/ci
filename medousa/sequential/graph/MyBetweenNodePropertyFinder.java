@@ -22,7 +22,6 @@ extends JFrame {
     JTextField destTxt = new JTextField();
     JButton showBtn = new JButton(" SHOW ");
     JButton searchNodeBtn = new JButton("SEARCH NODE");
-    MyBetweenNodePropertyFinder btwFiner;
     private JLabel reachTimeValue = new JLabel();
     private JLabel occurrenceValue = new JLabel();
     private JLabel minReachTimeValue = new JLabel();

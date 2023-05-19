@@ -32,6 +32,7 @@ public class MySequentialGraphVars {
     public final static Font tahomaBoldFont12 = new Font("Tahoma", Font.BOLD, 12);
     public final static Font tahomaBoldFont10 = new Font("Tahoma", Font.BOLD, 10);
     public final static Font tahomaBoldFont11 = new Font("Tahoma", Font.BOLD, 11);
+    public final static Font tahomaBoldFont16 = new Font("Tahoma", Font.BOLD, 16);
     public final static Font tahomaBoldFont28 = new Font("Tahoma", Font.BOLD, 28);
     public final static Font tahomaPlainFont18 = new Font("Tahoma", Font.PLAIN, 18);
     public final static Font tahomaPlainFont16 = new Font("Tahoma", Font.PLAIN, 16);

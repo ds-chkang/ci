@@ -126,7 +126,7 @@ implements MyRelationExtractionJobCompleteListener {
         }
     }
 
-    private void waitForPrefixersToTerminate() {
+    public void waitForPrefixersToTerminate() {
         for (int i = 0; i < this.prefixers.length; i++) {
             try {if (this.prefixers[i].isAlive()) {this.prefixers[i].join();}}
             catch (Exception ex) {ex.printStackTrace();}

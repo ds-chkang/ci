@@ -1,13 +1,13 @@
 package medousa.sequential.graph;
 
 import medousa.MyProgressBar;
+import medousa.direct.utils.MyDirectGraphSysUtil;
 import medousa.message.MyMessageUtil;
 import medousa.sequential.graph.listener.MyEdgeLabelSelecterListener;
 import medousa.sequential.graph.listener.MyNodeLabelSelecterListener;
 import medousa.sequential.graph.stats.MyGrayCellRenderer;
 import medousa.sequential.graph.stats.barchart.MyClusteredGraphLevelEdgeValueBarChart;
 import medousa.sequential.graph.stats.barchart.MyClusteredGraphLevelNodeValueBarChart;
-import medousa.sequential.graph.path.MyDepthFirstGraphPathSercher;
 import medousa.sequential.graph.stats.MyTextStatistics;
 import medousa.sequential.graph.stats.barchart.MyGraphLevelEdgeValueBarChart;
 import medousa.sequential.graph.stats.barchart.MyGraphLevelNodeValueBarChart;
@@ -20,6 +20,8 @@ import medousa.table.MyTableUtil;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -120,6 +122,9 @@ implements ActionListener {
     public JPanel bottomLeftControlPanel =new JPanel();
     public JPanel bottomRightPanel = new JPanel();
     public JPanel bottomPanel = new JPanel();
+    public JComboBox distanceMenu = new JComboBox();
+    public MyNode startNode;
+
     public JButton excludeBtn;
     public MyTextStatistics vTxtStat = new MyTextStatistics();
     public JComboBox depthSelecter = new JComboBox();
@@ -155,13 +160,21 @@ implements ActionListener {
     public JLabel nodeValueSelecterLabel = new JLabel("  N. V.");
     public JSplitPane graphTableSplitPane = new JSplitPane();
     public JTabbedPane tableTabbedPane = new JTabbedPane();
-    public JTable pathFromTable;
-    public JTable pathToTable;
+    public JTable pathSourceTable;
+    public JTable pathDestTable;
     public JTable nodeListTable;
+
+
+    public JTable selectedNodeStatTable;
+    public JTable multiNodeStatTable;
     public JTable currentNodeListTable;
+    JComboBox shortestDistancePathMenu = new JComboBox();
+    JPanel pathSourceTablePanel;
+    JPanel pathDestTablePanel;
+    public boolean isTableUpdating;
+    public Set<MyNode> visitedNodes;
 
     public MyViewerComponentController() {}
-
 
     public void setNodeValueExcludeSymbolComboBox() {
         if (this.nodeValueExcludeSymbolSelecter != null) {
@@ -229,233 +242,682 @@ implements ActionListener {
         }
     }
 
-    private JPanel setPathFindTable() {
-        JPanel fromTablePanel = new JPanel();
-        fromTablePanel.setLayout(new BorderLayout(2, 0));
-        fromTablePanel.setBackground(Color.WHITE);
-
-        JComboBox pathMenu = new JComboBox();
-        pathMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
-        pathMenu.setFocusable(false);
-        pathMenu.addItem("SELECT");
-        pathMenu.addItem("PATH EXPLORATION");
-        pathMenu.addItem("SHORTEST REACH");
-
-        String [] fromColumns = {"NO.", "FROM NODE"};
-        String [][] fromData = {};
-        DefaultTableModel fromTableModel = new DefaultTableModel(fromData, fromColumns);
-        pathFromTable = new JTable(fromTableModel) {
-            public String getToolTipText(MouseEvent e) {
-                String tip = null;
-                Point p = e.getPoint();
-                int rowIndex = rowAtPoint(p);
-                int colIndex = columnAtPoint(p);
-                try {
-                    tip = getValueAt(rowIndex, colIndex).toString();
-                } catch (RuntimeException e1) {}
-                return tip;
-            }
-        };
-
-        String [] fromTableTooltips = {"NO.", "FROM NODE"};
-        MyTableToolTipper fromTableTooltipHeader = new MyTableToolTipper(this.pathFromTable.getColumnModel());
-        fromTableTooltipHeader.setToolTipStrings(fromTableTooltips);
-        this.pathFromTable.setTableHeader(fromTableTooltipHeader);
-
-        int i=-0;
-        for (String n : MySequentialGraphVars.nodeNameMap.keySet()) {
-            fromTableModel.addRow(new String[]{String.valueOf(++i), n});
+    private void setShortestOutDistancedNodes() {
+        if (isTableUpdating || pathSourceTable.getSelectedRow() == -1) return;
+        String fromTableNodeName = pathSourceTable.getValueAt(pathSourceTable.getSelectedRow(), 1).toString();
+        if (startNode != null && fromTableNodeName.equals(startNode.getName())) {return;}
+        if (shortestDistancePathMenu.getSelectedIndex() == 1) {
+            MyMessageUtil.showInfoMsg("Select a node in the destination node table.");
+            return;
         }
 
-        pathFromTable.setRowHeight(22);
-        pathFromTable.setBackground(Color.WHITE);
-        pathFromTable.setFont(MySequentialGraphVars.f_pln_10);
-        pathFromTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont10);
-        pathFromTable.getTableHeader().setOpaque(false);
-        pathFromTable.getTableHeader().setBackground(new Color(0,0,0,0f));
-        pathFromTable.getColumnModel().getColumn(0).setPreferredWidth(35);
-        pathFromTable.getColumnModel().getColumn(1).setPreferredWidth(130);
+        isTableUpdating = true;
+        MyProgressBar pb = new MyProgressBar(false);
+        try {
+            startNode = (MyNode) MySequentialGraphVars.g.vRefs.get(MySequentialGraphVars.nodeNameMap.get(fromTableNodeName));
+            Set<MyNode> topLevelSuccessors = new HashSet<>(MySequentialGraphVars.g.getSuccessors(startNode));
+            topLevelSuccessors.add(startNode);
+            double totalWork = 0D;
+            double work = 50/topLevelSuccessors.size();
+            Queue<MyNode> Qu = new LinkedList<>();
+            visitedNodes = new HashSet();
+            Qu.add(startNode);
+            Map<MyNode, Integer> distanceMap =  new HashMap();
 
-        JTextField fromNodeSearchTxt = new JTextField();
-        JButton fromNodeSelectBtn = new JButton();
-        fromNodeSearchTxt.setToolTipText("TYPE A NODE TO SEARCH");
-        fromNodeSearchTxt.setBackground(Color.WHITE);
+            int maxDistance = 0;
+            distanceMap.put(startNode, 0);
+            while (!Qu.isEmpty()) {
+                MyNode v = Qu.remove();
+                Collection<MyNode> successors = MySequentialGraphVars.g.getSuccessors(v);
+                for (MyNode neighbor : successors) {
+                    if (!visitedNodes.contains(neighbor)) {
+                        int distance = distanceMap.get(v) + 1;
+                        neighbor.shortestOutDistance = distance;
+                        if (distance > maxDistance) {
+                            maxDistance = distance;
+                        }
+                        distanceMap.put(neighbor, distance);
+                        Qu.add(neighbor);
+                    }
+                }
+                visitedNodes.add(v);
+                if (topLevelSuccessors.contains(v)) {
+                    totalWork += work;
+                    pb.updateValue((int) totalWork, 100);
+                }
+            }
 
-        fromNodeSearchTxt.setBorder(BorderFactory.createLoweredSoftBevelBorder());
-        JPanel fromSearchAndSavePanel = MyTableUtil.searchAndSaveDataPanelForJTable2(this, fromNodeSearchTxt, fromNodeSelectBtn, fromTableModel, pathFromTable);
-        fromNodeSelectBtn.setPreferredSize(new Dimension(40, 25));
-        fromNodeSelectBtn.removeActionListener(this);
-        fromNodeSelectBtn.removeActionListener(this);
-        fromSearchAndSavePanel.remove(fromNodeSelectBtn);
-        fromNodeSearchTxt.setFont(MySequentialGraphVars.f_bold_10);
+            while (pathDestTable.getRowCount() > 0) {
+                int row = pathDestTable.getRowCount() - 1;
+                ((DefaultTableModel) pathDestTable.getModel()).removeRow(row);
+            }
+            pb.updateValue(60, 100);
 
-        add(fromSearchAndSavePanel, BorderLayout.SOUTH);
-        pathFromTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        pathFromTable.setSelectionBackground(Color.LIGHT_GRAY);
-        pathFromTable.setForeground(Color.BLACK);
-        pathFromTable.setSelectionForeground(Color.BLACK);
-        pathFromTable.setFocusable(false);
-        pathFromTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        pathFromTable.setRowSorter(MyTableUtil.setJTableRowSorterWithTextField(fromTableModel, fromNodeSearchTxt));
+            LinkedHashMap<String, Long> valueMap = new LinkedHashMap<>();
+            float maxNodeVal = 0f;
+            TreeSet<Float> distances = new TreeSet<>();
+            Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+            for (MyNode n : nodes) {
+                if (visitedNodes.contains(n)) {
+                    if (n == startNode && visitedNodes.size() == 1) {
+                        n.setCurrentValue(0);
+                        continue;
+                    } else {
+                        distances.add(n.shortestOutDistance);
+                    }
+                    valueMap.put(n.getName(), (long) n.getCurrentValue());
+                } else {
+                    n.setCurrentValue(0);
+                }
+            }
+            valueMap = MySequentialGraphSysUtil.sortMapByLongValue(valueMap);
+            pb.updateValue(80, 100);
 
-        JScrollPane fromTableScrollPane = new JScrollPane(pathFromTable);
-        fromTableScrollPane.setOpaque(false);
-        fromTableScrollPane.setBackground(new Color(0,0,0,0f));
-        fromTableScrollPane.setPreferredSize(new Dimension(150, 500));
-        fromTableScrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(7, 0));
-        fromTableScrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 7));
-
-        fromTablePanel.add(fromTableScrollPane, BorderLayout.CENTER);
-        fromTablePanel.add(fromSearchAndSavePanel, BorderLayout.SOUTH);
-
-        JPanel toTablePanel = new JPanel();
-        toTablePanel.setLayout(new BorderLayout(2, 2));
-        toTablePanel.setBackground(Color.WHITE);
-
-        String [] toColumns = {"NO.", "TO NODE"};
-        String [][] toData = {};
-        DefaultTableModel toTableModel = new DefaultTableModel(toData, toColumns);
-        pathToTable = new JTable(toTableModel) {
-            //Implement table cell tool tips.
-            public String getToolTipText(MouseEvent e) {
-                String tip = null;
-                Point p = e.getPoint();
-                int rowIndex = rowAtPoint(p);
-                int colIndex = columnAtPoint(p);
-
-                try {
-                    tip = getValueAt(rowIndex, colIndex).toString();
-                } catch (RuntimeException e1) {
-                    //catch null pointer exception if mouse is over an empty line
+            int i=0;
+            if (visitedNodes.size() > 1) {
+                work = (double)40/ visitedNodes.size();
+                for (String n : valueMap.keySet()) {
+                    totalWork += (10 + work);
+                    ((DefaultTableModel) pathDestTable.getModel()).addRow(
+                            new String[]{"" + (++i),
+                                    MySequentialGraphSysUtil.getNodeName(n),
+                                    MyMathUtil.getCommaSeperatedNumber(valueMap.get(n))});
                 }
 
-                return tip;
+                for (float distance : distances) {
+                    if (distance > maxNodeVal) {
+                        maxNodeVal = distance;
+                    }
+                }
             }
-        };
 
-        String [] toTableTooltips = {"NO.", "TO NODE"};
-        MyTableToolTipper toTableTooltipHeader = new MyTableToolTipper(this.pathToTable.getColumnModel());
-        toTableTooltipHeader.setToolTipStrings(toTableTooltips);
-        this.pathToTable.setTableHeader(toTableTooltipHeader);
-
-        int ii=-0;
-        for (String n : MySequentialGraphVars.nodeNameMap.keySet()) {
-            toTableModel.addRow(new String[]{String.valueOf(++ii), n});
-        }
-
-        pathToTable.setRowHeight(22);
-        pathToTable.setBackground(Color.WHITE);
-        pathToTable.setFont(MySequentialGraphVars.f_pln_10);
-        pathToTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont10);
-        pathToTable.getTableHeader().setOpaque(false);
-        pathToTable.getTableHeader().setBackground(new Color(0,0,0,0f));
-        pathToTable.getColumnModel().getColumn(0).setPreferredWidth(35);
-        pathToTable.getColumnModel().getColumn(1).setPreferredWidth(130);
-
-        JTextField toNodeSearchTxt = new JTextField();
-        JButton runBtn = new JButton("RUN");
-        runBtn.setFocusable(false);
-        runBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
-
-        toNodeSearchTxt.setBackground(Color.WHITE);
-        toNodeSearchTxt.setFont(MySequentialGraphVars.f_bold_10);
-        toNodeSearchTxt.setToolTipText("TYPE A NODE NAME TO SEARCH");
-        toNodeSearchTxt.setBorder(BorderFactory.createLoweredSoftBevelBorder());
-        JPanel toSearchAndSavePanel = MyTableUtil.searchAndSaveDataPanelForJTable2(this, toNodeSearchTxt, runBtn, toTableModel, pathToTable);
-
-        runBtn.setPreferredSize(new Dimension(50, 25));
-        runBtn.removeActionListener(this);
-        runBtn.removeActionListener(this);
-        runBtn.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent e) {
-                new Thread(new Runnable() {
-                    @Override public void run() {
-                        if (pathMenu.getSelectedIndex() == 0) {
-                            MyMessageUtil.showInfoMsg(MySequentialGraphVars.app, "Select a path option.");
-                        } else if (pathMenu.getSelectedIndex() == 1) {
-                            if (pathFromTable.getSelectedRow() >= 0 && pathToTable.getSelectedRow() >= 0) {
-                                String fromTableNodeName = pathFromTable.getValueAt(pathFromTable.getSelectedRow(), 1).toString();
-                                String toTableNodeName = pathToTable.getValueAt(pathToTable.getSelectedRow(), 1).toString();
-                                String fromNode = MySequentialGraphVars.nodeNameMap.get(fromTableNodeName);
-                                String toNode = MySequentialGraphVars.nodeNameMap.get(toTableNodeName);
-                                if (fromNode.equals(toNode)) {
-                                    MyMessageUtil.showInfoMsg("Choose different nodes to find paths.");
-                                    return;
-                                }
-                                MyDepthFirstGraphPathSercher betweenPathGraphDepthFirstSearch = new MyDepthFirstGraphPathSercher();
-                                betweenPathGraphDepthFirstSearch.decorate();
-                                betweenPathGraphDepthFirstSearch.run(fromNode, toNode);
-                                if (betweenPathGraphDepthFirstSearch.integratedGraph.getVertexCount() == 0) {
-                                    betweenPathGraphDepthFirstSearch.dispose();
-                                    MyMessageUtil.showInfoMsg("There are no reachable paths between [" + fromTableNodeName + "] AND [" + toTableNodeName + "]");
-                                    return;
-                                }
-                                betweenPathGraphDepthFirstSearch.setAlwaysOnTop(true);
-                                betweenPathGraphDepthFirstSearch.revalidate();
-                                betweenPathGraphDepthFirstSearch.repaint();
-                                betweenPathGraphDepthFirstSearch.setVisible(true);
-                                betweenPathGraphDepthFirstSearch.setAlwaysOnTop(false);
-                            } else {
-                                MyMessageUtil.showInfoMsg(MySequentialGraphVars.app, "Two nodes are required for the operation.");
-                            }
-                        } else if (pathMenu.getSelectedIndex() == 2) {
-                            if (pathFromTable.getSelectedRow() >= 0 && pathToTable.getSelectedRow() >= 0) {
-                                String fromTableNodeName = pathFromTable.getValueAt(pathFromTable.getSelectedRow(), 1).toString();
-                                String toTableNodeName = pathToTable.getValueAt(pathToTable.getSelectedRow(), 1).toString();
-                                MyNode fromNode = (MyNode) MySequentialGraphVars.g.vRefs.get(MySequentialGraphVars.nodeNameMap.get(fromTableNodeName));
-                                MyNode toNode = (MyNode) MySequentialGraphVars.g.vRefs.get(MySequentialGraphVars.nodeNameMap.get(toTableNodeName));
-                                String shortestPathLength = MyMathUtil.getCommaSeperatedNumber(MySequentialGraphSysUtil.getUnWeightedBetweenNodeShortestPathLength(fromNode, toNode));
-                                try {
-                                    Thread.sleep(500);
-                                    if (shortestPathLength.equals("0")) {
-                                        MyMessageUtil.showInfoMsg(MySequentialGraphVars.app, "[" + toTableNodeName + "] is unreachable from [" + fromTableNodeName + "]");
-                                    } else {
-                                        MyMessageUtil.showInfoMsg(MySequentialGraphVars.app, "Shortest Path Length Between [" + fromTableNodeName + "] and [" + toTableNodeName + "] is " + shortestPathLength);
+            pathDestTablePanel.remove(distanceMenu);
+            distanceMenu = new JComboBox();
+            distanceMenu.setFocusable(false);
+            distanceMenu.setFont(MySequentialGraphVars.tahomaPlainFont10);
+            distanceMenu.addItem("DISTANCE");
+            for (float distance : distances) {
+                distanceMenu.addItem("" + (int) distance);
+            }
+            distanceMenu.addActionListener(new ActionListener() {
+                @Override public void actionPerformed(ActionEvent e) {
+                    new Thread(new Runnable() {
+                        @Override public void run() {
+                            if (distanceMenu.getSelectedIndex() > 0) {
+                                MyProgressBar pb = new MyProgressBar(false);
+                                Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+                                for (MyNode n : nodes) {
+                                    if (n.getCurrentValue() > 0) {
+                                        if (Integer.parseInt(distanceMenu.getSelectedItem().toString()) != n.shortestOutDistance) {
+                                            if (n.getCurrentValue() != 0) {
+                                                n.setOriginalValue(n.getCurrentValue());
+                                                n.setCurrentValue(0);
+                                            }
+                                        }
+                                    } else if (n.shortestOutDistance == Integer.parseInt(distanceMenu.getSelectedItem().toString()) && n.getCurrentValue() == 0) {
+                                        n.setCurrentValue(n.getOriginalValue());
                                     }
-                                } catch (Exception ex) {
-                                    ex.printStackTrace();
+
+                                    if (MySequentialGraphVars.g.MX_N_VAL < n.getCurrentValue()) {
+                                        MySequentialGraphVars.g.MX_N_VAL = n.getCurrentValue();
+                                    }
                                 }
-                            } else {
-                                MyMessageUtil.showInfoMsg(MySequentialGraphVars.app, "Two nodes are required for the operation.");
+
+                                while (pathDestTable.getRowCount() > 0) {
+                                    int row = pathDestTable.getRowCount() - 1;
+                                    ((DefaultTableModel) pathDestTable.getModel()).removeRow(row);
+                                }
+
+                                LinkedHashMap<String, Long> valueMap = new LinkedHashMap<>();
+                                for (MyNode n : nodes) {
+                                    if (n.getCurrentValue() > 0) {
+                                        valueMap.put(n.getName(), (long) n.getCurrentValue());
+                                    }
+                                }
+                                valueMap = MySequentialGraphSysUtil.sortMapByLongValue(valueMap);
+
+                                int i = 0;
+                                for (String n : valueMap.keySet()) {
+                                    ((MyNode) MySequentialGraphVars.g.vRefs.get(n)).setCurrentValue(valueMap.get(n));
+                                    ((DefaultTableModel) pathDestTable.getModel()).addRow(new String[]{
+                                            "" + (++i),
+                                            MySequentialGraphSysUtil.getNodeName(n),
+                                            MyMathUtil.getCommaSeperatedNumber(valueMap.get(n))});
+                                }
+
+                                updateTopLevelCharts();
+                                updateTableInfos();
+
+                                MySequentialGraphVars.getSequentialGraphViewer().revalidate();
+                                MySequentialGraphVars.getSequentialGraphViewer().repaint();
+
+                                pb.updateValue(100, 100);
+                                pb.dispose();
+                            } else if (distanceMenu.getSelectedIndex() == 0) {
+                                MyProgressBar pb = new MyProgressBar(false);
+                                Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+                                for (MyNode n : nodes) {
+                                    if (n.getCurrentValue() == 0) {
+                                        n.setCurrentValue(n.getOriginalValue());
+                                    }
+                                }
+
+                                while (pathDestTable.getRowCount() > 0) {
+                                    int row = pathDestTable.getRowCount() - 1;
+                                    ((DefaultTableModel) pathDestTable.getModel()).removeRow(row);
+                                }
+
+                                float maxValue = 0f;
+                                LinkedHashMap<String, Long> valueMap = new LinkedHashMap<>();
+                                for (MyNode n : nodes) {
+                                    valueMap.put(n.getName(), (long) n.getCurrentValue());
+                                    if (maxValue < n.getCurrentValue()) {
+                                        maxValue = n.getCurrentValue();
+                                    }
+                                }
+                                valueMap = MySequentialGraphSysUtil.sortMapByLongValue(valueMap);
+                                if (maxValue > 0) {
+                                    MySequentialGraphVars.g.MX_N_VAL = maxValue;
+                                }
+
+                                int i = 0;
+                                for (String n : valueMap.keySet()) {
+                                    ((MyNode) MySequentialGraphVars.g.vRefs.get(n)).setCurrentValue(valueMap.get(n));
+                                    ((DefaultTableModel) pathDestTable.getModel()).addRow(new String[]{
+                                            "" + (++i),
+                                            MySequentialGraphSysUtil.getNodeName(n),
+                                            MyMathUtil.getCommaSeperatedNumber(valueMap.get(n))});
+                                }
+
+                                updateTopLevelCharts();
+                                updateTableInfos();
+
+                                MySequentialGraphVars.getSequentialGraphViewer().revalidate();
+                                MySequentialGraphVars.getSequentialGraphViewer().repaint();
+
+                                pb.updateValue(100, 100);
+                                pb.dispose();
                             }
                         }
+                    }).start();
+                }
+            });
+
+            pathDestTablePanel.add(distanceMenu, BorderLayout.NORTH);
+            updateTopLevelCharts();
+            updateTableInfos();
+
+            MySequentialGraphVars.getSequentialGraphViewer().revalidate();
+            MySequentialGraphVars.getSequentialGraphViewer().repaint();
+            pb.updateValue(100, 100);
+            pb.dispose();
+            isTableUpdating = false;
+        } catch (Exception ex) {
+            pb.updateValue(100, 100);
+            pb.dispose();
+            ex.printStackTrace();
+        }
+    }
+
+    public void updateTopLevelCharts() {
+        MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelAverageValuesByDepthLineChart.decorate();
+        MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelUniqueNodesByDepthLineChart.setUniqueNodesByDepthLineChart();
+        MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelContributionByDepthLineChart.decorate();
+        MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelPredecessorSuccessorByDepthLineChart.setAllCharts();
+        MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelDurationByDepthLineChart.decorate();
+        MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelReachTimeByDepthLineChart.decorate();
+    }
+
+
+    private void setShortestInDistancedNodes() {
+        if (isTableUpdating || pathDestTable.getSelectedRow() == -1) return;
+        String fromTableNodeName = pathDestTable.getValueAt(pathDestTable.getSelectedRow(), 1).toString();
+        if (startNode != null && fromTableNodeName.equals(startNode.getName())) {return;}
+        if (shortestDistancePathMenu.getSelectedIndex() == 0) {
+            MyMessageUtil.showInfoMsg("Select a node in the source node table.");
+            return;
+        }
+
+        isTableUpdating = true;
+        MyProgressBar pb = new MyProgressBar(false);
+        try {
+            startNode = (MyNode) MySequentialGraphVars.g.vRefs.get(fromTableNodeName);
+            Set<MyNode> topLevelPredecessors = new HashSet<>(MySequentialGraphVars.g.getPredecessors(startNode));
+            topLevelPredecessors.add(startNode);
+            double totalWork = 0D;
+            double work = 50/topLevelPredecessors.size();
+            Queue<MyNode> Qu = new LinkedList<>();
+            visitedNodes = new HashSet();
+            Qu.add(startNode);
+            Map<MyNode, Integer> distanceMap =  new HashMap();
+
+            int maxDistance = 0;
+            distanceMap.put(startNode, 0);
+            while (!Qu.isEmpty()) {
+                MyNode successor = Qu.remove();
+                Collection<MyNode> predecessors = MySequentialGraphVars.g.getPredecessors(successor);
+                for (MyNode predecessor : predecessors) {
+                    if (!visitedNodes.contains(predecessor)) {
+                        int distance = distanceMap.get(successor) + 1;
+                        predecessor.shortestInDistance = distance;
+                        if (distance > maxDistance) {
+                            maxDistance = distance;
+                        }
+                        distanceMap.put(predecessor, distance);
+                        Qu.add(predecessor);
                     }
-                }).start();
+                }
+                visitedNodes.add(successor);
+                if (topLevelPredecessors.contains(successor)) {
+                    totalWork += work;
+                    pb.updateValue((int) totalWork, 100);
+                }
             }
-        });
 
-        add(toSearchAndSavePanel, BorderLayout.SOUTH);
-        pathToTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        pathToTable.setSelectionBackground(Color.LIGHT_GRAY);
-        pathToTable.setSelectionForeground(Color.BLACK);
-        pathToTable.setForeground(Color.BLACK);
-        pathToTable.setFocusable(false);
-        pathToTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        pathToTable.setRowSorter(MyTableUtil.setJTableRowSorterWithTextField(toTableModel, toNodeSearchTxt));
+            while (pathSourceTable.getRowCount() > 0) {
+                int row = pathSourceTable.getRowCount() - 1;
+                ((DefaultTableModel) pathSourceTable.getModel()).removeRow(row);
+            }
+            pb.updateValue(60, 100);
 
-        JScrollPane toTableScrollPane = new JScrollPane(pathToTable);
-        toTableScrollPane.setOpaque(false);
-        toTableScrollPane.setBackground(new Color(0,0,0,0f));
-        toTableScrollPane.setPreferredSize(new Dimension(150, 500));
-        toTableScrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(7, 0));
-        toTableScrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 7));
+            LinkedHashMap<String, Long> valueMap = new LinkedHashMap<>();
+            float maxNodeVal = 0f;
+            TreeSet<Float> distances = new TreeSet<>();
+            Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+            for (MyNode n : nodes) {
+                if (visitedNodes.contains(n)) {
+                    if (n == startNode && visitedNodes.size() == 1) {
+                        n.setCurrentValue(0);
+                        continue;
+                    } else {
+                        distances.add(n.shortestInDistance);
+                    }
+                    valueMap.put(n.getName(), (long) n.getCurrentValue());
+                } else {
+                    n.setCurrentValue(0);
+                }
+            }
+            valueMap = MySequentialGraphSysUtil.sortMapByLongValue(valueMap);
+            pb.updateValue(80, 100);
 
-        toTablePanel.add(toTableScrollPane, BorderLayout.CENTER);
-        toTablePanel.add(toSearchAndSavePanel, BorderLayout.SOUTH);
+            int i=0;
+            if (visitedNodes.size() > 1) {
+                work = (double)40/ visitedNodes.size();
+                for (String n : valueMap.keySet()) {
+                    totalWork += (10 + work);
+                    ((DefaultTableModel) pathSourceTable.getModel()).addRow(new String[]{
+                        "" + (++i),
+                        MySequentialGraphSysUtil.getNodeName(n),
+                        MyMathUtil.getCommaSeperatedNumber(valueMap.get(n))});
+                }
 
-        JPanel pathPanel = new JPanel();
-        pathPanel.setBackground(Color.WHITE);
-        pathPanel.setLayout(new BorderLayout(3,1));
+                for (float distance : distances) {
+                    if (distance > maxNodeVal) {
+                        maxNodeVal = distance;
+                    }
+                }
+            }
 
-        JPanel tablePanel = new JPanel();
-        tablePanel.setBackground(Color.WHITE);
-        tablePanel.setLayout(new GridLayout(2,1));
-        tablePanel.add(fromTablePanel);
-        tablePanel.add(toTablePanel);
+            pathDestTablePanel.remove(distanceMenu);
+            distanceMenu = new JComboBox();
+            distanceMenu.setFocusable(false);
+            distanceMenu.setFont(MySequentialGraphVars.tahomaPlainFont10);
+            distanceMenu.addItem("DISTANCE");
+            for (float distance : distances) {
+                distanceMenu.addItem("" + (int) distance);
+            }
+            distanceMenu.addActionListener(new ActionListener() {
+                @Override public void actionPerformed(ActionEvent e) {
+                    new Thread(new Runnable() {
+                        @Override public void run() {
+                            if (distanceMenu.getSelectedIndex() > 0) {
+                                MyProgressBar pb = new MyProgressBar(false);
+                                Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+                                for (MyNode n : nodes) {
+                                    if (n.getCurrentValue() > 0) {
+                                        if (Integer.parseInt(distanceMenu.getSelectedItem().toString()) != n.shortestInDistance) {
+                                            if (n.getCurrentValue() != 0) {
+                                                n.setOriginalValue(n.getCurrentValue());
+                                                n.setCurrentValue(0);
+                                            }
+                                        }
+                                    } else if (n.shortestInDistance == Integer.parseInt(distanceMenu.getSelectedItem().toString()) && n.getCurrentValue() == 0) {
+                                        n.setCurrentValue(n.getOriginalValue());
+                                    }
 
-        pathPanel.add(tablePanel, BorderLayout.CENTER);
-        pathPanel.add(pathMenu, BorderLayout.NORTH);
-        return pathPanel;
+                                    if (MySequentialGraphVars.g.MX_N_VAL < n.getCurrentValue()) {
+                                        MySequentialGraphVars.g.MX_N_VAL = n.getCurrentValue();
+                                    }
+                                }
+                                pb.updateValue(40, 100);
+
+                                while (pathSourceTable.getRowCount() > 0) {
+                                    int row = pathSourceTable.getRowCount() - 1;
+                                    ((DefaultTableModel) pathSourceTable.getModel()).removeRow(row);
+                                }
+                                pb.updateValue(70, 100);
+
+                                LinkedHashMap<String, Long> valueMap = new LinkedHashMap<>();
+                                for (MyNode n : nodes) {
+                                    if (n.getCurrentValue() > 0) {
+                                        valueMap.put(n.getName(), (long) n.getCurrentValue());
+                                    }
+                                }
+                                valueMap = MyDirectGraphSysUtil.sortMapByLongValue(valueMap);
+                                pb.updateValue(80, 100);
+
+                                int i = 0;
+                                for (String n : valueMap.keySet()) {
+                                    ((MyNode) MySequentialGraphVars.g.vRefs.get(n)).setCurrentValue(valueMap.get(n));
+                                    ((DefaultTableModel) pathSourceTable.getModel()).addRow(
+                                            new String[]{"" + (++i),
+                                                MySequentialGraphSysUtil.getNodeName(n),
+                                                MyMathUtil.getCommaSeperatedNumber(valueMap.get(n))
+                                            }
+                                    );
+                                }
+
+                                updateTopLevelCharts();
+                                updateTableInfos();
+
+                                MySequentialGraphVars.getSequentialGraphViewer().revalidate();
+                                MySequentialGraphVars.getSequentialGraphViewer().repaint();
+                                pb.updateValue(100, 100);
+                                pb.dispose();
+                            } else if (distanceMenu.getSelectedIndex() == 0) {
+                                Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+                                for (MyNode n : nodes) {
+                                    if (n.getCurrentValue() == 0) {
+                                        n.setCurrentValue(n.getOriginalValue());
+                                    }
+                                }
+
+                                while (pathSourceTable.getRowCount() > 0) {
+                                    int row = pathSourceTable.getRowCount() - 1;
+                                    ((DefaultTableModel) pathSourceTable.getModel()).removeRow(row);
+                                }
+
+                                float maxValue = 0f;
+                                LinkedHashMap<String, Long> valueMap = new LinkedHashMap<>();
+                                for (MyNode n : nodes) {
+                                    valueMap.put(n.getName(), (long) n.getCurrentValue());
+                                    if (maxValue < n.getCurrentValue()) {
+                                        maxValue = n.getCurrentValue();
+                                    }
+                                }
+                                valueMap = MySequentialGraphSysUtil.sortMapByLongValue(valueMap);
+                                if (maxValue > 0) {
+                                    MySequentialGraphVars.g.MX_N_VAL = maxValue;
+                                }
+
+                                int i=0;
+                                for (String n : valueMap.keySet()) {
+                                    ((MyNode) MySequentialGraphVars.g.vRefs.get(n)).setCurrentValue(valueMap.get(n));
+                                    ((DefaultTableModel) pathSourceTable.getModel()).addRow(
+                                        new String[]{"" + (++i),
+                                            MySequentialGraphSysUtil.getNodeName(n),
+                                            MyMathUtil.getCommaSeperatedNumber(valueMap.get(n))
+                                        }
+                                    );
+                                }
+                            }
+
+                            updateTopLevelCharts();
+                            updateTableInfos();
+
+                            MySequentialGraphVars.getSequentialGraphViewer().revalidate();
+                            MySequentialGraphVars.getSequentialGraphViewer().repaint();
+                            pb.updateValue(100, 100);
+                            pb.dispose();
+                        }
+                    }).start();
+                }
+            });
+            pathDestTablePanel.add(distanceMenu, BorderLayout.NORTH);
+
+            if (maxNodeVal > 0) {
+                MySequentialGraphVars.g.MX_N_VAL = maxNodeVal;
+            }
+            pathDestTablePanel.add(distanceMenu, BorderLayout.NORTH);
+
+            updateTopLevelCharts();
+            updateTableInfos();
+
+            MySequentialGraphVars.getSequentialGraphViewer().revalidate();
+            MySequentialGraphVars.getSequentialGraphViewer().repaint();
+            pb.updateValue(100, 100);
+            pb.dispose();
+            isTableUpdating = false;
+        } catch (Exception ex) {
+            pb.updateValue(100, 100);
+            pb.dispose();
+            ex.printStackTrace();
+        }
+    }
+
+    private JPanel setPathFindTable() {
+        try {
+            this.pathSourceTablePanel = new JPanel();
+            this.pathSourceTablePanel.setLayout(new BorderLayout(2, 0));
+            this.pathSourceTablePanel.setBackground(Color.WHITE);
+
+            this.shortestDistancePathMenu = new JComboBox();
+            this.shortestDistancePathMenu.setFont(MySequentialGraphVars.tahomaPlainFont10);
+            this.shortestDistancePathMenu.setFocusable(false);
+            this.shortestDistancePathMenu.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    startNode = null;
+                }
+            });
+            //pathMenu.addItem("PATH EXPLORATION");
+            this.shortestDistancePathMenu.addItem("SHORTEST OUT-DISTANCE");
+            this.shortestDistancePathMenu.addItem("SHORTEST IN-DISTANCE");
+
+            String[] fromColumns = {"NO.", "SOURCE", "V."};
+            String[][] fromData = {};
+            DefaultTableModel fromTableModel = new DefaultTableModel(fromData, fromColumns);
+            this.pathSourceTable = new JTable(fromTableModel) {
+                public String getToolTipText(MouseEvent e) {
+                    String tip = null;
+                    Point p = e.getPoint();
+                    int rowIndex = rowAtPoint(p);
+                    int colIndex = columnAtPoint(p);
+                    try {
+                        tip = getValueAt(rowIndex, colIndex).toString();
+                    } catch (RuntimeException e1) {
+                    }
+                    return tip;
+                }
+            };
+
+            String[] fromTableTooltips = {"NO.", "SOURCE NODE", "SOURCE NODE VALUE"};
+            MyTableToolTipper fromTableTooltipHeader = new MyTableToolTipper(this.pathSourceTable.getColumnModel());
+            fromTableTooltipHeader.setToolTipStrings(fromTableTooltips);
+            this.pathSourceTable.setTableHeader(fromTableTooltipHeader);
+
+            Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+            LinkedHashMap<String, Long> sourceNodeValueMap = new LinkedHashMap<>();
+            int i = 0;
+            for (MyNode n : nodes) {
+                sourceNodeValueMap.put(n.getName(), (long) n.getCurrentValue());
+            }
+            sourceNodeValueMap = MySequentialGraphSysUtil.sortMapByLongValue(sourceNodeValueMap);
+
+            for (String n : sourceNodeValueMap.keySet()) {
+                fromTableModel.addRow(new String[]{
+                        String.valueOf(++i),
+                        MySequentialGraphSysUtil.getNodeName(n),
+                        MyMathUtil.getCommaSeperatedNumber(sourceNodeValueMap.get(n))});
+            }
+
+            this.pathSourceTable.setRowHeight(19);
+            this.pathSourceTable.setBackground(Color.WHITE);
+            this.pathSourceTable.setFont(MySequentialGraphVars.f_pln_10);
+            this.pathSourceTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont10);
+            this.pathSourceTable.getTableHeader().setOpaque(false);
+            this.pathSourceTable.getTableHeader().setBackground(new Color(0, 0, 0, 0f));
+            this.pathSourceTable.getColumnModel().getColumn(0).setPreferredWidth(45);
+            this.pathSourceTable.getColumnModel().getColumn(1).setPreferredWidth(80);
+            this.pathSourceTable.getColumnModel().getColumn(2).setPreferredWidth(40);
+
+            JTextField sourceNodeSearchTxt = new JTextField();
+            JButton sourceNodeSelectBtn = new JButton();
+            sourceNodeSearchTxt.setToolTipText("TYPE A NODE TO SEARCH");
+            sourceNodeSearchTxt.setBackground(Color.WHITE);
+
+            sourceNodeSearchTxt.setBorder(BorderFactory.createLoweredSoftBevelBorder());
+            JPanel sourceNodeSearchAndSavePanel = MyTableUtil.searchAndSaveDataPanelForJTable2(this, sourceNodeSearchTxt, sourceNodeSelectBtn, fromTableModel, this.pathSourceTable);
+            sourceNodeSelectBtn.setPreferredSize(new Dimension(40, 25));
+            sourceNodeSelectBtn.removeActionListener(this);
+            sourceNodeSelectBtn.removeActionListener(this);
+            sourceNodeSearchAndSavePanel.remove(sourceNodeSelectBtn);
+            sourceNodeSearchTxt.setFont(MySequentialGraphVars.f_bold_10);
+
+            add(sourceNodeSearchAndSavePanel, BorderLayout.SOUTH);
+            this.pathSourceTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            this.pathSourceTable.setSelectionBackground(Color.LIGHT_GRAY);
+            this.pathSourceTable.setForeground(Color.BLACK);
+            this.pathSourceTable.setSelectionForeground(Color.BLACK);
+            this.pathSourceTable.setFocusable(false);
+            this.pathSourceTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            this.pathSourceTable.setRowSorter(MyTableUtil.setJTableRowSorterWithTextField(fromTableModel, sourceNodeSearchTxt));
+            this.pathSourceTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+                public void valueChanged(ListSelectionEvent event) {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (shortestDistancePathMenu.getSelectedIndex() == 0) {
+                                setShortestOutDistancedNodes();
+                            }
+                        }
+                    }).start();
+                }
+            });
+
+            JScrollPane fromTableScrollPane = new JScrollPane(pathSourceTable);
+            fromTableScrollPane.setOpaque(false);
+            fromTableScrollPane.setBackground(new Color(0, 0, 0, 0f));
+            fromTableScrollPane.setPreferredSize(new Dimension(150, 500));
+            fromTableScrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(7, 0));
+            fromTableScrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 7));
+
+            this.pathSourceTablePanel.add(fromTableScrollPane, BorderLayout.CENTER);
+            this.pathSourceTablePanel.add(sourceNodeSearchAndSavePanel, BorderLayout.SOUTH);
+
+            this.pathDestTablePanel = new JPanel();
+            this.pathDestTablePanel.setLayout(new BorderLayout(2, 2));
+            this.pathDestTablePanel.setBackground(Color.WHITE);
+
+            this.distanceMenu.setFont(MySequentialGraphVars.tahomaPlainFont12);
+            this.distanceMenu.setFocusable(false);
+            this.pathDestTablePanel.add(this.distanceMenu, BorderLayout.NORTH);
+
+            String[] toColumns = {"NO.", "DEST", "V."};
+            String[][] toData = {};
+            DefaultTableModel toTableModel = new DefaultTableModel(toData, toColumns);
+            this.pathDestTable = new JTable(toTableModel) {
+                //Implement table cell tool tips.
+                public String getToolTipText(MouseEvent e) {
+                    String tip = null;
+                    Point p = e.getPoint();
+                    int rowIndex = rowAtPoint(p);
+                    int colIndex = columnAtPoint(p);
+
+                    try {
+                        tip = getValueAt(rowIndex, colIndex).toString();
+                    } catch (RuntimeException e1) {
+                        //catch null pointer exception if mouse is over an empty line
+                    }
+
+                    return tip;
+                }
+            };
+
+            String[] toTableTooltips = {"NO.", "DESTINATION NODE", "DESTINATION NODE VALUE"};
+            MyTableToolTipper toTableTooltipHeader = new MyTableToolTipper(this.pathDestTable.getColumnModel());
+            toTableTooltipHeader.setToolTipStrings(toTableTooltips);
+            this.pathDestTable.setTableHeader(toTableTooltipHeader);
+
+            i = 0;
+            for (MyNode n : nodes) {
+                toTableModel.addRow(new String[]{
+                        String.valueOf(++i),
+                        MySequentialGraphSysUtil.getNodeName(n.getName()),
+                        "0"});
+            }
+
+            this.pathDestTable.setRowHeight(19);
+            this.pathDestTable.setBackground(Color.WHITE);
+            this.pathDestTable.setFont(MySequentialGraphVars.f_pln_10);
+            this.pathDestTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont10);
+            this.pathDestTable.getTableHeader().setOpaque(false);
+            this.pathDestTable.getTableHeader().setBackground(new Color(0, 0, 0, 0f));
+            this.pathDestTable.getColumnModel().getColumn(0).setPreferredWidth(45);
+            this.pathDestTable.getColumnModel().getColumn(1).setPreferredWidth(80);
+            this.pathDestTable.getColumnModel().getColumn(2).setPreferredWidth(40);
+            this.pathDestTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+                public void valueChanged(ListSelectionEvent event) {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (shortestDistancePathMenu.getSelectedIndex() == 1) {
+                                setShortestInDistancedNodes();
+                            }
+                        }
+                    }).start();
+                }
+            });
+
+            JTextField destNodeSearchTxt = new JTextField();
+            JButton runBtn = new JButton("RUN");
+            runBtn.setFocusable(false);
+            runBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
+
+            destNodeSearchTxt.setBackground(Color.WHITE);
+            destNodeSearchTxt.setFont(MySequentialGraphVars.f_bold_10);
+            destNodeSearchTxt.setToolTipText("TYPE A NODE NAME TO SEARCH");
+            destNodeSearchTxt.setBorder(BorderFactory.createLoweredSoftBevelBorder());
+            JPanel destNodeSearchAndSavePanel = MyTableUtil.searchAndSaveDataPanelForJTable2(this, destNodeSearchTxt, runBtn, toTableModel, this.pathDestTable);
+            destNodeSearchAndSavePanel.remove(runBtn);
+
+            add(destNodeSearchAndSavePanel, BorderLayout.SOUTH);
+            this.pathDestTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            this.pathDestTable.setSelectionBackground(Color.LIGHT_GRAY);
+            this.pathDestTable.setSelectionForeground(Color.BLACK);
+            this.pathDestTable.setForeground(Color.BLACK);
+            this.pathDestTable.setFocusable(false);
+            this.pathDestTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            this.pathDestTable.setRowSorter(MyTableUtil.setJTableRowSorterWithTextField(toTableModel, destNodeSearchTxt));
+
+            JScrollPane destNodeTableScrollPane = new JScrollPane(this.pathDestTable);
+            destNodeTableScrollPane.setOpaque(false);
+            destNodeTableScrollPane.setBackground(new Color(0, 0, 0, 0f));
+            destNodeTableScrollPane.setPreferredSize(new Dimension(150, 500));
+            destNodeTableScrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(7, 0));
+            destNodeTableScrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 7));
+
+            this.pathDestTablePanel.add(destNodeTableScrollPane, BorderLayout.CENTER);
+            this.pathDestTablePanel.add(destNodeSearchAndSavePanel, BorderLayout.SOUTH);
+
+            JPanel pathPanel = new JPanel();
+            pathPanel.setBackground(Color.WHITE);
+            pathPanel.setLayout(new BorderLayout(3, 1));
+
+            JPanel tablePanel = new JPanel();
+            tablePanel.setBackground(Color.WHITE);
+            tablePanel.setLayout(new GridLayout(2, 1));
+            tablePanel.add(this.pathSourceTablePanel);
+            tablePanel.add(this.pathDestTablePanel);
+
+            pathPanel.add(tablePanel, BorderLayout.CENTER);
+            pathPanel.add(this.shortestDistancePathMenu, BorderLayout.NORTH);
+            return pathPanel;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
     }
 
     public void decorateGraphViewer(JPanel graphViewer) {
@@ -860,7 +1322,60 @@ implements ActionListener {
 
         this.tableTabbedPane.addTab("N.", null, setNodeTable(), "NODES");
         this.tableTabbedPane.addTab("E.", null, setEdgeTable(), "EDGES");
-        this.tableTabbedPane.addTab("P.", null, setPathFindTable(), "PATH ANALYSIS BETWEEN TWO NODES");
+       // this.tableTabbedPane.addTab("P.", null, setPathFindTable(), "PATH ANALYSIS BETWEEN NODES");
+       /** this.tableTabbedPane.addChangeListener(new ChangeListener() {
+            @Override public void stateChanged(ChangeEvent ae) {
+                new Thread(new Runnable() {
+                    @Override public void run() {
+                        if (tableTabbedPane.getSelectedIndex() == 2) {
+                            MyProgressBar pb = new MyProgressBar(false);
+
+                            if (graphRemovalPanel != null) {
+                                graphRemovalPanel.setVisible(false);
+                            }
+
+                            startNode = null;
+                            isTableUpdating = false;
+                            visitedNodes = null;
+                            pb.updateValue(10, 100);
+
+                            int row = pathDestTable.getRowCount();
+                            while (row > 0) {
+                                ((DefaultTableModel) pathDestTable.getModel()).removeRow(row-1);
+                                row = pathDestTable.getRowCount();
+                            }
+                            pb.updateValue(40, 100);
+
+                            Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+                            LinkedHashMap<String, Long> valueMap = new LinkedHashMap<>();
+                            for (MyNode n : nodes) {
+                                valueMap.put(n.getName(), (long) n.getCurrentValue());
+                            }
+                            valueMap = MySequentialGraphSysUtil.sortMapByLongValue(valueMap);
+                            pb.updateValue(70, 100);
+
+                            int i=0;
+                            for (String n : valueMap.keySet()) {
+                                ((MyNode) MySequentialGraphVars.g.vRefs.get(n)).setCurrentValue(valueMap.get(n));
+                                ((DefaultTableModel) pathDestTable.getModel()).addRow(new String[]{"" + (++i), n, MyMathUtil.getCommaSeperatedNumber(valueMap.get(n))});
+                            }
+                            pb.updateValue(90, 100);
+
+                            MySequentialGraphVars.getSequentialGraphViewer().vc.clusteringSectorLabel.setVisible(false);
+                            MySequentialGraphVars.getSequentialGraphViewer().vc.clusteringSelector.setVisible(false);
+                            Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
+                            for (MyEdge e : edges) {e.setCurrentValue(0);}
+                            MySequentialGraphVars.getSequentialGraphViewer().revalidate();
+                            MySequentialGraphVars.getSequentialGraphViewer().repaint();
+                            pb.updateValue(100, 100);
+                            pb.dispose();
+                        } else if (tableTabbedPane.getSelectedIndex() == 0){
+                            MyViewerControlComponentUtil.setDefaultViewerLook();
+                        }
+                    }
+                }).start();
+            }
+        });*/
 
         JPanel graphPanel = new JPanel();
         graphPanel.setBackground(Color.WHITE);
@@ -874,12 +1389,12 @@ implements ActionListener {
         this.graphTableSplitPane.getLeftComponent().setBackground(Color.WHITE);
         this.graphTableSplitPane.setBackground(Color.WHITE);
         this.graphTableSplitPane.getRightComponent().setBackground(Color.WHITE);
-        this.graphTableSplitPane.setDividerLocation(0.11);
+        this.graphTableSplitPane.setDividerLocation(0.12);
         this.graphTableSplitPane.setMinimumSize(new Dimension(200, 500));
         this.graphTableSplitPane.addComponentListener(new ComponentAdapter() {
             @Override public synchronized void componentResized(ComponentEvent e) {
                 super.componentResized(e);
-                graphTableSplitPane.setDividerLocation(0.11);
+                graphTableSplitPane.setDividerLocation(0.12);
 
                 if (nodeValueBarChart.isSelected()) {
                     MyViewerControlComponentUtil.removeBarChartsFromViewer();
@@ -930,10 +1445,22 @@ implements ActionListener {
             "MAX. NODE VALUE",
             "MIN. NODE VALUE",
             "NODE VALUE STANDARD DEVIATION",
+            "MAX. IN-NODES",
+            "MIN. IN-NODES",
             "AVG. IN-NODES",
+            "STD. IN-NODES",
+            "MAX. OUT-NODES",
+            "MIN. OUT-NODES",
             "AVG. OUT-NODES",
+            "STD. OUT-NODES",
+            "MAX. IN-CONTRIBUTION",
+            "MIN. IN-CONTRIBUTION",
             "AVG. IN-CONTRIBUTION",
+            "STD. IN-CONTRIBUTION",
+            "MAX. OUT-CONTRIBUTION",
+            "MIN. OUT-CONTRIBUTION",
             "AVG. OUT-CONTRIBUTION",
+            "STD. OUT-CONTRIBUTION",
             "AVG. UNIQUE NODE CONTRIBUTION",
             "MAX. UNIQUE NODE CONTRIBUTION",
             "MIN. UNIQUE NODE CONTRIBUTION",
@@ -968,7 +1495,7 @@ implements ActionListener {
         tooltipHeader.setToolTipStrings(toolTips);
         this.statTable.setTableHeader(tooltipHeader);
 
-        this.statTable.setRowHeight(22);
+        this.statTable.setRowHeight(23);
         this.statTable.setBackground(Color.WHITE);
         this.statTable.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.statTable.setFocusable(false);
@@ -999,9 +1526,6 @@ implements ActionListener {
         tablePanel.add(graphStatTableScrollPane, BorderLayout.CENTER);
         return tablePanel;
     }
-
-    public JTable selectedNodeStatTable;
-    public JTable multiNodeStatTable;
 
     public JPanel setSelectedNodeStatTable() {
         JPanel tablePanel = new JPanel();
@@ -1088,10 +1612,10 @@ implements ActionListener {
         selectedNodeStatTableModel.addRow(new String[]{"G. N.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getGreenNodeCount()) + "[" + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getGreenNodePercent()*100)) + "]"});
 
         // Edge stats.
-        selectedNodeStatTableModel.addRow(new String[]{"AVG. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getAverageEdgeValue()))});
+        selectedNodeStatTableModel.addRow(new String[]{"AVG. E. V.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getAverageEdgeValue()))});
         selectedNodeStatTableModel.addRow(new String[]{"MAX. E. V.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getMaximumEdgeValue()))});
-        selectedNodeStatTableModel.addRow(new String[]{"MIN. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getMinimumEdgeValue()))});
-        selectedNodeStatTableModel.addRow(new String[]{"STD. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getEdgeValueStandardDeviation()))});
+        selectedNodeStatTableModel.addRow(new String[]{"MIN. E. V.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getMinimumEdgeValue()))});
+        selectedNodeStatTableModel.addRow(new String[]{"STD. E. V.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getEdgeValueStandardDeviation()))});
 
         // Set the custom renderer for the first column
         TableColumnModel columnModel = this.selectedNodeStatTable.getColumnModel();
@@ -1145,10 +1669,10 @@ implements ActionListener {
         selectedNodeStatTableModel.addRow(new String[]{"G. N.", MyMathUtil.getCommaSeperatedNumber(MyNodeUtil.getGreenNodeCount()) + "[" + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyNodeUtil.getGreenNodePercent()*100)) + "]"});
 
         // Edge stats.
-        selectedNodeStatTableModel.addRow(new String[]{"AVG. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getAverageEdgeValue()))});
+        selectedNodeStatTableModel.addRow(new String[]{"AVG. E. V.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getAverageEdgeValue()))});
         selectedNodeStatTableModel.addRow(new String[]{"MAX. E. V.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getMaximumEdgeValue()))});
-        selectedNodeStatTableModel.addRow(new String[]{"MIN. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getMinimumEdgeValue()))});
-        selectedNodeStatTableModel.addRow(new String[]{"STD. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getEdgeValueStandardDeviation()))});
+        selectedNodeStatTableModel.addRow(new String[]{"MIN. E. V.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getMinimumEdgeValue()))});
+        selectedNodeStatTableModel.addRow(new String[]{"STD. E. V.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getEdgeValueStandardDeviation()))});
     }
 
     public JPanel setMultiNodeStatTable() {
@@ -1250,10 +1774,10 @@ implements ActionListener {
         multiNodeStatTableModel.addRow(new String[]{"SHA. S.", sharedSuccessorStr + "[" + sharedSuccessorPercentStr + "]"});
 
         // Edge stats.
-        multiNodeStatTableModel.addRow(new String[]{"AVG. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getAverageEdgeValue()))});
+        multiNodeStatTableModel.addRow(new String[]{"AVG. E. V.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getAverageEdgeValue()))});
         multiNodeStatTableModel.addRow(new String[]{"MAX. E. V.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getMaximumEdgeValue()))});
-        multiNodeStatTableModel.addRow(new String[]{"MIN. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getMinimumEdgeValue()))});
-        multiNodeStatTableModel.addRow(new String[]{"STD. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getEdgeValueStandardDeviation()))});
+        multiNodeStatTableModel.addRow(new String[]{"MIN. E. V.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getMinimumEdgeValue()))});
+        multiNodeStatTableModel.addRow(new String[]{"STD. E. V.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getEdgeValueStandardDeviation()))});
 
         // Set the custom renderer for the first column
         TableColumnModel columnModel = this.multiNodeStatTable.getColumnModel();
@@ -1319,10 +1843,10 @@ implements ActionListener {
         multiNodeStatTableModel.addRow(new String[]{"SHA. S.", MyMathUtil.getCommaSeperatedNumber(sharedSuccessors) + "[" + sharedSuccessorPercentStr + "]"});
 
         // Edge stats.
-        multiNodeStatTableModel.addRow(new String[]{"AVG. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getAverageEdgeValue()))});
+        multiNodeStatTableModel.addRow(new String[]{"AVG. E. V.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getAverageEdgeValue()))});
         multiNodeStatTableModel.addRow(new String[]{"MAX. E. V.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getMaximumEdgeValue()))});
-        multiNodeStatTableModel.addRow(new String[]{"MIN. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getMinimumEdgeValue()))});
-        multiNodeStatTableModel.addRow(new String[]{"STD. E. V:", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getEdgeValueStandardDeviation()))});
+        multiNodeStatTableModel.addRow(new String[]{"MIN. E. V.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getMinimumEdgeValue()))});
+        multiNodeStatTableModel.addRow(new String[]{"STD. E. V.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MyEdgeUtil.getEdgeValueStandardDeviation()))});
 
     }
 
@@ -1663,8 +2187,8 @@ implements ActionListener {
         this.nodeListTable.setAutoCreateRowSorter(false);
         this.currentNodeListTable.setAutoCreateRowSorter(false);
         this.edgeListTable.setAutoCreateRowSorter(false);
-        this.pathFromTable.setAutoCreateRowSorter(false);
-        this.pathToTable.setAutoCreateRowSorter(false);
+//        this.pathSourceTable.setAutoCreateRowSorter(false);
+//        this.pathDestTable.setAutoCreateRowSorter(false);
 
         this.updateNodeTable();
         this.nodeListTable.revalidate();
@@ -1683,7 +2207,6 @@ implements ActionListener {
         TableRowSorter<DefaultTableModel> newSorter = new TableRowSorter<DefaultTableModel>(tableModel);
         // Set the new sorter as the RowSorter of nodeListTable
         currentNodeListTable.setRowSorter(newSorter);
-
 
 
         // Get the existing nodeListTable RowSorter
@@ -1707,29 +2230,29 @@ implements ActionListener {
 
 
         // Get the existing pathFromTable RowSorter
-        sorter = (TableRowSorter<DefaultTableModel>) pathFromTable.getRowSorter();
+        sorter = (TableRowSorter<DefaultTableModel>) pathSourceTable.getRowSorter();
         // Get the existing pathFromTable model
         tableModel = (DefaultTableModel) sorter.getModel();
         // Create a new sorter with the existing pathFromTable model
         newSorter = new TableRowSorter<DefaultTableModel>(tableModel);
         // Set the new sorter as the RowSorter of pathFromTable
-        pathFromTable.setRowSorter(newSorter);
+ //       pathSourceTable.setRowSorter(newSorter);
 
 
         // Get the existing pathToTable RowSorter
-        sorter = (TableRowSorter<DefaultTableModel>) pathToTable.getRowSorter();
+        sorter = (TableRowSorter<DefaultTableModel>) pathDestTable.getRowSorter();
         // Get the existing pathToTable model
         tableModel = (DefaultTableModel) sorter.getModel();
         // Create a new sorter with the existing pathToTable model
         newSorter = new TableRowSorter<DefaultTableModel>(tableModel);
         // Set the new sorter as the RowSorter of pathToTable
-        pathToTable.setRowSorter(newSorter);
+  //      pathDestTable.setRowSorter(newSorter);
 
         this.nodeListTable.setAutoCreateRowSorter(true);
         this.currentNodeListTable.setAutoCreateRowSorter(true);
         this.edgeListTable.setAutoCreateRowSorter(true);
-        this.pathFromTable.setAutoCreateRowSorter(true);
-        this.pathToTable.setAutoCreateRowSorter(true);
+   //     this.pathSourceTable.setAutoCreateRowSorter(true);
+   //     this.pathDestTable.setAutoCreateRowSorter(true);
     }
 
     private void updateNodeTable() {

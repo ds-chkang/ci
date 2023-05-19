@@ -7,10 +7,8 @@ import medousa.message.MyMessageUtil;
 import medousa.direct.utils.MyDirectGraphSysUtil;
 import medousa.direct.utils.MyDirectGraphVars;
 import medousa.sequential.config.MySequentialGraphConfigPanel;
-import medousa.sequential.graph.analysis.MyAnalysisGraphApp;
-import medousa.sequential.graph.funnel.MyFunnelAnalysisApp;
+import medousa.sequential.graph.funnel.MyAnalysisGraphApp;
 import medousa.sequential.graph.layout.MyFRLayout;
-import medousa.sequential.pattern.MyPatternMiner2;
 import medousa.sequential.utils.MySequentialGraphSysUtil;
 import medousa.sequential.utils.MySequentialGraphVars;
 
@@ -18,6 +16,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 public class MyToolBar
 extends JPanel
@@ -33,10 +33,11 @@ implements ActionListener {
     private  JButton searchSequentialPatternBtn = new JButton();
     private  JButton nodeSummaryBtn = new JButton();
     public JButton networkBtn = new JButton();
-    private final ImageIcon run_img_icon = new ImageIcon(getClass().getResource(MyDirectGraphVars.imgDir +"run2.png"));
+    private final ImageIcon run_img_icon = new ImageIcon(getClass().getResource(MyDirectGraphVars.imgDir +"run.png"));
+    private final ImageIcon header_img_icon = new ImageIcon(getClass().getResource(MyDirectGraphVars.imgDir +"header.png"));
+    private final ImageIcon input_img_icon = new ImageIcon(getClass().getResource(MyDirectGraphVars.imgDir +"input.png"));
     private final ImageIcon logo_img_icon = new ImageIcon(getClass().getResource(MyDirectGraphVars.imgDir +"medousa.jpg"));
-    private final ImageIcon funnel_img_icon = new ImageIcon(getClass().getResource(MyDirectGraphVars.imgDir +"funnel.png"));
-    private final ImageIcon network_img_icon = new ImageIcon(getClass().getResource(MyDirectGraphVars.imgDir +"searchPath.png"));
+    private final ImageIcon funnel_img_icon = new ImageIcon(getClass().getResource(MyDirectGraphVars.imgDir +"simulation.png"));
     private final ImageIcon pathfinder_img_icon = new ImageIcon(getClass().getResource(MyDirectGraphVars.imgDir + "network.png"));
 
     protected   JComboBox projectMenuComboBox;
@@ -178,8 +179,8 @@ implements ActionListener {
                                 MyDirectGraphVars.app.getContentTabbedPane().addTab("      CONFIGURATION       ", scrollPane);
                                 MyDirectGraphVars.app.getContentTabbedPane().addTab("      DASHBOARD       ", MyDirectGraphVars.app.resetDirectGraphDashBoard());
 
-                                setButton(runBtn, run_img_icon, "Discover relations", false);
-                                setButton(networkBtn, network_img_icon, "Network Analyses", false);
+                                //setButton(runBtn, run_img_icon, "Discover relations", false);
+                                //setButton(networkBtn, network_img_icon, "Network Analyses", false);
                             } else if (selectedTabIdx == 2) {
                                 /**
                                 if (MySequentialGraphVars.g != null) {
@@ -205,10 +206,10 @@ implements ActionListener {
                                 MySequentialGraphVars.app.getContentTabbedPane().addTab("      DASHBOARD       ", MySequentialGraphVars.app.resetSequentialGraphDashboard());
 
 
-                                //setButton(runBtn, run_img_icon, "Discover relations", false);
-                                setButton(searchSequentialPatternBtn, pathfinder_img_icon, "Behavioral Pattern Mining", false);
-                                setButton(networkBtn, network_img_icon, "Network Analyses", false);
-                               // setButton(funnelBtn, funnel_img_icon, "Funnel Analyses", false);
+                                setButton(headerBtn, header_img_icon, "Set header", true);
+                                setButton(inputBtn, input_img_icon, "FUNNEL EXPLORER", false);
+                                setButton(runBtn, run_img_icon, "CREATE NETWORK", false);
+                                setButton(funnelBtn, funnel_img_icon, "Funnel Analyses", false);
                             }
 
                             add(toolBar, BorderLayout.CENTER);
@@ -241,8 +242,7 @@ implements ActionListener {
                         try {
                             if (projectMenuComboBox.getSelectedIndex() == 0) {setInitialToolbar();}
                             else {setToolBar();}
-                        } catch (Exception ex) {
-                        }
+                        } catch (Exception ex) {}
                     }
                 }).start();
             }
@@ -280,99 +280,140 @@ implements ActionListener {
                 MyDirectGraphVars.isDirectMarkovRelation = true;
                 this.doDirectRelationOperations(evt);
             } else if (projectMenuComboBox.getSelectedIndex() == 2) {
-                if (evt.getSource() == runBtn) {
-                            new Thread(new Runnable() {
-                                @Override public void run() {
-                                    try {
-                                        MyProgressBar pb = new MyProgressBar(false);
-                                        runBtn.setEnabled(false);
-                                        MySequentialGraphVars.outputDir = MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "elements" + MySequentialGraphSysUtil.getDirectorySlash();
-                                        MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getDefaultVariableTable().isTimeVariableOn();
-                                        MySequentialGraphVars.app.getSequentialGraphMsgBroker().categorize();
-                                        pb.updateValue(5, 100);
-                                        MySequentialGraphVars.app.getSequentialGraphMsgBroker().generateInputFeatures();
-                                        pb.updateValue(10, 100);
-                                        //MySequentialGraphVars.app.getSequentialGraphMsgBroker().runEngine();
-                                        pb.updateValue(20, 100);
-                                        inputBtn.setEnabled(false);
-                                        runBtn.setEnabled(false);
-                                        new Thread(new Runnable() {
-                                            @Override public void run() {
-                                                MySequentialGraphVars.app.getContentTabbedPane().setSelectedIndex(1);
-                                            }
-                                        }).start();
+                if (evt.getSource() == headerBtn) {
+                    new Thread(new Runnable() {
+                        @Override public void run() {
+                            try {
+                                JFileChooser fc = new JFileChooser();
+                                fc.setFocusable(false);
+                                fc.setFont(MySequentialGraphVars.f_pln_12);
+                                fc.setPreferredSize(new Dimension(600, 460));
+                                fc.setMultiSelectionEnabled(false);
+                                fc.showOpenDialog(MySequentialGraphVars.app);
 
-                                        new Thread(new Runnable() {
-                                            @Override public void run() {
-                                                try {
-                                                    MyFRLayout layout = new MyFRLayout<>(MySequentialGraphVars.app.getSequentialGraphMsgBroker().createGraph(pb), new Dimension(5500, 4500));
-                                                    MySequentialGraphVars.app.setSequentialGrpahViewer(MySequentialGraphVars.app.getSequentialGraphMsgBroker().createSequentialGraphView(layout, new Dimension(5500, 4500)));
-
-                                                    pb.updateValue(60, 100);
-                                                    searchSequentialPatternBtn.setEnabled(true);
-                                                    networkBtn.setEnabled(true);
-                                                    funnelBtn.setEnabled(true);
-                                                    MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-                                                    MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.setSelectedIndex(1); // DEFAULT VALUE.
-                                                    MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-                                                    MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
-
-                                                    pb.updateValue(80, 100);
-                                                    MySequentialGraphVars.app.getSequentialGraphDashboard().setDashboard();
-                                                    // System.out.println(MyVars.inputSequenceFile);
-
-                                                    pb.updateValue(100, 100);
-                                                    pb.dispose();
-                                                    MySequentialGraphVars.app.revalidate();
-                                                    MySequentialGraphVars.app.repaint();
-
-                                                    if (MySequentialGraphVars.g.getVertices().size() == 0) {
-                                                        pb.updateValue(100, 100);
-                                                        pb.dispose();
-                                                        MyMessageUtil.showInfoMsg("<html><body>An exception has occurred while creating a network.<br>Please, check the information provided in the configuration panel.</body></html>");
-                                                    } else {
-                                                        MyMessageUtil.showInfoMsg("Network has successfully been built!");
-                                                    }
-                                                } catch (Exception ex) {
-                                                    pb.updateValue(100, 100);
-                                                    pb.dispose();
-                                                    MyMessageUtil.showInfoMsg("<html><body>An exception has occurred while creating a network.<br>Please, check the information provided in the configuration panel.</body></html>");
-                                                }
-                                            }
-                                        }).start();
-                                    } catch (Exception ex) {
-                                        runBtn.setEnabled(true);
+                                if (fc.getSelectedFile() != null) {
+                                    String [] headers = MySequentialGraphVars.app.getSequentialGraphMsgBroker().loadHeader(fc.getSelectedFile());
+                                    if (headers == null) {
+                                        MyMessageUtil.showErrorMsg( "Please, check the format of the provided header file.");
+                                        return;
                                     }
-                                }
+                                    BufferedReader br = new BufferedReader(new FileReader(fc.getSelectedFile()));
+                                    String line = br.readLine();
+                                    headers = line.split(MySequentialGraphVars.commaDelimeter);
+                                    for (int i=0; i < headers.length; i++) {
+                                        headers[i] = " " + headers[i].toUpperCase();
+                                    }
 
-                    });
-                } else if (evt.getSource() == networkBtn) {
+                                    MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getDefaultVariableTable().updateTable(headers, true);
+                                    MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getSupplimentaryVariableTable().update(headers, true);
+                                    MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getEdgeValueTable().update(headers, true);
+                                    MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getEdgeLabelTable().update(headers, true);
+                                    MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getNodeValueTable().update(headers, true);
+                                    MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getNodeLabelTable().update(headers, true);
+                                    inputBtn.setEnabled(true);
+                                } else {
+                                    MyMessageUtil.showErrorMsg("Failed to header!");
+                                }
+                            } catch (Exception ex) {ex.printStackTrace();}
+                        }
+                    }).start();
+                } else if (evt.getSource() == inputBtn) {
+                    new Thread(new Runnable() {
+                        @Override public void run() {
+                            try {
+                                inputBtn.setEnabled(false);
+                                JFileChooser fc = new JFileChooser();
+                                fc.setFocusable(false);
+                                fc.setFont(MySequentialGraphVars.f_pln_12);
+                                fc.setPreferredSize(new Dimension(600, 460));
+                                fc.setMultiSelectionEnabled(true);
+                                fc.showOpenDialog(MySequentialGraphVars.app);
+                                if (fc.getSelectedFile() != null) {
+                                    MySequentialGraphVars.app.getSequentialGraphMsgBroker().setInputFiles(fc.getSelectedFiles());
+                                    MyMessageUtil.showInfoMsg("Data have been successfully loaded!");
+                                    inputBtn.setBackground(Color.WHITE);
+                                    runBtn.setEnabled(true);
+                                    runBtn.setBackground(Color.GREEN);
+                                } else {
+                                    inputBtn.setEnabled(false);
+                                    MyMessageUtil.showErrorMsg("Failed to load data file!");
+                                }
+                            } catch (Exception ex) {
+                                inputBtn.setEnabled(false);
+                                ex.printStackTrace();
+                            }
+                        }
+                    }).start();
+                } else if (evt.getSource() == runBtn) {
+                    new Thread(new Runnable() {
+                        @Override public void run() {
+                            MyProgressBar pb = new MyProgressBar(false);
+                            try {
+                                inputBtn.setEnabled(false);
+                                runBtn.setEnabled(false);
+                                MySequentialGraphVars.outputDir = MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "elements" + MySequentialGraphSysUtil.getDirectorySlash();
+                                MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getDefaultVariableTable().isTimeVariableOn();
+                                MySequentialGraphVars.app.getSequentialGraphMsgBroker().categorize();
+                                pb.updateValue(5, 100);
+                                MySequentialGraphVars.app.getSequentialGraphMsgBroker().generateInputFeatures();
+                                pb.updateValue(10, 100);
+                                MySequentialGraphVars.app.getSequentialGraphMsgBroker().runEngine();
+
+                                new Thread(new Runnable() {
+                                    @Override public void run() {
+                                        MySequentialGraphVars.app.getContentTabbedPane().setSelectedIndex(1);
+                                    }
+                                }).start();
+
+                                new Thread(new Runnable() {
+                                    @Override public void run() {
+                                        try {
+                                            MyFRLayout layout = new MyFRLayout<>(MySequentialGraphVars.app.getSequentialGraphMsgBroker().createGraph(pb), new Dimension(5500, 4500));
+                                            MySequentialGraphVars.app.setSequentialGrpahViewer(MySequentialGraphVars.app.getSequentialGraphMsgBroker().createSequentialGraphView(layout, new Dimension(5500, 4500)));
+
+                                            pb.updateValue(60, 100);
+                                            funnelBtn.setEnabled(true);
+                                            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
+                                            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.setSelectedIndex(1); // DEFAULT VALUE.
+                                            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
+
+                                            pb.updateValue(80, 100);
+                                            MySequentialGraphVars.app.getSequentialGraphDashboard().setDashboard();
+
+                                            pb.updateValue(100, 100);
+                                            pb.dispose();
+                                            MySequentialGraphVars.app.revalidate();
+                                            MySequentialGraphVars.app.repaint();
+
+                                            if (MySequentialGraphVars.g.getVertices().size() == 0) {
+                                                pb.updateValue(100, 100);
+                                                pb.dispose();
+                                                MyMessageUtil.showInfoMsg("<html><body>An exception has occurred while creating a network.<br>Please, check the information provided in the configuration panel.</body></html>");
+                                            } else {
+                                                MyMessageUtil.showInfoMsg("Network has successfully been built!");
+                                            }
+                                        } catch (Exception ex) {
+                                            pb.updateValue(100, 100);
+                                            pb.dispose();
+                                            MyMessageUtil.showInfoMsg("<html><body>An exception has occurred while creating a network.<br>Please, check the information provided in the configuration panel.</body></html>");
+                                        }
+                                    }
+                                }).start();
+                            } catch (Exception ex) {
+                                pb.updateValue(100, 100);
+                                pb.dispose();
+                                MyMessageUtil.showInfoMsg("<html><body>An exception has occurred while creating a network.<br>Please, check the information provided in the configuration panel.</body></html>");
+
+                            }
+                        }
+                    }).start();
+                } else if (evt.getSource() == funnelBtn) {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override public void run() {
                             new Thread(new Runnable() {
                                 @Override public void run() {
                                     MyAnalysisGraphApp networkAnalyzer = new MyAnalysisGraphApp();
                                     networkAnalyzer.setAlwaysOnTop(false);
-                                }
-                            }).start();
-                        }
-                    });
-                } else if (evt.getSource() == searchSequentialPatternBtn) {
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override public void run() {
-                            new Thread(new Runnable() {
-                                @Override public void run() {
-                                    MyPatternMiner2 pm = new MyPatternMiner2();
-                                }
-                            }).start();
-                        }
-                    });
-                } else if (evt.getSource() == funnelBtn) {
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override public void run() {
-                            new Thread(new Runnable() {
-                                @Override public void run() {
-                                    MyFunnelAnalysisApp funnelAnalysisApp = new MyFunnelAnalysisApp();
                                 }
                             }).start();
                         }
@@ -384,7 +425,7 @@ implements ActionListener {
 
     public JButton getSearchPathButton() { return this.searchSequentialPatternBtn; }
 
-       private void doDirectRelationOperations(ActionEvent evt) {
+    private void doDirectRelationOperations(ActionEvent evt) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
                 if (evt.getSource() == runBtn) {
