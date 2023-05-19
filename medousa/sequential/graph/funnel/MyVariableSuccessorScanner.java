@@ -19,13 +19,15 @@ extends MySuccessorScanner {
                     for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
                         boolean pathFound = true;
                         int j=i;
-                        for (int k = 1; k < this.itemsets.length; k++) {
-                            String itemset = MySequentialGraphVars.seqs[s][j++].split(":")[0];
-                            if (!itemsets[k].equals(itemset)) {
-                                pathFound = false;
-                                break;
+                        if ((j+(this.itemsets.length-1)) < MySequentialGraphVars.seqs[s].length) {
+                            for (int k = 1; k < this.itemsets.length; k++) {
+                                String itemset = MySequentialGraphVars.seqs[s][j++].split(":")[0];
+                                if (!itemsets[k].equals(itemset)) {
+                                    pathFound = false;
+                                    break;
+                                }
                             }
-                        }
+                        } else pathFound = false;
 
                         if (pathFound) {
                             j = (i+(this.itemsets.length-1));

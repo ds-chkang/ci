@@ -53,6 +53,8 @@ implements Serializable, Cloneable, Comparable<MyNode> {
     protected double closeness;
     protected double eignevector;
     protected double pageRankScore;
+    public Ellipse2D.Double nodeSize;
+
     protected Map<Integer, Integer> recursiveLengthMap = new HashMap<>();
     public float avgRecursiveTime;
 
@@ -66,6 +68,7 @@ implements Serializable, Cloneable, Comparable<MyNode> {
     public float avgShortestDistance = 0;
 
     public MyNode() {}
+
     public void setAverageRecursiveTime(float avgRecursiveTime) {
         this.avgRecursiveTime = avgRecursiveTime;
     }

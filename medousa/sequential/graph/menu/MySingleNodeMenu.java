@@ -1,6 +1,6 @@
 package medousa.sequential.graph.menu;
 
-import medousa.sequential.graph.MyFlowExplorerAnalyzer;
+import medousa.sequential.graph.flow.MyFlowExplorerAnalyzer;
 import medousa.sequential.graph.MyNode;
 import medousa.sequential.graph.stats.*;
 import medousa.sequential.utils.MyFontChooser;
@@ -54,7 +54,6 @@ implements ActionListener {
         this.add(new JSeparator());
         this.setMenuItem(null, this.nodeFont);
         this.setMenuItem(null, this.edgeFont);
-        this.add(new JSeparator());
         this.download.setEnabled(false);
     }
 

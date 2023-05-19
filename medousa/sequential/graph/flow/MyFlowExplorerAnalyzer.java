@@ -1,8 +1,11 @@
-package medousa.sequential.graph;
+package medousa.sequential.graph.flow;
 
 import edu.uci.ics.jung.visualization.renderers.DefaultVertexLabelRenderer;
+import medousa.sequential.graph.MyDepthEdge;
+import medousa.sequential.graph.MyDepthNode;
+import medousa.sequential.graph.MyEdge;
+import medousa.sequential.graph.MyNode;
 import medousa.sequential.graph.layout.MyDirectedSparseMultigraph;
-import medousa.sequential.graph.listener.MyFlowExplorerViewerMouseListener;
 import medousa.sequential.graph.stats.MyPathFlowNodesByDepthLineBarChart;
 import medousa.sequential.graph.stats.multinode.MyMultiNodeAppearanceByDepthLineChart;
 import medousa.sequential.graph.stats.singlenode.MySingleNodeAppearanceByDepthLineChart;
@@ -51,8 +54,8 @@ public class MyFlowExplorerAnalyzer
 implements ActionListener {
 
     public Map<String, MyEdge> edgeRefMap = new HashMap<>();
-    private VisualizationViewer<MyDepthNode, MyDepthEdge> vv;
-    private MyDirectedSparseMultigraph<MyDepthNode, MyDepthEdge> pathFlowGraph;
+    protected VisualizationViewer<MyDepthNode, MyDepthEdge> graphViewer;
+    protected MyDirectedSparseMultigraph<MyDepthNode, MyDepthEdge> pathFlowGraph;
     private StaticLayout<MyDepthNode, MyDepthEdge> layout;
     public float MAX_NODE_VALUE;
     public final float MAX_EDGE_STROKE = 25f;
@@ -68,15 +71,16 @@ implements ActionListener {
     public JCheckBox allDepth;
     public JCheckBox weightedEdge;
     private int mxDepth;
+    boolean isNotDataFlow = true;
 
     public MyFlowExplorerAnalyzer() {
         this.mxDepth = MySequentialGraphVars.mxDepth;
         this.pathFlowGraph = new MyDirectedSparseMultigraph<>();
         this.layout = new StaticLayout<>(this.pathFlowGraph);
-        this.vv = new VisualizationViewer<>(this.layout);
+        this.graphViewer = new VisualizationViewer<>(this.layout);
     }
 
-    private void createGraph() {
+    private void createFlowGraph() {
         for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
             for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
                 String ps = MySequentialGraphVars.seqs[s][i-1].split(":")[0] + "-" + (i-1);
@@ -496,28 +500,32 @@ implements ActionListener {
     }
 
     private void setViewer() {
-        this.vv.getRenderContext().setLabelOffset(25);
+        this.graphViewer.getRenderContext().setLabelOffset(25);
         Cursor handCursor = new Cursor(HAND_CURSOR);
-        this.vv.setCursor(handCursor);
-        this.vv.setBackground(Color.WHITE);
-        this.vv.setDoubleBuffered(true);
-        this.vv.setLayout(null);
+        this.graphViewer.setCursor(handCursor);
+        this.graphViewer.setBackground(Color.WHITE);
+        this.graphViewer.setDoubleBuffered(true);
+        this.graphViewer.setLayout(null);
 
         DefaultModalGraphMouse graphMouse = new DefaultModalGraphMouse();
         graphMouse.setMode(DefaultModalGraphMouse.Mode.PICKING);
-        this.vv.setGraphMouse(graphMouse);
-        this.vv.addMouseListener(new MyFlowExplorerViewerMouseListener(this));
-        this.vv.getRenderContext().setVertexFillPaintTransformer(this.nodeColorer);
-        this.vv.setBackground(Color.WHITE);
-        this.vv.setPreferredSize(new Dimension(10000, 10000));
-        this.vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller<>());
-        this.vv.getRenderContext().setVertexShapeTransformer(new Transformer<MyDepthNode, Shape>() {
+        this.graphViewer.setGraphMouse(graphMouse);
+        if (isNotDataFlow) {
+            this.graphViewer.addMouseListener(new MyFlowExplorerViewerMouseListener(this, isNotDataFlow));
+        } else {
+            this.graphViewer.addMouseListener(new MyFlowExplorerViewerMouseListener(this));
+        }
+        this.graphViewer.getRenderContext().setVertexFillPaintTransformer(this.nodeColorer);
+        this.graphViewer.setBackground(Color.WHITE);
+        this.graphViewer.setPreferredSize(new Dimension(10000, 10000));
+        this.graphViewer.getRenderContext().setVertexLabelTransformer(new ToStringLabeller<>());
+        this.graphViewer.getRenderContext().setVertexShapeTransformer(new Transformer<MyDepthNode, Shape>() {
             @Override public Shape transform(MyDepthNode n) {return n.nodeSize;}});
-        this.vv.getRenderContext().setEdgeDrawPaintTransformer(edgeDrawPainter);
-        this.vv.getRenderContext().setArrowDrawPaintTransformer(edgeArrowPainter);
-        this.vv.getRenderContext().setArrowFillPaintTransformer(edgeArrowPainter);
-        this.vv.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.S);
-        this.vv.getRenderContext().setEdgeStrokeTransformer(edgeStroker);
+        this.graphViewer.getRenderContext().setEdgeDrawPaintTransformer(edgeDrawPainter);
+        this.graphViewer.getRenderContext().setArrowDrawPaintTransformer(edgeArrowPainter);
+        this.graphViewer.getRenderContext().setArrowFillPaintTransformer(edgeArrowPainter);
+        this.graphViewer.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.S);
+        this.graphViewer.getRenderContext().setEdgeStrokeTransformer(edgeStroker);
 
         DefaultVertexLabelRenderer vertexLabelRenderer = new DefaultVertexLabelRenderer(Color.RED) {
             @Override public <V> Component getVertexLabelRendererComponent(JComponent vv, Object value, Font font, boolean isSelected, V n) {
@@ -535,9 +543,9 @@ implements ActionListener {
                 }
                 return this;
         }};
-        this.vv.getRenderContext().setVertexLabelRenderer(vertexLabelRenderer);
+        this.graphViewer.getRenderContext().setVertexLabelRenderer(vertexLabelRenderer);
 
-        this.vv.getRenderContext().setVertexFontTransformer(new Transformer<MyDepthNode, Font>() {
+        this.graphViewer.getRenderContext().setVertexFontTransformer(new Transformer<MyDepthNode, Font>() {
             @Override public Font transform(MyDepthNode n) {
                 if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
                     if (n.getName().split("-")[0].equals(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName())) {
@@ -557,7 +565,7 @@ implements ActionListener {
             }
         });
 
-        this.vv.setVertexToolTipTransformer(new Transformer<MyDepthNode, String>() {
+        this.graphViewer.setVertexToolTipTransformer(new Transformer<MyDepthNode, String>() {
             @Override public String transform(MyDepthNode n) {
                 return  "<html><body>" +
                         (n.getName().split("-")[0].contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName().split("-")[0]) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName().split("-")[0])) +
@@ -569,27 +577,28 @@ implements ActionListener {
             }
         });
 
-        this.vv.getRenderContext().setVertexLabelTransformer(new Transformer<MyDepthNode, String>() {
+        this.graphViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyDepthNode, String>() {
             @Override public String transform(MyDepthNode n) {
                 return  "<html><body>" +
-                        (n.getName().split("-")[0].contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName().split("-")[0]) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName().split("-")[0])) + "</body></html>";
+                        MySequentialGraphSysUtil.getNodeName(n.getName().split("-")[0])
+                                + "</body></html>";
             }
         });
 
-        this.vv.getRenderContext().setVertexDrawPaintTransformer(new Transformer<MyDepthNode, Paint>() {
+        this.graphViewer.getRenderContext().setVertexDrawPaintTransformer(new Transformer<MyDepthNode, Paint>() {
             @Override public Paint transform(MyDepthNode n) {
                 return Color.BLACK;
             }
         });
 
-        this.vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.QuadCurve<MyDepthNode, MyDepthEdge>());
+        this.graphViewer.getRenderContext().setEdgeShapeTransformer(new EdgeShape.QuadCurve<MyDepthNode, MyDepthEdge>());
         this.scale();
     }
 
     private void scale() {
         this.viewScaler = new CrossoverScalingControl();
         double amount = -1.0;
-        this.viewScaler.scale(this.vv, amount > 0 ? 2.0f : 1 / 2.5f, new Point2D.Double(100, 50));
+        this.viewScaler.scale(this.graphViewer, amount > 0 ? 2.0f : 1 / 2.5f, new Point2D.Double(100, 50));
     }
 
     private Transformer<MyDepthEdge, Paint> edgeArrowPainter = new Transformer<MyDepthEdge, Paint>() {
@@ -749,8 +758,8 @@ implements ActionListener {
         this.allDepth.setFocusable(false);
         this.allDepth.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
-                vv.revalidate();
-                vv.repaint();
+                graphViewer.revalidate();
+                graphViewer.repaint();
 
                 MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                 MySequentialGraphVars.getSequentialGraphViewer().repaint();
@@ -763,8 +772,8 @@ implements ActionListener {
         this.weightedEdge.setFocusable(false);
         this.weightedEdge.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
-                vv.revalidate();
-                vv.repaint();
+                graphViewer.revalidate();
+                graphViewer.repaint();
 
                 MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                 MySequentialGraphVars.getSequentialGraphViewer().repaint();
@@ -815,11 +824,12 @@ implements ActionListener {
         this.nodeListTable.setPreferredSize(new Dimension(210, 2000));
         this.nodeListTable.getTableHeader().setBackground(new Color(0, 0, 0, 0f));
         this.nodeListTable.getColumnModel().getColumn(0).setPreferredWidth(55);
-        this.nodeListTable.getColumnModel().getColumn(0).setMaxWidth(100);
+        this.nodeListTable.getColumnModel().getColumn(0).setMaxWidth(55);
         this.nodeListTable.getColumnModel().getColumn(1).setPreferredWidth(50);
-        this.nodeListTable.getColumnModel().getColumn(1).setMaxWidth(60);
-        this.nodeListTable.getColumnModel().getColumn(2).setPreferredWidth(120);
-        this.nodeListTable.getColumnModel().getColumn(2).setMaxWidth(150);
+        this.nodeListTable.getColumnModel().getColumn(1).setMaxWidth(50);
+        this.nodeListTable.getColumnModel().getColumn(2).setPreferredWidth(140);
+        this.nodeListTable.getColumnModel().getColumn(3).setPreferredWidth(50);
+        this.nodeListTable.getColumnModel().getColumn(3).setMaxWidth(50);
         this.nodeListTable.addComponentListener(new ComponentListener() {
             @Override public void componentResized(ComponentEvent e) {}
             @Override public void componentMoved(ComponentEvent e) {}
@@ -832,8 +842,8 @@ implements ActionListener {
                 new Thread(new Runnable() {
                     @Override public void run() {
                         try {
-                            vv.revalidate();
-                            vv.repaint();
+                            graphViewer.revalidate();
+                            graphViewer.repaint();
 
                             MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                             MySequentialGraphVars.getSequentialGraphViewer().repaint();
@@ -1378,88 +1388,7 @@ implements ActionListener {
             vvPanel.setLayout(new BorderLayout(3,3));
             vvPanel.setBackground(Color.WHITE);
             vvPanel.setBorder(titledBorder);
-            vvPanel.add(this.vv, BorderLayout.CENTER);
-
-            JPanel chartPanel = new JPanel();
-            chartPanel.setLayout(new GridLayout(1, 2));
-            chartPanel.setBackground(Color.WHITE);
-            chartPanel.add(new MyMultiNodeAppearanceByDepthLineChart());
-            chartPanel.add(setAverageContributionByDepthLineChart());
-            chartPanel.add(setMaxContributionByDepthLineChart());
-            chartPanel.add(setMinContributionByDepthLineChart());
-            chartPanel.add(setStdContributionByDepthLineChart());
-            chartPanel.add(setNumberOfNodesByDepthLineChart());
-
-            JSplitPane chartGraphSplitPane = new JSplitPane();
-            chartGraphSplitPane.setDividerLocation(0.80);
-            chartGraphSplitPane.setDividerSize(5);
-            chartGraphSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-            chartGraphSplitPane.setTopComponent(vvPanel);
-            chartGraphSplitPane.setBottomComponent(chartPanel);
-
-            JSplitPane splitPaneWithNodeListTableAndGraph = new JSplitPane();
-            splitPaneWithNodeListTableAndGraph.setDividerLocation(0.13);
-            splitPaneWithNodeListTableAndGraph.setDividerSize(5);
-            splitPaneWithNodeListTableAndGraph.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
-            splitPaneWithNodeListTableAndGraph.setLeftComponent(this.tablePanel);
-            splitPaneWithNodeListTableAndGraph.setRightComponent(chartGraphSplitPane);
-
-            JFrame fr = new JFrame("PATH FLOW ANALYZER");
-            fr.setBackground(Color.WHITE);
-            fr.setPreferredSize(new Dimension(750, 600));
-            fr.setLayout(new BorderLayout(3,3));
-            fr.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            fr.getContentPane().add(splitPaneWithNodeListTableAndGraph, BorderLayout.CENTER);
-            fr.addComponentListener(new ComponentAdapter() {
-                public void componentResized(ComponentEvent evt) {
-                    splitPaneWithNodeListTableAndGraph.setDividerSize(5);
-                    splitPaneWithNodeListTableAndGraph.setDividerLocation((int)(fr.getWidth()*0.13));
-
-                    chartGraphSplitPane.setDividerSize(5);
-                    chartGraphSplitPane.setDividerLocation((int)(fr.getHeight()*0.80));
-
-                    MySequentialGraphVars.getSequentialGraphViewer().revalidate();
-                    MySequentialGraphVars.getSequentialGraphViewer().repaint();
-                }
-            });
-
-            fr.pack();
-            fr.setVisible(true);
-            pb.updateValue(100, 100);
-            pb.dispose();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public void showMultiNodeToPathFlows() {
-        try {
-            MyProgressBar pb = new MyProgressBar(false);
-            this.createMultiNodeFromPathGraph();
-            pb.updateValue(20, 100);
-            this.setMaxNodeValue();
-            pb.updateValue(30, 100);
-            this.setMaxEdgeValue();
-            pb.updateValue(40, 100);
-            this.setNodeSizes();
-            pb.updateValue(50, 100);
-            this.setNodeLocations();
-            pb.updateValue(70, 100);
-            this.setViewer();
-            pb.updateValue(80, 100);
-            this.setNodeTable();
-            pb.updateValue(90, 100);
-
-            Border blackline = BorderFactory.createLineBorder(Color.black);
-            TitledBorder titledBorder = BorderFactory.createTitledBorder(blackline, "");
-            titledBorder.setTitleJustification(TitledBorder.LEFT);
-            titledBorder.setTitleFont(MySequentialGraphVars.tahomaBoldFont11);
-
-            JPanel vvPanel = new JPanel();
-            vvPanel.setLayout(new BorderLayout(3,3));
-            vvPanel.setBackground(Color.WHITE);
-            vvPanel.setBorder(titledBorder);
-            vvPanel.add(this.vv, BorderLayout.CENTER);
+            vvPanel.add(this.graphViewer, BorderLayout.CENTER);
 
             JPanel chartPanel = new JPanel();
             chartPanel.setLayout(new GridLayout(1, 2));
@@ -1540,7 +1469,7 @@ implements ActionListener {
             vvPanel.setLayout(new BorderLayout(3,3));
             vvPanel.setBackground(Color.WHITE);
             vvPanel.setBorder(titledBorder);
-            vvPanel.add(this.vv, BorderLayout.CENTER);
+            vvPanel.add(this.graphViewer, BorderLayout.CENTER);
 
             JPanel chartPanel = new JPanel();
             chartPanel.setLayout(new GridLayout(1, 2));
@@ -1621,7 +1550,7 @@ implements ActionListener {
             vvPanel.setLayout(new BorderLayout(3,3));
             vvPanel.setBackground(Color.WHITE);
             vvPanel.setBorder(titledBorder);
-            vvPanel.add(this.vv, BorderLayout.CENTER);
+            vvPanel.add(this.graphViewer, BorderLayout.CENTER);
 
             JPanel chartPanel = new JPanel();
             chartPanel.setLayout(new GridLayout(1, 2));
@@ -1703,7 +1632,7 @@ implements ActionListener {
             vvPanel.setLayout(new BorderLayout(3,3));
             vvPanel.setBackground(Color.WHITE);
             vvPanel.setBorder(titledBorder);
-            vvPanel.add(this.vv, BorderLayout.CENTER);
+            vvPanel.add(this.graphViewer, BorderLayout.CENTER);
 
             JPanel chartPanel = new JPanel();
             chartPanel.setLayout(new GridLayout(1, 2));
@@ -1759,7 +1688,8 @@ implements ActionListener {
     public void showDataFlows() {
         try {
             MyProgressBar pb = new MyProgressBar(false);
-            this.createGraph();
+            this.createFlowGraph();
+            isNotDataFlow = false;
             pb.updateValue(20, 100);
             this.setMaxNodeValue();
             pb.updateValue(30, 100);
@@ -1783,7 +1713,7 @@ implements ActionListener {
             vvPanel.setLayout(new BorderLayout(3,3));
             vvPanel.setBackground(Color.WHITE);
             vvPanel.setBorder(titledBorder);
-            vvPanel.add(this.vv, BorderLayout.CENTER);
+            vvPanel.add(this.graphViewer, BorderLayout.CENTER);
 
             JPanel chartPanel = new JPanel();
             chartPanel.setLayout(new GridLayout(1, 6));
@@ -1834,6 +1764,7 @@ implements ActionListener {
 
             fr.pack();
             fr.setVisible(true);
+
             pb.updateValue(100, 100);
             pb.dispose();
         } catch (Exception ex) {
@@ -1844,7 +1775,7 @@ implements ActionListener {
     public static void main(String[] args) {
         try {
             MyFlowExplorerAnalyzer staticLayoutExample = new MyFlowExplorerAnalyzer();
-            staticLayoutExample.createGraph();
+            staticLayoutExample.createFlowGraph();
             staticLayoutExample.setMaxNodeValue();
             staticLayoutExample.setNodeSizes();
             staticLayoutExample.setNodeLocations();

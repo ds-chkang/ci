@@ -155,9 +155,9 @@ extends JPanel {
                 g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
             int i = 0;
 
-                g.setFont(MySequentialGraphVars.tahomaBoldFont10);
+                g.setFont(MySequentialGraphVars.tahomaBoldFont12);
                 g.setColor(Color.DARK_GRAY);
-                g.drawString("EDGE VALUES", 0, (9*(i+1))+((i*gap)));
+                g.drawString("EDGE VALUES", 0, (10*(i+1))+((i*gap)));
                 i++;
 
                 int edgeCnt = 0;
@@ -166,16 +166,16 @@ extends JPanel {
                         g.setColor(this.colors.get(edgeCnt++));
                         float valuePortion = this.data.get(name) / this.maxVal;
                         valuePortion = this.BAR_WIDTH * valuePortion;
-                        g.fillRect(0, (9*i)+(i*gap), (int) valuePortion, 9);
+                        g.fillRect(0, (10*i)+(i*gap), (int) valuePortion, 10);
 
                         g.setColor(Color.BLUE);
-                        g.drawRect(0, (9*i)+(i*gap), (int) valuePortion, 9);
+                        g.drawRect(0, (10*i)+(i*gap), (int) valuePortion, 10);
 
                         String value = MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(this.data.get(name)));
                         value = (value.endsWith(".0") || value.endsWith(".00") ? value.substring(0, value.indexOf(".0")) : value);
-                        g.setFont(MySequentialGraphVars.f_pln_10);
+                        g.setFont(MySequentialGraphVars.f_pln_12);
                         g.setColor(Color.DARK_GRAY);
-                        g.drawString(name + "[" + value + "]", ((int)valuePortion)+5, (9*(i+1)) + ((i*gap)-2));
+                        g.drawString(name + "[" + value + "]", ((int)valuePortion)+5, (10*(i+1)) + ((i*gap)-2));
                         i++;
                     }
                 }

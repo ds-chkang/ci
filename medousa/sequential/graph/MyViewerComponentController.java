@@ -2230,21 +2230,21 @@ implements ActionListener {
 
 
         // Get the existing pathFromTable RowSorter
-        sorter = (TableRowSorter<DefaultTableModel>) pathSourceTable.getRowSorter();
+//        sorter = (TableRowSorter<DefaultTableModel>) pathSourceTable.getRowSorter();
         // Get the existing pathFromTable model
-        tableModel = (DefaultTableModel) sorter.getModel();
+  //      tableModel = (DefaultTableModel) sorter.getModel();
         // Create a new sorter with the existing pathFromTable model
-        newSorter = new TableRowSorter<DefaultTableModel>(tableModel);
+   //     newSorter = new TableRowSorter<DefaultTableModel>(tableModel);
         // Set the new sorter as the RowSorter of pathFromTable
  //       pathSourceTable.setRowSorter(newSorter);
 
 
         // Get the existing pathToTable RowSorter
-        sorter = (TableRowSorter<DefaultTableModel>) pathDestTable.getRowSorter();
+//        sorter = (TableRowSorter<DefaultTableModel>) pathDestTable.getRowSorter();
         // Get the existing pathToTable model
-        tableModel = (DefaultTableModel) sorter.getModel();
+//        tableModel = (DefaultTableModel) sorter.getModel();
         // Create a new sorter with the existing pathToTable model
-        newSorter = new TableRowSorter<DefaultTableModel>(tableModel);
+//        newSorter = new TableRowSorter<DefaultTableModel>(tableModel);
         // Set the new sorter as the RowSorter of pathToTable
   //      pathDestTable.setRowSorter(newSorter);
 

@@ -43,27 +43,28 @@ implements ActionListener {
     @Override public void actionPerformed(ActionEvent e) {
         new Thread(new Runnable() {
             @Override public void run() {
-                if (e.getSource() == deleteNode) {
-                    Collection<MyEdge> edges = funnelViewer.getGraphLayout().getGraph().getEdges();
-                    if (edges != null) {
-                        for (MyEdge edge : edges) {
-                            if (edge.getSource() == currentSelectedNode) {
-                                ((MyAnalysisGraph)funnelViewer.getGraphLayout().getGraph()).vRefs.remove(edge.getSource().getName());
-                                ((MyAnalysisGraph)funnelViewer.getGraphLayout().getGraph()).edRefs.remove(edge.getSource().getName() + "-" + edge.getDest().getName());
-                                funnelViewer.getGraphLayout().getGraph().removeVertex(edge.getSource());
-                                funnelViewer.getGraphLayout().getGraph().removeEdge(edge);
-                            } else if (edge.getDest() == currentSelectedNode) {
-                                ((MyAnalysisGraph)funnelViewer.getGraphLayout().getGraph()).vRefs.remove(edge.getDest().getName());
-                                ((MyAnalysisGraph)funnelViewer.getGraphLayout().getGraph()).edRefs.remove(edge.getSource().getName() + "-" + edge.getDest().getName());
-                                funnelViewer.getGraphLayout().getGraph().removeVertex(edge.getDest());
-                                funnelViewer.getGraphLayout().getGraph().removeEdge(edge);
-                            }
+                Collection<MyEdge> edges = funnelViewer.getGraphLayout().getGraph().getEdges();
+                if (edges != null) {
+                    for (MyEdge edge : edges) {
+                        if (edge.getSource() == currentSelectedNode) {
+                            edge.getDest().contribution = edge.getDest().contribution - edge.getContribution();
+                            ((MyAnalysisGraph)funnelViewer.getGraphLayout().getGraph()).vRefs.remove(edge.getSource().getName());
+                            ((MyAnalysisGraph)funnelViewer.getGraphLayout().getGraph()).edRefs.remove(edge.getSource().getName() + "-" + edge.getDest().getName());
+                            funnelViewer.getGraphLayout().getGraph().removeVertex(edge.getSource());
+                            funnelViewer.getGraphLayout().getGraph().removeEdge(edge);
+                        } else if (edge.getDest() == currentSelectedNode) {
+                            ((MyAnalysisGraph)funnelViewer.getGraphLayout().getGraph()).vRefs.remove(edge.getDest().getName());
+                            ((MyAnalysisGraph)funnelViewer.getGraphLayout().getGraph()).edRefs.remove(edge.getSource().getName() + "-" + edge.getDest().getName());
+                            funnelViewer.getGraphLayout().getGraph().removeVertex(edge.getDest());
+                            funnelViewer.getGraphLayout().getGraph().removeEdge(edge);
                         }
                     }
-                    ((MyAnalysisGraph) funnelViewer.getGraphLayout().getGraph()).vRefs.remove(currentSelectedNode.getName());
-                    funnelViewer.getGraphLayout().getGraph().removeVertex(currentSelectedNode);
-                    funnelViewer.graphMouseListener.selectedNode = null;
                 }
+
+                ((MyAnalysisGraph) funnelViewer.getGraphLayout().getGraph()).vRefs.remove(currentSelectedNode.getName());
+                funnelViewer.getGraphLayout().getGraph().removeVertex(currentSelectedNode);
+                funnelViewer.graphMouseListener.selectedNode = null;
+
                 funnelViewer.revalidate();
                 funnelViewer.repaint();
             }

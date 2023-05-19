@@ -1,6 +1,6 @@
 package medousa.sequential.graph.path;
 
-import medousa.sequential.graph.MyFlowExplorerAnalyzer;
+import medousa.sequential.graph.flow.MyFlowExplorerAnalyzer;
 import medousa.sequential.utils.MySequentialGraphVars;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 

@@ -35,7 +35,7 @@ implements MyJobCompleteListener {
 
     private void createScanners() {
         for (String path : this.pathSet) {
-            System.out.println(path);
+           // System.out.println(path);
             if (path.split("-")[0].endsWith("x")) {
                 this.scanners[this.scannerCnt] = new MyVariableSuccessorScanner(path);
                 this.scanners[this.scannerCnt++].addJob(this);

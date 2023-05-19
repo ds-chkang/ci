@@ -81,7 +81,9 @@ extends MyDirectGraphRelationPropertyExtractionJobDoneNotifier {
                 MyDirectGraphVars.uniqueContributionSeparator +
                 this.uniqueContribution);
             bw.close();
-            if (!this.nodeFile.renameTo(renameFile)) {System.out.println("Rename failed for " + renameFile.getName());}
+            if (!this.nodeFile.renameTo(renameFile)) {
+                System.out.println("Rename failed for " + renameFile.getName());
+            }
         } catch (Exception ex) {ex.printStackTrace();}
     }
 }

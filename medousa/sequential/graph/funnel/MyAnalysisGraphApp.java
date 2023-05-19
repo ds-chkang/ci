@@ -567,11 +567,21 @@ implements ActionListener, WindowListener {
 
             int cnt = 0;
             for (String n : successors.keySet()) {
-                if (graph.vRefs.containsKey(n)) continue;
+                //if (graph.vRefs.containsKey(n)) continue;
                 model.addRow(new String[]{"" + (++cnt),
                     MySequentialGraphSysUtil.getNodeName(n),
                     MyMathUtil.getCommaSeperatedNumber(successors.get(n))
                 });
+            }
+
+            if (cnt == 0) {
+                pb.updateValue(100, 100);
+                pb.dispose();
+                nodeOptionComboBoxMenu.removeActionListener(graphViewer.analysisGraphApp);
+                nodeOptionComboBoxMenu.setSelectedIndex(0);
+                nodeOptionComboBoxMenu.addActionListener(graphViewer.analysisGraphApp);
+                MyMessageUtil.showInfoMsg(graphViewer.analysisGraphApp, "No successors exist.");
+                return;
             }
 
             pb.updateValue(100, 100);
@@ -643,25 +653,27 @@ implements ActionListener, WindowListener {
 
     protected void addNodeToGraph() {
         try {
-            String nodeName = this.table.getValueAt(table.getSelectedRow(), 1).toString();
+            String encodedNodeName = MySequentialGraphVars.nodeNameMap.get(this.table.getValueAt(table.getSelectedRow(), 1).toString());
             String contribution = this.table.getValueAt(table.getSelectedRow(), 2).toString();
-            System.out.println(contribution);
-            MyNode n = new MyNode(MySequentialGraphVars.nodeNameMap.get(nodeName));
-            n.contribution = Long.parseLong(contribution);
-            if (this.graph.vRefs.containsKey(n.getName())) {
+            if (this.graph.vRefs.containsKey(encodedNodeName)) {
                 if (nodeOptionComboBoxMenu.getSelectedItem().toString().contains("SUCCESSOR")) {
-                    String edge = graphViewer.graphMouseListener.selectedNode.getName() + "-" + n.getName();
+                    String edge = graphViewer.graphMouseListener.selectedNode.getName() + "-" + encodedNodeName;
                     if (!this.graph.edRefs.contains(edge)) {
-                        MyEdge e = new MyEdge(0, graphViewer.graphMouseListener.selectedNode, n);
+                        MyNode n = (MyNode) this.graph.vRefs.get(encodedNodeName);
+                        n.contribution += Integer.parseInt(contribution);
+                        MyEdge e = new MyEdge(Integer.parseInt(contribution), graphViewer.graphMouseListener.selectedNode, n);
                         this.graph.addEdge(e, graphViewer.graphMouseListener.selectedNode, n);
                         this.graph.edRefs.add(edge);
                     } else {
-                        String selectedNodeName = (graphViewer.graphMouseListener.selectedNode.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(graphViewer.graphMouseListener.selectedNode.getName()) : MySequentialGraphSysUtil.getDecodedNodeName(graphViewer.graphMouseListener.selectedNode.getName()));
-                        MyMessageUtil.showInfoMsg(this, "An edge between " + MySequentialGraphSysUtil.getNodeName(selectedNodeName) + " and " + MySequentialGraphSysUtil.getNodeName(n.getName()) + " already exists.");
+                        String selectedNodeName = MySequentialGraphSysUtil.getNodeName(graphViewer.graphMouseListener.selectedNode.getName());
+                        MyMessageUtil.showInfoMsg(this, "An edge between " + MySequentialGraphSysUtil.getNodeName(selectedNodeName) + " and " +
+                            MySequentialGraphSysUtil.getNodeName(encodedNodeName) + " already exists.");
                     }
                 }
             } else if (this.nodeOptionComboBoxMenu.getSelectedItem().toString().contains("NODE")) {
-                this.graph.vRefs.put(n.getName(), n);
+                MyNode n = new MyNode(encodedNodeName);
+                n.contribution = Long.parseLong(contribution);
+                this.graph.vRefs.put(encodedNodeName, n);
                 if (graphViewer.mouseClickedLocation != null) {
                     graphViewer.getGraphLayout().setLocation(n,
                         new Point2D.Double(graphViewer.mouseClickedLocation.getX()+150, graphViewer.mouseClickedLocation.getY()));
@@ -705,6 +717,8 @@ implements ActionListener, WindowListener {
                 }
             }*/
             else if (this.nodeOptionComboBoxMenu.getSelectedItem().toString().contains("SUCCESSOR")) {
+                MyNode n = new MyNode(encodedNodeName);
+                n.contribution = Long.parseLong(contribution);
                 this.graph.vRefs.put(n.getName(), n);
                 if (graphViewer.mouseClickedLocation != null) {
                     graphViewer.getGraphLayout().setLocation(n, new Point2D.Double(graphViewer.mouseClickedLocation.getX() + 800, graphViewer.mouseClickedLocation.getY() + 150));
@@ -719,11 +733,12 @@ implements ActionListener, WindowListener {
                     graphViewer.MAX_NODE_VALUE = n.getContribution();
                 }
 
-                String edgeName = graphViewer.graphMouseListener.selectedNode.getName() + "-" + n.getName();
+                String edgeName = graphViewer.graphMouseListener.selectedNode.getName() + "-" + encodedNodeName;
                 if (!this.graph.edRefs.contains(edgeName)) {
                     MyEdge e = new MyEdge((int) n.getContribution(), graphViewer.graphMouseListener.selectedNode, n);
                     this.graph.addEdge(e, graphViewer.graphMouseListener.selectedNode, n);
                     this.graph.edRefs.add(edgeName);
+
                     if (this.graphViewer.MAX_EDGE_VALUE < e.getContribution()) {
                         this.graphViewer.MAX_EDGE_VALUE = e.getContribution();
                     }

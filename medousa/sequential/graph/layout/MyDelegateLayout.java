@@ -184,7 +184,7 @@ implements IterativeContext {
             newYPos = getSize().getHeight() - borderWidth - Math.random() * borderWidth * 2.0;
         }
 
-        System.out.println(MySequentialGraphSysUtil.getDecodedNodeName(((MyNode) v).getName()) + "   " + newXPos + "     " + newYPos);
+        //System.out.println(MySequentialGraphSysUtil.getDecodedNodeName(((MyNode) v).getName()) + "   " + newXPos + "     " + newYPos);
 
         xyd.setLocation(newXPos, newYPos);
     }

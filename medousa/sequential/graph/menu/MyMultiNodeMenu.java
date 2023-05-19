@@ -1,6 +1,6 @@
 package medousa.sequential.graph.menu;
 
-import medousa.sequential.graph.MyFlowExplorerAnalyzer;
+import medousa.sequential.graph.flow.MyFlowExplorerAnalyzer;
 import medousa.sequential.utils.MyFontChooser;
 import medousa.sequential.utils.MySequentialGraphVars;
 

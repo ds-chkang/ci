@@ -70,7 +70,7 @@ extends JPanel {
 
                     JLabel titleLabel = new JLabel(" NO. OF A.");
                     titleLabel.setToolTipText("NO. OF APPEARANCES OF THE SELECTED NDOE BY DEPTH");
-                    titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
+                    titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
                     titleLabel.setBackground(Color.WHITE);
                     titleLabel.setForeground(Color.DARK_GRAY);
 
@@ -108,36 +108,8 @@ extends JPanel {
                 }
             });
         } catch (Exception ex) {
+            decorate();
             ex.printStackTrace();
-        }
-    }
-
-    private void setLineGraphRendering(XYLineAndShapeRenderer renderer, int selected) {
-        Color colors [] = {Color.RED};
-        if (selected == 0) {
-            renderer.setSeriesPaint(0, Color.RED);
-            renderer.setSeriesStroke(0, new BasicStroke(1.5f));
-            renderer.setSeriesShapesVisible(0, true);
-            renderer.setSeriesShape(0, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
-            renderer.setSeriesFillPaint(0, Color.WHITE);
-            renderer.setUseFillPaint(true);
-
-        } else {
-            for (int i = 0; i < 1; i++) {
-                if (i == (selected-1)) {
-                    renderer.setSeriesPaint(i, colors[i]);
-                    renderer.setSeriesStroke(i, new BasicStroke(1.5f));
-                    renderer.setSeriesLinesVisible(i, true);
-                    renderer.setSeriesFillPaint(i, Color.WHITE);
-                    renderer.setSeriesShape(i, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
-                } else {
-                    renderer.setSeriesPaint(i, new Color(0f, 0f, 0f, 0f));
-                    renderer.setSeriesStroke(i, new BasicStroke(0f));
-                    renderer.setSeriesLinesVisible(i, false);
-                    renderer.setSeriesFillPaint(i, new Color(0f, 0f, 0f, 0f));
-                    renderer.setSeriesShape(i, new Ellipse2D.Double(0f, 0f, 0f, 0f));
-                }
-            }
         }
     }
 
