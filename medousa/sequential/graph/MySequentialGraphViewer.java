@@ -119,10 +119,9 @@ implements Serializable {
             final Color vertexLabelColor = Color.BLACK;
             DefaultVertexLabelRenderer vertexLabelRenderer = new DefaultVertexLabelRenderer(vertexLabelColor) {
                 @Override public <MyNode> Component getVertexLabelRendererComponent(
-                        JComponent vv, Object value, Font font,
-                        boolean isSelected, MyNode vertex) {
-                    super.getVertexLabelRendererComponent(
-                            vv, value, font, isSelected, vertex);
+                    JComponent vv, Object value, Font font,
+                    boolean isSelected, MyNode vertex) {
+                    super.getVertexLabelRendererComponent(vv, value, font, isSelected, vertex);
                     setForeground(vertexLabelColor);
                     return this;
                 }
@@ -425,7 +424,9 @@ implements Serializable {
 
     public Transformer<MyNode, Paint> unWeightedNodeColor = new Transformer<MyNode, Paint>() {
         @Override public Paint transform(MyNode n) {
-            if (isClustered) {
+            if (vc.startNode != null && vc.startNode == n) {
+                return Color.ORANGE;
+            } else if (isClustered) {
                 return n.clusteringColor;
             } else if (multiNodes != null) {
                 if (MySequentialGraphVars.g.getSuccessors(n).containsAll(multiNodes)) {

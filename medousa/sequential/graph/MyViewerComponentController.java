@@ -164,7 +164,6 @@ implements ActionListener {
     public JTable pathDestTable;
     public JTable nodeListTable;
 
-
     public JTable selectedNodeStatTable;
     public JTable multiNodeStatTable;
     public JTable currentNodeListTable;
@@ -1322,8 +1321,8 @@ implements ActionListener {
 
         this.tableTabbedPane.addTab("N.", null, setNodeTable(), "NODES");
         this.tableTabbedPane.addTab("E.", null, setEdgeTable(), "EDGES");
-       // this.tableTabbedPane.addTab("P.", null, setPathFindTable(), "PATH ANALYSIS BETWEEN NODES");
-       /** this.tableTabbedPane.addChangeListener(new ChangeListener() {
+        this.tableTabbedPane.addTab("S.", null, setPathFindTable(), "NODES BY SHORTEST DISTANCE");
+        this.tableTabbedPane.addChangeListener(new ChangeListener() {
             @Override public void stateChanged(ChangeEvent ae) {
                 new Thread(new Runnable() {
                     @Override public void run() {
@@ -1357,12 +1356,16 @@ implements ActionListener {
                             int i=0;
                             for (String n : valueMap.keySet()) {
                                 ((MyNode) MySequentialGraphVars.g.vRefs.get(n)).setCurrentValue(valueMap.get(n));
-                                ((DefaultTableModel) pathDestTable.getModel()).addRow(new String[]{"" + (++i), n, MyMathUtil.getCommaSeperatedNumber(valueMap.get(n))});
+                                ((DefaultTableModel) pathDestTable.getModel()).addRow(
+                                    new String[]{"" + (++i),
+                                        MySequentialGraphSysUtil.getNodeName(n),
+                                        MyMathUtil.getCommaSeperatedNumber(valueMap.get(n))});
                             }
                             pb.updateValue(90, 100);
 
-                            MySequentialGraphVars.getSequentialGraphViewer().vc.clusteringSectorLabel.setVisible(false);
-                            MySequentialGraphVars.getSequentialGraphViewer().vc.clusteringSelector.setVisible(false);
+                            clusteringSectorLabel.setVisible(false);
+                            clusteringSelector.setVisible(false);
+                            depthSelecter.setVisible(false);
                             Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
                             for (MyEdge e : edges) {e.setCurrentValue(0);}
                             MySequentialGraphVars.getSequentialGraphViewer().revalidate();
@@ -1375,7 +1378,7 @@ implements ActionListener {
                     }
                 }).start();
             }
-        });*/
+        });
 
         JPanel graphPanel = new JPanel();
         graphPanel.setBackground(Color.WHITE);
@@ -1395,7 +1398,6 @@ implements ActionListener {
             @Override public synchronized void componentResized(ComponentEvent e) {
                 super.componentResized(e);
                 graphTableSplitPane.setDividerLocation(0.12);
-
                 if (nodeValueBarChart.isSelected()) {
                     MyViewerControlComponentUtil.removeBarChartsFromViewer();
                     MyViewerControlComponentUtil.removeSharedNodeValueBarCharts();
@@ -2187,8 +2189,8 @@ implements ActionListener {
         this.nodeListTable.setAutoCreateRowSorter(false);
         this.currentNodeListTable.setAutoCreateRowSorter(false);
         this.edgeListTable.setAutoCreateRowSorter(false);
-//        this.pathSourceTable.setAutoCreateRowSorter(false);
-//        this.pathDestTable.setAutoCreateRowSorter(false);
+        this.pathSourceTable.setAutoCreateRowSorter(false);
+        this.pathDestTable.setAutoCreateRowSorter(false);
 
         this.updateNodeTable();
         this.nodeListTable.revalidate();
@@ -2230,29 +2232,29 @@ implements ActionListener {
 
 
         // Get the existing pathFromTable RowSorter
-//        sorter = (TableRowSorter<DefaultTableModel>) pathSourceTable.getRowSorter();
+        sorter = (TableRowSorter<DefaultTableModel>) pathSourceTable.getRowSorter();
         // Get the existing pathFromTable model
-  //      tableModel = (DefaultTableModel) sorter.getModel();
+        tableModel = (DefaultTableModel) sorter.getModel();
         // Create a new sorter with the existing pathFromTable model
-   //     newSorter = new TableRowSorter<DefaultTableModel>(tableModel);
+        newSorter = new TableRowSorter<DefaultTableModel>(tableModel);
         // Set the new sorter as the RowSorter of pathFromTable
- //       pathSourceTable.setRowSorter(newSorter);
+        pathSourceTable.setRowSorter(newSorter);
 
 
         // Get the existing pathToTable RowSorter
-//        sorter = (TableRowSorter<DefaultTableModel>) pathDestTable.getRowSorter();
+        sorter = (TableRowSorter<DefaultTableModel>) pathDestTable.getRowSorter();
         // Get the existing pathToTable model
-//        tableModel = (DefaultTableModel) sorter.getModel();
+        tableModel = (DefaultTableModel) sorter.getModel();
         // Create a new sorter with the existing pathToTable model
-//        newSorter = new TableRowSorter<DefaultTableModel>(tableModel);
+        newSorter = new TableRowSorter<DefaultTableModel>(tableModel);
         // Set the new sorter as the RowSorter of pathToTable
-  //      pathDestTable.setRowSorter(newSorter);
+        pathDestTable.setRowSorter(newSorter);
 
         this.nodeListTable.setAutoCreateRowSorter(true);
         this.currentNodeListTable.setAutoCreateRowSorter(true);
         this.edgeListTable.setAutoCreateRowSorter(true);
-   //     this.pathSourceTable.setAutoCreateRowSorter(true);
-   //     this.pathDestTable.setAutoCreateRowSorter(true);
+        this.pathSourceTable.setAutoCreateRowSorter(true);
+        this.pathDestTable.setAutoCreateRowSorter(true);
     }
 
     private void updateNodeTable() {

@@ -466,6 +466,7 @@ public class MyViewerControlComponentUtil {
             MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodeNeighborNodeTypeSelector.setVisible(false);
             MySequentialGraphVars.getSequentialGraphViewer().vc.depthNeighborNodeTypeSelector.setVisible(false);
             MySequentialGraphVars.getSequentialGraphViewer().vc.tableTabbedPane.setSelectedIndex(0);
+            MySequentialGraphVars.getSequentialGraphViewer().vc.startNode = null;
 
             pb.updateValue(80, 100);
             MySequentialGraphVars.sequentialGraphDashBoard.setGraphLevelDashBoard();
