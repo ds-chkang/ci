@@ -388,6 +388,7 @@ implements ActionListener {
                                             if (MySequentialGraphVars.g.getVertices().size() == 0) {
                                                 pb.updateValue(100, 100);
                                                 pb.dispose();
+                                                funnelBtn.setEnabled(false);
                                                 MyMessageUtil.showInfoMsg("<html><body>An exception has occurred while creating a network.<br>Please, check the information provided in the configuration panel.</body></html>");
                                             } else {
                                                 MyMessageUtil.showInfoMsg("Network has successfully been built!");
@@ -395,6 +396,7 @@ implements ActionListener {
                                         } catch (Exception ex) {
                                             pb.updateValue(100, 100);
                                             pb.dispose();
+                                            funnelBtn.setEnabled(false);
                                             MyMessageUtil.showInfoMsg("<html><body>An exception has occurred while creating a network.<br>Please, check the information provided in the configuration panel.</body></html>");
                                         }
                                     }

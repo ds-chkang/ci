@@ -8,6 +8,8 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MyAnalysisGraphNodeMenu
 extends JPopupMenu
@@ -43,7 +45,7 @@ implements ActionListener {
     @Override public void actionPerformed(ActionEvent e) {
         new Thread(new Runnable() {
             @Override public void run() {
-                Collection<MyEdge> edges = funnelViewer.getGraphLayout().getGraph().getEdges();
+                Set<MyEdge> edges = new HashSet<>(funnelViewer.getGraphLayout().getGraph().getEdges());
                 if (edges != null) {
                     for (MyEdge edge : edges) {
                         if (edge.getSource() == currentSelectedNode) {

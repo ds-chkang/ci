@@ -2,7 +2,6 @@ package medousa.sequential.graph.funnel;
 
 import medousa.MyProgressBar;
 import medousa.message.MyMessageUtil;
-import medousa.sequential.graph.MyGraph;
 import medousa.sequential.graph.layout.MyStaticLayout;
 import medousa.sequential.graph.MyEdge;
 import medousa.sequential.graph.MyNode;
@@ -531,8 +530,9 @@ implements ActionListener, WindowListener {
         MyProgressBar pb = new MyProgressBar(false);
         try {
             Set<String> pathSet = new HashSet<>();
-            MyAnalysisGraphSuccessorPathExtractor successorPathExtractor =
-                new MyAnalysisGraphSuccessorPathExtractor(graph, graphViewer.graphMouseListener.selectedNode);
+            MyAnalysisGraphSuccessorPathExtractor successorPathExtractor = new MyAnalysisGraphSuccessorPathExtractor();
+            successorPathExtractor.graph = graph;
+            successorPathExtractor.selectedNode = graphViewer.graphMouseListener.selectedNode;
             Collection<MyNode> nodes = graph.getVertices();
             for (MyNode n : nodes) {
                 if (graph.getPredecessorCount(n) == 0) {
@@ -550,9 +550,9 @@ implements ActionListener, WindowListener {
                 }
             }
 
-            MySuccessorScanManager successorScanManager = new MySuccessorScanManager(pathSet);
+            MySequenceScanManager successorScanManager = new MySequenceScanManager(pathSet);
             successorScanManager.run();
-            LinkedHashMap<String, Long> successors = new LinkedHashMap<>(successorScanManager.getSuccessors());
+            LinkedHashMap<String, Long> successors = new LinkedHashMap<>(successorScanManager.getNodeValueMap());
             successors = MySequentialGraphSysUtil.sortMapByLongValue(successors);
 
             if (successors.size() == 0) {
@@ -604,12 +604,12 @@ implements ActionListener, WindowListener {
                             nodeOptionComboBoxMenu.removeActionListener(plusNetworkAnalyzer);
                             nodeOptionComboBoxMenu.setSelectedIndex(0);
                             nodeOptionComboBoxMenu.addActionListener(plusNetworkAnalyzer);
-                        }/** else if (graphViewer.graphMouseListener.selectedNode != null && nodeOptionComboBoxMenu.getSelectedIndex() < 2) {
-                            MyMessageUtil.showInfoMsg(plusNetworkAnalyzer, "Select a predecessor or successor.");
+                        } else if (graphViewer.graphMouseListener.selectedNode != null && nodeOptionComboBoxMenu.getSelectedIndex() < 2) {
+                            MyMessageUtil.showInfoMsg(plusNetworkAnalyzer, "Select a successor option.");
                             nodeOptionComboBoxMenu.removeActionListener(plusNetworkAnalyzer);
                             nodeOptionComboBoxMenu.setSelectedIndex(0);
                             nodeOptionComboBoxMenu.addActionListener(plusNetworkAnalyzer);
-                        }*/ else {
+                        } else {
                             addNodeToGraph();
                         }
                         nodeOptionComboBoxMenu.removeActionListener(plusNetworkAnalyzer);
@@ -634,10 +634,7 @@ implements ActionListener, WindowListener {
                         } else if (nodeOptionComboBoxMenu.getSelectedItem().toString().contains("NODE")) {
                             removeTableRecords();
                             loadNodes();
-                        }/** else if (nodeOptionComboBoxMenu.getSelectedItem().toString().contains("PREDECESSOR")) {
-                            removeTableRecords();
-                            loadPredecessors();
-                        }*/ else if (nodeOptionComboBoxMenu.getSelectedItem().toString().contains("SUCCESSOR")) {
+                        } else if (nodeOptionComboBoxMenu.getSelectedItem().toString().contains("SUCCESSOR")) {
                             removeTableRecords();
                             loadSuccessors();
                         } else {
@@ -664,11 +661,67 @@ implements ActionListener, WindowListener {
                         MyEdge e = new MyEdge(Integer.parseInt(contribution), graphViewer.graphMouseListener.selectedNode, n);
                         this.graph.addEdge(e, graphViewer.graphMouseListener.selectedNode, n);
                         this.graph.edRefs.add(edge);
+
+                        /**
+                         * Extract all the paths to update node and edge contributions.
+                         */
+                        Set<String> pathSet = new HashSet<>();
+                        MyAnalysisGraphSuccessorPathExtractor successorPathExtractor = new MyAnalysisGraphSuccessorPathExtractor();
+                        successorPathExtractor.graph = graph;
+                        Collection<MyNode> nodes = graph.getVertices();
+                        for (MyNode startNode : nodes) {
+                            if (graph.getPredecessorCount(startNode) == 0) {
+                                for (MyNode endNode : nodes) {
+                                    successorPathExtractor.selectedNode = endNode;
+                                    for (List<MyNode> path : successorPathExtractor.run(startNode)) {
+                                        String pathStr = "";
+                                        for (MyNode pn : path) {
+                                            if (pathStr.length() == 0) {
+                                                pathStr = pn.getName();
+                                            } else {
+                                                pathStr = pathStr + "-" + pn.getName();
+                                            }
+                                        }
+                                        pathSet.add(pathStr);
+                                    }
+                                }
+                            }
+                        }
+
+                        /**
+                         * Get node contributions from sequences.
+                         */
+                        MySequenceScanManager sequenceScanManager = new MySequenceScanManager(pathSet, true);
+                        sequenceScanManager.run();
+
+                        LinkedHashMap<String, Long> nodeContributions = new LinkedHashMap<>(sequenceScanManager.getNodeValueMap());
+                        nodeContributions = MySequentialGraphSysUtil.sortMapByLongValue(nodeContributions);
+
+                        /***
+                         * Update node contributions.
+                         */
+                        for (String nn : nodeContributions.keySet()) {
+                            ((MyNode) graph.vRefs.get(nn)).contribution = nodeContributions.get(nn);
+                        }
+
+                        /**
+                         * Update edge contributions.
+                         */
+                        LinkedHashMap<String, Long> edgeContributions = new LinkedHashMap<>(sequenceScanManager.getEdgeValueMap());
+                        edgeContributions = MySequentialGraphSysUtil.sortMapByLongValue(edgeContributions);
+
+                        Collection<MyEdge> edges = graph.getEdges();
+                        for (MyEdge exE : edges) {
+                            String edgeName = exE.getSource().getName() + "-" + exE.getDest().getName();
+                            exE.contribution = (int) ((long) edgeContributions.get(edgeName));
+                        }
                     } else {
                         String selectedNodeName = MySequentialGraphSysUtil.getNodeName(graphViewer.graphMouseListener.selectedNode.getName());
                         MyMessageUtil.showInfoMsg(this, "An edge between " + MySequentialGraphSysUtil.getNodeName(selectedNodeName) + " and " +
                             MySequentialGraphSysUtil.getNodeName(encodedNodeName) + " already exists.");
                     }
+                } else {
+                    MyMessageUtil.showInfoMsg(this, "The node already exists.");
                 }
             } else if (this.nodeOptionComboBoxMenu.getSelectedItem().toString().contains("NODE")) {
                 MyNode n = new MyNode(encodedNodeName);
@@ -676,11 +729,11 @@ implements ActionListener, WindowListener {
                 this.graph.vRefs.put(encodedNodeName, n);
                 if (graphViewer.mouseClickedLocation != null) {
                     graphViewer.getGraphLayout().setLocation(n,
-                        new Point2D.Double(graphViewer.mouseClickedLocation.getX()+150, graphViewer.mouseClickedLocation.getY()));
+                            new Point2D.Double(graphViewer.mouseClickedLocation.getX() + 150, graphViewer.mouseClickedLocation.getY()));
                     this.graph.addVertex(n);
                 } else {
                     graphViewer.getGraphLayout().setLocation(n,
-                        new Point2D.Double(getWidth()/2, getHeight()/2));
+                            new Point2D.Double(getWidth() / 2, getHeight() / 2));
                     this.graph.addVertex(n);
                 }
                 graphViewer.mouseClickedLocation = null;
@@ -688,35 +741,7 @@ implements ActionListener, WindowListener {
                 if (graphViewer.MAX_NODE_VALUE < n.getContribution()) {
                     graphViewer.MAX_NODE_VALUE = n.getContribution();
                 }
-            }
-            /** else if (nodeOptionComboBoxMenu.getSelectedItem().toString().contains("PREDECESSOR")) {
-                this.graph.vRefs.put(n.getName(), n);
-                if (graphViewer.mouseClickedLocation != null) {
-                    graphViewer.getGraphLayout().setLocation(n, new Point2D.Double(graphViewer.mouseClickedLocation.getX()+100, graphViewer.mouseClickedLocation.getY()+150));
-                    this.graph.addVertex(n);
-                } else {
-                    graphViewer.getGraphLayout().setLocation(n, new Point2D.Double(getWidth()/2, getHeight()/2));
-                    this.graph.addVertex(n);
-                }
-                graphViewer.mouseClickedLocation = null;
-
-                if (graphViewer.MAX_NODE_VALUE < n.getContribution()) {
-                    graphViewer.MAX_NODE_VALUE = n.getContribution();
-                }
-
-                Collection<MyEdge> inEdges = MySequentialGraphVars.g.getInEdges(this.graphViewer.graphMouseListener.selectedNode);
-                for (MyEdge e : inEdges) {
-                    if (n.getName().equals(e.getSource().getName()) && e.getDest().getName().equals(graphViewer.graphMouseListener.selectedNode.getName())) {
-                        this.graph.addEdge(e, n, graphViewer.graphMouseListener.selectedNode);
-                        this.graph.edRefs.add(e.getSource().getName() + "-" + e.getDest().getName());
-                        if (this.graphViewer.MAX_EDGE_VALUE < e.getContribution()) {
-                            this.graphViewer.MAX_EDGE_VALUE = e.getContribution();
-                        }
-                        break;
-                    }
-                }
-            }*/
-            else if (this.nodeOptionComboBoxMenu.getSelectedItem().toString().contains("SUCCESSOR")) {
+            } else if (this.nodeOptionComboBoxMenu.getSelectedItem().toString().contains("SUCCESSOR")) {
                 MyNode n = new MyNode(encodedNodeName);
                 n.contribution = Long.parseLong(contribution);
                 this.graph.vRefs.put(n.getName(), n);
@@ -752,9 +777,9 @@ implements ActionListener, WindowListener {
             }
 
             String statTxt = "N.: " + MyMathUtil.getCommaSeperatedNumber(graph.getVertexCount()) + "   " +
-                             "E.: " + MyMathUtil.getCommaSeperatedNumber(graph.getEdgeCount()) + "   " +
-                             "MAX. N. V.: " + MyMathUtil.twoDecimalFormat(graphViewer.MAX_NODE_VALUE) + "   " +
-                             "MAX. E. V.: " + MyMathUtil.twoDecimalFormat(graphViewer.MAX_EDGE_VALUE);
+                    "E.: " + MyMathUtil.getCommaSeperatedNumber(graph.getEdgeCount()) + "   " +
+                    "MAX. N. V.: " + MyMathUtil.twoDecimalFormat(graphViewer.MAX_NODE_VALUE) + "   " +
+                    "MAX. E. V.: " + MyMathUtil.twoDecimalFormat(graphViewer.MAX_EDGE_VALUE);
 
             this.statisticLabel.setText(statTxt);
             this.graphViewer.revalidate();

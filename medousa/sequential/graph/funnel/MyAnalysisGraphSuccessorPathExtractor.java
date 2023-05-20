@@ -8,13 +8,10 @@ import java.util.List;
 
 public class MyAnalysisGraphSuccessorPathExtractor {
 
-    private MyAnalysisGraph graph;
-    private MyNode selectedNode;
+    public MyAnalysisGraph graph;
+    public MyNode selectedNode;
 
-    public MyAnalysisGraphSuccessorPathExtractor(MyAnalysisGraph graph, MyNode selectedNode) {
-        this.graph = graph;
-        this.selectedNode = selectedNode;
-    }
+    public MyAnalysisGraphSuccessorPathExtractor() {}
 
     private List<List<MyNode>> findAllPaths(MyNode start, MyNode end) {
         List<List<MyNode>> allPaths = new ArrayList<>();
