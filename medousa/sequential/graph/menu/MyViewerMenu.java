@@ -3,7 +3,7 @@ package medousa.sequential.graph.menu;
 import medousa.message.MyMessageUtil;
 import medousa.sequential.graph.flow.MyFlowExplorerAnalyzer;
 import medousa.sequential.utils.MyFontChooser;
-import medousa.sequential.utils.MyViewerControlComponentUtil;
+import medousa.sequential.utils.MyViewerComponentControllerUtil;
 import medousa.sequential.utils.MySequentialGraphVars;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import medousa.sequential.graph.*;
@@ -133,11 +133,11 @@ implements ActionListener {
                     MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
                     MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelSelecter.setSelectedIndex(0);
                     MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-                    MyViewerControlComponentUtil.showNodeValue();
+                    MyViewerComponentControllerUtil.showNodeValue();
                 } else if (e.getSource() == showEdgeValue) {
-                    MyViewerControlComponentUtil.showEdgeValue();
+                    MyViewerComponentControllerUtil.showEdgeValue();
                 } else if (e.getSource() == showEdgeLabel) {
-                    MyViewerControlComponentUtil.showEdgeLabel();
+                    MyViewerComponentControllerUtil.showEdgeLabel();
                 } else if (e.getSource() == nodesByDepth) {
                     MyNodeDepthAppearnaceStatistics nodeDepthAppearnaceStatistics = new MyNodeDepthAppearnaceStatistics();
                 } else if (e.getSource() == searchNode) {
@@ -168,7 +168,7 @@ implements ActionListener {
                     MyFlowExplorerAnalyzer dataFlowGrapher = new MyFlowExplorerAnalyzer();
                     dataFlowGrapher.showDataFlows();
                 } else if (e.getSource() == clustering) {
-                    MyViewerControlComponentUtil.setDefaultViewerLook();
+                    MyViewerComponentControllerUtil.setDefaultViewerLook();
                     MyClusteringConfig clusteringConfig = new MyClusteringConfig();
                 } else if (e.getSource() == nodeFont) {
 

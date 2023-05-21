@@ -3,13 +3,11 @@ package medousa.sequential.graph;
 import edu.uci.ics.jung.algorithms.cluster.WeakComponentClusterer;
 import medousa.MyProgressBar;
 import medousa.direct.graph.MyDirectGraphComboBoxTooltipper;
-import medousa.direct.graph.MyDirectGraphRemovalPanel;
 import medousa.direct.utils.MyDirectGraphVars;
 import medousa.message.MyMessageUtil;
 import medousa.sequential.graph.stats.barchart.MyGraphLevelNodeValueBarChart;
 import medousa.sequential.utils.MyMathUtil;
 import medousa.sequential.utils.MySequentialGraphVars;
-import medousa.sequential.utils.MyViewerControlComponentUtil;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;

@@ -2,7 +2,7 @@ package medousa.sequential.graph;
 
 import medousa.MyProgressBar;
 import medousa.message.MyMessageUtil;
-import medousa.sequential.utils.MyViewerControlComponentUtil;
+import medousa.sequential.utils.MyViewerComponentControllerUtil;
 import medousa.sequential.utils.MySequentialGraphSysUtil;
 import medousa.sequential.utils.MySequentialGraphVars;
 import medousa.table.MyTableUtil;
@@ -167,11 +167,11 @@ implements ActionListener {
 
             pb.updateValue(90, 100);
             MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
-            MyViewerControlComponentUtil.removeBarChartsFromViewer();
+            MyViewerComponentControllerUtil.removeBarChartsFromViewer();
             MySequentialGraphSysUtil.setSharedPredecessors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode, n);
             MySequentialGraphSysUtil.setSharedSuccessors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode, n);
             MySequentialGraphVars.sequentialGraphDashBoard.setMultiNodeDashBoard();
-            MyViewerControlComponentUtil.setSharedNodeLevelNodeValueBarChart();
+            MyViewerComponentControllerUtil.setSharedNodeLevelNodeValueBarChart();
             pb.updateValue(95, 100);
         } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null && MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size() > 0) {
             MySequentialGraphVars.getSequentialGraphViewer().multiNodes.add(n);
@@ -182,14 +182,14 @@ implements ActionListener {
             pb.updateValue(30, 100);
             MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
             pb.updateValue(40, 100);
-            MyViewerControlComponentUtil.removeBarChartsFromViewer();
+            MyViewerComponentControllerUtil.removeBarChartsFromViewer();
             pb.updateValue(50, 100);
             MySequentialGraphSysUtil.setSharedPredecessors(n);
             pb.updateValue(60, 100);
             MySequentialGraphSysUtil.setSharedSuccessors(n);
             pb.updateValue(70, 100);
             MySequentialGraphVars.sequentialGraphDashBoard.setMultiNodeDashBoard();
-            MyViewerControlComponentUtil.setSharedNodeLevelNodeValueBarChart();
+            MyViewerComponentControllerUtil.setSharedNodeLevelNodeValueBarChart();
             pb.updateValue(95, 100);
 
         } else {
@@ -205,11 +205,11 @@ implements ActionListener {
             pb.updateValue(50, 100);
             MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
             pb.updateValue(60, 100);
-            MyViewerControlComponentUtil.setDepthOptionForSelectedNode();
+            MyViewerComponentControllerUtil.setDepthOptionForSelectedNode();
             pb.updateValue(70, 100);
-            MyViewerControlComponentUtil.removeBarChartsFromViewer();
+            MyViewerComponentControllerUtil.removeBarChartsFromViewer();
             pb.updateValue(80, 100);
-            MyViewerControlComponentUtil.setSelectedNodeNeighborValueBarChartToViewer();
+            MyViewerComponentControllerUtil.setSelectedNodeNeighborValueBarChartToViewer();
             MySequentialGraphVars.sequentialGraphDashBoard.setSingleNodeDashBoard();
             pb.updateValue(95, 100);
         }

@@ -3,9 +3,6 @@ package medousa.sequential.utils;
 import medousa.sequential.graph.MyClusteringConfig;
 import medousa.sequential.graph.MyEdge;
 import medousa.sequential.graph.MyNode;
-import medousa.sequential.graph.stats.barchart.MyGraphLevelEdgeValueBarChart;
-import medousa.sequential.graph.stats.barchart.MyGraphLevelNodeValueBarChart;
-import medousa.sequential.graph.stats.barchart.MySingleNodeNeighborNodeValueBarChart;
 
 import java.util.*;
 
@@ -828,7 +825,7 @@ public class MyNodeUtil {
             } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null && MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size() > 0) {
                 MySequentialGraphVars.getSequentialGraphViewer().vc.updateMultiNodeStatTable();
             } else {
-                MyViewerControlComponentUtil.setGraphLevelTableStatistics();
+                MyViewerComponentControllerUtil.setGraphLevelTableStatistics();
             }
 
             if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() > 1) {
@@ -837,14 +834,14 @@ public class MyNodeUtil {
             }
 
             if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.isSelected()) {
-                MyViewerControlComponentUtil.removeBarChartsFromViewer();
+                MyViewerComponentControllerUtil.removeBarChartsFromViewer();
                 MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
                 MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.setSelected(false);
                 MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
             }
 
             if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueBarChart.isSelected()) {
-                MyViewerControlComponentUtil.removeEdgeValueBarChartFromViewer();
+                MyViewerComponentControllerUtil.removeEdgeValueBarChartFromViewer();
                 MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueBarChart.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
                 MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueBarChart.setSelected(false);
                 MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueBarChart.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);

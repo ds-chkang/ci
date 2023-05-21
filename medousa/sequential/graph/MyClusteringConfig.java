@@ -4,7 +4,7 @@ import medousa.MyProgressBar;
 import medousa.message.MyMessageUtil;
 import medousa.sequential.graph.common.MyEdgeBetweennessClusterer;
 import medousa.sequential.utils.MyMathUtil;
-import medousa.sequential.utils.MyViewerControlComponentUtil;
+import medousa.sequential.utils.MyViewerComponentControllerUtil;
 import medousa.sequential.utils.MySequentialGraphSysUtil;
 import medousa.sequential.utils.MySequentialGraphVars;
 import medousa.table.MyTableUtil;
@@ -305,7 +305,7 @@ implements ActionListener {
                     @Override public void run() {
                         MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.setVisible(true);
                         recoverClusteredNodeValue();
-                        MyViewerControlComponentUtil.setDefaultViewerLook();
+                        MyViewerComponentControllerUtil.setDefaultViewerLook();
                         MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.setText("N. V. B.");
                         MySequentialGraphVars.getSequentialGraphViewer().vc.clusteringSectorLabel.setEnabled(true);
                         MySequentialGraphVars.getSequentialGraphViewer().vc.clusteringSelector.setEnabled(true);

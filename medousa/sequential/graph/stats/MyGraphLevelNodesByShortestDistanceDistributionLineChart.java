@@ -2,18 +2,13 @@ package medousa.sequential.graph.stats;
 
 import medousa.MyProgressBar;
 import medousa.sequential.graph.MyNode;
-import medousa.sequential.utils.MySequentialGraphSysUtil;
 import medousa.sequential.utils.MySequentialGraphVars;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.category.BarRenderer;
-import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.data.category.CategoryDataset;
-import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.HorizontalAlignment;
@@ -27,14 +22,14 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.util.*;
 
-public class MyGraphLevelShortestAverageDistanceDistributionLineChart
+public class MyGraphLevelNodesByShortestDistanceDistributionLineChart
 extends JPanel {
 
     public static int instances = 0;
     public JComboBox chartMenu;
     private XYSeries valueSeries;
 
-    public MyGraphLevelShortestAverageDistanceDistributionLineChart() {
+    public MyGraphLevelNodesByShortestDistanceDistributionLineChart() {
         decorate();
     }
 
@@ -51,7 +46,7 @@ extends JPanel {
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
         for (MyNode n : nodes) {
             if (n.getCurrentValue() == 0) continue;
-            long value = (long) n.avgShortestDistance;
+            long value = (long) n.shortestOutDistance;
             if (value == 0) continue;
             if (valueMap.containsKey(value)) {
                 valueMap.put(value, valueMap.get(value) + 1);
@@ -69,7 +64,7 @@ extends JPanel {
 
         TreeMap<Long, Long> valueMap = createNodeValueMap();
         XYSeriesCollection dataset = new XYSeriesCollection();
-        this.valueSeries = new XYSeries("AVG. SHORTEST D.");
+        this.valueSeries = new XYSeries("NODES BY DISTANCE");
         for (Long value : valueMap.keySet()) {
             this.valueSeries.add(value, valueMap.get(value));
         }
@@ -91,7 +86,7 @@ extends JPanel {
         XYPlot plot = (XYPlot) chart.getPlot();
         XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
         renderer.setSeriesPaint(0, Color.DARK_GRAY);
-        renderer.setSeriesStroke(0, new BasicStroke(0.9f));
+        renderer.setSeriesStroke(0, new BasicStroke(1.2f));
         renderer.setSeriesShapesVisible(0, true);
         renderer.setSeriesShape(0, new Ellipse2D.Double(-1.0, -1.0, 2.0, 2.0));
         renderer.setSeriesFillPaint(0, Color.WHITE);
@@ -101,8 +96,8 @@ extends JPanel {
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new Dimension(350, 367));
 
-        JLabel titleLabel = new JLabel(" AVG. SHORTEST D.");
-        titleLabel.setToolTipText("AVERAGE SHORTEST DISTANCE DISTRIBUTION");
+        JLabel titleLabel = new JLabel(" N. BY D.");
+        titleLabel.setToolTipText("NODES BY DISTANCE DISTRIBUTION");
         titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
         titleLabel.setBackground(Color.WHITE);
         titleLabel.setForeground(Color.DARK_GRAY);
@@ -147,7 +142,7 @@ extends JPanel {
     public void enlarge() {
         MyProgressBar pb = new MyProgressBar(false);
         try {
-            JFrame f = new JFrame(" AVERAGE SHORTEST DISTANCE DISTRIBUTION");
+            JFrame f = new JFrame(" NODES BY SHORTEST DISTANCE DISTRIBUTION");
             f.setLayout(new BorderLayout(3, 3));
             f.getContentPane().add(new MyGraphLevelNodeValueDistributionLineChart(), BorderLayout.CENTER);
             f.setPreferredSize(new Dimension(450, 350));

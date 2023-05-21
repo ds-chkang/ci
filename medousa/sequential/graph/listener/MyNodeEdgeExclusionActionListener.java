@@ -4,7 +4,7 @@ import medousa.sequential.graph.MyEdge;
 import medousa.sequential.graph.MyNode;
 import medousa.sequential.graph.MyViewerComponentController;
 import medousa.sequential.utils.MyDepthNodeExcluder;
-import medousa.sequential.utils.MyViewerControlComponentUtil;
+import medousa.sequential.utils.MyViewerComponentControllerUtil;
 import medousa.sequential.utils.MySequentialGraphVars;
 
 import java.awt.event.ActionEvent;
@@ -48,7 +48,7 @@ implements ActionListener {
                     MyDepthNodeExcluder.exludeDepthNodes(Integer.parseInt(MySequentialGraphVars.getSequentialGraphViewer().vc.depthExcludeSelecter.getSelectedItem().toString()));
                 }
 
-                MyViewerControlComponentUtil.setBottomCharts();
+                MyViewerComponentControllerUtil.setBottomCharts();
                 MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
 
                 MySequentialGraphVars.getSequentialGraphViewer().revalidate();

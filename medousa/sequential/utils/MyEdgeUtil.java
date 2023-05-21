@@ -4,7 +4,6 @@ import medousa.sequential.graph.MyClusteringConfig;
 import medousa.sequential.graph.MyEdge;
 import medousa.sequential.graph.MyNode;
 import edu.uci.ics.jung.algorithms.importance.BetweennessCentrality;
-import medousa.sequential.graph.MyViewerComponentController;
 import org.apache.commons.collections15.Transformer;
 
 import java.awt.*;
@@ -249,7 +248,7 @@ public class MyEdgeUtil {
                 } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null) {
                     MySequentialGraphVars.getSequentialGraphViewer().vc.updateMultiNodeStatTable();
                 } else {
-                    MyViewerControlComponentUtil.setGraphLevelTableStatistics();
+                    MyViewerComponentControllerUtil.setGraphLevelTableStatistics();
                 }
                 MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                 MySequentialGraphVars.getSequentialGraphViewer().repaint();
@@ -294,7 +293,7 @@ public class MyEdgeUtil {
                 } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null) {
                     MySequentialGraphVars.getSequentialGraphViewer().vc.updateMultiNodeStatTable();
                 } else {
-                    MyViewerControlComponentUtil.setGraphLevelTableStatistics();
+                    MyViewerComponentControllerUtil.setGraphLevelTableStatistics();
                 }
                 MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                 MySequentialGraphVars.getSequentialGraphViewer().repaint();

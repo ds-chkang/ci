@@ -6,7 +6,7 @@ import medousa.sequential.graph.MyNode;
 import medousa.sequential.graph.menu.MySingleNodeMenu;
 import medousa.sequential.utils.MySelectedNodeUtil;
 import medousa.sequential.utils.MySequentialGraphVars;
-import medousa.sequential.utils.MyViewerControlComponentUtil;
+import medousa.sequential.utils.MyViewerComponentControllerUtil;
 import edu.uci.ics.jung.visualization.control.GraphMouseListener;
 
 import javax.swing.*;
@@ -28,11 +28,11 @@ implements GraphMouseListener {
             pb.updateValue(35, 100);
             MySelectedNodeUtil.adjustSelectedNodeNeighborNodeValues(MySequentialGraphVars.getSequentialGraphViewer().selectedNode);
             pb.updateValue(65, 100);
-            MyViewerControlComponentUtil.setDepthOptionForSelectedNode();
+            MyViewerComponentControllerUtil.setDepthOptionForSelectedNode();
             pb.updateValue(90, 100);
 
-            MyViewerControlComponentUtil.removeBarChartsFromViewer();
-            MyViewerControlComponentUtil.removeSharedNodeValueBarCharts();
+            MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+            MyViewerComponentControllerUtil.removeSharedNodeValueBarCharts();
             pb.updateValue(95, 100);
 
             MySequentialGraphVars.sequentialGraphDashBoard.setSingleNodeDashBoard();
@@ -125,8 +125,8 @@ implements GraphMouseListener {
                             MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors = new HashSet<>(MySequentialGraphVars.g.getSuccessors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode));
 
                           //  MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
-                            MyViewerControlComponentUtil.removeBarChartsFromViewer();
-                            MyViewerControlComponentUtil.removeEdgeValueBarChartFromViewer();
+                            MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+                            MyViewerComponentControllerUtil.removeEdgeValueBarChartFromViewer();
                             MySequentialGraphVars.sequentialGraphDashBoard.setSingleNodeDashBoard();
                             MySequentialGraphVars.getSequentialGraphViewer().vc.updateTableInfos();
                             pb.updateValue(100, 100);

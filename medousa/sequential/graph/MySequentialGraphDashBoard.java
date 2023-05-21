@@ -1,12 +1,9 @@
 package medousa.sequential.graph;
 
-import edu.uci.ics.jung.algorithms.cluster.WeakComponentClusterer;
 import medousa.sequential.graph.stats.depthnode.*;
 import medousa.sequential.graph.stats.multinode.*;
 import medousa.sequential.graph.stats.singlenode.*;
 import medousa.sequential.graph.stats.*;
-import medousa.sequential.graph.stats.singlenode.MySingleNodeHopCountDistributionLineChart;
-import medousa.sequential.utils.MyMathUtil;
 import medousa.sequential.utils.MySequentialGraphSysUtil;
 import medousa.sequential.utils.MySequentialGraphVars;
 
@@ -15,7 +12,6 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.util.Set;
 
 public class MySequentialGraphDashBoard
 extends JPanel {
@@ -35,7 +31,7 @@ extends JPanel {
     public MyDepthLevelNodeValueHistogramDistributionLineChart depthLevelNodeValueHistogramDistributionLineChart;
     public MyDepthLevelEndingNodeValueHistogramDistributionLineChart depthLevelEndingNodeValueHistogramDistributionLineChart;
 
-    public MyGraphLevelShortestAverageDistanceDistributionLineChart graphLevelShortestAverageDistanceDistributionLineChart;
+    public MyGraphLevelNodesByShortestDistanceDistributionLineChart graphLevelShortestAverageDistanceDistributionLineChart;
     public MyGraphLevelShortestDistanceNodeValueDistributionLineChart graphLevelShortestDistanceNodeValueDistributionLineChart;
     public MyGraphLevelShortestDistanceUnreachableNodeCountDistributionLineChart graphLevelShortestDistanceUnreachableNodeCountDistributionLineChart;
 
@@ -45,13 +41,13 @@ extends JPanel {
     }
 
     TitledBorder dataProfileTitledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK),
-        "DATA PROFILE", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
+        "DISTRIBUTIONS", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
 
     TitledBorder networkTitledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK),
             "NETWORK", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
 
     TitledBorder shortestDistanceTitledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK),
-            "NODE DISTANCE PROFILE", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
+            "DISTRIBUTIONS", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
 
     public void setShortestDistanceDashBoard() {
         SwingUtilities.invokeLater(new Runnable() {
@@ -59,7 +55,7 @@ extends JPanel {
                 removeAll();
                 setLayout(new BorderLayout(0,0));
 
-                graphLevelShortestAverageDistanceDistributionLineChart = new MyGraphLevelShortestAverageDistanceDistributionLineChart();
+                graphLevelShortestAverageDistanceDistributionLineChart = new MyGraphLevelNodesByShortestDistanceDistributionLineChart();
                 graphLevelShortestDistanceNodeValueDistributionLineChart = new MyGraphLevelShortestDistanceNodeValueDistributionLineChart();
                 graphLevelShortestDistanceUnreachableNodeCountDistributionLineChart = new MyGraphLevelShortestDistanceUnreachableNodeCountDistributionLineChart();
 
@@ -72,7 +68,7 @@ extends JPanel {
                 shortestDistanceProfilePanel.setBorder(shortestDistanceTitledBorder);
 
                 JTabbedPane tabbedPane = new JTabbedPane();
-                tabbedPane.addTab("DATA PROFILE", null, shortestDistanceProfilePanel, "SHORTEST DISTANCE NODE PROFILE");
+                tabbedPane.addTab("NODE DISTANCE PROFILE", null, shortestDistanceProfilePanel, "NODE DISTANCE PROFILE");
                 //tabbedPane.addTab("GRAPH STATS.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setStatTable(), "GRAPH STATISTICS");
                 tabbedPane.setFont(MySequentialGraphVars.tahomaBoldFont12);
 

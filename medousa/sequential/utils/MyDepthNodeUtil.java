@@ -494,8 +494,8 @@ public class MyDepthNodeUtil {
     }
 
     public static void setDepthNodeNeighbors() {
-        MyViewerControlComponentUtil.removeBarChartsFromViewer();
-        MyViewerControlComponentUtil.removeEdgeValueBarChartFromViewer();
+        MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+        MyViewerComponentControllerUtil.removeEdgeValueBarChartFromViewer();
         if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthNeighborNodeTypeSelector.getSelectedIndex() == 0) {
             MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeSuccessorMaps = null;
             MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodePredecessorMaps = null;
@@ -536,8 +536,8 @@ public class MyDepthNodeUtil {
     }
 
     public static void setSelectedSingleDepthNodeNeighbors() {
-        MyViewerControlComponentUtil.removeBarChartsFromViewer();
-        MyViewerControlComponentUtil.removeEdgeValueBarChartFromViewer();
+        MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+        MyViewerComponentControllerUtil.removeEdgeValueBarChartFromViewer();
         if (MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodeNeighborNodeTypeSelector.getSelectedIndex() == 0) {
             MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeSuccessorMaps = null;
             MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodePredecessorMaps = null;

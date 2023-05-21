@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class MyViewerControlComponentUtil {
+public class MyViewerComponentControllerUtil {
 
     public static void setNodeBarChartToViewer() {
         MySequentialGraphVars.getSequentialGraphViewer().graphLevelNodeValueBarChart = new MyGraphLevelNodeValueBarChart();
@@ -417,9 +417,9 @@ public class MyViewerControlComponentUtil {
             MySequentialGraphVars.getSequentialGraphViewer().excluded = false;
             MySequentialGraphVars.getSequentialGraphViewer().isClustered = false;
             MySequentialGraphVars.currentGraphDepth = 0;
-            MyViewerControlComponentUtil.setEdgeValueSelecterMenu();
-            MyViewerControlComponentUtil.setDepthValueSelecterMenu();
-            MyViewerControlComponentUtil.setNodeValueComboBoxMenu();
+            MyViewerComponentControllerUtil.setEdgeValueSelecterMenu();
+            MyViewerComponentControllerUtil.setDepthValueSelecterMenu();
+            MyViewerComponentControllerUtil.setNodeValueComboBoxMenu();
             pb.updateValue(60, 100);
 
             MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueExcludeSymbolSelecter.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
@@ -502,8 +502,8 @@ public class MyViewerControlComponentUtil {
             MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.setText("N. V. B.");
             MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueBarChart.setText("E. V. B.");
 
-            MyViewerControlComponentUtil.removeBarChartsFromViewer();
-            MyViewerControlComponentUtil.removeEdgeValueBarChartFromViewer();
+            MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+            MyViewerComponentControllerUtil.removeEdgeValueBarChartFromViewer();
             MySequentialGraphVars.getSequentialGraphViewer().getRenderContext().setEdgeDrawPaintTransformer(MySequentialGraphVars.getSequentialGraphViewer().edgeColor);
 
             if (MySequentialGraphVars.getSequentialGraphViewer().vc.graphRemovalPanel != null) {
@@ -600,8 +600,8 @@ public class MyViewerControlComponentUtil {
             MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueBarChart.setText("C. E. V. B.");
             pb.updateValue(95, 100);
 
-            MyViewerControlComponentUtil.removeBarChartsFromViewer();
-            MyViewerControlComponentUtil.removeEdgeValueBarChartFromViewer();
+            MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+            MyViewerComponentControllerUtil.removeEdgeValueBarChartFromViewer();
             MySequentialGraphVars.getSequentialGraphViewer().getRenderContext().setEdgeDrawPaintTransformer(MySequentialGraphVars.getSequentialGraphViewer().edgeColor);
             MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setClusterTextStatistics();
             MySequentialGraphVars.getSequentialGraphViewer().revalidate();

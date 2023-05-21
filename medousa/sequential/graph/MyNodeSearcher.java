@@ -3,7 +3,7 @@ package medousa.sequential.graph;
 import medousa.MyProgressBar;
 import medousa.sequential.utils.MyMultiNodeUtil;
 import medousa.sequential.utils.MySelectedNodeUtil;
-import medousa.sequential.utils.MyViewerControlComponentUtil;
+import medousa.sequential.utils.MyViewerComponentControllerUtil;
 import medousa.sequential.utils.MySequentialGraphVars;
 
 import java.util.*;
@@ -31,7 +31,7 @@ public class MyNodeSearcher {
         MySequentialGraphVars.getSequentialGraphViewer().multiNodeSuccessors.addAll(MySequentialGraphVars.g.getSuccessors(dest));
         pb.updateValue(30, 100);
 
-        MyViewerControlComponentUtil.removeBarChartsFromViewer();
+        MyViewerComponentControllerUtil.removeBarChartsFromViewer();
         pb.updateValue(50, 100);
 
         MySequentialGraphVars.getSequentialGraphViewer().sharedPredecessors.addAll(MySequentialGraphVars.g.getPredecessors(source));
@@ -76,10 +76,10 @@ public class MyNodeSearcher {
             MySelectedNodeUtil.adjustSelectedNodeNeighborNodeValues(MySequentialGraphVars.getSequentialGraphViewer().selectedNode);
             MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
             pb.updateValue(85, 100);
-            MyViewerControlComponentUtil.setDepthOptionForSelectedNode();
+            MyViewerComponentControllerUtil.setDepthOptionForSelectedNode();
             pb.updateValue(90, 100);
-            MyViewerControlComponentUtil.removeBarChartsFromViewer();
-            MyViewerControlComponentUtil.removeSharedNodeValueBarCharts();
+            MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+            MyViewerComponentControllerUtil.removeSharedNodeValueBarCharts();
             pb.updateValue(95, 100);
             MySequentialGraphVars.sequentialGraphDashBoard.setSingleNodeDashBoard();
             MySequentialGraphVars.getSequentialGraphViewer().getRenderContext().setEdgeDrawPaintTransformer(MySequentialGraphVars.getSequentialGraphViewer().edgeColor);

@@ -1,6 +1,5 @@
 package medousa.sequential.graph.listener;
 
-import medousa.direct.utils.MyDirectGraphVars;
 import medousa.sequential.graph.MyNode;
 import medousa.sequential.graph.MySequentialGraphViewer;
 import medousa.sequential.graph.menu.MyDepthNodeMenu;
@@ -9,7 +8,7 @@ import medousa.sequential.graph.menu.MySingleNodeMenu;
 import medousa.sequential.graph.menu.MyViewerMenu;
 import medousa.MyProgressBar;
 import medousa.sequential.utils.MyMultiNodeUtil;
-import medousa.sequential.utils.MyViewerControlComponentUtil;
+import medousa.sequential.utils.MyViewerComponentControllerUtil;
 import medousa.sequential.utils.MySequentialGraphVars;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 
@@ -41,12 +40,12 @@ implements MouseListener {
                                 MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null ||
                                 MySequentialGraphVars.getSequentialGraphViewer().excluded ||
                                 MySequentialGraphVars.getSequentialGraphViewer().vc.tableTabbedPane.getSelectedIndex() == 2) {
-                                MyViewerControlComponentUtil.setDefaultViewerLook();
+                                MyViewerComponentControllerUtil.setDefaultViewerLook();
                             }
                         } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() > 0 ||
                             MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() > 0 ||
                             MySequentialGraphVars.getSequentialGraphViewer().excluded) {
-                            MyViewerControlComponentUtil.setDefaultViewerLook();
+                            MyViewerComponentControllerUtil.setDefaultViewerLook();
                         }
                     }
                 }).start();
@@ -75,7 +74,7 @@ implements MouseListener {
                         }
                     }).start();
                 } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.getSelectedIndex() == 0 && (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null || MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null || MySequentialGraphVars.getSequentialGraphViewer().excluded)) {
-                    MyViewerControlComponentUtil.setDefaultViewerLook();
+                    MyViewerComponentControllerUtil.setDefaultViewerLook();
                 }
             } else if (SwingUtilities.isRightMouseButton(e) &&
                 MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null &&
@@ -176,7 +175,7 @@ implements MouseListener {
                 MySequentialGraphVars.getSequentialGraphViewer().sharedPredecessors.retainAll(MySequentialGraphVars.g.getPredecessors(n));
             }
             pb.updateValue(80, 100);
-            MyViewerControlComponentUtil.removeBarChartsFromViewer();
+            MyViewerComponentControllerUtil.removeBarChartsFromViewer();
             MySequentialGraphVars.getSequentialGraphViewer().selectedNode = null;
             MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors = null;
             MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors = null;
@@ -224,7 +223,7 @@ implements MouseListener {
                 MySequentialGraphVars.getSequentialGraphViewer().sharedPredecessors.retainAll(MySequentialGraphVars.g.getPredecessors(n));
             }
             pb.updateValue(80, 100);
-            MyViewerControlComponentUtil.removeBarChartsFromViewer();
+            MyViewerComponentControllerUtil.removeBarChartsFromViewer();
             MySequentialGraphVars.getSequentialGraphViewer().selectedNode = null;
             MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors = null;
             MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors = null;

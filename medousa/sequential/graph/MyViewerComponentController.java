@@ -932,6 +932,8 @@ implements ActionListener {
     }
 
     public void decorateGraphViewer(JPanel graphViewer) {
+        final MyViewerComponentController viewerComponentController = this;
+
         this.setLayout(new BorderLayout());
         this.setBorder(BorderFactory.createLoweredSoftBevelBorder());
         this.setBackground(Color.WHITE);
@@ -961,13 +963,13 @@ implements ActionListener {
         this.depthSelecter.setToolTipText("SELECT A DEPTH");
         this.depthSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.depthSelecter.addActionListener(this);
-        MyViewerControlComponentUtil.setDepthValueSelecterMenu();
+        MyViewerComponentControllerUtil.setDepthValueSelecterMenu();
 
         this.depthExcludeSelecter.setBackground(Color.WHITE);
         this.depthExcludeSelecter.setFocusable(false);
         this.depthExcludeSelecter.setToolTipText("SELECT A DEPTH");
         this.depthExcludeSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
-        MyViewerControlComponentUtil.setDepthExcludeSelecterMenu();
+        MyViewerComponentControllerUtil.setDepthExcludeSelecterMenu();
 
         this.depthExcludeSymbolSelecter.setBackground(Color.WHITE);
         this.depthExcludeSymbolSelecter.setFocusable(false);
@@ -1055,7 +1057,7 @@ implements ActionListener {
             nodeValueTooltips[23] = "UNREACHABLE NODE COUNT";
             this.nodeValueSelecter.setRenderer(new MyComboBoxTooltipRenderer(nodeValueTooltips));
         }
-        MyViewerControlComponentUtil.setNodeValueComboBoxMenu();
+        MyViewerComponentControllerUtil.setNodeValueComboBoxMenu();
 
         this.edgeValueLabel.setToolTipText("EDGE VALUE");
         this.edgeValueLabel.setBackground(Color.WHITE);
@@ -1096,7 +1098,7 @@ implements ActionListener {
             edgeValueTooltips[7] = "BETWEENESS";
             this.edgeValueSelecter.setRenderer(new MyComboBoxTooltipRenderer(edgeValueTooltips));
         }
-        MyViewerControlComponentUtil.setEdgeValueSelecterMenu();
+        MyViewerComponentControllerUtil.setEdgeValueSelecterMenu();
 
         this.edgeLabelSelecter.setFocusable(false);
         this.edgeLabelSelecter.setToolTipText("SELECT AN EDGE LABEL");
@@ -1336,6 +1338,10 @@ implements ActionListener {
                         if (tableTabbedPane.getSelectedIndex() == 2) {
                             MyProgressBar pb = new MyProgressBar(false);
 
+                            nodeValueSelecter.removeActionListener(viewerComponentController);
+                            nodeValueSelecter.setSelectedIndex(11);
+                            nodeValueSelecter.addActionListener(viewerComponentController);
+
                             if (graphRemovalPanel != null) {
                                 graphRemovalPanel.setVisible(false);
                             }
@@ -1351,18 +1357,20 @@ implements ActionListener {
                             }
 
                             Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
-                            LinkedHashMap<String, Long> valueMap = new LinkedHashMap<>();
+                            float max = 0f;
                             for (MyNode n : nodes) {
-                                valueMap.put(n.getName(), (long) n.getCurrentValue());
+                                n.setCurrentValue(n.avgShortestDistance);
+                                if (n.getCurrentValue() > max) {
+                                    max = n.getCurrentValue();
+                                }
                             }
-                            valueMap = MySequentialGraphSysUtil.sortMapByLongValue(valueMap);
+                            MySequentialGraphVars.g.MX_N_VAL = max;
 
                             int i=0;
-                            for (String n : valueMap.keySet()) {
-                                ((MyNode) MySequentialGraphVars.g.vRefs.get(n)).setCurrentValue(valueMap.get(n));
+                            for (MyNode n : nodes) {
                                 ((DefaultTableModel) shortestDistanceDestTable.getModel()).addRow(
                                     new String[]{"" + (++i),
-                                        MySequentialGraphSysUtil.getNodeName(n),
+                                        MySequentialGraphSysUtil.getNodeName(n.getName()),
                                         "0"
                                     }
                                 );
@@ -1401,7 +1409,7 @@ implements ActionListener {
                             pb.updateValue(100, 100);
                             pb.dispose();
                         } else if (tableTabbedPane.getSelectedIndex() == 0){
-                            MyViewerControlComponentUtil.setDefaultViewerLook();
+                            MyViewerComponentControllerUtil.setDefaultViewerLook();
                         }
                     }
                 }).start();
@@ -1427,19 +1435,19 @@ implements ActionListener {
                 super.componentResized(e);
                 graphTableSplitPane.setDividerLocation(0.12);
                 if (nodeValueBarChart.isSelected()) {
-                    MyViewerControlComponentUtil.removeBarChartsFromViewer();
-                    MyViewerControlComponentUtil.removeSharedNodeValueBarCharts();
+                    MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+                    MyViewerComponentControllerUtil.removeSharedNodeValueBarCharts();
                     if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
-                        MyViewerControlComponentUtil.setSelectedNodeNeighborValueBarChartToViewer();
+                        MyViewerComponentControllerUtil.setSelectedNodeNeighborValueBarChartToViewer();
                     } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null) {
-                        MyViewerControlComponentUtil.setSharedNodeLevelNodeValueBarChart();
+                        MyViewerComponentControllerUtil.setSharedNodeLevelNodeValueBarChart();
                     } else {
                         MySequentialGraphVars.getSequentialGraphViewer().graphLevelNodeValueBarChart = new MyGraphLevelNodeValueBarChart();
                         MySequentialGraphVars.getSequentialGraphViewer().add(MySequentialGraphVars.getSequentialGraphViewer().graphLevelNodeValueBarChart);
                     }
                 } else {
-                    MyViewerControlComponentUtil.removeBarChartsFromViewer();
-                    MyViewerControlComponentUtil.removeSharedNodeValueBarCharts();
+                    MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+                    MyViewerComponentControllerUtil.removeSharedNodeValueBarCharts();
                 }
                 MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                 MySequentialGraphVars.getSequentialGraphViewer().repaint();
@@ -1544,7 +1552,7 @@ implements ActionListener {
         TableColumnModel columnModel = this.statTable.getColumnModel();
         columnModel.getColumn(0).setCellRenderer(new MyGrayCellRenderer());
 
-        MyViewerControlComponentUtil.setGraphLevelTableStatistics();
+        MyViewerComponentControllerUtil.setGraphLevelTableStatistics();
 
         JScrollPane graphStatTableScrollPane = new JScrollPane(this.statTable);
         graphStatTableScrollPane.setOpaque(false);
@@ -2770,8 +2778,8 @@ implements ActionListener {
             new Thread(new Runnable() {
                 @Override public void run() {
                     if (nodeValueBarChart.isSelected()) {
-                        MyViewerControlComponentUtil.removeBarChartsFromViewer();
-                        MyViewerControlComponentUtil.removeSharedNodeValueBarCharts();
+                        MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+                        MyViewerComponentControllerUtil.removeSharedNodeValueBarCharts();
                         if (MySequentialGraphVars.getSequentialGraphViewer().isClustered) {
                             if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.getText().equals("N. V. B.")) {
                                 MyMessageUtil.showInfoMsg("Select a cluster ID.");
@@ -2780,19 +2788,19 @@ implements ActionListener {
                             MySequentialGraphVars.getSequentialGraphViewer().clusteredGraphLevelNodeValueBarChart = new MyClusteredGraphLevelNodeValueBarChart();
                             MySequentialGraphVars.getSequentialGraphViewer().add(MySequentialGraphVars.getSequentialGraphViewer().clusteredGraphLevelNodeValueBarChart);
                         } else if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
-                            MyViewerControlComponentUtil.setSelectedNodeNeighborValueBarChartToViewer();
+                            MyViewerComponentControllerUtil.setSelectedNodeNeighborValueBarChartToViewer();
                         } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null) {
-                            MyViewerControlComponentUtil.setSharedNodeLevelNodeValueBarChart();
+                            MyViewerComponentControllerUtil.setSharedNodeLevelNodeValueBarChart();
                         } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.getSelectedIndex() > 0 && MySequentialGraphVars.getSequentialGraphViewer().vc.depthNeighborNodeTypeSelector.getSelectedIndex() == 0) {
-                            MyViewerControlComponentUtil.setDepthNodeBarChartToViewer();
+                            MyViewerComponentControllerUtil.setDepthNodeBarChartToViewer();
                         } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.getSelectedIndex() > 0 && MySequentialGraphVars.getSequentialGraphViewer().vc.depthNeighborNodeTypeSelector.getSelectedIndex() > 0) {
-                            MyViewerControlComponentUtil.setDepthNeighborNodeBarChartToViewer();
+                            MyViewerComponentControllerUtil.setDepthNeighborNodeBarChartToViewer();
                         } else {
-                            MyViewerControlComponentUtil.setNodeBarChartToViewer();
+                            MyViewerComponentControllerUtil.setNodeBarChartToViewer();
                         }
                     } else {
-                        MyViewerControlComponentUtil.removeBarChartsFromViewer();
-                        MyViewerControlComponentUtil.removeSharedNodeValueBarCharts();
+                        MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+                        MyViewerComponentControllerUtil.removeSharedNodeValueBarCharts();
                     }
                     MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                     MySequentialGraphVars.getSequentialGraphViewer().repaint();
@@ -2808,24 +2816,24 @@ implements ActionListener {
                             return;
                         }
                         if (edgeValueSelecter.getSelectedIndex() < 2) {
-                            MyViewerControlComponentUtil.removeEdgeValueBarChartFromViewer();
+                            MyViewerComponentControllerUtil.removeEdgeValueBarChartFromViewer();
                         } else if (MySequentialGraphVars.getSequentialGraphViewer().isClustered) {
-                            MyViewerControlComponentUtil.removeEdgeValueBarChartFromViewer();
+                            MyViewerComponentControllerUtil.removeEdgeValueBarChartFromViewer();
                             MySequentialGraphVars.getSequentialGraphViewer().clusteredGraphLevelEdgeValueBarChart = new MyClusteredGraphLevelEdgeValueBarChart();
                             MySequentialGraphVars.getSequentialGraphViewer().add(MySequentialGraphVars.getSequentialGraphViewer().clusteredGraphLevelEdgeValueBarChart);
                         } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null && MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size() > 0) {
-                            MyViewerControlComponentUtil.setShareNodeLevelEdgeValueBarChartToViewer();
+                            MyViewerComponentControllerUtil.setShareNodeLevelEdgeValueBarChartToViewer();
                         } else if (depthSelecter.getSelectedIndex() > 0) {
                             if (depthNeighborNodeTypeSelector.getSelectedIndex() > 0) {
-                                MyViewerControlComponentUtil.removeEdgeValueBarChartFromViewer();
+                                MyViewerComponentControllerUtil.removeEdgeValueBarChartFromViewer();
                                 MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart = new MyGraphLevelEdgeValueBarChart();
                                 MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart.setEdgeValueBarChartForDepthNodes();
                                 MySequentialGraphVars.getSequentialGraphViewer().add(MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart);
                             }
                         } else if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
-                            MyViewerControlComponentUtil.setSingleNodeLevelEdgeBarChartToViewer();
+                            MyViewerComponentControllerUtil.setSingleNodeLevelEdgeBarChartToViewer();
                         } else {
-                            MyViewerControlComponentUtil.setEdgeBarChartToViewer();
+                            MyViewerComponentControllerUtil.setEdgeBarChartToViewer();
                         }
                     } else {
                         if (MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart != null) {
@@ -2841,7 +2849,7 @@ implements ActionListener {
                 @Override public void run() {
                     new Thread(new Runnable() {
                         @Override public void run() {
-                            MyViewerControlComponentUtil.showEdgeLabel();
+                            MyViewerComponentControllerUtil.showEdgeLabel();
                         }
                     }).start();
                 }
@@ -2849,7 +2857,7 @@ implements ActionListener {
         } else if (ae.getSource() == nodeLabelSelecter) {
             new Thread(new Runnable() {
                 @Override public void run() {
-                    MyViewerControlComponentUtil.showNodeLabel();
+                    MyViewerComponentControllerUtil.showNodeLabel();
                 }
             }).start();
         } else if (ae.getSource() == clusteringSelector) {
@@ -2859,12 +2867,12 @@ implements ActionListener {
                         if (MyClusteringConfig.instances++ == 0) {
                             edgeValueBarChart.setText("C. E. V. B");
                             nodeValueBarChart.setText("C. N. V. B");
-                            MyViewerControlComponentUtil.setDefaultViewerLook();
+                            MyViewerComponentControllerUtil.setDefaultViewerLook();
                             MyClusteringConfig clusteringConfig = new MyClusteringConfig();
                         }
                     } else if (clusteringSelector.getSelectedIndex() == 0) {
                         if (MySequentialGraphVars.getSequentialGraphViewer().isClustered) {
-                            MyViewerControlComponentUtil.setDefaultViewerLook();
+                            MyViewerComponentControllerUtil.setDefaultViewerLook();
                             MySequentialGraphVars.getSequentialGraphViewer().isClustered = false;
                         }
                     } else if (clusteringSelector.getSelectedIndex() == 2) {
@@ -2896,7 +2904,7 @@ implements ActionListener {
                     MySequentialGraphVars.app.getSequentialGraphDashboard().setDepthNodeDashBoard();
                     pb.updateValue(85, 100);
                     updateNodeTable();
-                    MyViewerControlComponentUtil.adjustDepthNodeValueMenu();
+                    MyViewerComponentControllerUtil.adjustDepthNodeValueMenu();
                     MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                     MySequentialGraphVars.getSequentialGraphViewer().repaint();
                     pb.updateValue(100, 100);
@@ -2907,15 +2915,15 @@ implements ActionListener {
             new Thread(new Runnable() {
                 @Override public void run() {
                     MyProgressBar pb = new MyProgressBar(false);
-                    MyViewerControlComponentUtil.setExcludeSymbolOption();
+                    MyViewerComponentControllerUtil.setExcludeSymbolOption();
                     pb.updateValue(30, 100);
                     MyDepthNodeUtil.setSelectedSingleDepthNodeNeighbors();
                     pb.updateValue(65, 100);
-                    MyViewerControlComponentUtil.setBottomCharts();
+                    MyViewerComponentControllerUtil.setBottomCharts();
                     pb.updateValue(95, 100);
                     vTxtStat.setTextStatistics();
                     updateTableInfos();
-                    MyViewerControlComponentUtil.adjustDepthNodeValueMenu();
+                    MyViewerComponentControllerUtil.adjustDepthNodeValueMenu();
                     pb.updateValue(100, 100);
                     pb.dispose();
                 }
@@ -2979,14 +2987,14 @@ implements ActionListener {
                         tableTabbedPane.setEnabledAt(1, true);
                         tableTabbedPane.setEnabledAt(2, true);
 
-                        MyViewerControlComponentUtil.setDefaultViewerLook();
+                        MyViewerComponentControllerUtil.setDefaultViewerLook();
                         return;
                     } else if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
                         clusteringSectorLabel.setEnabled(false);
                         clusteringSelector.setEnabled(false);
 
                         if (depthSelecter.getSelectedIndex() == 0) {
-                            MyViewerControlComponentUtil.setDefaultViewerLook();
+                            MyViewerComponentControllerUtil.setDefaultViewerLook();
                             tableTabbedPane.setEnabledAt(1, true);
                             tableTabbedPane.setEnabledAt(2, true);
                         } else {
@@ -2994,8 +3002,8 @@ implements ActionListener {
                             nodeValueBarChart.setText("DEPTH N. V. B.");
                             tableTabbedPane.setEnabledAt(1, false);
                             tableTabbedPane.setEnabledAt(2, false);
-                            MyViewerControlComponentUtil.removeBarChartsFromViewer();
-                            MyViewerControlComponentUtil.removeEdgeValueBarChartFromViewer();
+                            MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+                            MyViewerComponentControllerUtil.removeEdgeValueBarChartFromViewer();
                             depthNodeNameSet = new HashSet<>();
                             depthNodeNameSet.add(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName());
                             selectedNodeNeighborNodeTypeSelector.setVisible(true);
@@ -3006,7 +3014,7 @@ implements ActionListener {
                                 }
                             }
                             updateNodeTable();
-                            MyViewerControlComponentUtil.setSelectedNodeNeighborNodeTypeOption();
+                            MyViewerComponentControllerUtil.setSelectedNodeNeighborNodeTypeOption();
                            // MyViewerControlComponentUtil.setBottomCharts();
                             MySequentialGraphVars.getSequentialGraphViewer().selectedNode = null;
                         }
@@ -3025,8 +3033,8 @@ implements ActionListener {
                             }
                         }
                         updateNodeTable();
-                        MyViewerControlComponentUtil.setSelectedNodeNeighborNodeTypeOption();
-                        MyViewerControlComponentUtil.setSelectedNodeVisibleOnly();
+                        MyViewerComponentControllerUtil.setSelectedNodeNeighborNodeTypeOption();
+                        MyViewerComponentControllerUtil.setSelectedNodeVisibleOnly();
                         //MyViewerControlComponentUtil.setBottomCharts();
                         MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                         MySequentialGraphVars.getSequentialGraphViewer().repaint();
@@ -3038,8 +3046,8 @@ implements ActionListener {
                         tableTabbedPane.setEnabledAt(1, false);
                         tableTabbedPane.setEnabledAt(2, false);
                         nodeValueBarChart.setText("DEPTH N. V. B.");
-                        MyViewerControlComponentUtil.setDepthNodeNameSet();
-                        MyViewerControlComponentUtil.setDepthNodeNeighborNodeTypeOption();
+                        MyViewerComponentControllerUtil.setDepthNodeNameSet();
+                        MyViewerComponentControllerUtil.setDepthNodeNeighborNodeTypeOption();
                         MyDepthNodeUtil.setDepthNodeValue();
                         MySequentialGraphVars.app.getSequentialGraphDashboard().setDepthNodeDashBoard();
                         //vTxtStat.setTextStatistics();
@@ -3049,7 +3057,7 @@ implements ActionListener {
                         MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                         MySequentialGraphVars.getSequentialGraphViewer().repaint();
                     }
-                    MyViewerControlComponentUtil.adjustDepthNodeValueMenu();
+                    MyViewerComponentControllerUtil.adjustDepthNodeValueMenu();
                 }
             }).start();
         }
