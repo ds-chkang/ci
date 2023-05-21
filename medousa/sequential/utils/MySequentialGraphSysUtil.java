@@ -4,7 +4,6 @@ import medousa.message.MyMessageUtil;
 import medousa.security.MyOSMonitor;
 import medousa.sequential.feature.MyVariableMap;
 import medousa.sequential.graph.MyGraph;
-import medousa.MyProgressBar;
 import medousa.sequential.graph.MyEdge;
 import medousa.sequential.graph.MyNode;
 
@@ -280,45 +279,41 @@ public class MySequentialGraphSysUtil {
             MySequentialGraphVars.getSequentialGraphViewer().sharedSuccessors.retainAll(MySequentialGraphVars.g.getSuccessors(a));
         }
     }
-
     public static String getWorkingDir() {
         return System.getProperty("user.dir");
     }
-
     public static void setAverageShortestDistance(MyGraph<MyNode, MyEdge> g) {
-        StringBuilder b =  new StringBuilder();
-        long gTotalL = 0L;
+        long gTotalD = 0L;
         long gCount = 0L;
         Collection<MyNode> nodes = g.getVertices();
         for (MyNode start : nodes) {
             Queue<MyNode> Qu =  new LinkedList<>();
-            Set<MyNode> visited = new HashSet();
-            Map<MyNode, Integer> found =  new HashMap();
+            Set<MyNode> visitedNodeSet = new HashSet();
+            Map<MyNode, Integer> distanceMap =  new HashMap();
 
             Qu.add(start);
-            found.put(start, 0);
+            distanceMap.put(start, 0);
             while (!Qu.isEmpty()) {
                 MyNode vertex = Qu.remove();
                 Collection<MyNode> successors = g.getSuccessors(vertex);
                 for (MyNode neighbor : successors) {
-                    if (!found.keySet().contains(neighbor) && !visited.contains(neighbor)) {
-                        found.put(neighbor, found.get(vertex) + 1);
+                    if (!visitedNodeSet.contains(neighbor)) {
+                        distanceMap.put(neighbor, distanceMap.get(vertex) + 1);
                         Qu.add(neighbor);
                     }
                 }
-                //b.append(vertex.toString() + " ");
-                visited.add(vertex);
+                visitedNodeSet.add(vertex);
             }
 
             // Calculate average path length.
-            int totalL = 0;
+            int totalD = 0;
             int count = 0;
-            for (Integer l : found.values()) {
-                if (l > 0) {
-                    totalL += l;
+            for (int d : distanceMap.values()) {
+                if (d > 0) {
+                    totalD += d;
                     count++;
-                    if (l > MySequentialGraphVars.diameter) {
-                        MySequentialGraphVars.diameter = l;
+                    if (d > MySequentialGraphVars.diameter) {
+                        MySequentialGraphVars.diameter = d;
                     }
                 }
             }
@@ -326,19 +321,19 @@ public class MySequentialGraphSysUtil {
             if (count == 0) {
                 start.setAverageShortestDistance(0);
             } else {
-                start.setAverageShortestDistance((float) totalL / count);
+                start.setAverageShortestDistance((float) totalD / count);
             }
 
-            gTotalL += totalL;
+            gTotalD += totalD;
             gCount += count;
             start.setUnreachableNodeCount((MySequentialGraphVars.g.getVertexCount()-1)-count);
         }
 
-        if (gTotalL > 0) {
-            double avg = (double) gTotalL / gCount;
-            MySequentialGraphVars.avgShortestPathLen = avg;
+        if (gTotalD > 0) {
+            double avg = (double) gTotalD / gCount;
+            MySequentialGraphVars.avgShortestDistance = avg;
         } else {
-            MySequentialGraphVars.avgShortestPathLen = 0.0D;
+            MySequentialGraphVars.avgShortestDistance = 0.0D;
         }
     }
 

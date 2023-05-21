@@ -424,7 +424,7 @@ implements Serializable {
 
     public Transformer<MyNode, Paint> unWeightedNodeColor = new Transformer<MyNode, Paint>() {
         @Override public Paint transform(MyNode n) {
-            if (vc.startNode != null && vc.startNode == n) {
+            if (vc.shortestDistanceSourceNode != null && vc.shortestDistanceSourceNode == n) {
                 return Color.ORANGE;
             } else if (isClustered) {
                 return n.clusteringColor;

@@ -66,6 +66,8 @@ implements GraphMouseListener {
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
                 try {
+                    if (MySequentialGraphVars.getSequentialGraphViewer().vc.tableTabbedPane.getSelectedIndex() == 2) return;
+
                     if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null && MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size() > 0) {
                         if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes.contains(obj) && SwingUtilities.isRightMouseButton(e)) {
                             MySingleNodeMenu grapNodeMenu = new MySingleNodeMenu();
@@ -122,7 +124,7 @@ implements GraphMouseListener {
                             MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors = new HashSet<>(MySequentialGraphVars.g.getPredecessors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode));
                             MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors = new HashSet<>(MySequentialGraphVars.g.getSuccessors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode));
 
-                            MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
+                          //  MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
                             MyViewerControlComponentUtil.removeBarChartsFromViewer();
                             MyViewerControlComponentUtil.removeEdgeValueBarChartFromViewer();
                             MySequentialGraphVars.sequentialGraphDashBoard.setSingleNodeDashBoard();

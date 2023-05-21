@@ -30,6 +30,7 @@ import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 
 public class MyViewerComponentController
 extends JPanel
@@ -122,11 +123,10 @@ implements ActionListener {
     public JPanel bottomLeftControlPanel =new JPanel();
     public JPanel bottomRightPanel = new JPanel();
     public JPanel bottomPanel = new JPanel();
-    public JComboBox distanceMenu = new JComboBox();
-    public MyNode startNode;
-
+    public MyNode shortestDistanceSourceNode;
     public JButton excludeBtn;
     public MyTextStatistics vTxtStat = new MyTextStatistics();
+    public JComboBox shortestDistanceMenu = new JComboBox();
     public JComboBox depthSelecter = new JComboBox();
     public JComboBox nodeValueSelecter = new JComboBox();
     public JComboBox edgeValueSelecter = new JComboBox();
@@ -160,18 +160,21 @@ implements ActionListener {
     public JLabel nodeValueSelecterLabel = new JLabel("  N. V.");
     public JSplitPane graphTableSplitPane = new JSplitPane();
     public JTabbedPane tableTabbedPane = new JTabbedPane();
-    public JTable pathSourceTable;
-    public JTable pathDestTable;
+    public JTable shortestDistanceSourceTable;
+    public JTable shortestDistanceDestTable;
     public JTable nodeListTable;
-
     public JTable selectedNodeStatTable;
     public JTable multiNodeStatTable;
     public JTable currentNodeListTable;
-    JComboBox shortestDistancePathMenu = new JComboBox();
-    JPanel pathSourceTablePanel;
-    JPanel pathDestTablePanel;
+    JComboBox shortestDistanceOptionMenu = new JComboBox();
+    JPanel shortestDistanceSourceTablePanel;
+    JPanel shortestDistanceDestTablePanel;
     public boolean isTableUpdating;
     public Set<MyNode> visitedNodes;
+    public JLabel edgeLabelExcludeComboBoxMenuLabel = new JLabel("   E. L.");
+    public JLabel edgeLabelLabel = new JLabel("  E. L.");
+    public JLabel edgeValueLabel = new JLabel("   E. V.");
+    public JLabel edgeValueExludeLabel = new JLabel("  E. V.");
 
     public MyViewerComponentController() {}
 
@@ -242,29 +245,23 @@ implements ActionListener {
     }
 
     private void setShortestOutDistancedNodes() {
-        if (isTableUpdating || pathSourceTable.getSelectedRow() == -1) return;
-        String fromTableNodeName = pathSourceTable.getValueAt(pathSourceTable.getSelectedRow(), 1).toString();
-        if (startNode != null && fromTableNodeName.equals(startNode.getName())) {return;}
-        if (shortestDistancePathMenu.getSelectedIndex() == 1) {
-            MyMessageUtil.showInfoMsg("Select a node in the destination node table.");
-            return;
-        }
+        if (isTableUpdating || shortestDistanceSourceTable.getSelectedRow() == -1) return;
+        String fromTableNodeName = shortestDistanceSourceTable.getValueAt(shortestDistanceSourceTable.getSelectedRow(), 1).toString();
+        if (shortestDistanceSourceNode != null && fromTableNodeName.equals(shortestDistanceSourceNode.getName())) {return;}
 
         isTableUpdating = true;
         MyProgressBar pb = new MyProgressBar(false);
         try {
-            startNode = (MyNode) MySequentialGraphVars.g.vRefs.get(MySequentialGraphVars.nodeNameMap.get(fromTableNodeName));
-            Set<MyNode> topLevelSuccessors = new HashSet<>(MySequentialGraphVars.g.getSuccessors(startNode));
-            topLevelSuccessors.add(startNode);
-            double totalWork = 0D;
-            double work = 50/topLevelSuccessors.size();
+            shortestDistanceSourceNode = (MyNode) MySequentialGraphVars.g.vRefs.get(MySequentialGraphVars.nodeNameMap.get(fromTableNodeName));
+            Set<MyNode> topLevelSuccessors = new HashSet<>(MySequentialGraphVars.g.getSuccessors(shortestDistanceSourceNode));
+            topLevelSuccessors.add(shortestDistanceSourceNode);
             Queue<MyNode> Qu = new LinkedList<>();
             visitedNodes = new HashSet();
-            Qu.add(startNode);
+            Qu.add(shortestDistanceSourceNode);
             Map<MyNode, Integer> distanceMap =  new HashMap();
 
             int maxDistance = 0;
-            distanceMap.put(startNode, 0);
+            distanceMap.put(shortestDistanceSourceNode, 0);
             while (!Qu.isEmpty()) {
                 MyNode v = Qu.remove();
                 Collection<MyNode> successors = MySequentialGraphVars.g.getSuccessors(v);
@@ -280,17 +277,12 @@ implements ActionListener {
                     }
                 }
                 visitedNodes.add(v);
-                if (topLevelSuccessors.contains(v)) {
-                    totalWork += work;
-                    pb.updateValue((int) totalWork, 100);
-                }
             }
 
-            while (pathDestTable.getRowCount() > 0) {
-                int row = pathDestTable.getRowCount() - 1;
-                ((DefaultTableModel) pathDestTable.getModel()).removeRow(row);
+            while (shortestDistanceDestTable.getRowCount() > 0) {
+                int row = shortestDistanceDestTable.getRowCount() - 1;
+                ((DefaultTableModel) shortestDistanceDestTable.getModel()).removeRow(row);
             }
-            pb.updateValue(60, 100);
 
             LinkedHashMap<String, Long> valueMap = new LinkedHashMap<>();
             float maxNodeVal = 0f;
@@ -298,29 +290,47 @@ implements ActionListener {
             Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
             for (MyNode n : nodes) {
                 if (visitedNodes.contains(n)) {
-                    if (n == startNode && visitedNodes.size() == 1) {
+                    if (n == shortestDistanceSourceNode && visitedNodes.size() == 1) {
                         n.setCurrentValue(0);
                         continue;
                     } else {
                         distances.add(n.shortestOutDistance);
                     }
-                    valueMap.put(n.getName(), (long) n.getCurrentValue());
+                    valueMap.put(n.getName(), (long) n.shortestOutDistance);
                 } else {
                     n.setCurrentValue(0);
                 }
             }
-            valueMap = MySequentialGraphSysUtil.sortMapByLongValue(valueMap);
-            pb.updateValue(80, 100);
+            // Create a Comparator to compare values in reverse order
+            Comparator<Map.Entry<String, Long>> valueComparator = (e1, e2) -> {
+                if (e1.getValue() < e2.getValue()) {
+                    return -1; // Return negative value to indicate e1 should appear before e2
+                } else if (e1.getValue() > e2.getValue()) {
+                    return 1; // Return positive value to indicate e1 should appear after e2
+                } else {
+                    return 0; // Return zero if values are equal
+                }
+            };
+
+            // Convert the entrySet to a List and sort it using the valueComparator
+            List<Map.Entry<String, Long>> sortedEntries = new ArrayList<>(valueMap.entrySet());
+            Collections.sort(sortedEntries, valueComparator);
+
+            // Create a new LinkedHashMap to store the entries in the desired order
+            LinkedHashMap<String, Long> reversedMap = new LinkedHashMap<>();
+
+            // Iterate over the sorted list and put the entries into the reversedMap
+            for (Map.Entry<String, Long> entry : sortedEntries) {
+                reversedMap.put(entry.getKey(), entry.getValue());
+            }
 
             int i=0;
             if (visitedNodes.size() > 1) {
-                work = (double)40/ visitedNodes.size();
-                for (String n : valueMap.keySet()) {
-                    totalWork += (10 + work);
-                    ((DefaultTableModel) pathDestTable.getModel()).addRow(
-                            new String[]{"" + (++i),
-                                    MySequentialGraphSysUtil.getNodeName(n),
-                                    MyMathUtil.getCommaSeperatedNumber(valueMap.get(n))});
+                for (String n : reversedMap.keySet()) {
+                    ((DefaultTableModel) shortestDistanceDestTable.getModel()).addRow(
+                        new String[]{"" + (++i),
+                            MySequentialGraphSysUtil.getNodeName(n),
+                            MyMathUtil.getCommaSeperatedNumber(reversedMap.get(n))});
                 }
 
                 for (float distance : distances) {
@@ -330,30 +340,31 @@ implements ActionListener {
                 }
             }
 
-            pathDestTablePanel.remove(distanceMenu);
-            distanceMenu = new JComboBox();
-            distanceMenu.setFocusable(false);
-            distanceMenu.setFont(MySequentialGraphVars.tahomaPlainFont10);
-            distanceMenu.addItem("DISTANCE");
+            shortestDistanceDestTablePanel.remove(shortestDistanceMenu);
+            shortestDistanceMenu = new JComboBox();
+            shortestDistanceMenu.setFocusable(false);
+            shortestDistanceMenu.setFont(MySequentialGraphVars.tahomaPlainFont10);
+            shortestDistanceMenu.addItem("DISTANCE");
             for (float distance : distances) {
-                distanceMenu.addItem("" + (int) distance);
+                shortestDistanceMenu.addItem("" + (int) distance);
             }
-            distanceMenu.addActionListener(new ActionListener() {
+
+            shortestDistanceMenu.addActionListener(new ActionListener() {
                 @Override public void actionPerformed(ActionEvent e) {
                     new Thread(new Runnable() {
                         @Override public void run() {
-                            if (distanceMenu.getSelectedIndex() > 0) {
+                            if (shortestDistanceMenu.getSelectedIndex() > 0) {
                                 MyProgressBar pb = new MyProgressBar(false);
                                 Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
                                 for (MyNode n : nodes) {
                                     if (n.getCurrentValue() > 0) {
-                                        if (Integer.parseInt(distanceMenu.getSelectedItem().toString()) != n.shortestOutDistance) {
+                                        if (Integer.parseInt(shortestDistanceMenu.getSelectedItem().toString()) != n.shortestOutDistance) {
                                             if (n.getCurrentValue() != 0) {
                                                 n.setOriginalValue(n.getCurrentValue());
                                                 n.setCurrentValue(0);
                                             }
                                         }
-                                    } else if (n.shortestOutDistance == Integer.parseInt(distanceMenu.getSelectedItem().toString()) && n.getCurrentValue() == 0) {
+                                    } else if (n.shortestOutDistance == Integer.parseInt(shortestDistanceMenu.getSelectedItem().toString()) && n.getCurrentValue() == 0) {
                                         n.setCurrentValue(n.getOriginalValue());
                                     }
 
@@ -362,9 +373,9 @@ implements ActionListener {
                                     }
                                 }
 
-                                while (pathDestTable.getRowCount() > 0) {
-                                    int row = pathDestTable.getRowCount() - 1;
-                                    ((DefaultTableModel) pathDestTable.getModel()).removeRow(row);
+                                while (shortestDistanceDestTable.getRowCount() > 0) {
+                                    int row = shortestDistanceDestTable.getRowCount() - 1;
+                                    ((DefaultTableModel) shortestDistanceDestTable.getModel()).removeRow(row);
                                 }
 
                                 LinkedHashMap<String, Long> valueMap = new LinkedHashMap<>();
@@ -378,21 +389,21 @@ implements ActionListener {
                                 int i = 0;
                                 for (String n : valueMap.keySet()) {
                                     ((MyNode) MySequentialGraphVars.g.vRefs.get(n)).setCurrentValue(valueMap.get(n));
-                                    ((DefaultTableModel) pathDestTable.getModel()).addRow(new String[]{
+                                    ((DefaultTableModel) shortestDistanceDestTable.getModel()).addRow(new String[]{
                                             "" + (++i),
                                             MySequentialGraphSysUtil.getNodeName(n),
                                             MyMathUtil.getCommaSeperatedNumber(valueMap.get(n))});
                                 }
 
-                                updateTopLevelCharts();
-                                updateTableInfos();
+                                //updateTopLevelCharts();
+                                //updateTableInfos();
 
                                 MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                                 MySequentialGraphVars.getSequentialGraphViewer().repaint();
 
                                 pb.updateValue(100, 100);
                                 pb.dispose();
-                            } else if (distanceMenu.getSelectedIndex() == 0) {
+                            } else if (shortestDistanceMenu.getSelectedIndex() == 0) {
                                 MyProgressBar pb = new MyProgressBar(false);
                                 Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
                                 for (MyNode n : nodes) {
@@ -401,9 +412,9 @@ implements ActionListener {
                                     }
                                 }
 
-                                while (pathDestTable.getRowCount() > 0) {
-                                    int row = pathDestTable.getRowCount() - 1;
-                                    ((DefaultTableModel) pathDestTable.getModel()).removeRow(row);
+                                while (shortestDistanceDestTable.getRowCount() > 0) {
+                                    int row = shortestDistanceDestTable.getRowCount() - 1;
+                                    ((DefaultTableModel) shortestDistanceDestTable.getModel()).removeRow(row);
                                 }
 
                                 float maxValue = 0f;
@@ -422,14 +433,14 @@ implements ActionListener {
                                 int i = 0;
                                 for (String n : valueMap.keySet()) {
                                     ((MyNode) MySequentialGraphVars.g.vRefs.get(n)).setCurrentValue(valueMap.get(n));
-                                    ((DefaultTableModel) pathDestTable.getModel()).addRow(new String[]{
+                                    ((DefaultTableModel) shortestDistanceDestTable.getModel()).addRow(new String[]{
                                             "" + (++i),
                                             MySequentialGraphSysUtil.getNodeName(n),
                                             MyMathUtil.getCommaSeperatedNumber(valueMap.get(n))});
                                 }
 
-                                updateTopLevelCharts();
-                                updateTableInfos();
+                                //updateTopLevelCharts();
+                                //updateTableInfos();
 
                                 MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                                 MySequentialGraphVars.getSequentialGraphViewer().repaint();
@@ -442,9 +453,13 @@ implements ActionListener {
                 }
             });
 
-            pathDestTablePanel.add(distanceMenu, BorderLayout.NORTH);
-            updateTopLevelCharts();
+            shortestDistanceDestTablePanel.add(shortestDistanceMenu, BorderLayout.NORTH);
+            //updateTopLevelCharts();
             updateTableInfos();
+
+            MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelShortestAverageDistanceDistributionLineChart.decorate();
+            MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelShortestDistanceUnreachableNodeCountDistributionLineChart.decorate();
+            MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelShortestDistanceNodeValueDistributionLineChart.decorate();
 
             MySequentialGraphVars.getSequentialGraphViewer().revalidate();
             MySequentialGraphVars.getSequentialGraphViewer().repaint();
@@ -467,31 +482,24 @@ implements ActionListener {
         MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelReachTimeByDepthLineChart.decorate();
     }
 
-
     private void setShortestInDistancedNodes() {
-        if (isTableUpdating || pathDestTable.getSelectedRow() == -1) return;
-        String fromTableNodeName = pathDestTable.getValueAt(pathDestTable.getSelectedRow(), 1).toString();
-        if (startNode != null && fromTableNodeName.equals(startNode.getName())) {return;}
-        if (shortestDistancePathMenu.getSelectedIndex() == 0) {
-            MyMessageUtil.showInfoMsg("Select a node in the source node table.");
-            return;
-        }
+        if (isTableUpdating || shortestDistanceDestTable.getSelectedRow() == -1) return;
+        String fromTableNodeName = shortestDistanceDestTable.getValueAt(shortestDistanceDestTable.getSelectedRow(), 1).toString();
+        if (shortestDistanceSourceNode != null && fromTableNodeName.equals(shortestDistanceSourceNode.getName())) {return;}
 
         isTableUpdating = true;
         MyProgressBar pb = new MyProgressBar(false);
         try {
-            startNode = (MyNode) MySequentialGraphVars.g.vRefs.get(fromTableNodeName);
-            Set<MyNode> topLevelPredecessors = new HashSet<>(MySequentialGraphVars.g.getPredecessors(startNode));
-            topLevelPredecessors.add(startNode);
-            double totalWork = 0D;
-            double work = 50/topLevelPredecessors.size();
+            shortestDistanceSourceNode = (MyNode) MySequentialGraphVars.g.vRefs.get(fromTableNodeName);
+            Set<MyNode> topLevelPredecessors = new HashSet<>(MySequentialGraphVars.g.getPredecessors(shortestDistanceSourceNode));
+            topLevelPredecessors.add(shortestDistanceSourceNode);
             Queue<MyNode> Qu = new LinkedList<>();
             visitedNodes = new HashSet();
-            Qu.add(startNode);
+            Qu.add(shortestDistanceSourceNode);
             Map<MyNode, Integer> distanceMap =  new HashMap();
 
             int maxDistance = 0;
-            distanceMap.put(startNode, 0);
+            distanceMap.put(shortestDistanceSourceNode, 0);
             while (!Qu.isEmpty()) {
                 MyNode successor = Qu.remove();
                 Collection<MyNode> predecessors = MySequentialGraphVars.g.getPredecessors(successor);
@@ -507,17 +515,12 @@ implements ActionListener {
                     }
                 }
                 visitedNodes.add(successor);
-                if (topLevelPredecessors.contains(successor)) {
-                    totalWork += work;
-                    pb.updateValue((int) totalWork, 100);
-                }
             }
 
-            while (pathSourceTable.getRowCount() > 0) {
-                int row = pathSourceTable.getRowCount() - 1;
-                ((DefaultTableModel) pathSourceTable.getModel()).removeRow(row);
+            while (shortestDistanceSourceTable.getRowCount() > 0) {
+                int row = shortestDistanceSourceTable.getRowCount() - 1;
+                ((DefaultTableModel) shortestDistanceSourceTable.getModel()).removeRow(row);
             }
-            pb.updateValue(60, 100);
 
             LinkedHashMap<String, Long> valueMap = new LinkedHashMap<>();
             float maxNodeVal = 0f;
@@ -525,7 +528,7 @@ implements ActionListener {
             Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
             for (MyNode n : nodes) {
                 if (visitedNodes.contains(n)) {
-                    if (n == startNode && visitedNodes.size() == 1) {
+                    if (n == shortestDistanceSourceNode && visitedNodes.size() == 1) {
                         n.setCurrentValue(0);
                         continue;
                     } else {
@@ -541,10 +544,8 @@ implements ActionListener {
 
             int i=0;
             if (visitedNodes.size() > 1) {
-                work = (double)40/ visitedNodes.size();
                 for (String n : valueMap.keySet()) {
-                    totalWork += (10 + work);
-                    ((DefaultTableModel) pathSourceTable.getModel()).addRow(new String[]{
+                    ((DefaultTableModel) shortestDistanceSourceTable.getModel()).addRow(new String[]{
                         "" + (++i),
                         MySequentialGraphSysUtil.getNodeName(n),
                         MyMathUtil.getCommaSeperatedNumber(valueMap.get(n))});
@@ -557,30 +558,30 @@ implements ActionListener {
                 }
             }
 
-            pathDestTablePanel.remove(distanceMenu);
-            distanceMenu = new JComboBox();
-            distanceMenu.setFocusable(false);
-            distanceMenu.setFont(MySequentialGraphVars.tahomaPlainFont10);
-            distanceMenu.addItem("DISTANCE");
+            shortestDistanceDestTablePanel.remove(shortestDistanceMenu);
+            shortestDistanceMenu = new JComboBox();
+            shortestDistanceMenu.setFocusable(false);
+            shortestDistanceMenu.setFont(MySequentialGraphVars.tahomaPlainFont10);
+            shortestDistanceMenu.addItem("DISTANCE");
             for (float distance : distances) {
-                distanceMenu.addItem("" + (int) distance);
+                shortestDistanceMenu.addItem("" + (int) distance);
             }
-            distanceMenu.addActionListener(new ActionListener() {
+            shortestDistanceMenu.addActionListener(new ActionListener() {
                 @Override public void actionPerformed(ActionEvent e) {
                     new Thread(new Runnable() {
                         @Override public void run() {
-                            if (distanceMenu.getSelectedIndex() > 0) {
+                            if (shortestDistanceMenu.getSelectedIndex() > 0) {
                                 MyProgressBar pb = new MyProgressBar(false);
                                 Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
                                 for (MyNode n : nodes) {
                                     if (n.getCurrentValue() > 0) {
-                                        if (Integer.parseInt(distanceMenu.getSelectedItem().toString()) != n.shortestInDistance) {
+                                        if (Integer.parseInt(shortestDistanceMenu.getSelectedItem().toString()) != n.shortestInDistance) {
                                             if (n.getCurrentValue() != 0) {
                                                 n.setOriginalValue(n.getCurrentValue());
                                                 n.setCurrentValue(0);
                                             }
                                         }
-                                    } else if (n.shortestInDistance == Integer.parseInt(distanceMenu.getSelectedItem().toString()) && n.getCurrentValue() == 0) {
+                                    } else if (n.shortestInDistance == Integer.parseInt(shortestDistanceMenu.getSelectedItem().toString()) && n.getCurrentValue() == 0) {
                                         n.setCurrentValue(n.getOriginalValue());
                                     }
 
@@ -590,9 +591,9 @@ implements ActionListener {
                                 }
                                 pb.updateValue(40, 100);
 
-                                while (pathSourceTable.getRowCount() > 0) {
-                                    int row = pathSourceTable.getRowCount() - 1;
-                                    ((DefaultTableModel) pathSourceTable.getModel()).removeRow(row);
+                                while (shortestDistanceSourceTable.getRowCount() > 0) {
+                                    int row = shortestDistanceSourceTable.getRowCount() - 1;
+                                    ((DefaultTableModel) shortestDistanceSourceTable.getModel()).removeRow(row);
                                 }
                                 pb.updateValue(70, 100);
 
@@ -608,7 +609,7 @@ implements ActionListener {
                                 int i = 0;
                                 for (String n : valueMap.keySet()) {
                                     ((MyNode) MySequentialGraphVars.g.vRefs.get(n)).setCurrentValue(valueMap.get(n));
-                                    ((DefaultTableModel) pathSourceTable.getModel()).addRow(
+                                    ((DefaultTableModel) shortestDistanceSourceTable.getModel()).addRow(
                                             new String[]{"" + (++i),
                                                 MySequentialGraphSysUtil.getNodeName(n),
                                                 MyMathUtil.getCommaSeperatedNumber(valueMap.get(n))
@@ -623,7 +624,7 @@ implements ActionListener {
                                 MySequentialGraphVars.getSequentialGraphViewer().repaint();
                                 pb.updateValue(100, 100);
                                 pb.dispose();
-                            } else if (distanceMenu.getSelectedIndex() == 0) {
+                            } else if (shortestDistanceMenu.getSelectedIndex() == 0) {
                                 Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
                                 for (MyNode n : nodes) {
                                     if (n.getCurrentValue() == 0) {
@@ -631,9 +632,9 @@ implements ActionListener {
                                     }
                                 }
 
-                                while (pathSourceTable.getRowCount() > 0) {
-                                    int row = pathSourceTable.getRowCount() - 1;
-                                    ((DefaultTableModel) pathSourceTable.getModel()).removeRow(row);
+                                while (shortestDistanceSourceTable.getRowCount() > 0) {
+                                    int row = shortestDistanceSourceTable.getRowCount() - 1;
+                                    ((DefaultTableModel) shortestDistanceSourceTable.getModel()).removeRow(row);
                                 }
 
                                 float maxValue = 0f;
@@ -652,7 +653,7 @@ implements ActionListener {
                                 int i=0;
                                 for (String n : valueMap.keySet()) {
                                     ((MyNode) MySequentialGraphVars.g.vRefs.get(n)).setCurrentValue(valueMap.get(n));
-                                    ((DefaultTableModel) pathSourceTable.getModel()).addRow(
+                                    ((DefaultTableModel) shortestDistanceSourceTable.getModel()).addRow(
                                         new String[]{"" + (++i),
                                             MySequentialGraphSysUtil.getNodeName(n),
                                             MyMathUtil.getCommaSeperatedNumber(valueMap.get(n))
@@ -672,12 +673,12 @@ implements ActionListener {
                     }).start();
                 }
             });
-            pathDestTablePanel.add(distanceMenu, BorderLayout.NORTH);
+            shortestDistanceDestTablePanel.add(shortestDistanceMenu, BorderLayout.NORTH);
 
             if (maxNodeVal > 0) {
                 MySequentialGraphVars.g.MX_N_VAL = maxNodeVal;
             }
-            pathDestTablePanel.add(distanceMenu, BorderLayout.NORTH);
+            shortestDistanceDestTablePanel.add(shortestDistanceMenu, BorderLayout.NORTH);
 
             updateTopLevelCharts();
             updateTableInfos();
@@ -696,27 +697,27 @@ implements ActionListener {
 
     private JPanel setPathFindTable() {
         try {
-            this.pathSourceTablePanel = new JPanel();
-            this.pathSourceTablePanel.setLayout(new BorderLayout(2, 0));
-            this.pathSourceTablePanel.setBackground(Color.WHITE);
+            this.shortestDistanceSourceTablePanel = new JPanel();
+            this.shortestDistanceSourceTablePanel.setLayout(new BorderLayout(2, 0));
+            this.shortestDistanceSourceTablePanel.setBackground(Color.WHITE);
 
-            this.shortestDistancePathMenu = new JComboBox();
-            this.shortestDistancePathMenu.setFont(MySequentialGraphVars.tahomaPlainFont10);
-            this.shortestDistancePathMenu.setFocusable(false);
-            this.shortestDistancePathMenu.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    startNode = null;
+            this.shortestDistanceOptionMenu = new JComboBox();
+            this.shortestDistanceOptionMenu.setFont(MySequentialGraphVars.tahomaPlainFont10);
+            this.shortestDistanceOptionMenu.setFocusable(false);
+            this.shortestDistanceOptionMenu.addActionListener(new ActionListener() {
+                @Override public void actionPerformed(ActionEvent e) {
+                    shortestDistanceSourceNode = null;
                 }
             });
             //pathMenu.addItem("PATH EXPLORATION");
-            this.shortestDistancePathMenu.addItem("SHORTEST OUT-DISTANCE");
-            this.shortestDistancePathMenu.addItem("SHORTEST IN-DISTANCE");
+            this.shortestDistanceOptionMenu.addItem("SELECT DISTANCE OPTION");
+            this.shortestDistanceOptionMenu.addItem("SHORTEST OUT-DISTANCE");
+            //this.shortestDistancePathMenu.addItem("SHORTEST IN-DISTANCE");
 
-            String[] fromColumns = {"NO.", "SOURCE", "V."};
+            String[] fromColumns = {"NO.", "SOURCE", "R. N.", "V."};
             String[][] fromData = {};
-            DefaultTableModel fromTableModel = new DefaultTableModel(fromData, fromColumns);
-            this.pathSourceTable = new JTable(fromTableModel) {
+            DefaultTableModel shortestDistanceSourceTableModel = new DefaultTableModel(fromData, fromColumns);
+            this.shortestDistanceSourceTable = new JTable(shortestDistanceSourceTableModel) {
                 public String getToolTipText(MouseEvent e) {
                     String tip = null;
                     Point p = e.getPoint();
@@ -730,35 +731,61 @@ implements ActionListener {
                 }
             };
 
-            String[] fromTableTooltips = {"NO.", "SOURCE NODE", "SOURCE NODE VALUE"};
-            MyTableToolTipper fromTableTooltipHeader = new MyTableToolTipper(this.pathSourceTable.getColumnModel());
+            String[] fromTableTooltips = {"NO.", "SOURCE NODE", "NO. OF REACHABLE NODES", "AVERAGE SHORTEST DISTANCE"};
+            MyTableToolTipper fromTableTooltipHeader = new MyTableToolTipper(this.shortestDistanceSourceTable.getColumnModel());
             fromTableTooltipHeader.setToolTipStrings(fromTableTooltips);
-            this.pathSourceTable.setTableHeader(fromTableTooltipHeader);
+            this.shortestDistanceSourceTable.setTableHeader(fromTableTooltipHeader);
 
             Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
             LinkedHashMap<String, Long> sourceNodeValueMap = new LinkedHashMap<>();
             int i = 0;
             for (MyNode n : nodes) {
-                sourceNodeValueMap.put(n.getName(), (long) n.getCurrentValue());
+                sourceNodeValueMap.put(n.getName(), (long) n.getAverageShortestDistance());
             }
-            sourceNodeValueMap = MySequentialGraphSysUtil.sortMapByLongValue(sourceNodeValueMap);
+            //sourceNodeValueMap = MySequentialGraphSysUtil.sortMapByLongValue(sourceNodeValueMap);
 
-            for (String n : sourceNodeValueMap.keySet()) {
-                fromTableModel.addRow(new String[]{
-                        String.valueOf(++i),
-                        MySequentialGraphSysUtil.getNodeName(n),
-                        MyMathUtil.getCommaSeperatedNumber(sourceNodeValueMap.get(n))});
+            // Create a Comparator to compare values in reverse order
+            Comparator<Map.Entry<String, Long>> valueComparator = (e1, e2) -> {
+                if (e1.getValue() < e2.getValue()) {
+                    return -1; // Return negative value to indicate e1 should appear before e2
+                } else if (e1.getValue() > e2.getValue()) {
+                    return 1; // Return positive value to indicate e1 should appear after e2
+                } else {
+                    return 0; // Return zero if values are equal
+                }
+            };
+
+            // Convert the entrySet to a List and sort it using the valueComparator
+            List<Map.Entry<String, Long>> sortedEntries = new ArrayList<>(sourceNodeValueMap.entrySet());
+            Collections.sort(sortedEntries, valueComparator);
+
+            // Create a new LinkedHashMap to store the entries in the desired order
+            LinkedHashMap<String, Long> reversedMap = new LinkedHashMap<>();
+
+            // Iterate over the sorted list and put the entries into the reversedMap
+            for (Map.Entry<String, Long> entry : sortedEntries) {
+                reversedMap.put(entry.getKey(), entry.getValue());
             }
 
-            this.pathSourceTable.setRowHeight(19);
-            this.pathSourceTable.setBackground(Color.WHITE);
-            this.pathSourceTable.setFont(MySequentialGraphVars.f_pln_10);
-            this.pathSourceTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont10);
-            this.pathSourceTable.getTableHeader().setOpaque(false);
-            this.pathSourceTable.getTableHeader().setBackground(new Color(0, 0, 0, 0f));
-            this.pathSourceTable.getColumnModel().getColumn(0).setPreferredWidth(45);
-            this.pathSourceTable.getColumnModel().getColumn(1).setPreferredWidth(80);
-            this.pathSourceTable.getColumnModel().getColumn(2).setPreferredWidth(40);
+            for (String n : reversedMap.keySet()) {
+                if (reversedMap.get(n) == 0) continue;
+                shortestDistanceSourceTableModel.addRow(new String[]{
+                    String.valueOf(++i),
+                    MySequentialGraphSysUtil.getNodeName(n),
+                    MyMathUtil.getCommaSeperatedNumber((MySequentialGraphVars.g.getVertexCount()-1)-((MyNode)MySequentialGraphVars.g.vRefs.get(n)).getUnreachableNodeCount()),
+                    MyMathUtil.getCommaSeperatedNumber(reversedMap.get(n))});
+            }
+
+            this.shortestDistanceSourceTable.setRowHeight(19);
+            this.shortestDistanceSourceTable.setBackground(Color.WHITE);
+            this.shortestDistanceSourceTable.setFont(MySequentialGraphVars.f_pln_10);
+            this.shortestDistanceSourceTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont10);
+            this.shortestDistanceSourceTable.getTableHeader().setOpaque(false);
+            this.shortestDistanceSourceTable.getTableHeader().setBackground(new Color(0, 0, 0, 0f));
+            this.shortestDistanceSourceTable.getColumnModel().getColumn(0).setPreferredWidth(40);
+            this.shortestDistanceSourceTable.getColumnModel().getColumn(1).setPreferredWidth(60);
+            this.shortestDistanceSourceTable.getColumnModel().getColumn(2).setPreferredWidth(40);
+            this.shortestDistanceSourceTable.getColumnModel().getColumn(3).setPreferredWidth(40);
 
             JTextField sourceNodeSearchTxt = new JTextField();
             JButton sourceNodeSelectBtn = new JButton();
@@ -766,7 +793,7 @@ implements ActionListener {
             sourceNodeSearchTxt.setBackground(Color.WHITE);
 
             sourceNodeSearchTxt.setBorder(BorderFactory.createLoweredSoftBevelBorder());
-            JPanel sourceNodeSearchAndSavePanel = MyTableUtil.searchAndSaveDataPanelForJTable2(this, sourceNodeSearchTxt, sourceNodeSelectBtn, fromTableModel, this.pathSourceTable);
+            JPanel sourceNodeSearchAndSavePanel = MyTableUtil.searchAndSaveDataPanelForJTable2(this, sourceNodeSearchTxt, sourceNodeSelectBtn, shortestDistanceSourceTableModel, this.shortestDistanceSourceTable);
             sourceNodeSelectBtn.setPreferredSize(new Dimension(40, 25));
             sourceNodeSelectBtn.removeActionListener(this);
             sourceNodeSelectBtn.removeActionListener(this);
@@ -774,19 +801,17 @@ implements ActionListener {
             sourceNodeSearchTxt.setFont(MySequentialGraphVars.f_bold_10);
 
             add(sourceNodeSearchAndSavePanel, BorderLayout.SOUTH);
-            this.pathSourceTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            this.pathSourceTable.setSelectionBackground(Color.LIGHT_GRAY);
-            this.pathSourceTable.setForeground(Color.BLACK);
-            this.pathSourceTable.setSelectionForeground(Color.BLACK);
-            this.pathSourceTable.setFocusable(false);
-            this.pathSourceTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            this.pathSourceTable.setRowSorter(MyTableUtil.setJTableRowSorterWithTextField(fromTableModel, sourceNodeSearchTxt));
-            this.pathSourceTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            this.shortestDistanceSourceTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            this.shortestDistanceSourceTable.setSelectionBackground(Color.LIGHT_GRAY);
+            this.shortestDistanceSourceTable.setForeground(Color.BLACK);
+            this.shortestDistanceSourceTable.setSelectionForeground(Color.BLACK);
+            this.shortestDistanceSourceTable.setFocusable(false);
+            this.shortestDistanceSourceTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            this.shortestDistanceSourceTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
                 public void valueChanged(ListSelectionEvent event) {
                     new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (shortestDistancePathMenu.getSelectedIndex() == 0) {
+                        @Override public void run() {
+                            if (shortestDistanceOptionMenu.getSelectedIndex() == 1) {
                                 setShortestOutDistancedNodes();
                             }
                         }
@@ -794,28 +819,28 @@ implements ActionListener {
                 }
             });
 
-            JScrollPane fromTableScrollPane = new JScrollPane(pathSourceTable);
+            JScrollPane fromTableScrollPane = new JScrollPane(shortestDistanceSourceTable);
             fromTableScrollPane.setOpaque(false);
             fromTableScrollPane.setBackground(new Color(0, 0, 0, 0f));
             fromTableScrollPane.setPreferredSize(new Dimension(150, 500));
             fromTableScrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(7, 0));
             fromTableScrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 7));
 
-            this.pathSourceTablePanel.add(fromTableScrollPane, BorderLayout.CENTER);
-            this.pathSourceTablePanel.add(sourceNodeSearchAndSavePanel, BorderLayout.SOUTH);
+            this.shortestDistanceSourceTablePanel.add(shortestDistanceOptionMenu, BorderLayout.NORTH);
+            this.shortestDistanceSourceTablePanel.add(fromTableScrollPane, BorderLayout.CENTER);
+            this.shortestDistanceSourceTablePanel.add(sourceNodeSearchAndSavePanel, BorderLayout.SOUTH);
 
-            this.pathDestTablePanel = new JPanel();
-            this.pathDestTablePanel.setLayout(new BorderLayout(2, 2));
-            this.pathDestTablePanel.setBackground(Color.WHITE);
+            this.shortestDistanceDestTablePanel = new JPanel();
+            this.shortestDistanceDestTablePanel.setLayout(new BorderLayout(2, 2));
+            this.shortestDistanceDestTablePanel.setBackground(Color.WHITE);
 
-            this.distanceMenu.setFont(MySequentialGraphVars.tahomaPlainFont12);
-            this.distanceMenu.setFocusable(false);
-            this.pathDestTablePanel.add(this.distanceMenu, BorderLayout.NORTH);
+            this.shortestDistanceMenu.setFont(MySequentialGraphVars.tahomaPlainFont10);
+            this.shortestDistanceMenu.setFocusable(false);
 
-            String[] toColumns = {"NO.", "DEST", "V."};
-            String[][] toData = {};
-            DefaultTableModel toTableModel = new DefaultTableModel(toData, toColumns);
-            this.pathDestTable = new JTable(toTableModel) {
+            String [] toColumns = {"NO.", "DEST", "V."};
+            String [][] toData = {};
+            DefaultTableModel shortestDistanceDestTableModel = new DefaultTableModel(toData, toColumns);
+            this.shortestDistanceDestTable = new JTable(shortestDistanceDestTableModel) {
                 //Implement table cell tool tips.
                 public String getToolTipText(MouseEvent e) {
                     String tip = null;
@@ -826,41 +851,42 @@ implements ActionListener {
                     try {
                         tip = getValueAt(rowIndex, colIndex).toString();
                     } catch (RuntimeException e1) {
-                        //catch null pointer exception if mouse is over an empty line
+                        e1.printStackTrace();
                     }
-
                     return tip;
                 }
             };
 
-            String[] toTableTooltips = {"NO.", "DESTINATION NODE", "DESTINATION NODE VALUE"};
-            MyTableToolTipper toTableTooltipHeader = new MyTableToolTipper(this.pathDestTable.getColumnModel());
+            String[] toTableTooltips = {"NO.", "DESTINATION NODE", "DISTANCE FROM SOURCE NODE"};
+            MyTableToolTipper toTableTooltipHeader = new MyTableToolTipper(this.shortestDistanceDestTable.getColumnModel());
             toTableTooltipHeader.setToolTipStrings(toTableTooltips);
-            this.pathDestTable.setTableHeader(toTableTooltipHeader);
+            this.shortestDistanceDestTable.setTableHeader(toTableTooltipHeader);
 
             i = 0;
             for (MyNode n : nodes) {
-                toTableModel.addRow(new String[]{
-                        String.valueOf(++i),
-                        MySequentialGraphSysUtil.getNodeName(n.getName()),
-                        "0"});
+                shortestDistanceDestTableModel.addRow(new String[]{"" + (++i), MySequentialGraphSysUtil.getNodeName(n.getName()), "0"});
             }
 
-            this.pathDestTable.setRowHeight(19);
-            this.pathDestTable.setBackground(Color.WHITE);
-            this.pathDestTable.setFont(MySequentialGraphVars.f_pln_10);
-            this.pathDestTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont10);
-            this.pathDestTable.getTableHeader().setOpaque(false);
-            this.pathDestTable.getTableHeader().setBackground(new Color(0, 0, 0, 0f));
-            this.pathDestTable.getColumnModel().getColumn(0).setPreferredWidth(45);
-            this.pathDestTable.getColumnModel().getColumn(1).setPreferredWidth(80);
-            this.pathDestTable.getColumnModel().getColumn(2).setPreferredWidth(40);
-            this.pathDestTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            this.shortestDistanceDestTable.setRowHeight(19);
+            this.shortestDistanceDestTable.setBackground(Color.WHITE);
+            this.shortestDistanceDestTable.setFont(MySequentialGraphVars.f_pln_10);
+            this.shortestDistanceDestTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont10);
+            this.shortestDistanceDestTable.getTableHeader().setOpaque(false);
+            this.shortestDistanceDestTable.getTableHeader().setBackground(new Color(0, 0, 0, 0f));
+            this.shortestDistanceDestTable.getColumnModel().getColumn(0).setPreferredWidth(45);
+            this.shortestDistanceDestTable.getColumnModel().getColumn(1).setPreferredWidth(80);
+            this.shortestDistanceDestTable.getColumnModel().getColumn(2).setPreferredWidth(40);
+            this.shortestDistanceDestTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            this.shortestDistanceDestTable.setSelectionBackground(Color.LIGHT_GRAY);
+            this.shortestDistanceDestTable.setSelectionForeground(Color.BLACK);
+            this.shortestDistanceDestTable.setForeground(Color.BLACK);
+            this.shortestDistanceDestTable.setFocusable(false);
+            this.shortestDistanceDestTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            this.shortestDistanceDestTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
                 public void valueChanged(ListSelectionEvent event) {
                     new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (shortestDistancePathMenu.getSelectedIndex() == 1) {
+                        @Override public void run() {
+                            if (shortestDistanceOptionMenu.getSelectedIndex() == 2) {
                                 setShortestInDistancedNodes();
                             }
                         }
@@ -877,41 +903,27 @@ implements ActionListener {
             destNodeSearchTxt.setFont(MySequentialGraphVars.f_bold_10);
             destNodeSearchTxt.setToolTipText("TYPE A NODE NAME TO SEARCH");
             destNodeSearchTxt.setBorder(BorderFactory.createLoweredSoftBevelBorder());
-            JPanel destNodeSearchAndSavePanel = MyTableUtil.searchAndSaveDataPanelForJTable2(this, destNodeSearchTxt, runBtn, toTableModel, this.pathDestTable);
+            JPanel destNodeSearchAndSavePanel = MyTableUtil.searchAndSaveDataPanelForJTable2(this, destNodeSearchTxt, runBtn, shortestDistanceDestTableModel, this.shortestDistanceDestTable);
             destNodeSearchAndSavePanel.remove(runBtn);
-
             add(destNodeSearchAndSavePanel, BorderLayout.SOUTH);
-            this.pathDestTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            this.pathDestTable.setSelectionBackground(Color.LIGHT_GRAY);
-            this.pathDestTable.setSelectionForeground(Color.BLACK);
-            this.pathDestTable.setForeground(Color.BLACK);
-            this.pathDestTable.setFocusable(false);
-            this.pathDestTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            this.pathDestTable.setRowSorter(MyTableUtil.setJTableRowSorterWithTextField(toTableModel, destNodeSearchTxt));
 
-            JScrollPane destNodeTableScrollPane = new JScrollPane(this.pathDestTable);
+            JScrollPane destNodeTableScrollPane = new JScrollPane(this.shortestDistanceDestTable);
             destNodeTableScrollPane.setOpaque(false);
             destNodeTableScrollPane.setBackground(new Color(0, 0, 0, 0f));
             destNodeTableScrollPane.setPreferredSize(new Dimension(150, 500));
             destNodeTableScrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(7, 0));
             destNodeTableScrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 7));
 
-            this.pathDestTablePanel.add(destNodeTableScrollPane, BorderLayout.CENTER);
-            this.pathDestTablePanel.add(destNodeSearchAndSavePanel, BorderLayout.SOUTH);
-
-            JPanel pathPanel = new JPanel();
-            pathPanel.setBackground(Color.WHITE);
-            pathPanel.setLayout(new BorderLayout(3, 1));
+            this.shortestDistanceDestTablePanel.add(this.shortestDistanceMenu, BorderLayout.NORTH);
+            this.shortestDistanceDestTablePanel.add(destNodeTableScrollPane, BorderLayout.CENTER);
+            this.shortestDistanceDestTablePanel.add(destNodeSearchAndSavePanel, BorderLayout.SOUTH);
 
             JPanel tablePanel = new JPanel();
             tablePanel.setBackground(Color.WHITE);
             tablePanel.setLayout(new GridLayout(2, 1));
-            tablePanel.add(this.pathSourceTablePanel);
-            tablePanel.add(this.pathDestTablePanel);
-
-            pathPanel.add(tablePanel, BorderLayout.CENTER);
-            pathPanel.add(this.shortestDistancePathMenu, BorderLayout.NORTH);
-            return pathPanel;
+            tablePanel.add(this.shortestDistanceSourceTablePanel);
+            tablePanel.add(this.shortestDistanceDestTablePanel);
+            return tablePanel;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -966,15 +978,15 @@ implements ActionListener {
         this.depthExcludeSymbolSelecter.addItem("<");
         this.depthExcludeSymbolSelecter.addItem(">");
 
-        nodeValueExcludeSymbolSelecter.setFocusable(false);
-        nodeValueExcludeSymbolSelecter.setBackground(Color.WHITE);
+        this.nodeValueExcludeSymbolSelecter.setFocusable(false);
+        this.nodeValueExcludeSymbolSelecter.setBackground(Color.WHITE);
 
-        edgeValueExcludeSymbolSelecter.setFocusable(false);
-        edgeValueExcludeSymbolSelecter.setBackground(Color.WHITE);
+        this.edgeValueExcludeSymbolSelecter.setFocusable(false);
+        this.edgeValueExcludeSymbolSelecter.setBackground(Color.WHITE);
 
-        nodeValueSelecterLabel.setToolTipText("NODE VALUE");
-        nodeValueSelecterLabel.setBackground(Color.WHITE);
-        nodeValueSelecterLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.nodeValueSelecterLabel.setToolTipText("NODE VALUE");
+        this.nodeValueSelecterLabel.setBackground(Color.WHITE);
+        this.nodeValueSelecterLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.nodeValueSelecter.setBackground(Color.WHITE);
         this.nodeValueSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.nodeValueSelecter.setFocusable(false);
@@ -1045,15 +1057,13 @@ implements ActionListener {
         }
         MyViewerControlComponentUtil.setNodeValueComboBoxMenu();
 
-        JLabel edgeValueLabel = new JLabel("   E. V.");
-        edgeValueLabel.setToolTipText("EDGE VALUE");
-        edgeValueLabel.setBackground(Color.WHITE);
-        edgeValueLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.edgeValueLabel.setToolTipText("EDGE VALUE");
+        this.edgeValueLabel.setBackground(Color.WHITE);
+        this.edgeValueLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
 
-        JLabel edgeLabelLabel = new JLabel("  E. L.");
-        edgeLabelLabel.setToolTipText("EDGE LABEL");
-        edgeLabelLabel.setBackground(Color.WHITE);
-        edgeLabelLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.edgeLabelLabel.setToolTipText("EDGE LABEL");
+        this.edgeLabelLabel.setBackground(Color.WHITE);
+        this.edgeLabelLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
 
         this.edgeValueSelecter.setBackground(Color.WHITE);
         this.edgeValueSelecter.setToolTipText("SELECT AN EDGE VALUE");
@@ -1094,7 +1104,6 @@ implements ActionListener {
         this.edgeLabelSelecter.setBackground(Color.WHITE);
         this.edgeLabelSelecter.addItem("NONE");
         for (String edgeLabel : MySequentialGraphVars.userDefinedEdgeLabelSet) {this.edgeLabelSelecter.addItem(edgeLabel);}
-
         this.edgeLabelSelecter.addActionListener(this);
 
         JLabel nodeLabelLabel = new JLabel("  N. L.");
@@ -1157,16 +1166,15 @@ implements ActionListener {
         nodeValueExcludeOptionLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
         nodeValueExcludeOptionLabel.setBackground(Color.WHITE);
 
-        JLabel edgeValueExludeLabel = new JLabel("  E. V.");
-        edgeValueExludeLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
-        edgeValueExludeLabel.setBackground(Color.WHITE);
+        this.edgeValueExludeLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.edgeValueExludeLabel.setBackground(Color.WHITE);
 
         this.topLeftPanel.setBackground(Color.WHITE);
         this.topLeftPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         this.topLeftPanel.add(nodeValueExcludeOptionLabel);
         this.topLeftPanel.add(this.nodeValueExcludeSymbolSelecter);
         this.topLeftPanel.add(this.nodeValueExcludeTxt);
-        this.topLeftPanel.add(edgeValueExludeLabel);
+        this.topLeftPanel.add(this.edgeValueExludeLabel);
         this.topLeftPanel.add(this.edgeValueExcludeSymbolSelecter);
         this.topLeftPanel.add(this.edgeValueExcludeTxt);
 
@@ -1209,7 +1217,6 @@ implements ActionListener {
             this.topLeftPanel.add(this.nodeLabelValueExcludeSelecter);
         }
 
-        JLabel edgeLabelExcludeComboBoxMenuLabel = new JLabel("   E. L.");
         edgeLabelExcludeComboBoxMenuLabel.setBackground(Color.WHITE);
         edgeLabelExcludeComboBoxMenuLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
 
@@ -1236,7 +1243,7 @@ implements ActionListener {
         this.edgeLabelValueExcludeSelecter.addItem("");
 
         if (MySequentialGraphVars.userDefinedEdgeLabelSet.size() > 0) {
-            this.topLeftPanel.add(edgeLabelExcludeComboBoxMenuLabel);
+            this.topLeftPanel.add(this.edgeLabelExcludeComboBoxMenuLabel);
             this.topLeftPanel.add(this.edgeLabelExcludeSymbolSelecter);
             this.topLeftPanel.add(this.edgeLabelExcludeSelecter);
             this.topLeftPanel.add(this.edgeLabelValueExcludeSelecter);
@@ -1245,12 +1252,12 @@ implements ActionListener {
         this.topLeftPanel.add(this.depthExcludeSymbolSelecter);
         this.topLeftPanel.add(this.excludeBtn);
 
-        bottomPanel.setBackground(Color.WHITE);
-        bottomPanel.setLayout(new BorderLayout(0,0));
+        this.bottomPanel.setBackground(Color.WHITE);
+        this.bottomPanel.setLayout(new BorderLayout(0,0));
 
-        clusteringSectorLabel.setBackground(Color.WHITE);
-        clusteringSectorLabel.setToolTipText("FIND CLUSTERS");
-        clusteringSectorLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.clusteringSectorLabel.setBackground(Color.WHITE);
+        this.clusteringSectorLabel.setToolTipText("FIND CLUSTERS");
+        this.clusteringSectorLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
 
         this.clusteringSelector.setBackground(Color.WHITE);
         this.clusteringSelector.setToolTipText("FIND CLUSTERS");
@@ -1285,18 +1292,18 @@ implements ActionListener {
         this.bottomRightPanel.add(this.depthSelecter);
         this.bottomRightPanel.add(this.depthNeighborNodeTypeSelector);
         this.bottomRightPanel.add(this.selectedNodeNeighborNodeTypeSelector);
-        this.bottomRightPanel.add(nodeValueSelecterLabel);
+        this.bottomRightPanel.add(this.nodeValueSelecterLabel);
         this.bottomRightPanel.add(this.nodeValueSelecter);
         this.bottomRightPanel.add(nodeLabelLabel) ;
         this.bottomRightPanel.add(this.nodeLabelSelecter);
-        this.bottomRightPanel.add(edgeValueLabel);
+        this.bottomRightPanel.add(this.edgeValueLabel);
         this.bottomRightPanel.add(this.edgeValueSelecter);
         if (MySequentialGraphVars.userDefinedEdgeLabelSet.size() > 0) {
-            bottomRightPanel.add(edgeLabelLabel);
+            bottomRightPanel.add(this.edgeLabelLabel);
             bottomRightPanel.add(this.edgeLabelSelecter);
         }
-        bottomPanel.add(this.bottomLeftControlPanel, BorderLayout.WEST);
-        bottomPanel.add(bottomRightPanel, BorderLayout.CENTER);
+        this.bottomPanel.add(this.bottomLeftControlPanel, BorderLayout.WEST);
+        this.bottomPanel.add(this.bottomRightPanel, BorderLayout.CENTER);
 
         JPanel topRightPanel = new JPanel();
         topRightPanel.setBackground(Color.WHITE);
@@ -1307,8 +1314,8 @@ implements ActionListener {
         graphGroupNodeNumberPercentLabel.setFont(MySequentialGraphVars.tahomaPlainFont11);
         graphGroupNodeNumberPercentLabel.setText("");
         topRightPanel.add(graphGroupNodeNumberPercentLabel);
-        topRightPanel.add(clusteringSectorLabel);
-        topRightPanel.add(clusteringSelector);
+        topRightPanel.add(this.clusteringSectorLabel);
+        topRightPanel.add(this.clusteringSelector);
 
         topPanel.add(topRightPanel, BorderLayout.EAST);
         topPanel.add(this.topLeftPanel, BorderLayout.WEST);
@@ -1333,17 +1340,15 @@ implements ActionListener {
                                 graphRemovalPanel.setVisible(false);
                             }
 
-                            startNode = null;
+                            shortestDistanceSourceNode = null;
                             isTableUpdating = false;
                             visitedNodes = null;
-                            pb.updateValue(10, 100);
 
-                            int row = pathDestTable.getRowCount();
+                            int row = shortestDistanceDestTable.getRowCount();
                             while (row > 0) {
-                                ((DefaultTableModel) pathDestTable.getModel()).removeRow(row-1);
-                                row = pathDestTable.getRowCount();
+                                ((DefaultTableModel) shortestDistanceDestTable.getModel()).removeRow(row-1);
+                                row = shortestDistanceDestTable.getRowCount();
                             }
-                            pb.updateValue(40, 100);
 
                             Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
                             LinkedHashMap<String, Long> valueMap = new LinkedHashMap<>();
@@ -1351,23 +1356,46 @@ implements ActionListener {
                                 valueMap.put(n.getName(), (long) n.getCurrentValue());
                             }
                             valueMap = MySequentialGraphSysUtil.sortMapByLongValue(valueMap);
-                            pb.updateValue(70, 100);
 
                             int i=0;
                             for (String n : valueMap.keySet()) {
                                 ((MyNode) MySequentialGraphVars.g.vRefs.get(n)).setCurrentValue(valueMap.get(n));
-                                ((DefaultTableModel) pathDestTable.getModel()).addRow(
+                                ((DefaultTableModel) shortestDistanceDestTable.getModel()).addRow(
                                     new String[]{"" + (++i),
                                         MySequentialGraphSysUtil.getNodeName(n),
-                                        MyMathUtil.getCommaSeperatedNumber(valueMap.get(n))});
+                                        "0"
+                                    }
+                                );
                             }
-                            pb.updateValue(90, 100);
 
                             clusteringSectorLabel.setVisible(false);
                             clusteringSelector.setVisible(false);
                             depthSelecter.setVisible(false);
+                            depthExcludeSelecter.setVisible(false);
+                            depthExcludeSymbolSelecter.setVisible(false);
+                            edgeValueExludeLabel.setVisible(false);
+                            edgeValueLabel.setVisible(false);
+                            edgeLabelLabel.setVisible(false);
+                            edgeLabelExcludeComboBoxMenuLabel.setVisible(false);
+                            edgeValueExcludeSymbolSelecter.setVisible(false);
+                            edgeLabelSelecter.setVisible(false);
+                            edgeValueSelecter.setVisible(false);
+                            edgeValueExcludeTxt.setVisible(false);
+                            edgeLabelExcludeSelecter.setVisible(false);
+                            edgeValueBarChart.setVisible(false);
+                            edgeLabelValueExcludeSelecter.setVisible(false);
+
+                            /**
+                             * Set edge values to zero.
+                             */
                             Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
                             for (MyEdge e : edges) {e.setCurrentValue(0);}
+
+                            /**
+                             * Turn dashborad to shortest distance dashboard.
+                             */
+                            MySequentialGraphVars.app.getSequentialGraphDashboard().setShortestDistanceDashBoard();
+
                             MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                             MySequentialGraphVars.getSequentialGraphViewer().repaint();
                             pb.updateValue(100, 100);
@@ -1387,7 +1415,7 @@ implements ActionListener {
         graphPanel.add(bottomPanel, BorderLayout.SOUTH);
 
         this.graphTableSplitPane.setDividerSize(4);
-        this.graphTableSplitPane.setLeftComponent(tableTabbedPane);
+        this.graphTableSplitPane.setLeftComponent(this.tableTabbedPane);
         this.graphTableSplitPane.setRightComponent(graphPanel);
         this.graphTableSplitPane.getLeftComponent().setBackground(Color.WHITE);
         this.graphTableSplitPane.setBackground(Color.WHITE);
@@ -2189,8 +2217,8 @@ implements ActionListener {
         this.nodeListTable.setAutoCreateRowSorter(false);
         this.currentNodeListTable.setAutoCreateRowSorter(false);
         this.edgeListTable.setAutoCreateRowSorter(false);
-        this.pathSourceTable.setAutoCreateRowSorter(false);
-        this.pathDestTable.setAutoCreateRowSorter(false);
+        this.shortestDistanceSourceTable.setAutoCreateRowSorter(false);
+        this.shortestDistanceDestTable.setAutoCreateRowSorter(false);
 
         this.updateNodeTable();
         this.nodeListTable.revalidate();
@@ -2232,29 +2260,29 @@ implements ActionListener {
 
 
         // Get the existing pathFromTable RowSorter
-        sorter = (TableRowSorter<DefaultTableModel>) pathSourceTable.getRowSorter();
+        sorter = (TableRowSorter<DefaultTableModel>) shortestDistanceSourceTable.getRowSorter();
         // Get the existing pathFromTable model
         tableModel = (DefaultTableModel) sorter.getModel();
         // Create a new sorter with the existing pathFromTable model
         newSorter = new TableRowSorter<DefaultTableModel>(tableModel);
         // Set the new sorter as the RowSorter of pathFromTable
-        pathSourceTable.setRowSorter(newSorter);
+        shortestDistanceSourceTable.setRowSorter(newSorter);
 
 
         // Get the existing pathToTable RowSorter
-        sorter = (TableRowSorter<DefaultTableModel>) pathDestTable.getRowSorter();
+        sorter = (TableRowSorter<DefaultTableModel>) shortestDistanceDestTable.getRowSorter();
         // Get the existing pathToTable model
         tableModel = (DefaultTableModel) sorter.getModel();
         // Create a new sorter with the existing pathToTable model
         newSorter = new TableRowSorter<DefaultTableModel>(tableModel);
         // Set the new sorter as the RowSorter of pathToTable
-        pathDestTable.setRowSorter(newSorter);
+        shortestDistanceDestTable.setRowSorter(newSorter);
 
         this.nodeListTable.setAutoCreateRowSorter(true);
         this.currentNodeListTable.setAutoCreateRowSorter(true);
         this.edgeListTable.setAutoCreateRowSorter(true);
-        this.pathSourceTable.setAutoCreateRowSorter(true);
-        this.pathDestTable.setAutoCreateRowSorter(true);
+        this.shortestDistanceSourceTable.setAutoCreateRowSorter(true);
+        this.shortestDistanceDestTable.setAutoCreateRowSorter(true);
     }
 
     private void updateNodeTable() {

@@ -35,6 +35,10 @@ extends JPanel {
     public MyDepthLevelNodeValueHistogramDistributionLineChart depthLevelNodeValueHistogramDistributionLineChart;
     public MyDepthLevelEndingNodeValueHistogramDistributionLineChart depthLevelEndingNodeValueHistogramDistributionLineChart;
 
+    public MyGraphLevelShortestAverageDistanceDistributionLineChart graphLevelShortestAverageDistanceDistributionLineChart;
+    public MyGraphLevelShortestDistanceNodeValueDistributionLineChart graphLevelShortestDistanceNodeValueDistributionLineChart;
+    public MyGraphLevelShortestDistanceUnreachableNodeCountDistributionLineChart graphLevelShortestDistanceUnreachableNodeCountDistributionLineChart;
+
     public MySequentialGraphDashBoard() {}
     public void setDashboard() {
         setGraphLevelDashBoard();
@@ -45,6 +49,54 @@ extends JPanel {
 
     TitledBorder networkTitledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK),
             "NETWORK", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
+
+    TitledBorder shortestDistanceTitledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK),
+            "NODE DISTANCE PROFILE", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
+
+    public void setShortestDistanceDashBoard() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override public void run() {
+                removeAll();
+                setLayout(new BorderLayout(0,0));
+
+                graphLevelShortestAverageDistanceDistributionLineChart = new MyGraphLevelShortestAverageDistanceDistributionLineChart();
+                graphLevelShortestDistanceNodeValueDistributionLineChart = new MyGraphLevelShortestDistanceNodeValueDistributionLineChart();
+                graphLevelShortestDistanceUnreachableNodeCountDistributionLineChart = new MyGraphLevelShortestDistanceUnreachableNodeCountDistributionLineChart();
+
+                JPanel shortestDistanceProfilePanel = new JPanel();
+                shortestDistanceProfilePanel.setBackground(Color.WHITE);
+                shortestDistanceProfilePanel.setLayout(new GridLayout(3, 1));
+                shortestDistanceProfilePanel.add(graphLevelShortestDistanceUnreachableNodeCountDistributionLineChart);
+                shortestDistanceProfilePanel.add(graphLevelShortestAverageDistanceDistributionLineChart);
+                shortestDistanceProfilePanel.add(graphLevelShortestDistanceNodeValueDistributionLineChart);
+                shortestDistanceProfilePanel.setBorder(shortestDistanceTitledBorder);
+
+                JTabbedPane tabbedPane = new JTabbedPane();
+                tabbedPane.addTab("DATA PROFILE", null, shortestDistanceProfilePanel, "SHORTEST DISTANCE NODE PROFILE");
+                //tabbedPane.addTab("GRAPH STATS.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setStatTable(), "GRAPH STATISTICS");
+                tabbedPane.setFont(MySequentialGraphVars.tahomaBoldFont12);
+
+                JSplitPane graphAndGraphChartSplitPane = new JSplitPane();
+                graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
+                graphAndGraphChartSplitPane.setDividerSize(4);
+                graphAndGraphChartSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
+                graphAndGraphChartSplitPane.setLeftComponent(tabbedPane);
+                graphAndGraphChartSplitPane.setRightComponent(MySequentialGraphVars.app.getSequentialGraphViewerPanel());
+
+                add(graphAndGraphChartSplitPane);
+
+                MySequentialGraphVars.app.addComponentListener(new ComponentAdapter() {
+                    public void componentResized(ComponentEvent evt) {
+                        graphAndGraphChartSplitPane.setDividerSize(4);
+                        graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
+                    }
+                });
+
+                revalidate();
+                repaint();
+            }
+        });
+    }
 
     public void setGraphLevelDashBoard() {
         SwingUtilities.invokeLater(new Runnable() {

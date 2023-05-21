@@ -817,8 +817,16 @@ public class MyNodeUtil {
                 }
             }
 
+            if (MySequentialGraphVars.getSequentialGraphViewer().vc.tableTabbedPane.getSelectedIndex() == 2) {
+                MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelShortestAverageDistanceDistributionLineChart.decorate();
+                MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelShortestDistanceUnreachableNodeCountDistributionLineChart.decorate();
+                MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelShortestDistanceNodeValueDistributionLineChart.decorate();
+            }
+
             if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
                 MySequentialGraphVars.getSequentialGraphViewer().vc.updateSelectedNodeStatTable();
+            } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null && MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size() > 0) {
+                MySequentialGraphVars.getSequentialGraphViewer().vc.updateMultiNodeStatTable();
             } else {
                 MyViewerControlComponentUtil.setGraphLevelTableStatistics();
             }

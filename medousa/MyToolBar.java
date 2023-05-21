@@ -335,11 +335,11 @@ implements ActionListener {
                                     runBtn.setEnabled(true);
                                     runBtn.setBackground(Color.GREEN);
                                 } else {
-                                    inputBtn.setEnabled(false);
+                                    inputBtn.setEnabled(true);
                                     MyMessageUtil.showErrorMsg("Failed to load data file!");
                                 }
                             } catch (Exception ex) {
-                                inputBtn.setEnabled(false);
+                                inputBtn.setEnabled(true);
                                 ex.printStackTrace();
                             }
                         }

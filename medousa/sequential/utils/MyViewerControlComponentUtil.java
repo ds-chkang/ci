@@ -465,8 +465,24 @@ public class MyViewerControlComponentUtil {
             MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelSelecter.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
             MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodeNeighborNodeTypeSelector.setVisible(false);
             MySequentialGraphVars.getSequentialGraphViewer().vc.depthNeighborNodeTypeSelector.setVisible(false);
+            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueExludeLabel.setVisible(true);
+            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueLabel.setVisible(true);
+            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelLabel.setVisible(true);
+            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelExcludeComboBoxMenuLabel.setVisible(true);
+            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueExcludeSymbolSelecter.setVisible(true);
+            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelSelecter.setVisible(true);
+            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.setVisible(true);
+            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueExcludeTxt.setVisible(true);
+            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelExcludeSelecter.setVisible(true);
+            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueBarChart.setVisible(true);
+            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelValueExcludeSelecter.setVisible(true);
+            MySequentialGraphVars.getSequentialGraphViewer().vc.depthExcludeSelecter.setVisible(true);
+            MySequentialGraphVars.getSequentialGraphViewer().vc.depthExcludeSymbolSelecter.setVisible(true);
+            MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.setVisible(true);
+            MySequentialGraphVars.getSequentialGraphViewer().vc.clusteringSelector.setVisible(true);
+            MySequentialGraphVars.getSequentialGraphViewer().vc.clusteringSectorLabel.setVisible(true);
             MySequentialGraphVars.getSequentialGraphViewer().vc.tableTabbedPane.setSelectedIndex(0);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.startNode = null;
+            MySequentialGraphVars.getSequentialGraphViewer().vc.shortestDistanceSourceNode = null;
 
             pb.updateValue(80, 100);
             MySequentialGraphVars.sequentialGraphDashBoard.setGraphLevelDashBoard();
@@ -573,8 +589,8 @@ public class MyViewerControlComponentUtil {
             MySequentialGraphVars.getSequentialGraphViewer().vc.currentNodeListTable.clearSelection();
             MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.clearSelection();
             MySequentialGraphVars.getSequentialGraphViewer().vc.edgeListTable.clearSelection();
-            MySequentialGraphVars.getSequentialGraphViewer().vc.pathSourceTable.clearSelection();
-            MySequentialGraphVars.getSequentialGraphViewer().vc.pathDestTable.clearSelection();
+            MySequentialGraphVars.getSequentialGraphViewer().vc.shortestDistanceSourceTable.clearSelection();
+            MySequentialGraphVars.getSequentialGraphViewer().vc.shortestDistanceDestTable.clearSelection();
 
             MyNodeUtil.setClusteringDefaultValuesToNodes();
             MyEdgeUtil.setClusteringDefaultValuesToEdges();
