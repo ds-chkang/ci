@@ -22,21 +22,25 @@ implements ActionListener {
     }
 
     @Override public void actionPerformed(ActionEvent ae) {
-
-        String itemSelected = this.nodeLabelExcludeSelecter.getSelectedItem().toString();
-        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
-        Set<String> nodeLabelValueSet = new HashSet<>();
-        for (MyNode n : nodes) {
-            if (n.nodeLabelMap.containsKey(itemSelected)) {
-                nodeLabelValueSet.add(n.nodeLabelMap.get(itemSelected));
+        new Thread(new Runnable() {
+            @Override public void run() {
+                String itemSelected = nodeLabelExcludeSelecter.getSelectedItem().toString();
+                Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+                Set<String> nodeLabelValueSet = new HashSet<>();
+                for (MyNode n : nodes) {
+                    if (n.nodeLabelMap.containsKey(itemSelected)) {
+                        nodeLabelValueSet.add(n.nodeLabelMap.get(itemSelected));
+                    }
+                }
+                
+                nodeLabelValueExcludeSelecter.removeAllItems();
+                nodeLabelValueExcludeSelecter.addItem("");
+                for (String nodeLabelValue : nodeLabelValueSet) {
+                    nodeLabelValueExcludeSelecter.addItem(nodeLabelValue);
+                }
+                nodeLabelValueExcludeSelecter.revalidate();
+                nodeLabelValueExcludeSelecter.repaint();
             }
-        }
-
-        this.nodeLabelValueExcludeSelecter.removeAllItems();
-        this.nodeLabelValueExcludeSelecter.addItem("");
-        for (String nodeLabelValue : nodeLabelValueSet) {
-            this.nodeLabelValueExcludeSelecter.addItem(nodeLabelValue);
-        }
-
+        }).start();
     }
 }

@@ -33,22 +33,21 @@ implements MouseListener {
             if (SwingUtilities.isLeftMouseButton(e) &&
                 MySequentialGraphVars.getSequentialGraphViewer().getPickedVertexState().getPicked().size() == 0 &&
                 MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.getSelectedIndex() == 0) {
-                new Thread(new Runnable() {
-                    @Override public void run() {
-                        if (!MySequentialGraphVars.getSequentialGraphViewer().isClustered) {
-                            if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null ||
-                                MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null ||
-                                MySequentialGraphVars.getSequentialGraphViewer().excluded ||
-                                MySequentialGraphVars.getSequentialGraphViewer().vc.tableTabbedPane.getSelectedIndex() == 2) {
-                                MyViewerComponentControllerUtil.setDefaultViewerLook();
-                            }
-                        } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() > 0 ||
-                            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() > 0 ||
-                            MySequentialGraphVars.getSequentialGraphViewer().excluded) {
+                if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null ||
+                    MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null ||
+                    MySequentialGraphVars.getSequentialGraphViewer().vc.tableTabbedPane.getSelectedIndex() == 2 ||
+                    MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() > 0 ||
+                    MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() > 1 ||
+                    MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelSelecter.getSelectedIndex() != 1 ||
+                    MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelSelecter.getSelectedIndex() > 0 ||
+                    MySequentialGraphVars.getSequentialGraphViewer().excluded) {
+
+                    new Thread(new Runnable() {
+                        @Override public void run() {
                             MyViewerComponentControllerUtil.setDefaultViewerLook();
                         }
-                    }
-                }).start();
+                    }).start();
+                }
             } else if (SwingUtilities.isLeftMouseButton(e) &&
                 MySequentialGraphVars.getSequentialGraphViewer().getPickedVertexState().getPicked().size() == 0 &&
                 MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.getSelectedIndex() > 0) {
@@ -175,7 +174,7 @@ implements MouseListener {
                 MySequentialGraphVars.getSequentialGraphViewer().sharedPredecessors.retainAll(MySequentialGraphVars.g.getPredecessors(n));
             }
             pb.updateValue(80, 100);
-            MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+            MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
             MySequentialGraphVars.getSequentialGraphViewer().selectedNode = null;
             MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors = null;
             MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors = null;
@@ -223,7 +222,7 @@ implements MouseListener {
                 MySequentialGraphVars.getSequentialGraphViewer().sharedPredecessors.retainAll(MySequentialGraphVars.g.getPredecessors(n));
             }
             pb.updateValue(80, 100);
-            MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+            MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
             MySequentialGraphVars.getSequentialGraphViewer().selectedNode = null;
             MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors = null;
             MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors = null;

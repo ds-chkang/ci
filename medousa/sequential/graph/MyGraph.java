@@ -296,6 +296,18 @@ implements Serializable {
         return (count == 0 ? 0.0f : (total/count));
     }
 
+    public float getAverageNodeValue() {
+        long total = 0;
+        int count = 0;
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        for (MyNode n : nodes) {
+            if (n.getCurrentValue() == 0 || MyClusteringConfig.selectedClusterColor != null && (MyClusteringConfig.selectedClusterColor != n.clusteringColor)) continue;
+            total += n.getCurrentValue();
+            count++;
+        }
+        return (count == 0 ? 0.0f : (total/count));
+    }
+
     public float getClusteredAveragePredecessorCount() {
         float total = 0;
         int count = 0;

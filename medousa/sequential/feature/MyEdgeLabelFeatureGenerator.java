@@ -31,15 +31,15 @@ public class MyEdgeLabelFeatureGenerator {
     }
 
     private void setObjectIDIndex() { 
-        objIDIdx = MySequentialGraphVars.app.getDirectGraphMsgBroker().getHeaderIndex(objIDColNm);
+        objIDIdx = MySequentialGraphVars.app.getSequentialGraphMsgBroker().getHeaderIndex(objIDColNm);
     }
 
-    private void setWeightNameIndex(String edgeWeightVariable) {weightLoc = MySequentialGraphVars.app.getDirectGraphMsgBroker().getHeaderIndex(edgeWeightVariable);}
+    private void setWeightNameIndex(String edgeWeightVariable) {weightLoc = MySequentialGraphVars.app.getSequentialGraphMsgBroker().getHeaderIndex(edgeWeightVariable);}
 
-    private void setItemNameIndex(String itemIDColNm) {itemLoc = MySequentialGraphVars.app.getDirectGraphMsgBroker().getHeaderIndex(itemIDColNm);}
+    private void setItemNameIndex(String itemIDColNm) {itemLoc = MySequentialGraphVars.app.getSequentialGraphMsgBroker().getHeaderIndex(itemIDColNm);}
 
     private void setTransactionIDIndex() { 
-        trIDIdx = MySequentialGraphVars.app.getDirectGraphMsgBroker().getHeaderIndex(trIDColNm);
+        trIDIdx = MySequentialGraphVars.app.getSequentialGraphMsgBroker().getHeaderIndex(trIDColNm);
     }
 
     private void run(ArrayList<ArrayList<String>> dataIn, String edgeValueType) {

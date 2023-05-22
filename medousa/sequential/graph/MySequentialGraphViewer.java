@@ -62,7 +62,9 @@ implements Serializable {
     public Font nodeFont = new Font("Noto Sans", Font.PLAIN, 50);
     public Font edgeFont = new Font("Noto Sans", Font.PLAIN, 50);
     public MyGraphLevelNodeValueBarChart graphLevelNodeValueBarChart;
-    public MyGraphLevelEdgeValueBarChart graphLelvelEdgeValueBarChart;
+    public MyGraphLevelNodeLabelBarChart graphLevelNodeLabelBarChart;
+    public MyGraphLevelEdgeValueBarChart graphLevelEdgeValueBarChart;
+    public MyGraphLevelEdgeLabelBarChart graphLevelEdgeLabelBarChart;
     public MySingleNodeNeighborNodeValueBarChart nodeLevelNeighborNodeValueBarChart;
     public MyMultiLevelNeighborNodeValueBarChart sharedNodeValueBarChart;
     public MyMultiLevelEdgeValueBarChart multiNodeLevelEdgeValueBarChart;

@@ -167,7 +167,7 @@ implements ActionListener {
 
             pb.updateValue(90, 100);
             MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
-            MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+            MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
             MySequentialGraphSysUtil.setSharedPredecessors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode, n);
             MySequentialGraphSysUtil.setSharedSuccessors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode, n);
             MySequentialGraphVars.sequentialGraphDashBoard.setMultiNodeDashBoard();
@@ -182,7 +182,7 @@ implements ActionListener {
             pb.updateValue(30, 100);
             MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
             pb.updateValue(40, 100);
-            MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+            MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
             pb.updateValue(50, 100);
             MySequentialGraphSysUtil.setSharedPredecessors(n);
             pb.updateValue(60, 100);
@@ -207,7 +207,7 @@ implements ActionListener {
             pb.updateValue(60, 100);
             MyViewerComponentControllerUtil.setDepthOptionForSelectedNode();
             pb.updateValue(70, 100);
-            MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+            MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
             pb.updateValue(80, 100);
             MyViewerComponentControllerUtil.setSelectedNodeNeighborValueBarChartToViewer();
             MySequentialGraphVars.sequentialGraphDashBoard.setSingleNodeDashBoard();

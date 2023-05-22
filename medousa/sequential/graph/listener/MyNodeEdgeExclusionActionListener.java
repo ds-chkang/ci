@@ -31,7 +31,7 @@ implements ActionListener {
                 }
 
                 if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelExcludeSelecter.isShowing() && MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelExcludeSelecter.getSelectedIndex() > 0 &&
-                    MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelExcludeSymbolSelecter.isShowing() && MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelExcludeSymbolSelecter.getSelectedIndex() > 0) {
+                    MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelExcludeMathSymbolSelecter.isShowing() && MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelExcludeMathSymbolSelecter.getSelectedIndex() > 0) {
                     doNodeLabelExclusion();
                 }
 
@@ -40,7 +40,7 @@ implements ActionListener {
                 }
 
                 if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelExcludeSelecter.isShowing() && MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelExcludeSelecter.getSelectedIndex() > 0 &&
-                    MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelExcludeSymbolSelecter.isShowing() && MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelExcludeSymbolSelecter.getSelectedIndex() > 0) {
+                    MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelExcludeMathSymbolSelecter.isShowing() && MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelExcludeMathSymbolSelecter.getSelectedIndex() > 0) {
                     doEdgeLabelExclusion();
                 }
 
@@ -48,7 +48,7 @@ implements ActionListener {
                     MyDepthNodeExcluder.exludeDepthNodes(Integer.parseInt(MySequentialGraphVars.getSequentialGraphViewer().vc.depthExcludeSelecter.getSelectedItem().toString()));
                 }
 
-                MyViewerComponentControllerUtil.setBottomCharts();
+               // MyViewerComponentControllerUtil.setBottomCharts();
                 MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
 
                 MySequentialGraphVars.getSequentialGraphViewer().revalidate();
@@ -137,7 +137,7 @@ implements ActionListener {
                     }
                 }
             }
-        } else if (viewerController.edgeLabelExcludeSymbolSelecter.getSelectedIndex() == 7) {
+        } else if (viewerController.edgeLabelExcludeMathSymbolSelecter.getSelectedIndex() == 7) {
             String[] numberPair = viewerController.edgeValueExcludeTxt.getText().split(",");
             double leftNum = Double.parseDouble(numberPair[0]);
             double rightNum = Double.parseDouble(numberPair[1]);
@@ -290,8 +290,8 @@ implements ActionListener {
     private void doNodeLabelExclusion() {
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
         int nodesRemoved = 0;
-        if (viewerController.nodeLabelExcludeSymbolSelecter.getSelectedIndex() > 0) {// Node label condition is on.
-            if (viewerController.nodeLabelExcludeSymbolSelecter.getSelectedIndex() == 1) {
+        if (viewerController.nodeLabelExcludeMathSymbolSelecter.getSelectedIndex() > 0) {// Node label condition is on.
+            if (viewerController.nodeLabelExcludeMathSymbolSelecter.getSelectedIndex() == 1) {
                 for (MyNode n : nodes) {
                     if (n.getCurrentValue() > 0) {
                         if (n.nodeLabelMap.containsValue(viewerController.nodeLabelExcludeSelecter.getSelectedItem().toString().trim())) {
@@ -300,7 +300,7 @@ implements ActionListener {
                         }
                     }
                 }
-            } else if (viewerController.nodeLabelExcludeSymbolSelecter.getSelectedIndex() == 2) {
+            } else if (viewerController.nodeLabelExcludeMathSymbolSelecter.getSelectedIndex() == 2) {
                 for (MyNode n : nodes) {
                     if (n.getCurrentValue() > 0) {
                         if (!n.nodeLabelMap.containsValue(viewerController.nodeLabelExcludeSelecter.getSelectedItem().toString().trim())) {
@@ -321,8 +321,8 @@ implements ActionListener {
     private void doEdgeLabelExclusion() {
         Collection<MyEdge> edges = MySequentialGraphVars.g.getVertices();
         int edgesRemoved = 0;
-        if (viewerController.edgeLabelExcludeSymbolSelecter.getSelectedIndex() > 0) {// Edge label exclusion condition is on.
-            if (viewerController.edgeLabelExcludeSymbolSelecter.getSelectedIndex() == 1) {
+        if (viewerController.edgeLabelExcludeMathSymbolSelecter.getSelectedIndex() > 0) {// Edge label exclusion condition is on.
+            if (viewerController.edgeLabelExcludeMathSymbolSelecter.getSelectedIndex() == 1) {
                 for (MyEdge e : edges) {
                     if (e.getCurrentValue() > 0) {
                         if (e.edgeLabelMap.containsValue(viewerController.edgeLabelExcludeSelecter.getSelectedItem().toString().trim())) {
@@ -334,7 +334,7 @@ implements ActionListener {
                         }
                     }
                 }
-            } else if (viewerController.edgeLabelExcludeSymbolSelecter.getSelectedIndex() == 2) {
+            } else if (viewerController.edgeLabelExcludeMathSymbolSelecter.getSelectedIndex() == 2) {
                 for (MyEdge e : edges) {
                     if (e.getCurrentValue() > 0) {
                         if (!e.edgeLabelMap.containsValue(viewerController.edgeLabelExcludeSelecter.getSelectedItem().toString().trim())) {

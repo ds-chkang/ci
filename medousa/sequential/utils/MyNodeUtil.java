@@ -828,25 +828,6 @@ public class MyNodeUtil {
                 MyViewerComponentControllerUtil.setGraphLevelTableStatistics();
             }
 
-            if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() > 1) {
-                MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.setSelectedIndex(
-                    MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex());
-            }
-
-            if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.isSelected()) {
-                MyViewerComponentControllerUtil.removeBarChartsFromViewer();
-                MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-                MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.setSelected(false);
-                MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-            }
-
-            if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueBarChart.isSelected()) {
-                MyViewerComponentControllerUtil.removeEdgeValueBarChartFromViewer();
-                MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueBarChart.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-                MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueBarChart.setSelected(false);
-                MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueBarChart.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-            }
-
             MySequentialGraphVars.getSequentialGraphViewer().revalidate();
             MySequentialGraphVars.getSequentialGraphViewer().repaint();
         } catch (Exception ex) {

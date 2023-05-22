@@ -28,6 +28,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Ellipse2D;
 import java.util.*;
 
 public class MyClusteringConfig
@@ -341,8 +342,8 @@ implements ActionListener {
         float TOTAL_EDGE_VALUE = 0f;
         LinkedHashMap<String, Float> valueMap = new LinkedHashMap<>();
         for (MyEdge e : scoresByRemovedEdge.keySet()) {
-            String source = (e.getSource().getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(e.getSource().getName()) : MySequentialGraphSysUtil.getDecodedNodeName(e.getSource().getName()));
-            String dest = (e.getDest().getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(e.getDest().getName()) : MySequentialGraphSysUtil.getDecodedNodeName(e.getDest().getName()));
+            String source = MySequentialGraphSysUtil.getNodeName(e.getSource().getName());
+            String dest = MySequentialGraphSysUtil.getNodeName(e.getDest().getName());
             String edgeName = source + "-" + dest;
             valueMap.put(edgeName, scoresByRemovedEdge.get(e));
             if (MAX_EDGE_VALUE < scoresByRemovedEdge.get(e)) {
@@ -435,7 +436,7 @@ implements ActionListener {
 
         int count = 0;
         for (String n : valueMap.keySet()) {
-            String nodeName = (n.contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n) : MySequentialGraphSysUtil.getDecodedNodeName(n));
+            String nodeName = MySequentialGraphSysUtil.getNodeName(n);
             m.addRow(new String[]{"" + (++count), nodeName, MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(valueMap.get(n)))});
         }
 
@@ -616,10 +617,16 @@ implements ActionListener {
         chart.getXYPlot().getRangeAxis().setLabelFont(MySequentialGraphVars.tahomaPlainFont13);
         chart.getXYPlot().getRangeAxis().setTickLabelFont(MySequentialGraphVars.tahomaPlainFont11);
         chart.getXYPlot().getDomainAxis().setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+
         chart.setBackgroundPaint(Color.WHITE);
         XYPlot plot = (XYPlot) chart.getPlot();
         XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
-        renderer.setSeriesStroke(0, new BasicStroke(2.0f));
+        renderer.setSeriesStroke(0, new BasicStroke(1.5f));
+        renderer.setSeriesPaint(0, Color.BLUE);
+        renderer.setSeriesShapesVisible(0, true);
+        renderer.setSeriesShape(0, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
+        renderer.setSeriesFillPaint(0, Color.WHITE);
+        renderer.setUseFillPaint(true);
 
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new Dimension(350, 367));

@@ -83,8 +83,8 @@ public class MyViewerComponentControllerUtil {
     }
 
     public static void setEdgeBarChartToViewer() {
-        if (MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart != null) {
-            MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart);
+        if (MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart != null) {
+            MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart);
         }
         if (MySequentialGraphVars.getSequentialGraphViewer().multiNodeLevelEdgeValueBarChart != null) {
             MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().multiNodeLevelEdgeValueBarChart);
@@ -95,19 +95,19 @@ public class MyViewerComponentControllerUtil {
 
         if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.getSelectedIndex() > 0) {
             if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthNeighborNodeTypeSelector.getSelectedIndex() > 0) {
-                MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart = new MyGraphLevelEdgeValueBarChart();
-                MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart.setEdgeValueBarChartForDepthNodes();
-                MySequentialGraphVars.getSequentialGraphViewer().add(MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart);
+                MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart = new MyGraphLevelEdgeValueBarChart();
+                MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart.setEdgeValueBarChartForDepthNodes();
+                MySequentialGraphVars.getSequentialGraphViewer().add(MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart);
             }
         } else {
             if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode == null) {
-                MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart = new MyGraphLevelEdgeValueBarChart();
-                MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart.setEdgeValueBarChart();
-                MySequentialGraphVars.getSequentialGraphViewer().add(MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart);
+                MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart = new MyGraphLevelEdgeValueBarChart();
+                MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart.setEdgeValueBarChart();
+                MySequentialGraphVars.getSequentialGraphViewer().add(MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart);
             } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null && MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size() > 0) {
-                MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart = new MyGraphLevelEdgeValueBarChart();
-                MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart.setEdgeValueBarChartForSelectedNode();
-                MySequentialGraphVars.getSequentialGraphViewer().add(MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart);
+                MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart = new MyGraphLevelEdgeValueBarChart();
+                MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart.setEdgeValueBarChartForSelectedNode();
+                MySequentialGraphVars.getSequentialGraphViewer().add(MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart);
             }
         }
 
@@ -116,8 +116,8 @@ public class MyViewerComponentControllerUtil {
     }
 
     public static void setSingleNodeLevelEdgeBarChartToViewer() {
-        if (MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart != null) {
-            MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart);
+        if (MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart != null) {
+            MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart);
         }
         if (MySequentialGraphVars.getSequentialGraphViewer().singleNodeLevelEdgeValueBarChart != null) {
             MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().singleNodeLevelEdgeValueBarChart);
@@ -307,18 +307,30 @@ public class MyViewerComponentControllerUtil {
     }
 
     public static void removeEdgeValueBarChartFromViewer() {
+        if (MySequentialGraphVars.getSequentialGraphViewer().multiNodeLevelEdgeValueBarChart != null) {
+            MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().multiNodeLevelEdgeValueBarChart);
+        }
+
+        if (MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeLabelBarChart != null) {
+            MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeLabelBarChart);
+        }
+
         if (MySequentialGraphVars.getSequentialGraphViewer().clusteredGraphLevelEdgeValueBarChart != null) {
             MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().clusteredGraphLevelEdgeValueBarChart);
         }
-        if (MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart != null) {
-            MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart);
+
+        if (MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart != null) {
+            MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart);
         }
+
         if (MySequentialGraphVars.getSequentialGraphViewer().multiNodeLevelEdgeValueBarChart != null) {
             MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().sharedNodeValueBarChart);
         }
+
         if (MySequentialGraphVars.getSequentialGraphViewer().singleNodeLevelEdgeValueBarChart != null) {
             MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().singleNodeLevelEdgeValueBarChart);
         }
+
         MySequentialGraphVars.getSequentialGraphViewer().revalidate();
         MySequentialGraphVars.getSequentialGraphViewer().repaint();
     }
@@ -330,25 +342,31 @@ public class MyViewerComponentControllerUtil {
             MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeNameSet.add(depthNode.getName());
         }
     }
-    public static void removeBarChartsFromViewer() {
+    public static void removeNodeBarChartsFromViewer() {
+        if (MySequentialGraphVars.getSequentialGraphViewer().graphLevelNodeLabelBarChart != null) {
+            MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().graphLevelNodeLabelBarChart);
+        }
+
         if (MySequentialGraphVars.getSequentialGraphViewer().clusteredGraphLevelNodeValueBarChart != null) {
             MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().clusteredGraphLevelNodeValueBarChart);
         }
+
         if (MySequentialGraphVars.getSequentialGraphViewer().graphLevelNodeValueBarChart != null) {
             MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().graphLevelNodeValueBarChart);
         }
+
         if (MySequentialGraphVars.getSequentialGraphViewer().nodeLevelNeighborNodeValueBarChart != null) {
             MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().nodeLevelNeighborNodeValueBarChart);
         }
-        if (MySequentialGraphVars.getSequentialGraphViewer().multiNodeLevelEdgeValueBarChart != null) {
-            MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().multiNodeLevelEdgeValueBarChart);
-        }
+
         if (MySequentialGraphVars.getSequentialGraphViewer().sharedNodeValueBarChart != null) {
             MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().sharedNodeValueBarChart);
         }
+
         if (MySequentialGraphVars.getSequentialGraphViewer().depthNodeLevelNodeValueBarChart != null) {
             MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().depthNodeLevelNodeValueBarChart);
         }
+
         if (MySequentialGraphVars.getSequentialGraphViewer().depthNodeLevelNeighborNodeValueBarChart != null) {
             MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().depthNodeLevelNeighborNodeValueBarChart);
         }
@@ -357,38 +375,6 @@ public class MyViewerComponentControllerUtil {
     public static void setExcludeSymbolOption() {
         MySequentialGraphVars.getSequentialGraphViewer().vc.setNodeValueExcludeSymbolComboBox();
 
-    }
-
-    public static void setBottomCharts() {
-        if (MySequentialGraphVars.currentGraphDepth > 0) {
-            if (MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodeNeighborNodeTypeSelector.isShowing()) {
-               // MySequentialGraphVars.app.getSequentialGraphDashboard().singleNodePredecessorEdgeCurrentValueDistributionLineChart.decorate();
-              //  MySequentialGraphVars.app.getSequentialGraphDashboard().singleNodeSuccessorEdgeCurrentValueDistributionLineChart.decorate();
-            } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthNeighborNodeTypeSelector.isShowing()) {
-              //  MySequentialGraphVars.app.getSequentialGraphDashboard().depthLevelNodeHopCountDistribution.decorate();
-              //  MySequentialGraphVars.app.getSequentialGraphDashboard().depthLevelNodeCurrentValueDistribution.decorate();
-              //  MySequentialGraphVars.app.getSequentialGraphDashboard().depthLevelEdgeCurrentValueDistribution.decorate();
-            } else {
-               // MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelSuccessorCountDistributionLineGraph.setSuccessorCountLineChart();
-              //  MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelNodeHopCountDistributionLineGraph.decorate();
-              //  MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelEdgeValueDistributionLineGraph.setEdgeValueLineChart();
-              //  MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelNodeValueDistributionLineGraph.decorate();
-              //  MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelSuccessorCountDistributionLineGraph.setSuccessorCountLineChart();
-            }
-        } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null &&
-            MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size() > 0) {
-          //  MySequentialGraphVars.app.getSequentialGraphDashboard().multiNodePredecessorValueDistributionLineChart.decorateValueLineChart();
-          //  MySequentialGraphVars.app.getSequentialGraphDashboard().multiNodeSuccessorValueDistributionLineChart.decorateValueChart();
-          //  MySequentialGraphVars.app.getSequentialGraphDashboard().multiNodeSharedPredecessorEdgeValueDistributionLineChart.decorate();
-          //  MySequentialGraphVars.app.getSequentialGraphDashboard().multiNodeSharedSuccessorEdgeValueDistributionLineChart.decorate();
-        } else if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
-            //MySequentialGraphVars.app.getSequentialGraphDashboard().singleNodePredecessorEdgeCurrentValueDistributionLineChart.decorate();
-           // MySequentialGraphVars.app.getSequentialGraphDashboard().singleNodeSuccessorEdgeCurrentValueDistributionLineChart.decorate();
-        } else {
-         //   MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelEdgeValueDistributionLineGraph.decorate();
-        }
-      //  MySequentialGraphVars.app.getSequentialGraphDashboard().revalidate();
-     //   MySequentialGraphVars.app.getSequentialGraphDashboard().repaint();
     }
 
     public static void setDefaultViewerLook() {
@@ -422,6 +408,8 @@ public class MyViewerComponentControllerUtil {
             MyViewerComponentControllerUtil.setNodeValueComboBoxMenu();
             pb.updateValue(60, 100);
 
+            MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelBarChart.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
+            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelBarChart.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
             MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueExcludeSymbolSelecter.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
             MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueExcludeSymbolSelecter.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
             MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
@@ -443,6 +431,10 @@ public class MyViewerComponentControllerUtil {
             MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.setSelected(false);
             MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueBarChart.setSelected(false);
             MySequentialGraphVars.getSequentialGraphViewer().vc.weightedNodeColor.setSelected(false);
+            MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelBarChart.setSelected(false);
+            MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelBarChart.setVisible(false);
+            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelBarChart.setSelected(false);
+            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelBarChart.setVisible(false);
             MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.setSelectedIndex(0);
             MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.setSelectedIndex(1);
             MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelSelecter.setSelectedIndex(0);
@@ -502,7 +494,7 @@ public class MyViewerComponentControllerUtil {
             MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.setText("N. V. B.");
             MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueBarChart.setText("E. V. B.");
 
-            MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+            MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
             MyViewerComponentControllerUtil.removeEdgeValueBarChartFromViewer();
             MySequentialGraphVars.getSequentialGraphViewer().getRenderContext().setEdgeDrawPaintTransformer(MySequentialGraphVars.getSequentialGraphViewer().edgeColor);
 
@@ -600,7 +592,7 @@ public class MyViewerComponentControllerUtil {
             MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueBarChart.setText("C. E. V. B.");
             pb.updateValue(95, 100);
 
-            MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+            MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
             MyViewerComponentControllerUtil.removeEdgeValueBarChartFromViewer();
             MySequentialGraphVars.getSequentialGraphViewer().getRenderContext().setEdgeDrawPaintTransformer(MySequentialGraphVars.getSequentialGraphViewer().edgeColor);
             MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setClusterTextStatistics();
@@ -765,8 +757,8 @@ public class MyViewerComponentControllerUtil {
     }
 
     public static void setShareNodeLevelEdgeValueBarChartToViewer() {
-        if (MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart != null) {
-            MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart);
+        if (MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart != null) {
+            MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart);
         }
         if (MySequentialGraphVars.getSequentialGraphViewer().multiNodeLevelEdgeValueBarChart != null) {
             MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().multiNodeLevelEdgeValueBarChart);

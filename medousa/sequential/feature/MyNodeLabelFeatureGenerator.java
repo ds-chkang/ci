@@ -33,8 +33,8 @@ public class MyNodeLabelFeatureGenerator {
     private void setObjectIDIndex() { 
         objIDIdx = MySequentialGraphVars.app.getSequentialGraphMsgBroker().getHeaderIndex(objIDColNm);
     }
-    private void setWeightNameIndex(String edgeWeightVariable) {weightLoc = MySequentialGraphVars.app.getDirectGraphMsgBroker().getHeaderIndex(edgeWeightVariable);}
-    private void setItemNameIndex(String itemIDColNm) {itemLoc = MySequentialGraphVars.app.getDirectGraphMsgBroker().getHeaderIndex(itemIDColNm);}
+    private void setWeightNameIndex(String edgeWeightVariable) {weightLoc = MySequentialGraphVars.app.getSequentialGraphMsgBroker().getHeaderIndex(edgeWeightVariable);}
+    private void setItemNameIndex(String itemIDColNm) {itemLoc = MySequentialGraphVars.app.getSequentialGraphMsgBroker().getHeaderIndex(itemIDColNm);}
     private void setTransactionIDIndex() {
         trIDIdx = MySequentialGraphVars.app.getSequentialGraphMsgBroker().getHeaderIndex(trIDColNm);
     }

@@ -6,11 +6,8 @@ import medousa.message.MyMessageUtil;
 import medousa.sequential.graph.listener.MyEdgeLabelSelecterListener;
 import medousa.sequential.graph.listener.MyNodeLabelSelecterListener;
 import medousa.sequential.graph.stats.MyGrayCellRenderer;
-import medousa.sequential.graph.stats.barchart.MyClusteredGraphLevelEdgeValueBarChart;
-import medousa.sequential.graph.stats.barchart.MyClusteredGraphLevelNodeValueBarChart;
+import medousa.sequential.graph.stats.barchart.*;
 import medousa.sequential.graph.stats.MyTextStatistics;
-import medousa.sequential.graph.stats.barchart.MyGraphLevelEdgeValueBarChart;
-import medousa.sequential.graph.stats.barchart.MyGraphLevelNodeValueBarChart;
 import medousa.sequential.graph.listener.MyNodeEdgeExclusionActionListener;
 import medousa.sequential.utils.*;
 import medousa.sequential.utils.MySequentialGraphSysUtil;
@@ -121,7 +118,7 @@ implements ActionListener {
     public JLabel clusteringSectorLabel = new JLabel("CLS.");
     private JPanel topLeftPanel = new JPanel();
     public JPanel bottomLeftControlPanel =new JPanel();
-    public JPanel bottomRightPanel = new JPanel();
+    public JPanel bottomRightControlPanel = new JPanel();
     public JPanel bottomPanel = new JPanel();
     public MyNode shortestDistanceSourceNode;
     public JButton excludeBtn;
@@ -134,10 +131,10 @@ implements ActionListener {
     public JComboBox edgeValueExcludeSymbolSelecter  = new JComboBox();
     public JComboBox edgeLabelSelecter = new JComboBox();
     public JComboBox nodeLabelSelecter = new JComboBox();
-    public JComboBox nodeLabelExcludeSymbolSelecter = new JComboBox();
+    public JComboBox nodeLabelExcludeMathSymbolSelecter = new JComboBox();
     public JComboBox nodeLabelExcludeSelecter = new JComboBox();
     public JComboBox nodeLabelValueExcludeSelecter = new JComboBox();
-    public JComboBox edgeLabelExcludeSymbolSelecter = new JComboBox();
+    public JComboBox edgeLabelExcludeMathSymbolSelecter = new JComboBox();
     public JComboBox edgeLabelExcludeSelecter = new JComboBox();
     public JComboBox depthExcludeSelecter = new JComboBox();
     public JComboBox depthExcludeSymbolSelecter = new JComboBox();
@@ -149,7 +146,9 @@ implements ActionListener {
     public JTextField edgeValueExcludeTxt = new JTextField();
     public JCheckBox weightedNodeColor = new JCheckBox("N. C.");
     public JCheckBox nodeValueBarChart = new JCheckBox("N. V. B.");
+    public JCheckBox nodeLabelBarChart = new JCheckBox("N. L. B.");
     public JCheckBox edgeValueBarChart = new JCheckBox("E. V. B.");
+    public JCheckBox edgeLabelBarChart = new JCheckBox("E. L. B.");
     public JCheckBox endingNodeBarChart = new JCheckBox("E. N. B.");
     public Map<String, Integer> selectedNodeSuccessorDepthNodeMap;
     public Map<String, Integer> selectedNodePredecessorDepthNodeMap;
@@ -175,6 +174,7 @@ implements ActionListener {
     public JLabel edgeLabelLabel = new JLabel("  E. L.");
     public JLabel edgeValueLabel = new JLabel("   E. V.");
     public JLabel edgeValueExludeLabel = new JLabel("  E. V.");
+    public JLabel nodeLabelLabel = new JLabel("  N. L.");
 
     public MyViewerComponentController() {}
 
@@ -940,7 +940,9 @@ implements ActionListener {
         this.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         this.nodeValueBarChart.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.nodeLabelBarChart.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.edgeValueBarChart.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.edgeLabelBarChart.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.weightedNodeColor.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.clusteringSectorLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
 
@@ -1108,7 +1110,6 @@ implements ActionListener {
         for (String edgeLabel : MySequentialGraphVars.userDefinedEdgeLabelSet) {this.edgeLabelSelecter.addItem(edgeLabel);}
         this.edgeLabelSelecter.addActionListener(this);
 
-        JLabel nodeLabelLabel = new JLabel("  N. L.");
         nodeLabelLabel.setToolTipText("NODE LABEL");
         nodeLabelLabel.setBackground(Color.WHITE);
         nodeLabelLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
@@ -1137,8 +1138,9 @@ implements ActionListener {
         this.nodeValueExcludeTxt.setPreferredSize(new Dimension(60, 20));
 
         this.excludeBtn = new JButton("EXCL.");
+        //this.excludeBtn.setBackground(Color.GREEN);
         this.excludeBtn.setToolTipText("EXCLUDE NODES AND EDGES");
-        this.excludeBtn.setBackground(Color.WHITE);
+        //this.excludeBtn.setBackground(Color.WHITE);
         this.excludeBtn.setFocusable(false);
         this.excludeBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.excludeBtn.addActionListener(new MyNodeEdgeExclusionActionListener(this));
@@ -1148,19 +1150,33 @@ implements ActionListener {
         removeEdgeEmptyLabel.setPreferredSize(new Dimension(50, 20));
 
         this.nodeValueBarChart.setFocusable(false);
-        this.nodeValueBarChart.setToolTipText("SHOW NODE VALUE BAR CHART");
+        this.nodeValueBarChart.setToolTipText("NODE VALUE BAR CHART");
         this.nodeValueBarChart.setBackground(Color.WHITE);
         this.nodeValueBarChart.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.nodeValueBarChart.addActionListener(this);
 
+        this.nodeLabelBarChart.setFocusable(false);
+        this.nodeLabelBarChart.setToolTipText("NODE LABEL BAR CHART");
+        this.nodeLabelBarChart.setBackground(Color.WHITE);
+        this.nodeLabelBarChart.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.nodeLabelBarChart.addActionListener(this);
+        this.nodeLabelBarChart.setVisible(false);
+
         this.edgeValueBarChart.setFocusable(false);
-        this.edgeValueBarChart.setToolTipText("SHOW EDGE VALUE BAR CHART");
+        this.edgeValueBarChart.setToolTipText("EDGE VALUE BAR CHART");
         this.edgeValueBarChart.setBackground(Color.WHITE);
         this.edgeValueBarChart.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.edgeValueBarChart.addActionListener(this);
 
+        this.edgeLabelBarChart.setFocusable(false);
+        this.edgeLabelBarChart.setToolTipText("EDGE VALUE BAR CHART");
+        this.edgeLabelBarChart.setBackground(Color.WHITE);
+        this.edgeLabelBarChart.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.edgeLabelBarChart.setVisible(false);
+        this.edgeLabelBarChart.addActionListener(this);
+
         this.endingNodeBarChart.setFocusable(false);
-        this.endingNodeBarChart.setToolTipText("SHOW ENDING NODE BAR CHART");
+        this.endingNodeBarChart.setToolTipText("ENDING NODE BAR CHART");
         this.endingNodeBarChart.setBackground(Color.WHITE);
         this.endingNodeBarChart.setFont(MySequentialGraphVars.tahomaPlainFont12);
 
@@ -1184,26 +1200,29 @@ implements ActionListener {
         nodeLabelExcludeComboBoxMenuLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
         nodeLabelExcludeComboBoxMenuLabel.setBackground(Color.WHITE);
 
-        this.nodeLabelExcludeSymbolSelecter.setBackground(Color.WHITE);
-        this.nodeLabelExcludeSymbolSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
-        this.nodeLabelExcludeSymbolSelecter.setFocusable(false);
-        this.nodeLabelExcludeSymbolSelecter.addItem("");
-        this.nodeLabelExcludeSymbolSelecter.addItem("==");
-        this.nodeLabelExcludeSymbolSelecter.addItem("!=");
+        this.nodeLabelExcludeMathSymbolSelecter.setBackground(Color.WHITE);
+        this.nodeLabelExcludeMathSymbolSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.nodeLabelExcludeMathSymbolSelecter.setFocusable(false);
+        this.nodeLabelExcludeMathSymbolSelecter.addItem("");
+        this.nodeLabelExcludeMathSymbolSelecter.addItem("==");
+        this.nodeLabelExcludeMathSymbolSelecter.addItem("!=");
+        this.nodeLabelExcludeMathSymbolSelecter.setToolTipText("SELECT AN ARITHMATIC SYMBOL TO EXCLUDE");
 
         this.nodeLabelExcludeSelecter.setBackground(Color.WHITE);
         this.nodeLabelExcludeSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.nodeLabelExcludeSelecter.setFocusable(false);
+        this.nodeLabelExcludeSelecter.setToolTipText("SELECT A NODE LABEL TO EXCLUDE");
         this.nodeLabelExcludeSelecter.addItem("");
         for (String nodeLabel : MySequentialGraphVars.userDefinedNodeLabelSet) {
             this.nodeLabelExcludeSelecter.addItem(nodeLabel);
         }
-        this.nodeLabelExcludeSymbolSelecter.addActionListener(new MyNodeLabelSelecterListener(this.nodeLabelExcludeSelecter, this.nodeLabelValueExcludeSelecter));
+        this.nodeLabelExcludeSelecter.addActionListener(new MyNodeLabelSelecterListener(this.nodeLabelExcludeSelecter, this.nodeLabelValueExcludeSelecter));
 
         this.nodeLabelValueExcludeSelecter.setFocusable(false);
         this.nodeLabelValueExcludeSelecter.setToolTipText("SELECT A NODE LABEL VALUE TO EXCLUDE");
         this.nodeLabelValueExcludeSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.nodeLabelValueExcludeSelecter.setBackground(Color.WHITE);
+
 
         this.edgeValueExcludeTxt.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.edgeValueExcludeTxt.setToolTipText("ENTER A NUMERIC VALUE");
@@ -1214,7 +1233,7 @@ implements ActionListener {
 
         if (MySequentialGraphVars.userDefinedNodeLabelSet.size() > 0) {
             this.topLeftPanel.add(nodeLabelExcludeComboBoxMenuLabel);
-            this.topLeftPanel.add(this.nodeLabelExcludeSymbolSelecter);
+            this.topLeftPanel.add(this.nodeLabelExcludeMathSymbolSelecter);
             this.topLeftPanel.add(this.nodeLabelExcludeSelecter);
             this.topLeftPanel.add(this.nodeLabelValueExcludeSelecter);
         }
@@ -1222,12 +1241,12 @@ implements ActionListener {
         edgeLabelExcludeComboBoxMenuLabel.setBackground(Color.WHITE);
         edgeLabelExcludeComboBoxMenuLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
 
-        this.edgeLabelExcludeSymbolSelecter.setBackground(Color.WHITE);
-        this.edgeLabelExcludeSymbolSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
-        this.edgeLabelExcludeSymbolSelecter.setFocusable(false);
-        this.edgeLabelExcludeSymbolSelecter.addItem("");
-        this.edgeLabelExcludeSymbolSelecter.addItem("==");
-        this.edgeLabelExcludeSymbolSelecter.addItem("!=");
+        this.edgeLabelExcludeMathSymbolSelecter.setBackground(Color.WHITE);
+        this.edgeLabelExcludeMathSymbolSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.edgeLabelExcludeMathSymbolSelecter.setFocusable(false);
+        this.edgeLabelExcludeMathSymbolSelecter.addItem("");
+        this.edgeLabelExcludeMathSymbolSelecter.addItem("==");
+        this.edgeLabelExcludeMathSymbolSelecter.addItem("!=");
 
         this.edgeLabelExcludeSelecter.setBackground(Color.WHITE);
         this.edgeLabelExcludeSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
@@ -1236,8 +1255,7 @@ implements ActionListener {
         for (String nodeLabel : MySequentialGraphVars.userDefinedEdgeLabelSet) {
             this.edgeLabelExcludeSelecter.addItem(nodeLabel);
         }
-        this.edgeLabelExcludeSelecter.addActionListener(
-            new MyEdgeLabelSelecterListener(this.edgeLabelExcludeSelecter, this.edgeLabelValueExcludeSelecter));
+        this.edgeLabelExcludeSelecter.addActionListener(new MyEdgeLabelSelecterListener(this.edgeLabelExcludeSelecter, this.edgeLabelValueExcludeSelecter));
 
         this.edgeLabelValueExcludeSelecter.setBackground(Color.WHITE);
         this.edgeLabelValueExcludeSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
@@ -1246,7 +1264,7 @@ implements ActionListener {
 
         if (MySequentialGraphVars.userDefinedEdgeLabelSet.size() > 0) {
             this.topLeftPanel.add(this.edgeLabelExcludeComboBoxMenuLabel);
-            this.topLeftPanel.add(this.edgeLabelExcludeSymbolSelecter);
+            this.topLeftPanel.add(this.edgeLabelExcludeMathSymbolSelecter);
             this.topLeftPanel.add(this.edgeLabelExcludeSelecter);
             this.topLeftPanel.add(this.edgeLabelValueExcludeSelecter);
         }
@@ -1280,32 +1298,34 @@ implements ActionListener {
         this.bottomLeftControlPanel.setBackground(Color.WHITE);
 
         this.weightedNodeColor.setFocusable(false);
-        this.weightedNodeColor.setToolTipText("SHOW WEIGHTED NODE COLORS");
+        this.weightedNodeColor.setToolTipText("WEIGHTED NODE COLORS");
         this.weightedNodeColor.setBackground(Color.WHITE);
         this.weightedNodeColor.setFont(MySequentialGraphVars.tahomaPlainFont11);
         this.weightedNodeColor.addActionListener(this);
 
         this.bottomLeftControlPanel.add(this.weightedNodeColor);
         this.bottomLeftControlPanel.add(this.nodeValueBarChart);
+        this.bottomLeftControlPanel.add(this.nodeLabelBarChart);
         this.bottomLeftControlPanel.add(this.edgeValueBarChart);
+        this.bottomLeftControlPanel.add(this.edgeLabelBarChart);
 
-        this.bottomRightPanel.setBackground(Color.WHITE);
-        this.bottomRightPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0,0));
-        this.bottomRightPanel.add(this.depthSelecter);
-        this.bottomRightPanel.add(this.depthNeighborNodeTypeSelector);
-        this.bottomRightPanel.add(this.selectedNodeNeighborNodeTypeSelector);
-        this.bottomRightPanel.add(this.nodeValueSelecterLabel);
-        this.bottomRightPanel.add(this.nodeValueSelecter);
-        this.bottomRightPanel.add(nodeLabelLabel) ;
-        this.bottomRightPanel.add(this.nodeLabelSelecter);
-        this.bottomRightPanel.add(this.edgeValueLabel);
-        this.bottomRightPanel.add(this.edgeValueSelecter);
+        this.bottomRightControlPanel.setBackground(Color.WHITE);
+        this.bottomRightControlPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0,0));
+        this.bottomRightControlPanel.add(this.depthSelecter);
+        this.bottomRightControlPanel.add(this.depthNeighborNodeTypeSelector);
+        this.bottomRightControlPanel.add(this.selectedNodeNeighborNodeTypeSelector);
+        this.bottomRightControlPanel.add(this.nodeValueSelecterLabel);
+        this.bottomRightControlPanel.add(this.nodeValueSelecter);
+        this.bottomRightControlPanel.add(nodeLabelLabel) ;
+        this.bottomRightControlPanel.add(this.nodeLabelSelecter);
+        this.bottomRightControlPanel.add(this.edgeValueLabel);
+        this.bottomRightControlPanel.add(this.edgeValueSelecter);
         if (MySequentialGraphVars.userDefinedEdgeLabelSet.size() > 0) {
-            bottomRightPanel.add(this.edgeLabelLabel);
-            bottomRightPanel.add(this.edgeLabelSelecter);
+            bottomRightControlPanel.add(this.edgeLabelLabel);
+            bottomRightControlPanel.add(this.edgeLabelSelecter);
         }
         this.bottomPanel.add(this.bottomLeftControlPanel, BorderLayout.WEST);
-        this.bottomPanel.add(this.bottomRightPanel, BorderLayout.CENTER);
+        this.bottomPanel.add(this.bottomRightControlPanel, BorderLayout.CENTER);
 
         JPanel topRightPanel = new JPanel();
         topRightPanel.setBackground(Color.WHITE);
@@ -1435,7 +1455,7 @@ implements ActionListener {
                 super.componentResized(e);
                 graphTableSplitPane.setDividerLocation(0.12);
                 if (nodeValueBarChart.isSelected()) {
-                    MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+                    MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
                     MyViewerComponentControllerUtil.removeSharedNodeValueBarCharts();
                     if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
                         MyViewerComponentControllerUtil.setSelectedNodeNeighborValueBarChartToViewer();
@@ -1446,7 +1466,7 @@ implements ActionListener {
                         MySequentialGraphVars.getSequentialGraphViewer().add(MySequentialGraphVars.getSequentialGraphViewer().graphLevelNodeValueBarChart);
                     }
                 } else {
-                    MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+                    MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
                     MyViewerComponentControllerUtil.removeSharedNodeValueBarCharts();
                 }
                 MySequentialGraphVars.getSequentialGraphViewer().revalidate();
@@ -1460,7 +1480,7 @@ implements ActionListener {
 
     public JPanel setStatTable() {
         JPanel tablePanel = new JPanel();
-        tablePanel.setLayout(new BorderLayout(3,3));
+        tablePanel.setLayout(new BorderLayout(0,0));
         tablePanel.setBackground(Color.WHITE);
 
         String [] statTableColumns = {"PROPERTY.", "VALUE"};
@@ -1554,6 +1574,14 @@ implements ActionListener {
 
         MyViewerComponentControllerUtil.setGraphLevelTableStatistics();
 
+        JTextField propertySearchTxt = new JTextField();
+        propertySearchTxt.setBorder(BorderFactory.createLoweredSoftBevelBorder());
+
+        JButton propertySearchBtn = new JButton();
+        JPanel propertySearchPanel = MyTableUtil.searchTablePanel(this, propertySearchTxt, propertySearchBtn, statTableModel, this.statTable);
+        propertySearchPanel.remove(propertySearchBtn);
+        propertySearchTxt.setFont(MySequentialGraphVars.tahomaBoldFont12);
+
         JScrollPane graphStatTableScrollPane = new JScrollPane(this.statTable);
         graphStatTableScrollPane.setOpaque(false);
         graphStatTableScrollPane.setPreferredSize(new Dimension(150, 805));
@@ -1562,12 +1590,13 @@ implements ActionListener {
         graphStatTableScrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 6));
 
         tablePanel.add(graphStatTableScrollPane, BorderLayout.CENTER);
+        tablePanel.add(propertySearchPanel, BorderLayout.SOUTH);
         return tablePanel;
     }
 
     public JPanel setSelectedNodeStatTable() {
         JPanel tablePanel = new JPanel();
-        tablePanel.setLayout(new BorderLayout(3,3));
+        tablePanel.setLayout(new BorderLayout(0,0));
         tablePanel.setBackground(Color.WHITE);
 
         String [] statTableColumns = {"PROPERTY.", "VALUE"};
@@ -1715,7 +1744,7 @@ implements ActionListener {
 
     public JPanel setMultiNodeStatTable() {
         JPanel tablePanel = new JPanel();
-        tablePanel.setLayout(new BorderLayout(3,3));
+        tablePanel.setLayout(new BorderLayout(0,0));
         tablePanel.setBackground(Color.WHITE);
 
         String [] statTableColumns = {"PROPERTY.", "VALUE"};
@@ -1890,7 +1919,7 @@ implements ActionListener {
 
     public JPanel setEdgeTable() {
         JPanel tablePanel = new JPanel();
-        tablePanel.setLayout(new BorderLayout(3,3));
+        tablePanel.setLayout(new BorderLayout(0,0));
         tablePanel.setBackground(Color.WHITE);
 
         String [] bottomTableColumns = {"SOURCE", "DEST", "V."};
@@ -1996,7 +2025,7 @@ implements ActionListener {
         tablePanel.setBackground(Color.WHITE);
 
         JPanel bottomTablePanel = new JPanel();
-        bottomTablePanel.setLayout(new BorderLayout(3,3));
+        bottomTablePanel.setLayout(new BorderLayout(0,0));
         bottomTablePanel.setBackground(Color.WHITE);
 
         String [] bottomTableColumns = {"NO.", "NODE", "V."};
@@ -2046,8 +2075,8 @@ implements ActionListener {
         nodeListTable.getTableHeader().setOpaque(false);
         nodeListTable.getTableHeader().setBackground(new Color(0,0,0,0f));
         nodeListTable.getColumnModel().getColumn(0).setPreferredWidth(35);
-        nodeListTable.getColumnModel().getColumn(1).setPreferredWidth(100);
-        nodeListTable.getColumnModel().getColumn(2).setPreferredWidth(35);
+        nodeListTable.getColumnModel().getColumn(1).setPreferredWidth(80);
+        nodeListTable.getColumnModel().getColumn(2).setPreferredWidth(40);
 
         JTextField bottomTableNodeTableNodeSearchTxt = new JTextField();
         JButton bottomTableNodeSelectBtn = new JButton("SEL.");
@@ -2166,8 +2195,8 @@ implements ActionListener {
         currentNodeListTable.getTableHeader().setOpaque(false);
         currentNodeListTable.getTableHeader().setBackground(new Color(0,0,0,0f));
         currentNodeListTable.getColumnModel().getColumn(0).setPreferredWidth(35);
-        currentNodeListTable.getColumnModel().getColumn(1).setPreferredWidth(100);
-        currentNodeListTable.getColumnModel().getColumn(2).setPreferredWidth(35);
+        currentNodeListTable.getColumnModel().getColumn(1).setPreferredWidth(80);
+        currentNodeListTable.getColumnModel().getColumn(2).setPreferredWidth(40);
 
         JTextField topTableNodeSearchTxt = new JTextField();
         JButton topTableNodeSelectBtn = new JButton("SEL.");
@@ -2771,14 +2800,16 @@ implements ActionListener {
         }
     }
 
-    public JPanel getSequentialGraphChart() {return this;}
+    public MyViewerComponentController getSequentialGraphControllerPanel() {return this;}
 
     @Override public void actionPerformed(ActionEvent ae) {
-      if (ae.getSource() == nodeValueBarChart) {
+
+        if (ae.getSource() == nodeValueBarChart) {
             new Thread(new Runnable() {
                 @Override public void run() {
                     if (nodeValueBarChart.isSelected()) {
-                        MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+                        nodeLabelBarChart.setSelected(false);
+                        MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
                         MyViewerComponentControllerUtil.removeSharedNodeValueBarCharts();
                         if (MySequentialGraphVars.getSequentialGraphViewer().isClustered) {
                             if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.getText().equals("N. V. B.")) {
@@ -2799,8 +2830,42 @@ implements ActionListener {
                             MyViewerComponentControllerUtil.setNodeBarChartToViewer();
                         }
                     } else {
-                        MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+                        MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
                         MyViewerComponentControllerUtil.removeSharedNodeValueBarCharts();
+                    }
+                    MySequentialGraphVars.getSequentialGraphViewer().revalidate();
+                    MySequentialGraphVars.getSequentialGraphViewer().repaint();
+                }
+            }).start();
+        } else if (ae.getSource() == nodeLabelBarChart) {
+            new Thread(new Runnable() {
+                @Override public void run() {
+                    if (nodeLabelBarChart.isSelected()) {
+                        nodeValueBarChart.setSelected(false);
+                        MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
+                        MyViewerComponentControllerUtil.removeSharedNodeValueBarCharts();
+
+                        MySequentialGraphVars.getSequentialGraphViewer().graphLevelNodeLabelBarChart = new MyGraphLevelNodeLabelBarChart();
+                        MySequentialGraphVars.getSequentialGraphViewer().add(MySequentialGraphVars.getSequentialGraphViewer().graphLevelNodeLabelBarChart);
+                    } else {
+                        MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
+                        MyViewerComponentControllerUtil.removeSharedNodeValueBarCharts();
+                    }
+                    MySequentialGraphVars.getSequentialGraphViewer().revalidate();
+                    MySequentialGraphVars.getSequentialGraphViewer().repaint();
+                }
+            }).start();
+        } else if (ae.getSource() == edgeLabelBarChart) {
+            new Thread(new Runnable() {
+                @Override public void run() {
+                    if (edgeLabelBarChart.isSelected()) {
+                        edgeValueBarChart.setSelected(false);
+                        MyViewerComponentControllerUtil.removeEdgeValueBarChartFromViewer();
+                        MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeLabelBarChart = new MyGraphLevelEdgeLabelBarChart();
+                        MySequentialGraphVars.getSequentialGraphViewer().add(MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeLabelBarChart);
+                        MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeLabelBarChart.setEdgeLabelBarChart();
+                    } else if (MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeLabelBarChart != null) {
+                        MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeLabelBarChart);
                     }
                     MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                     MySequentialGraphVars.getSequentialGraphViewer().repaint();
@@ -2815,29 +2880,29 @@ implements ActionListener {
                             edgeValueBarChart.setSelected(false);
                             return;
                         }
-                        if (edgeValueSelecter.getSelectedIndex() < 2) {
-                            MyViewerComponentControllerUtil.removeEdgeValueBarChartFromViewer();
-                        } else if (MySequentialGraphVars.getSequentialGraphViewer().isClustered) {
-                            MyViewerComponentControllerUtil.removeEdgeValueBarChartFromViewer();
+
+                        MyViewerComponentControllerUtil.removeEdgeValueBarChartFromViewer();
+                        if (MySequentialGraphVars.getSequentialGraphViewer().isClustered) {
                             MySequentialGraphVars.getSequentialGraphViewer().clusteredGraphLevelEdgeValueBarChart = new MyClusteredGraphLevelEdgeValueBarChart();
                             MySequentialGraphVars.getSequentialGraphViewer().add(MySequentialGraphVars.getSequentialGraphViewer().clusteredGraphLevelEdgeValueBarChart);
-                        } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null && MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size() > 0) {
+                        } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null &&
+                            MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size() > 0) {
                             MyViewerComponentControllerUtil.setShareNodeLevelEdgeValueBarChartToViewer();
                         } else if (depthSelecter.getSelectedIndex() > 0) {
                             if (depthNeighborNodeTypeSelector.getSelectedIndex() > 0) {
-                                MyViewerComponentControllerUtil.removeEdgeValueBarChartFromViewer();
-                                MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart = new MyGraphLevelEdgeValueBarChart();
-                                MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart.setEdgeValueBarChartForDepthNodes();
-                                MySequentialGraphVars.getSequentialGraphViewer().add(MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart);
+                                MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart = new MyGraphLevelEdgeValueBarChart();
+                                MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart.setEdgeValueBarChartForDepthNodes();
+                                MySequentialGraphVars.getSequentialGraphViewer().add(MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart);
                             }
                         } else if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
                             MyViewerComponentControllerUtil.setSingleNodeLevelEdgeBarChartToViewer();
                         } else {
                             MyViewerComponentControllerUtil.setEdgeBarChartToViewer();
                         }
+                        edgeLabelBarChart.setSelected(false);
                     } else {
-                        if (MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart != null) {
-                            MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().graphLelvelEdgeValueBarChart);
+                        if (MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart != null) {
+                            MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart);
                         }
                     }
                     MySequentialGraphVars.getSequentialGraphViewer().revalidate();
@@ -2847,16 +2912,26 @@ implements ActionListener {
         } else if (ae.getSource() == edgeLabelSelecter) {
             new Thread(new Runnable() {
                 @Override public void run() {
-                    new Thread(new Runnable() {
-                        @Override public void run() {
-                            MyViewerComponentControllerUtil.showEdgeLabel();
-                        }
-                    }).start();
+                    if (edgeLabelSelecter.getSelectedIndex() > 0) {
+                        edgeLabelBarChart.setVisible(true);
+                    } else {
+                        edgeLabelBarChart.setVisible(false);
+                        edgeLabelBarChart.setSelected(false);
+                        MyViewerComponentControllerUtil.removeEdgeValueBarChartFromViewer();
+                    }
+                    MyViewerComponentControllerUtil.showEdgeLabel();
                 }
             }).start();
         } else if (ae.getSource() == nodeLabelSelecter) {
             new Thread(new Runnable() {
                 @Override public void run() {
+                    if (nodeLabelSelecter.getSelectedIndex() > 1) {
+                        nodeLabelBarChart.setVisible(true);
+                    } else {
+                        nodeLabelBarChart.setVisible(false);
+                        nodeLabelBarChart.setSelected(false);
+                        MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
+                    }
                     MyViewerComponentControllerUtil.showNodeLabel();
                 }
             }).start();
@@ -2896,7 +2971,6 @@ implements ActionListener {
             new Thread(new Runnable() {
                 @Override public void run() {
                     MyProgressBar pb = new MyProgressBar(false);
-                    //MyViewerControlComponentUtil.setDefaultViewerLook();
                     nodeValueBarChart.setSelected(false);
                     pb.updateValue(40, 100);
                     MyDepthNodeUtil.setDepthNodeNeighbors();
@@ -2919,9 +2993,7 @@ implements ActionListener {
                     pb.updateValue(30, 100);
                     MyDepthNodeUtil.setSelectedSingleDepthNodeNeighbors();
                     pb.updateValue(65, 100);
-                    MyViewerComponentControllerUtil.setBottomCharts();
                     pb.updateValue(95, 100);
-                    vTxtStat.setTextStatistics();
                     updateTableInfos();
                     MyViewerComponentControllerUtil.adjustDepthNodeValueMenu();
                     pb.updateValue(100, 100);
@@ -2944,8 +3016,13 @@ implements ActionListener {
                       MyNodeUtil.setNodeValue();
                   }
 
-                  //MyViewerControlComponentUtil.setBottomCharts();
-                  vTxtStat.setTextStatistics();
+
+                  if (edgeValueSelecter.getSelectedIndex() < 2) {
+                      edgeValueBarChart.removeActionListener(getSequentialGraphControllerPanel());
+                      edgeValueBarChart.setSelected(false);
+                      edgeValueBarChart.addActionListener(getSequentialGraphControllerPanel());
+                  }
+
                   updateNodeTable();
                   pb.updateValue(100, 100);
                   pb.dispose();
@@ -2967,9 +3044,15 @@ implements ActionListener {
                     MySequentialGraphVars.getSequentialGraphViewer().edgeValName = edgeValueSelecter.getSelectedItem().toString().replaceAll(" ", "");
                     MyProgressBar pb = new MyProgressBar(false);
                     MyEdgeUtil.setEdgeValue();
-                    //vTxtStat.setTextStatistics();
+
                     updateNodeTable();
                     edgeValueSelecter.setToolTipText("EDGE VALUE: " + edgeValueSelecter.getSelectedItem().toString());
+                    if (edgeValueSelecter.getSelectedIndex() < 2) {
+                        edgeValueBarChart.removeActionListener(getSequentialGraphControllerPanel());
+                        edgeValueBarChart.setSelected(false);
+                        edgeValueBarChart.addActionListener(getSequentialGraphControllerPanel());
+                    }
+
                     MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                     MySequentialGraphVars.getSequentialGraphViewer().repaint();
                     pb.updateValue(100, 100);
@@ -3002,7 +3085,7 @@ implements ActionListener {
                             nodeValueBarChart.setText("DEPTH N. V. B.");
                             tableTabbedPane.setEnabledAt(1, false);
                             tableTabbedPane.setEnabledAt(2, false);
-                            MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+                            MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
                             MyViewerComponentControllerUtil.removeEdgeValueBarChartFromViewer();
                             depthNodeNameSet = new HashSet<>();
                             depthNodeNameSet.add(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName());
@@ -3015,7 +3098,6 @@ implements ActionListener {
                             }
                             updateNodeTable();
                             MyViewerComponentControllerUtil.setSelectedNodeNeighborNodeTypeOption();
-                           // MyViewerControlComponentUtil.setBottomCharts();
                             MySequentialGraphVars.getSequentialGraphViewer().selectedNode = null;
                         }
                     } else if (selectedNodeNeighborNodeTypeSelector.isShowing()) {
@@ -3035,7 +3117,6 @@ implements ActionListener {
                         updateNodeTable();
                         MyViewerComponentControllerUtil.setSelectedNodeNeighborNodeTypeOption();
                         MyViewerComponentControllerUtil.setSelectedNodeVisibleOnly();
-                        //MyViewerControlComponentUtil.setBottomCharts();
                         MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                         MySequentialGraphVars.getSequentialGraphViewer().repaint();
                     } else {

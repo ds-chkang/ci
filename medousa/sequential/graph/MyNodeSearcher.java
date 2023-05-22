@@ -31,7 +31,7 @@ public class MyNodeSearcher {
         MySequentialGraphVars.getSequentialGraphViewer().multiNodeSuccessors.addAll(MySequentialGraphVars.g.getSuccessors(dest));
         pb.updateValue(30, 100);
 
-        MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+        MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
         pb.updateValue(50, 100);
 
         MySequentialGraphVars.getSequentialGraphViewer().sharedPredecessors.addAll(MySequentialGraphVars.g.getPredecessors(source));
@@ -78,7 +78,7 @@ public class MyNodeSearcher {
             pb.updateValue(85, 100);
             MyViewerComponentControllerUtil.setDepthOptionForSelectedNode();
             pb.updateValue(90, 100);
-            MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+            MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
             MyViewerComponentControllerUtil.removeSharedNodeValueBarCharts();
             pb.updateValue(95, 100);
             MySequentialGraphVars.sequentialGraphDashBoard.setSingleNodeDashBoard();

@@ -69,6 +69,33 @@ public class MyTableUtil {
         return controlPanel;
     }
 
+    public static JPanel searchTablePanel(
+            ActionListener actionContainer,
+            JTextField searchTxt,
+            JButton btn,
+            DefaultTableModel dtm,
+            JTable table) {
+        table.setAutoCreateRowSorter(true);
+        btn.setPreferredSize(new Dimension(80, 28));
+        btn.addActionListener(actionContainer);
+        btn.setFocusable(false);
+
+        JPanel controlPanel = new JPanel();
+        controlPanel.setLayout(new BorderLayout(3,3));
+        controlPanel.setPreferredSize(new Dimension(150, 30));
+
+        TableRowSorter sorter = setJTableRowSorterWithTextField(dtm, searchTxt);
+        table.setRowSorter(sorter);
+
+        searchTxt.setPreferredSize(new Dimension(100, 28));
+        searchTxt.setFont(MyDirectGraphVars.f_pln_13);
+        searchTxt.addActionListener(actionContainer);
+
+        controlPanel.add(btn, BorderLayout.EAST);
+        controlPanel.add(searchTxt, BorderLayout.CENTER);
+        return controlPanel;
+    }
+
     public static JPanel searchAndAddNodePanelForJTable(
             ActionListener actionContainer,
             JTextField searchTxt,

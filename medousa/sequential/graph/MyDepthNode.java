@@ -5,7 +5,8 @@ import java.awt.geom.Point2D;
 import java.io.Serializable;
 
 public class MyDepthNode
-extends MyNode implements Serializable {
+extends MyNode
+implements Serializable {
 
     public int relativeDepth;
     public int physicalDepth;

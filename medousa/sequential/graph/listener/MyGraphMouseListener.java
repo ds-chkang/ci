@@ -31,7 +31,7 @@ implements GraphMouseListener {
             MyViewerComponentControllerUtil.setDepthOptionForSelectedNode();
             pb.updateValue(90, 100);
 
-            MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+            MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
             MyViewerComponentControllerUtil.removeSharedNodeValueBarCharts();
             pb.updateValue(95, 100);
 
@@ -125,7 +125,7 @@ implements GraphMouseListener {
                             MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors = new HashSet<>(MySequentialGraphVars.g.getSuccessors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode));
 
                           //  MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
-                            MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+                            MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
                             MyViewerComponentControllerUtil.removeEdgeValueBarChartFromViewer();
                             MySequentialGraphVars.sequentialGraphDashBoard.setSingleNodeDashBoard();
                             MySequentialGraphVars.getSequentialGraphViewer().vc.updateTableInfos();

@@ -38,6 +38,11 @@ public class MyDepthNodeUtil {
             MyDepthNodeUtil.setMinReachTimeToDepthNodes();
         }
 
+        if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() < 2) {
+            if (MySequentialGraphVars.getSequentialGraphViewer().graphLevelNodeValueBarChart != null) {
+                MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.setSelected(false);
+            }
+        }
 
         MyEdgeUtil.setEdgesToZeroValues();
     }
@@ -494,7 +499,7 @@ public class MyDepthNodeUtil {
     }
 
     public static void setDepthNodeNeighbors() {
-        MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+        MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
         MyViewerComponentControllerUtil.removeEdgeValueBarChartFromViewer();
         if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthNeighborNodeTypeSelector.getSelectedIndex() == 0) {
             MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeSuccessorMaps = null;
@@ -536,7 +541,7 @@ public class MyDepthNodeUtil {
     }
 
     public static void setSelectedSingleDepthNodeNeighbors() {
-        MyViewerComponentControllerUtil.removeBarChartsFromViewer();
+        MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
         MyViewerComponentControllerUtil.removeEdgeValueBarChartFromViewer();
         if (MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodeNeighborNodeTypeSelector.getSelectedIndex() == 0) {
             MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeSuccessorMaps = null;

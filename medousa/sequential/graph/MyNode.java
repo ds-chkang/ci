@@ -177,7 +177,9 @@ implements Serializable, Cloneable, Comparable<MyNode> {
     public void setPageRankScore(double pageRankScore) { this.pageRankScore = pageRankScore; }
     public double getPageRankScore() { return this.pageRankScore; }
     public void setNodeLabel(String nodeLabel, String value) {
-        if (!this.nodeLabelMap.containsKey(nodeLabel)) {this.nodeLabelMap.put(nodeLabel, value);}
+        if (!this.nodeLabelMap.containsKey(nodeLabel)) {
+            this.nodeLabelMap.put(nodeLabel, value);
+        }
     }
     public void setNodeSumValue(String variable, float value) {
         if (this.nodeNumericValueMap.containsKey(variable)) {this.nodeNumericValueMap.put(variable, this.nodeNumericValueMap.get(variable)+value);

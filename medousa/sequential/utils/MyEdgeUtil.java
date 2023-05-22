@@ -300,6 +300,9 @@ public class MyEdgeUtil {
             }
         }
         setEdgeColor();
+       // MySequentialGraphVars.app.getSequentialGraphDashboard().networkTitledBorder.setTitle(MySequentialGraphVars.app.getSequentialGraphDashboard().setGraphLevelTextStatistics());
+       // MySequentialGraphVars.app.revalidate();
+       // MySequentialGraphVars.app.repaint();
     }
 
     public static void setSupportValueToEdges() {
