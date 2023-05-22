@@ -44,7 +44,7 @@ extends JPanel {
         "DISTRIBUTIONS", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
 
     TitledBorder networkTitledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK),
-            "NETWORK", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
+            "NETWORK EXPLORER", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
 
     TitledBorder shortestDistanceTitledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK),
             "DISTRIBUTIONS", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
@@ -71,6 +71,8 @@ extends JPanel {
                 tabbedPane.addTab("NODE DISTANCE PROFILE", null, shortestDistanceProfilePanel, "NODE DISTANCE PROFILE");
                 //tabbedPane.addTab("GRAPH STATS.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setStatTable(), "GRAPH STATISTICS");
                 tabbedPane.setFont(MySequentialGraphVars.tahomaBoldFont12);
+
+                MySequentialGraphVars.app.getSequentialGraphViewerPanel().setBorder(networkTitledBorder);
 
                 JSplitPane graphAndGraphChartSplitPane = new JSplitPane();
                 graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
@@ -124,6 +126,8 @@ extends JPanel {
                     tabbedPane.addTab("GRAPH STATS.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setStatTable(), "GRAPH STATISTICS");
                     tabbedPane.setFont(MySequentialGraphVars.tahomaBoldFont12);
 
+                    MySequentialGraphVars.app.getSequentialGraphViewerPanel().setBorder(networkTitledBorder);
+
                     JSplitPane graphAndGraphChartSplitPane = new JSplitPane();
                     graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
                     graphAndGraphChartSplitPane.setDividerSize(4);
@@ -158,6 +162,8 @@ extends JPanel {
                     tabbedPane.addTab("DATA PROFILE", null, dataProfilePanel, "DATA PROFILE");
                     tabbedPane.addTab("GRAPH STATS.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setStatTable(), "GRAPH STATISTICS");
                     tabbedPane.setFont(MySequentialGraphVars.tahomaBoldFont12);
+
+                    MySequentialGraphVars.app.getSequentialGraphViewerPanel().setBorder(networkTitledBorder);
 
                     JSplitPane graphAndGraphChartSplitPane = new JSplitPane();
                     graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
@@ -206,6 +212,8 @@ extends JPanel {
                     dataProfilePanel.add(graphLevelContributionByDepthLineChart);
                     dataProfilePanel.setBorder(dataProfileTitledBorder);
 
+                    MySequentialGraphVars.app.getSequentialGraphViewerPanel().setBorder(networkTitledBorder);
+
                     JSplitPane graphAndGraphChartSplitPane = new JSplitPane();
                     graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
                     graphAndGraphChartSplitPane.setDividerSize(4);
@@ -237,6 +245,8 @@ extends JPanel {
                     dataProfilePanel.add(graphLevelNodeCountDistributionLineChart);
                     dataProfilePanel.add(depthLevelEndingNodeValueHistogramDistributionLineChart);
                     dataProfilePanel.setBorder(dataProfileTitledBorder);
+
+                    MySequentialGraphVars.app.getSequentialGraphViewerPanel().setBorder(networkTitledBorder);
 
                     JSplitPane graphAndGraphChartSplitPane = new JSplitPane();
                     graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
@@ -289,6 +299,8 @@ extends JPanel {
                 tabbedPane.addTab("GRAPH STATS.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setMultiNodeStatTable(), "GRAPH STATISTICS");
                 tabbedPane.setFont(MySequentialGraphVars.tahomaBoldFont12);
 
+                MySequentialGraphVars.app.getSequentialGraphViewerPanel().setBorder(networkTitledBorder);
+
                 JSplitPane graphAndGraphChartSplitPane = new JSplitPane();
                 graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
                 graphAndGraphChartSplitPane.setDividerSize(4);
@@ -335,9 +347,11 @@ extends JPanel {
                     dataProfilePanel.setBorder(dataProfileTitledBorder);
 
                     JTabbedPane tabbedPane = new JTabbedPane();
-                    tabbedPane.addTab("DATA PROFILE", null, dataProfilePanel, "NODE PROFILE");
-                    tabbedPane.addTab("NODE STATS.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setSelectedNodeStatTable(), "GRAPH STATISTICS");
+                    tabbedPane.addTab("N. P.", null, dataProfilePanel, "NODE PROFILE");
+                    tabbedPane.addTab("N. S.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setSelectedNodeStatTable(), "NODE STATISTICS");
                     tabbedPane.setFont(MySequentialGraphVars.tahomaBoldFont12);
+
+                    MySequentialGraphVars.app.getSequentialGraphViewerPanel().setBorder(networkTitledBorder);
 
                     JSplitPane graphAndGraphChartSplitPane = new JSplitPane();
                     graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
@@ -370,12 +384,14 @@ extends JPanel {
 
                     JTabbedPane tabbedPane = new JTabbedPane();
                     tabbedPane.addTab("DATA PROFILE", null, dataProfilePanel, "NODE PROFILE");
-                    tabbedPane.addTab("NODE STATS.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setSelectedNodeStatTable(), "GRAPH STATISTICS");
+                    tabbedPane.addTab("NODE STATS.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setSelectedNodeStatTable(), "NODE STATISTICS");
                     tabbedPane.setFont(MySequentialGraphVars.tahomaBoldFont12);
+
+                    MySequentialGraphVars.app.getSequentialGraphViewerPanel().setBorder(networkTitledBorder);
 
                     JSplitPane graphAndGraphChartSplitPane = new JSplitPane();
                     graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
-                    graphAndGraphChartSplitPane.setDividerSize(5);
+                    graphAndGraphChartSplitPane.setDividerSize(4);
                     graphAndGraphChartSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
                     graphAndGraphChartSplitPane.setLeftComponent(tabbedPane);
                     graphAndGraphChartSplitPane.setRightComponent(MySequentialGraphVars.app.getSequentialGraphViewerPanel());
@@ -383,7 +399,7 @@ extends JPanel {
                     add(graphAndGraphChartSplitPane, BorderLayout.CENTER);
                     MySequentialGraphVars.app.addComponentListener(new ComponentAdapter() {
                         public void componentResized(ComponentEvent evt) {
-                            graphAndGraphChartSplitPane.setDividerSize(5);
+                            graphAndGraphChartSplitPane.setDividerSize(4);
                             graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
                         }
                     });
