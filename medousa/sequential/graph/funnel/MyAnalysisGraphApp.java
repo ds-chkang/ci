@@ -190,7 +190,10 @@ implements ActionListener, WindowListener {
                                 graphViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyNode, String>() {
                                     @Override public String transform(MyNode n) {
                                         String cont = MyMathUtil.getCommaSeperatedNumber(n.getContribution());
-                                        return MySequentialGraphSysUtil.getDecodedNodeName(n.getName()) + "[" + cont + "] ";
+                                        return "<html><body>" +
+                                                MySequentialGraphSysUtil.getNodeName(n.getName()) +
+                                                "<br>" + "[" + cont + "] " +
+                                                "</body></html>";
                                     }
                                 });
                             } else {
@@ -204,7 +207,7 @@ implements ActionListener, WindowListener {
                             if (nodeNameCheckBoxMenu.isSelected()) {
                                 graphViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyNode, String>() {
                                     @Override public String transform(MyNode n) {
-                                        return MySequentialGraphSysUtil.getDecodedNodeName(n.getName());
+                                        return MySequentialGraphSysUtil.getNodeName(n.getName());
                                     }
                                 });
                             } else {
@@ -235,14 +238,16 @@ implements ActionListener, WindowListener {
                                     @Override public String transform(MyNode n) {
                                         String inCont = "IN-C.: " + MyMathUtil.getCommaSeperatedNumber(n.getInContribution());
                                         String outCont = "OUT-C.: " + MyMathUtil.getCommaSeperatedNumber(n.getOutContribution());
-                                        return MySequentialGraphSysUtil.getDecodedNodeName(n.getName()) + "[" +
-                                                inCont + "  " + outCont + "] ";
+                                        return "<html><body>" +
+                                                MySequentialGraphSysUtil.getNodeName(n.getName()) +
+                                                "<br>" + "[" + inCont + "  " + outCont + "] " +
+                                                "</html></body>";
                                     }
                                 });
                             } else {
                                 graphViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyNode, String>() {
                                     @Override public String transform(MyNode n) {
-                                        return MySequentialGraphSysUtil.getDecodedNodeName(n.getName());
+                                        return MySequentialGraphSysUtil.getNodeName(n.getName());
                                     }
                                 });
                             }
