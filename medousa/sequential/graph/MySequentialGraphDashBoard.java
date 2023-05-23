@@ -35,6 +35,7 @@ extends JPanel {
     public MyGraphLevelNodesByShortestDistanceDistributionLineChart graphLevelShortestAverageDistanceDistributionLineChart;
     public MyGraphLevelShortestDistanceNodeValueDistributionLineChart graphLevelShortestDistanceNodeValueDistributionLineChart;
     public MyGraphLevelShortestDistanceUnreachableNodeCountDistributionLineChart graphLevelShortestDistanceUnreachableNodeCountDistributionLineChart;
+    public MyGraphLevelAverageNodeValueByDistanceDistributionLineChart graphLevelAverageNodeValueByDistanceDistributionLineChart;
 
     public MySequentialGraphDashBoard() {}
     public void setDashboard() {
@@ -160,17 +161,19 @@ extends JPanel {
                 setLayout(new BorderLayout(0,0));
 
                 TitledBorder networkTitledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK),
-                    "VISUAL NETWORK EXPLORER", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
+                    "NETWORK EXPLORER", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
 
                 graphLevelShortestAverageDistanceDistributionLineChart = new MyGraphLevelNodesByShortestDistanceDistributionLineChart();
                 graphLevelShortestDistanceNodeValueDistributionLineChart = new MyGraphLevelShortestDistanceNodeValueDistributionLineChart();
                 graphLevelShortestDistanceUnreachableNodeCountDistributionLineChart = new MyGraphLevelShortestDistanceUnreachableNodeCountDistributionLineChart();
+                graphLevelAverageNodeValueByDistanceDistributionLineChart = new MyGraphLevelAverageNodeValueByDistanceDistributionLineChart();
 
                 JPanel shortestDistanceProfilePanel = new JPanel();
                 shortestDistanceProfilePanel.setBackground(Color.WHITE);
-                shortestDistanceProfilePanel.setLayout(new GridLayout(3, 1));
+                shortestDistanceProfilePanel.setLayout(new GridLayout(4, 1));
                 shortestDistanceProfilePanel.add(graphLevelShortestDistanceUnreachableNodeCountDistributionLineChart);
                 shortestDistanceProfilePanel.add(graphLevelShortestAverageDistanceDistributionLineChart);
+                shortestDistanceProfilePanel.add(graphLevelAverageNodeValueByDistanceDistributionLineChart);
                 shortestDistanceProfilePanel.add(graphLevelShortestDistanceNodeValueDistributionLineChart);
                 shortestDistanceProfilePanel.setBorder(shortestDistanceTitledBorder);
 
@@ -211,7 +214,7 @@ extends JPanel {
                 setLayout(new BorderLayout(0,0));
 
                 TitledBorder networkTitledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.GRAY),
-                "VISUAL NETWORK EXPLORER", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
+                "NETWORK EXPLORER", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
 
                 if (MySequentialGraphVars.isTimeOn) {
                     graphLevelAverageValuesByDepthLineChart = new MyGraphLevelAverageValuesByDepthLineChart();
@@ -304,7 +307,7 @@ extends JPanel {
                 setLayout(new BorderLayout(0,0));
 
                 TitledBorder networkTitledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK),
-                        "VISUAL NETWORK EXPLORER", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
+                        "NETWORK EXPLORER", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
 
                 if (MySequentialGraphVars.isTimeOn) {
                     depthLevelPredecessorsAndSuccessorsByDepthLineChart = new MyDepthLevelPredecessorsAndSuccessorsByDepthLineChart();
@@ -392,7 +395,7 @@ extends JPanel {
                 setLayout(new BorderLayout(0, 0));
 
                 TitledBorder networkTitledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK),
-                        "VISUAL NETWORK EXPLORER", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
+                        "NETWORK EXPLORER", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
 
                 MyMultiNodeAppearanceByDepthLineChart sharedNodeLevelSelectedNodesByDepthLineChart = new MyMultiNodeAppearanceByDepthLineChart();
                 MyMultiLevelSharedSuccessorAppearancesByDepthLineChart sharedNodeLevelSharedSuccessorAppearancesByDepthLineChart = new MyMultiLevelSharedSuccessorAppearancesByDepthLineChart();
@@ -446,7 +449,7 @@ extends JPanel {
                 setLayout(new BorderLayout(0,0));
 
                 TitledBorder networkTitledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK),
-                    "VISUAL NETWORK EXPLORER", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
+                    "NETWORK EXPLORER", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
 
                 if (MySequentialGraphVars.isTimeOn) {
                     MySingleNodeAverageValuesByDepthLineChart singleNodeAverageValuesByDepthLineChart = new MySingleNodeAverageValuesByDepthLineChart();

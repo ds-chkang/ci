@@ -1,7 +1,6 @@
 package medousa.sequential.graph.stats;
 
 import medousa.MyProgressBar;
-import medousa.sequential.graph.MyClusteringConfig;
 import medousa.sequential.graph.MyNode;
 import medousa.sequential.utils.MySequentialGraphVars;
 import org.jfree.chart.ChartFactory;
@@ -24,9 +23,9 @@ import java.awt.geom.Ellipse2D;
 import java.util.Collection;
 import java.util.TreeMap;
 
-public class MyGraphLevelShortestDistanceNodeValueDistributionLineChart extends JPanel {
+public class MyGraphLevelAverageNodeValueByDistanceDistributionLineChart extends JPanel {
 
-    public MyGraphLevelShortestDistanceNodeValueDistributionLineChart() {
+    public MyGraphLevelAverageNodeValueByDistanceDistributionLineChart() {
         this.decorate();
     }
     public void decorate() {
@@ -37,22 +36,26 @@ public class MyGraphLevelShortestDistanceNodeValueDistributionLineChart extends 
                     setLayout(new BorderLayout(5,5));
                     setBackground(Color.WHITE);
 
-                    TreeMap<Long, Integer> nodeValueMap = new TreeMap<>();
+                    TreeMap<Integer, Long> totalNodeValueByDistanceMap = new TreeMap<>();
+                    TreeMap<Integer, Long> totalNodeValueCountByDistanceMap = new TreeMap<>();
                     Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
                     for (MyNode n : nodes) {
                         if (n.getCurrentValue() == 0) continue;
-                        long value = (long)n.getCurrentValue();
-                        if (nodeValueMap.containsKey(value)) {
-                            nodeValueMap.put(value, nodeValueMap.get(value) + 1);
+                        int distance = (int) n.shortestOutDistance;
+                        if (totalNodeValueByDistanceMap.containsKey(distance)) {
+                            totalNodeValueByDistanceMap.put(distance, totalNodeValueByDistanceMap.get(distance) + ((long) n.getCurrentValue()));
+                            totalNodeValueCountByDistanceMap.put(distance, totalNodeValueCountByDistanceMap.get(distance) + 1);
                         } else {
-                            nodeValueMap.put(value, 1);
+                            totalNodeValueByDistanceMap.put(distance, (long) n.getCurrentValue());
+                            totalNodeValueCountByDistanceMap.put(distance, 1L);
                         }
                     }
 
                     XYSeriesCollection dataset = new XYSeriesCollection();
-                    XYSeries series = new XYSeries("N. V.");
-                    for (Long nodeValue : nodeValueMap.keySet()) {
-                        series.add(nodeValue, nodeValueMap.get(nodeValue));
+                    XYSeries series = new XYSeries("AVG. N. V. BY DISTANCE");
+                    for (int distance : totalNodeValueByDistanceMap.keySet()) {
+                        float avgValueByDistance = (float) totalNodeValueByDistanceMap.get(distance)/totalNodeValueCountByDistanceMap.get(distance);
+                        series.add(distance, (long) avgValueByDistance);
                     }
                     dataset.addSeries(series);
 
@@ -81,8 +84,8 @@ public class MyGraphLevelShortestDistanceNodeValueDistributionLineChart extends 
                     ChartPanel chartPanel = new ChartPanel( chart );
                     chartPanel.setPreferredSize( new Dimension( 350 , 367 ) );
 
-                    JLabel titleLabel = new JLabel(" N. V.");
-                    titleLabel.setToolTipText("NODE VALUE DISTRIBUTION");
+                    JLabel titleLabel = new JLabel(" AVG. N. V. BY D.");
+                    titleLabel.setToolTipText("AVERAGE NODE VALUE BY DISTANCE DISTRIBUTION");
                     titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
                     titleLabel.setBackground(Color.WHITE);
                     titleLabel.setForeground(Color.DARK_GRAY);
@@ -133,13 +136,13 @@ public class MyGraphLevelShortestDistanceNodeValueDistributionLineChart extends 
     public void enlarge() {
         MyProgressBar pb = new MyProgressBar(false);
         try {
-            JFrame f = new JFrame(" NODE VALUE DISTRIBUTION");
+            JFrame f = new JFrame(" AVERAGE NODE VALUE BY DISTANCE DISTRIBUTION");
             f.setLayout(new BorderLayout());
             f.setBackground(Color.WHITE);
             f.setPreferredSize(new Dimension(400, 450));
             f.setCursor(Cursor.HAND_CURSOR);
             f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            MyGraphLevelShortestDistanceNodeValueDistributionLineChart depthNodeLevelNeighborNodeCountDistributionLineGraph = new MyGraphLevelShortestDistanceNodeValueDistributionLineChart();
+            MyGraphLevelAverageNodeValueByDistanceDistributionLineChart depthNodeLevelNeighborNodeCountDistributionLineGraph = new MyGraphLevelAverageNodeValueByDistanceDistributionLineChart();
             f.getContentPane().add(depthNodeLevelNeighborNodeCountDistributionLineGraph, BorderLayout.CENTER);
             f.pack();
             f.addMouseListener(new MouseAdapter() {

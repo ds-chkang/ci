@@ -71,9 +71,9 @@ public class MyGraphLevelShortestDistanceUnreachableNodeCountDistributionLineCha
                     XYPlot plot = (XYPlot) chart.getPlot();
                     XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
                     renderer.setSeriesPaint(0, Color.DARK_GRAY);
-                    renderer.setSeriesStroke(0, new BasicStroke(1.2f));
+                    renderer.setSeriesStroke(0, new BasicStroke(1.4f));
                     renderer.setSeriesShapesVisible(0, true);
-                    renderer.setSeriesShape(0, new Ellipse2D.Double(-1.0, -1.0, 2.0, 2.0));
+                    renderer.setSeriesShape(0, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
                     renderer.setSeriesFillPaint(0, Color.WHITE);
                     renderer.setUseFillPaint(true);
 

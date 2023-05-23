@@ -460,6 +460,7 @@ implements ActionListener {
             MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelShortestAverageDistanceDistributionLineChart.decorate();
             MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelShortestDistanceUnreachableNodeCountDistributionLineChart.decorate();
             MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelShortestDistanceNodeValueDistributionLineChart.decorate();
+            MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelAverageNodeValueByDistanceDistributionLineChart.decorate();
 
             MySequentialGraphVars.getSequentialGraphViewer().revalidate();
             MySequentialGraphVars.getSequentialGraphViewer().repaint();
@@ -1357,10 +1358,6 @@ implements ActionListener {
                     @Override public void run() {
                         if (tableTabbedPane.getSelectedIndex() == 2) {
                             MyProgressBar pb = new MyProgressBar(false);
-
-                            nodeValueSelecter.removeActionListener(viewerComponentController);
-                            nodeValueSelecter.setSelectedIndex(11);
-                            nodeValueSelecter.addActionListener(viewerComponentController);
 
                             if (graphRemovalPanel != null) {
                                 graphRemovalPanel.setVisible(false);
