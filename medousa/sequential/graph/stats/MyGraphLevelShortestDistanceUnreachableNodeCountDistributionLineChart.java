@@ -40,7 +40,7 @@ public class MyGraphLevelShortestDistanceUnreachableNodeCountDistributionLineCha
                     Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
                     for (MyNode n : nodes) {
                         if (n.getCurrentValue() == 0) continue;
-                        long value = (long)n.getUnreachableNodeCount();
+                        long value = n.getUnreachableNodeCount();
                         if (nodeValueMap.containsKey(value)) {
                             nodeValueMap.put(value, nodeValueMap.get(value) + 1);
                         } else {

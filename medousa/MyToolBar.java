@@ -398,6 +398,10 @@ implements ActionListener {
                                             pb.dispose();
                                             funnelBtn.setEnabled(false);
                                             MyMessageUtil.showInfoMsg("<html><body>An exception has occurred while creating a network.<br>Please, check the information provided in the configuration panel.</body></html>");
+                                        } finally {
+                                            headerBtn.setVisible(false);
+                                            inputBtn.setVisible(false);
+                                            runBtn.setVisible(false);
                                         }
                                     }
                                 }).start();

@@ -41,20 +41,20 @@ extends JPanel {
         });
     }
 
-    private TreeMap<Long, Long> createNodeValueMap() {
-        TreeMap<Long, Long> valueMap = new TreeMap<>();
+    private TreeMap<Integer, Long> createNodeValueMap() {
+        TreeMap<Integer, Long> nodesByDistanceMap = new TreeMap<>();
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
         for (MyNode n : nodes) {
             if (n.getCurrentValue() == 0) continue;
-            long value = (long) n.shortestOutDistance;
-            if (value == 0) continue;
-            if (valueMap.containsKey(value)) {
-                valueMap.put(value, valueMap.get(value) + 1);
+            int distance = (int) n.shortestOutDistance;
+            if (distance == 0) continue;
+            if (nodesByDistanceMap.containsKey(distance)) {
+                nodesByDistanceMap.put(distance, nodesByDistanceMap.get(distance) + 1);
             } else {
-                valueMap.put(value, 1L);
+                nodesByDistanceMap.put(distance, 1L);
             }
         }
-        return valueMap;
+        return nodesByDistanceMap;
     }
 
     private void setNodeValueLineChart() {
@@ -62,11 +62,15 @@ extends JPanel {
         setLayout(new BorderLayout(3, 3));
         setBackground(Color.WHITE);
 
-        TreeMap<Long, Long> valueMap = createNodeValueMap();
+        TreeMap<Integer, Long> valueMap = createNodeValueMap();
         XYSeriesCollection dataset = new XYSeriesCollection();
         this.valueSeries = new XYSeries("NODES BY DISTANCE");
-        for (Long value : valueMap.keySet()) {
-            this.valueSeries.add(value, valueMap.get(value));
+        for (int i=1; i <= MySequentialGraphVars.currentMaxShortestDistance; i++) {
+            if (valueMap.containsKey(i)) {
+                this.valueSeries.add(i, valueMap.get(i));
+            } else {
+                this.valueSeries.add(i, 0);
+            }
         }
         dataset.addSeries(this.valueSeries);
 
@@ -142,9 +146,9 @@ extends JPanel {
     public void enlarge() {
         MyProgressBar pb = new MyProgressBar(false);
         try {
-            JFrame f = new JFrame(" NODES BY SHORTEST DISTANCE DISTRIBUTION");
+            JFrame f = new JFrame(" NODES BY DISTANCE DISTRIBUTION");
             f.setLayout(new BorderLayout(3, 3));
-            f.getContentPane().add(new MyGraphLevelNodeValueDistributionLineChart(), BorderLayout.CENTER);
+            f.getContentPane().add(new MyGraphLevelNodesByShortestDistanceDistributionLineChart(), BorderLayout.CENTER);
             f.setPreferredSize(new Dimension(450, 350));
             f.pack();
             f.setCursor(Cursor.HAND_CURSOR);

@@ -46,6 +46,7 @@ public class MySequentialGraphVars {
     public static int mxDepth = 0;
     public static int diameter = 0;
     public static double avgShortestDistance = 0.0D;
+    public static int currentMaxShortestDistance = 0;
     public static int currentGraphDepth = -1;
     public static String mergedFileLocation;
     public static int accesssTimeColumnIdx;

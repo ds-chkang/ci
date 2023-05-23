@@ -36,6 +36,7 @@ extends JPanel {
     public MyGraphLevelShortestDistanceNodeValueDistributionLineChart graphLevelShortestDistanceNodeValueDistributionLineChart;
     public MyGraphLevelShortestDistanceUnreachableNodeCountDistributionLineChart graphLevelShortestDistanceUnreachableNodeCountDistributionLineChart;
     public MyGraphLevelAverageNodeValueByDistanceDistributionLineChart graphLevelAverageNodeValueByDistanceDistributionLineChart;
+    public MyGraphLevelTotalNodeByShortestDistanceDistributionLineChart graphLevelTotalNodeByShortestDistanceDistributionLineChart;
 
     public MySequentialGraphDashBoard() {}
     public void setDashboard() {
@@ -167,12 +168,14 @@ extends JPanel {
                 graphLevelShortestDistanceNodeValueDistributionLineChart = new MyGraphLevelShortestDistanceNodeValueDistributionLineChart();
                 graphLevelShortestDistanceUnreachableNodeCountDistributionLineChart = new MyGraphLevelShortestDistanceUnreachableNodeCountDistributionLineChart();
                 graphLevelAverageNodeValueByDistanceDistributionLineChart = new MyGraphLevelAverageNodeValueByDistanceDistributionLineChart();
+                //graphLevelTotalNodeByShortestDistanceDistributionLineChart = new MyGraphLevelTotalNodeByShortestDistanceDistributionLineChart();
 
                 JPanel shortestDistanceProfilePanel = new JPanel();
                 shortestDistanceProfilePanel.setBackground(Color.WHITE);
                 shortestDistanceProfilePanel.setLayout(new GridLayout(4, 1));
                 shortestDistanceProfilePanel.add(graphLevelShortestDistanceUnreachableNodeCountDistributionLineChart);
                 shortestDistanceProfilePanel.add(graphLevelShortestAverageDistanceDistributionLineChart);
+                //shortestDistanceProfilePanel.add(graphLevelTotalNodeByShortestDistanceDistributionLineChart);
                 shortestDistanceProfilePanel.add(graphLevelAverageNodeValueByDistanceDistributionLineChart);
                 shortestDistanceProfilePanel.add(graphLevelShortestDistanceNodeValueDistributionLineChart);
                 shortestDistanceProfilePanel.setBorder(shortestDistanceTitledBorder);

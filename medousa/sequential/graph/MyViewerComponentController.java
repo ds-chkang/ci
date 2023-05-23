@@ -448,6 +448,11 @@ implements ActionListener {
                                 pb.updateValue(100, 100);
                                 pb.dispose();
                             }
+
+                            MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelShortestAverageDistanceDistributionLineChart.decorate();
+                            MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelShortestDistanceUnreachableNodeCountDistributionLineChart.decorate();
+                            MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelShortestDistanceNodeValueDistributionLineChart.decorate();
+                            MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelAverageNodeValueByDistanceDistributionLineChart.decorate();
                         }
                     }).start();
                 }
@@ -461,6 +466,8 @@ implements ActionListener {
             MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelShortestDistanceUnreachableNodeCountDistributionLineChart.decorate();
             MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelShortestDistanceNodeValueDistributionLineChart.decorate();
             MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelAverageNodeValueByDistanceDistributionLineChart.decorate();
+
+            MySequentialGraphVars.currentMaxShortestDistance = shortestDistanceMenu.getItemCount()-2;
 
             MySequentialGraphVars.getSequentialGraphViewer().revalidate();
             MySequentialGraphVars.getSequentialGraphViewer().repaint();
@@ -707,7 +714,14 @@ implements ActionListener {
             this.shortestDistanceOptionMenu.setFocusable(false);
             this.shortestDistanceOptionMenu.addActionListener(new ActionListener() {
                 @Override public void actionPerformed(ActionEvent e) {
-                    shortestDistanceSourceNode = null;
+                    new Thread(new Runnable() {
+                        @Override public void run() {
+                            if (shortestDistanceOptionMenu.getSelectedIndex() == 0) {
+                                setShortestDistanceConfiguration();
+                            }
+                            shortestDistanceSourceNode = null;
+                        }
+                    }).start();
                 }
             });
             //pathMenu.addItem("PATH EXPLORATION");
@@ -837,6 +851,20 @@ implements ActionListener {
 
             this.shortestDistanceMenu.setFont(MySequentialGraphVars.tahomaPlainFont10);
             this.shortestDistanceMenu.setFocusable(false);
+            this.shortestDistanceMenu.addActionListener(new ActionListener() {
+                @Override public void actionPerformed(ActionEvent e) {
+                    new Thread(new Runnable() {
+                        @Override public void run() {
+                            if (shortestDistanceMenu.getSelectedIndex() > 0) {
+                                MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelShortestAverageDistanceDistributionLineChart.decorate();
+                                MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelShortestDistanceUnreachableNodeCountDistributionLineChart.decorate();
+                                MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelShortestDistanceNodeValueDistributionLineChart.decorate();
+                                MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelAverageNodeValueByDistanceDistributionLineChart.decorate();
+                            }
+                        }
+                    }).start();
+                }
+            });
 
             String [] toColumns = {"NO.", "DEST", "V."};
             String [][] toData = {};
@@ -933,8 +961,6 @@ implements ActionListener {
     }
 
     public void decorateGraphViewer(JPanel graphViewer) {
-        final MyViewerComponentController viewerComponentController = this;
-
         this.setLayout(new BorderLayout());
         this.setBorder(BorderFactory.createLoweredSoftBevelBorder());
         this.setBackground(Color.WHITE);
@@ -1357,75 +1383,8 @@ implements ActionListener {
                 new Thread(new Runnable() {
                     @Override public void run() {
                         if (tableTabbedPane.getSelectedIndex() == 2) {
-                            MyProgressBar pb = new MyProgressBar(false);
-
-                            if (graphRemovalPanel != null) {
-                                graphRemovalPanel.setVisible(false);
-                            }
-
-                            shortestDistanceSourceNode = null;
-                            isTableUpdating = false;
-                            visitedNodes = null;
-
-                            int row = shortestDistanceDestTable.getRowCount();
-                            while (row > 0) {
-                                ((DefaultTableModel) shortestDistanceDestTable.getModel()).removeRow(row-1);
-                                row = shortestDistanceDestTable.getRowCount();
-                            }
-
-                            Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
-                            float max = 0f;
-                            for (MyNode n : nodes) {
-                                n.setCurrentValue(n.avgShortestDistance);
-                                if (n.getCurrentValue() > max) {
-                                    max = n.getCurrentValue();
-                                }
-                            }
-                            MySequentialGraphVars.g.MX_N_VAL = max;
-
-                            int i=0;
-                            for (MyNode n : nodes) {
-                                ((DefaultTableModel) shortestDistanceDestTable.getModel()).addRow(
-                                    new String[]{"" + (++i),
-                                        MySequentialGraphSysUtil.getNodeName(n.getName()),
-                                        "0"
-                                    }
-                                );
-                            }
-
-                            clusteringSectorLabel.setVisible(false);
-                            clusteringSelector.setVisible(false);
-                            depthSelecter.setVisible(false);
-                            depthExcludeSelecter.setVisible(false);
-                            depthExcludeSymbolSelecter.setVisible(false);
-                            edgeValueExludeLabel.setVisible(false);
-                            edgeValueLabel.setVisible(false);
-                            edgeLabelLabel.setVisible(false);
-                            edgeLabelExcludeComboBoxMenuLabel.setVisible(false);
-                            edgeValueExcludeSymbolSelecter.setVisible(false);
-                            edgeLabelSelecter.setVisible(false);
-                            edgeValueSelecter.setVisible(false);
-                            edgeValueExcludeTxt.setVisible(false);
-                            edgeLabelExcludeSelecter.setVisible(false);
-                            edgeValueBarChart.setVisible(false);
-                            edgeLabelValueExcludeSelecter.setVisible(false);
-
-                            /**
-                             * Set edge values to zero.
-                             */
-                            Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
-                            for (MyEdge e : edges) {e.setCurrentValue(0);}
-
-                            /**
-                             * Turn dashborad to shortest distance dashboard.
-                             */
-                            MySequentialGraphVars.app.getSequentialGraphDashboard().setShortestDistanceDashBoard();
-
-                            MySequentialGraphVars.getSequentialGraphViewer().revalidate();
-                            MySequentialGraphVars.getSequentialGraphViewer().repaint();
-                            pb.updateValue(100, 100);
-                            pb.dispose();
-                        } else if (tableTabbedPane.getSelectedIndex() == 0){
+                            setShortestDistanceConfiguration();
+                        } else if (tableTabbedPane.getSelectedIndex() == 0) {
                             MyViewerComponentControllerUtil.setDefaultViewerLook();
                         }
                     }
@@ -1473,6 +1432,81 @@ implements ActionListener {
 
         this.add(topPanel, BorderLayout.NORTH);
         this.add(this.graphTableSplitPane, BorderLayout.CENTER);
+    }
+
+    public void setShortestDistanceConfiguration() {
+        if (tableTabbedPane.getSelectedIndex() == 2) {
+            MyProgressBar pb = new MyProgressBar(false);
+
+            if (graphRemovalPanel != null) {
+                graphRemovalPanel.setVisible(false);
+            }
+
+            shortestDistanceSourceNode = null;
+            isTableUpdating = false;
+            visitedNodes = null;
+
+            int row = shortestDistanceDestTable.getRowCount();
+            while (row > 0) {
+                ((DefaultTableModel) shortestDistanceDestTable.getModel()).removeRow(row - 1);
+                row = shortestDistanceDestTable.getRowCount();
+            }
+
+            Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+            float max = 0f;
+            for (MyNode n : nodes) {
+                n.setCurrentValue(n.avgShortestDistance);
+                if (n.getCurrentValue() > max) {
+                    max = n.getCurrentValue();
+                }
+            }
+            MySequentialGraphVars.g.MX_N_VAL = max;
+
+            int i = 0;
+            for (MyNode n : nodes) {
+                ((DefaultTableModel) shortestDistanceDestTable.getModel()).addRow(
+                        new String[]{"" + (++i),
+                                MySequentialGraphSysUtil.getNodeName(n.getName()),
+                                "0"
+                        }
+                );
+            }
+
+            clusteringSectorLabel.setVisible(false);
+            clusteringSelector.setVisible(false);
+            depthSelecter.setVisible(false);
+            depthExcludeSelecter.setVisible(false);
+            depthExcludeSymbolSelecter.setVisible(false);
+            edgeValueExludeLabel.setVisible(false);
+            edgeValueLabel.setVisible(false);
+            edgeLabelLabel.setVisible(false);
+            edgeLabelExcludeComboBoxMenuLabel.setVisible(false);
+            edgeValueExcludeSymbolSelecter.setVisible(false);
+            edgeLabelSelecter.setVisible(false);
+            edgeValueSelecter.setVisible(false);
+            edgeValueExcludeTxt.setVisible(false);
+            edgeLabelExcludeSelecter.setVisible(false);
+            edgeValueBarChart.setVisible(false);
+            edgeLabelValueExcludeSelecter.setVisible(false);
+
+            /**
+             * Set edge values to zero.
+             */
+            Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
+            for (MyEdge e : edges) {
+                e.setCurrentValue(0);
+            }
+
+            /**
+             * Turn dashborad to shortest distance dashboard.
+             */
+            MySequentialGraphVars.app.getSequentialGraphDashboard().setShortestDistanceDashBoard();
+
+            MySequentialGraphVars.getSequentialGraphViewer().revalidate();
+            MySequentialGraphVars.getSequentialGraphViewer().repaint();
+            pb.updateValue(100, 100);
+            pb.dispose();
+        }
     }
 
     public JPanel setStatTable() {
