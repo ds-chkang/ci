@@ -36,7 +36,8 @@ extends JPanel {
     public MyGraphLevelShortestDistanceNodeValueDistributionLineChart graphLevelShortestDistanceNodeValueDistributionLineChart;
     public MyGraphLevelShortestDistanceUnreachableNodeCountDistributionLineChart graphLevelShortestDistanceUnreachableNodeCountDistributionLineChart;
     public MyGraphLevelAverageNodeValueByDistanceDistributionLineChart graphLevelAverageNodeValueByDistanceDistributionLineChart;
-    public MyGraphLevelTotalNodeByShortestDistanceDistributionLineChart graphLevelTotalNodeByShortestDistanceDistributionLineChart;
+
+    public MyGraphLevelContributionDistributionByObjectLineChart graphLevelContributionDistributionByObjectLineChart;
 
     public MySequentialGraphDashBoard() {}
     public void setDashboard() {
@@ -48,112 +49,6 @@ extends JPanel {
 
     TitledBorder shortestDistanceTitledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK),
             "DISTRIBUTIONS", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
-
-    public String setGraphLevelTextStatistics() {
-        String stat = "";
-
-        String nodes = "N.: " + MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.g.getVertexCount());
-        String edges = "E.: " + MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.g.getEdgeCount());
-
-        String reds = "R.: " + MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.g.getRedNodeCount());
-        String blues = "B.: " + MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.g.getBlueNodeCount());
-        String greens = "G.: " + MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.g.getGreenNodeCount());
-
-        String maxNodeVal = "MAX.: " + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MySequentialGraphVars.g.getMaximumNodeValue()));
-        String avgNodeVal = "AVG.: " + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MySequentialGraphVars.g.getAverageNodeValue()));
-        String minNodeVal = "MIN.: " + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MySequentialGraphVars.g.getMinimumNodeValue()));
-        String stdNodeVal = "STD.: " + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MySequentialGraphVars.g.getNodeValueStandardDeviation()));
-
-        String maxEdgeVal = "MAX.: " + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MySequentialGraphVars.g.getMaximumEdgeValue()));
-        String avgEdgeVal = "AVG.: " + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MySequentialGraphVars.g.getAverageEdgeValue()));
-        String minEdgeVal = "MIN.: " + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MySequentialGraphVars.g.getMinimumEdgeValue()));
-        String stdEdgeVal = "STD.: " + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MySequentialGraphVars.g.getEdgeValueStandardDeviation()));
-
-        if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() < 2) {
-            stat += "NETWORK    " +
-                    "[" +
-                    nodes + "    " +
-                    maxNodeVal + "    " +
-                    avgNodeVal + "    " +
-                    minNodeVal + "    " +
-                    stdNodeVal + "]"    +
-                    "    " +
-                    edges;
-        } else {
-            stat += "NETWORK    " +
-                    "[" +
-                    nodes + "    " +
-                    maxNodeVal + "    " +
-                    avgNodeVal + "    " +
-                    minNodeVal + "    " +
-                    stdNodeVal +
-                    "]"    +
-                    " " +
-
-                    "[" +
-                    edges + "    " +
-                    maxEdgeVal + "    " +
-                    avgEdgeVal + "    " +
-                    minEdgeVal + "    " +
-                    stdEdgeVal +
-                    "]";
-        }
-
-        return stat;
-    }
-
-    public String setSingleNodeLevelTextStatistics() {
-        String stat = "";
-
-        String nodes = "N.: " + MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.g.getVertexCount());
-        String edges = "E.: " + MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.g.getEdgeCount());
-
-        String reds = "R.: " + MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.g.getRedNodeCount());
-        String blues = "B.: " + MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.g.getBlueNodeCount());
-        String greens = "G.: " + MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.g.getGreenNodeCount());
-
-        String maxNodeVal = "MAX.: " + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MySequentialGraphVars.g.getMaximumNodeValue()));
-        String avgNodeVal = "AVG.: " + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MySequentialGraphVars.g.getAverageNodeValue()));
-        String minNodeVal = "MIN.: " + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MySequentialGraphVars.g.getMinimumNodeValue()));
-        String stdNodeVal = "STD.: " + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MySequentialGraphVars.g.getNodeValueStandardDeviation()));
-
-        String maxEdgeVal = "MAX.: " + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MySequentialGraphVars.g.getMaximumEdgeValue()));
-        String avgEdgeVal = "AVG.: " + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MySequentialGraphVars.g.getAverageEdgeValue()));
-        String minEdgeVal = "MIN.: " + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MySequentialGraphVars.g.getMinimumEdgeValue()));
-        String stdEdgeVal = "STD.: " + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MySequentialGraphVars.g.getEdgeValueStandardDeviation()));
-
-        if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() < 2) {
-            stat += "NETWORK    " +
-                    "[" +
-                    nodes + "    " +
-                    maxNodeVal + "    " +
-                    avgNodeVal + "    " +
-                    minNodeVal + "    " +
-                    stdNodeVal + "]"    +
-                    "    " +
-                    edges;
-        } else {
-            stat += "NETWORK    " +
-                    "[" +
-                    nodes + "    " +
-                    maxNodeVal + "    " +
-                    avgNodeVal + "    " +
-                    minNodeVal + "    " +
-                    stdNodeVal +
-                    "]"    +
-                    " " +
-
-                    "[" +
-                    edges + "    " +
-                    maxEdgeVal + "    " +
-                    avgEdgeVal + "    " +
-                    minEdgeVal + "    " +
-                    stdEdgeVal +
-                    "]";
-        }
-
-        return stat;
-    }
 
     public void setShortestDistanceDashBoard() {
         SwingUtilities.invokeLater(new Runnable() {
@@ -238,9 +133,17 @@ extends JPanel {
                     dataProfilePanel.add(graphLevelContributionByDepthLineChart);
                     dataProfilePanel.setBorder(dataProfileTitledBorder);
 
+                    graphLevelContributionDistributionByObjectLineChart = new MyGraphLevelContributionDistributionByObjectLineChart();
+
+                    JPanel graphProfilePanel = new JPanel();
+                    graphProfilePanel.setBackground(Color.WHITE);
+                    graphProfilePanel.add(graphLevelContributionDistributionByObjectLineChart);
+                    graphProfilePanel.setBorder(dataProfileTitledBorder);
+
                     JTabbedPane tabbedPane = new JTabbedPane();
-                    tabbedPane.addTab("DATA PROFILE", null, dataProfilePanel, "DATA PROFILE");
-                    tabbedPane.addTab("GRAPH STATS.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setStatTable(), "GRAPH STATISTICS");
+                    tabbedPane.addTab("D. P.", null, dataProfilePanel, "DATA PROFILE");
+                    //tabbedPane.addTab("G. P.", null, graphProfilePanel, "GRAPH PROFILE");
+                    tabbedPane.addTab("G. S.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setStatTable(), "GRAPH TEXT STATISTICS");
                     tabbedPane.setFont(MySequentialGraphVars.tahomaBoldFont12);
 
                     MySequentialGraphVars.app.getSequentialGraphViewerPanel().setBorder(networkTitledBorder);
@@ -277,6 +180,7 @@ extends JPanel {
 
                     JTabbedPane tabbedPane = new JTabbedPane();
                     tabbedPane.addTab("DATA PROFILE", null, dataProfilePanel, "DATA PROFILE");
+                    tabbedPane.addTab("GRAPH PROFILE", null, dataProfilePanel, "GRAPH PROFILE");
                     tabbedPane.addTab("GRAPH STATS.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setStatTable(), "GRAPH STATISTICS");
                     tabbedPane.setFont(MySequentialGraphVars.tahomaBoldFont12);
 

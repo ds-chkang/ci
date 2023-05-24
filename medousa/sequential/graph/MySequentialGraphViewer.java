@@ -104,7 +104,7 @@ implements Serializable {
             this.getRenderContext().setEdgeDrawPaintTransformer(this.edgeColor);
             this.setVertexToolTipTransformer(this.defaultToolTipper);
             this.getRenderContext().setEdgeStrokeTransformer(this.edgeStroker);
-            this.getRenderContext().setVertexStrokeTransformer(nodeStroker);
+            this.getRenderContext().setVertexStrokeTransformer(this.nodeStroker);
             this.getRenderContext().setVertexDrawPaintTransformer(new Transformer<MyNode, Paint>() {
                 @Override public Paint transform(MyNode n) {
                     if (vc.depthSelecter.getSelectedIndex() > 0) {
@@ -160,7 +160,7 @@ implements Serializable {
             titledBorder.setTitleJustification(TitledBorder.LEFT);
             titledBorder.setTitleFont(MySequentialGraphVars.tahomaBoldFont12);
             titledBorder.setTitleColor(Color.DARK_GRAY);
-            this.vc.setBorder(titledBorder);
+            //this.vc.setBorder(titledBorder);
 
             this.addComponentListener(new ComponentAdapter() {
                 @Override public void componentResized(ComponentEvent e) {
@@ -283,7 +283,9 @@ implements Serializable {
 
     private Transformer<MyNode, Stroke> nodeStroker = new Transformer<MyNode, Stroke>() {
         @Override public Stroke transform(MyNode n) {
-            if ((selectedNode != null && n == selectedNode) || (multiNodes != null && multiNodes.contains(n))) {
+            if (vc.tableTabbedPane.getSelectedIndex() == 2) {
+                return new BasicStroke(4f);
+            } else if ((selectedNode != null && n == selectedNode) || (multiNodes != null && multiNodes.contains(n))) {
                 return new BasicStroke(30f);
             } else {
                 float currentNodeValueWeight = n.getCurrentValue()/ MySequentialGraphVars.g.MX_N_VAL;

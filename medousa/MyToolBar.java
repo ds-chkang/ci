@@ -196,20 +196,16 @@ implements ActionListener {
                                 MySequentialGraphSysUtil.initVariables();
                                 MySequentialGraphConfigPanel sequentialGraphConfigPanel = new MySequentialGraphConfigPanel();
                                 MySequentialGraphVars.app.getSequentialGraphMsgBroker().setSequentialConfigPanel(sequentialGraphConfigPanel);
-                                if (MySequentialGraphVars.app.getContentTabbedPane().getTabCount() > 0) {
-                                    MySequentialGraphVars.app.getContentTabbedPane().removeAll();
-                                    runBtn.setEnabled(false);
-                                    searchSequentialPatternBtn.setEnabled(false);
-                                    networkBtn.setEnabled(false);
-                                }
+
                                 MySequentialGraphVars.app.getContentTabbedPane().addTab("      CONFIGURATION       ", sequentialGraphConfigPanel);
                                 MySequentialGraphVars.app.getContentTabbedPane().addTab("      DASHBOARD       ", MySequentialGraphVars.app.resetSequentialGraphDashboard());
-
 
                                 setButton(headerBtn, header_img_icon, "Set header", true);
                                 setButton(inputBtn, input_img_icon, "FUNNEL EXPLORER", false);
                                 setButton(runBtn, run_img_icon, "CREATE NETWORK", false);
                                 setButton(funnelBtn, funnel_img_icon, "Funnel Analyses", false);
+
+                                funnelBtn.setVisible(false);
                             }
 
                             add(toolBar, BorderLayout.CENTER);
@@ -349,8 +345,8 @@ implements ActionListener {
                         @Override public void run() {
                             MyProgressBar pb = new MyProgressBar(false);
                             try {
-                                inputBtn.setEnabled(false);
-                                runBtn.setEnabled(false);
+                                inputBtn.setVisible(false);
+                                runBtn.setVisible(false);
                                 MySequentialGraphVars.outputDir = MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "elements" + MySequentialGraphSysUtil.getDirectorySlash();
                                 MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getDefaultVariableTable().isTimeVariableOn();
                                 MySequentialGraphVars.app.getSequentialGraphMsgBroker().categorize();
@@ -373,6 +369,7 @@ implements ActionListener {
 
                                             pb.updateValue(60, 100);
                                             funnelBtn.setEnabled(true);
+                                            funnelBtn.setVisible(true);
                                             MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
                                             MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.setSelectedIndex(1); // DEFAULT VALUE.
                                             MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
@@ -388,7 +385,7 @@ implements ActionListener {
                                             if (MySequentialGraphVars.g.getVertices().size() == 0) {
                                                 pb.updateValue(100, 100);
                                                 pb.dispose();
-                                                funnelBtn.setEnabled(false);
+                                                funnelBtn.setVisible(false);
                                                 MyMessageUtil.showInfoMsg("<html><body>An exception has occurred while creating a network.<br>Please, check the information provided in the configuration panel.</body></html>");
                                             } else {
                                                 MyMessageUtil.showInfoMsg("Network has successfully been built!");
@@ -396,7 +393,7 @@ implements ActionListener {
                                         } catch (Exception ex) {
                                             pb.updateValue(100, 100);
                                             pb.dispose();
-                                            funnelBtn.setEnabled(false);
+                                            funnelBtn.setVisible(false);
                                             MyMessageUtil.showInfoMsg("<html><body>An exception has occurred while creating a network.<br>Please, check the information provided in the configuration panel.</body></html>");
                                         } finally {
                                             headerBtn.setVisible(false);

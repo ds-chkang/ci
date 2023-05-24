@@ -28,36 +28,39 @@ implements ActionListener {
     private JMenuItem timeDistribution = new JMenuItem("BETWEEN TIME DISTRIBUTION");
     private JMenuItem nodeFont = new JMenuItem("NODE FONT");
     private JMenuItem edgeFont = new JMenuItem("EDGE FONT");
+    private JMenuItem contributionDistributionNyObject = new JMenuItem("CONT. DIST. BY OBJ.");
 
     public MySingleNodeMenu( ) {
         this.decorate();
     }
 
     private void decorate() {
-        this.setMenuItem(null, this.predecessorStatistics);
-        this.setMenuItem(null, this.successorStatistics);
+        this.setMenuItem(null, this.predecessorStatistics, "PREDECESSOR STATISTICS");
+        this.setMenuItem(null, this.successorStatistics, "SUCCESSOR STATISTICS");
         this.add(new JSeparator());
-        this.setMenuItem(null, this.showPredecessorsOnly);
-        this.setMenuItem(null, this.showSuccessorsOnly);
-        this.setMenuItem(null, this.showNeighbors);
+        this.setMenuItem(null, this.contributionDistributionNyObject, "CONTRIBUTION COUNT DISTRIBUTION BY OBJECT");
         this.add(new JSeparator());
-        this.setMenuItem(null, this.download);
-        this.setMenuItem(this.download, this.downloadUsers);
+        this.setMenuItem(null, this.showPredecessorsOnly, "PREDECESSORS ONLY VIEW");
+        this.setMenuItem(null, this.showSuccessorsOnly, "SUCCESSORS ONLY VIEW");
+        this.setMenuItem(null, this.showNeighbors, "NEIGHBOR NDOES");
         this.add(new JSeparator());
-        this.setMenuItem(null, this.fromPathFlow);
+        this.setMenuItem(null, this.download, "DOWNLOAD");
+        this.setMenuItem(this.download, this.downloadUsers, "DOWNLOAD USERS");
         this.add(new JSeparator());
-        this.setMenuItem(null, this.toPathFlow);
+        this.setMenuItem(null, this.fromPathFlow, "FROM PATH FLOW");
+        this.add(new JSeparator());
+        this.setMenuItem(null, this.toPathFlow, "TO PATH FLOW");
         if (MySequentialGraphVars.isTimeOn) {
             this.add(new JSeparator());
-            this.setMenuItem(null, this.timeDistribution);
+            this.setMenuItem(null, this.timeDistribution, "TIME DISTRIBUTION");
         }
         this.add(new JSeparator());
-        this.setMenuItem(null, this.nodeFont);
-        this.setMenuItem(null, this.edgeFont);
+        this.setMenuItem(null, this.nodeFont, "NODE FONT SETUP DIALOG");
+        this.setMenuItem(null, this.edgeFont, "EDGE FONT SETUP DIALOG");
         this.download.setEnabled(false);
     }
 
-    private void setMenuItem(JMenu root, JMenuItem menuItem) {
+    private void setMenuItem(JMenu root, JMenuItem menuItem, String tooltip) {
         menuItem.setFont(MySequentialGraphVars.tahomaPlainFont12);
         menuItem.addActionListener(this);
         if (root == null) {
