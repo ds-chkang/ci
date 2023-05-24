@@ -46,7 +46,7 @@ implements Serializable {
     public boolean excluded;
     private ScalingControl viewScaler;
     public final float MX_E_STK = 32.0f;
-    public final float MIN_NODE_SZ = 54.0f;
+    public final float MIN_NODE_SZ = 50.0f;
     public Map<String, Integer> endNodesMap;
     public Set<String> nodesBetweenTwoNodes;
     public MyNode selectedNode;

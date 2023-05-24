@@ -1392,6 +1392,17 @@ implements ActionListener {
             }
         });
 
+        this.tableTabbedPane.addMouseListener(new MouseAdapter() {
+            @Override public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                new Thread(new Runnable() {
+                    @Override public void run() {
+                        setShortestDistanceConfiguration();
+                    }
+                }).start();
+            }
+        });
+
         JPanel graphPanel = new JPanel();
         graphPanel.setBackground(Color.WHITE);
         graphPanel.setLayout(new BorderLayout(0,0));
