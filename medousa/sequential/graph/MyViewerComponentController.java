@@ -5,6 +5,8 @@ import medousa.direct.utils.MyDirectGraphSysUtil;
 import medousa.message.MyMessageUtil;
 import medousa.sequential.graph.listener.MyEdgeLabelSelecterListener;
 import medousa.sequential.graph.listener.MyNodeLabelSelecterListener;
+import medousa.sequential.graph.stats.MyGraphLevelNodeValueDistributionLineChart;
+import medousa.sequential.graph.stats.MyGraphLevelTopLevelNodeValueDistribution;
 import medousa.sequential.graph.stats.MyGrayCellRenderer;
 import medousa.sequential.graph.stats.barchart.*;
 import medousa.sequential.graph.stats.MyTextStatistics;
@@ -1167,7 +1169,7 @@ implements ActionListener {
         this.excludeBtn = new JButton("EXCL.");
         //this.excludeBtn.setBackground(Color.GREEN);
         this.excludeBtn.setToolTipText("EXCLUDE NODES AND EDGES");
-        //this.excludeBtn.setBackground(Color.WHITE);
+        this.excludeBtn.setBackground(Color.WHITE);
         this.excludeBtn.setFocusable(false);
         this.excludeBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.excludeBtn.addActionListener(new MyNodeEdgeExclusionActionListener(this));
@@ -1354,6 +1356,37 @@ implements ActionListener {
         this.bottomPanel.add(this.bottomLeftControlPanel, BorderLayout.WEST);
         this.bottomPanel.add(this.bottomRightControlPanel, BorderLayout.CENTER);
 
+        JButton edgeValueDistributionBtn = new JButton("E. V.");
+        edgeValueDistributionBtn.setBackground(Color.WHITE);
+        edgeValueDistributionBtn.setToolTipText("CURRENT EDGE VALUE DISTRIBUTION");
+        edgeValueDistributionBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        edgeValueDistributionBtn.setFocusable(false);
+        edgeValueDistributionBtn.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                if (edgeValueSelecter.getSelectedIndex() > 1) {
+
+                } else {
+                    MyMessageUtil.showInfoMsg(MySequentialGraphVars.app, "Select an edge value.");
+                }
+            }
+        });
+
+        JButton nodeValueDistributionBtn = new JButton("N. V.");
+        nodeValueDistributionBtn.setBackground(Color.WHITE);
+        nodeValueDistributionBtn.setToolTipText("CURRENT NODE VALUE DISTRIBUTION");
+        nodeValueDistributionBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        nodeValueDistributionBtn.setFocusable(false);
+        nodeValueDistributionBtn.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                new Thread(new Runnable() {
+                    @Override public void run() {
+                        MyGraphLevelTopLevelNodeValueDistribution graphLevelTopLevelNodeValueDistribution = new MyGraphLevelTopLevelNodeValueDistribution();
+                        graphLevelTopLevelNodeValueDistribution.enlarge(graphLevelTopLevelNodeValueDistribution);
+                    }
+                }).start();
+            }
+        });
+
         JPanel topRightPanel = new JPanel();
         topRightPanel.setBackground(Color.WHITE);
         topRightPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
@@ -1365,6 +1398,8 @@ implements ActionListener {
         topRightPanel.add(graphGroupNodeNumberPercentLabel);
         topRightPanel.add(this.clusteringSectorLabel);
         topRightPanel.add(this.clusteringSelector);
+        topRightPanel.add(nodeValueDistributionBtn);
+        topRightPanel.add(edgeValueDistributionBtn);
 
         topPanel.add(topRightPanel, BorderLayout.EAST);
         topPanel.add(this.topLeftPanel, BorderLayout.WEST);

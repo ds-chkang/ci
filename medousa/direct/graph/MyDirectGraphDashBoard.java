@@ -1,6 +1,8 @@
 package medousa.direct.graph;
 
+import medousa.direct.graph.analysis.MyDirectGraphEdgeLabelBarChart;
 import medousa.direct.graph.barcharts.MyDirectGraphEdgeValueBarChart;
+import medousa.direct.graph.barcharts.MyDirectGraphNodeLabelBarChart;
 import medousa.direct.graph.barcharts.MyDirectGraphNodeValueBarChart;
 import medousa.direct.graph.barcharts.MyDirectGraphNodesByShortestDistanceBarChart;
 import medousa.direct.graph.multilevel.*;

@@ -38,7 +38,7 @@ implements ActionListener {
         this.setMenuItem(null, this.predecessorStatistics, "PREDECESSOR STATISTICS");
         this.setMenuItem(null, this.successorStatistics, "SUCCESSOR STATISTICS");
         this.add(new JSeparator());
-        this.setMenuItem(null, this.contributionDistributionNyObject, "CONTRIBUTION COUNT DISTRIBUTION BY OBJECT");
+        this.setMenuItem(null, this.contributionDistributionNyObject, "CONTRIBUTION DISTRIBUTION");
         this.add(new JSeparator());
         this.setMenuItem(null, this.showPredecessorsOnly, "PREDECESSORS ONLY VIEW");
         this.setMenuItem(null, this.showSuccessorsOnly, "SUCCESSORS ONLY VIEW");

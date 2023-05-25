@@ -1,10 +1,11 @@
-package medousa.direct.graph.toplevel;
+package medousa.sequential.graph.stats;
 
-import medousa.direct.graph.MyDirectNode;
 import medousa.MyProgressBar;
-import medousa.direct.utils.MyDirectGraphMathUtil;
-import medousa.direct.utils.MyDirectGraphSysUtil;
 import medousa.direct.utils.MyDirectGraphVars;
+import medousa.sequential.graph.MyNode;
+import medousa.sequential.utils.MyMathUtil;
+import medousa.sequential.utils.MySequentialGraphSysUtil;
+import medousa.sequential.utils.MySequentialGraphVars;
 import medousa.table.MyTableUtil;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -20,11 +21,9 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.TreeMap;
+import java.util.*;
 
-public class MyDirectGraphTopLevelNodeValueDistribution
+public class MyGraphLevelTopLevelNodeValueDistribution
 extends JPanel
 implements ActionListener {
 
@@ -34,12 +33,11 @@ implements ActionListener {
     private float avgValue = 0;
     private float stdValue = 0;
 
-    public MyDirectGraphTopLevelNodeValueDistribution() {
-        this.decorate();
+    public MyGraphLevelTopLevelNodeValueDistribution() {
+        decorate();
     }
 
     public void decorate() {
-        final MyDirectGraphTopLevelNodeValueDistribution nodeValueLabelDistribution = this;
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
                 removeAll();
@@ -50,10 +48,10 @@ implements ActionListener {
                 chartPanel.getChart().getCategoryPlot().setRangeGridlinePaint(Color.DARK_GRAY);
                 chartPanel.getChart().getCategoryPlot().setDomainGridlinePaint(Color.DARK_GRAY);
                 chartPanel.getChart().getCategoryPlot().setBackgroundPaint(Color.WHITE);
-                chartPanel.getChart().getCategoryPlot().getDomainAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont11);
-                chartPanel.getChart().getCategoryPlot().getDomainAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont11);
-                chartPanel.getChart().getCategoryPlot().getRangeAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont11);
-                chartPanel.getChart().getCategoryPlot().getRangeAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont11);
+                chartPanel.getChart().getCategoryPlot().getDomainAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont10);
+                chartPanel.getChart().getCategoryPlot().getDomainAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont10);
+                chartPanel.getChart().getCategoryPlot().getRangeAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont10);
+                chartPanel.getChart().getCategoryPlot().getRangeAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont10);
 
                 CategoryAxis domainAxis = chartPanel.getChart().getCategoryPlot().getDomainAxis();
                 domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_90);
@@ -65,45 +63,7 @@ implements ActionListener {
                 barRenderer.setBarPainter(new StandardBarPainter());
                 barRenderer.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont11);
 
-                JLabel titleLabel = new JLabel(" N. V.");
-                titleLabel.setToolTipText("NODE VALUE DISTRIBUTION");
-                titleLabel.setFont(MyDirectGraphVars.tahomaBoldFont11);
-                titleLabel.setBackground(Color.WHITE);
-                titleLabel.setForeground(Color.DARK_GRAY);
-
-                JPanel titlePanel = new JPanel();
-                titlePanel.setBackground(Color.WHITE);
-                titlePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
-                titlePanel.add(titleLabel);
-
-                JButton enlargeBtn = new JButton("+");
-                enlargeBtn.setToolTipText("ENLARGE");
-                enlargeBtn.setFocusable(false);
-                enlargeBtn.setBackground(Color.WHITE);
-                enlargeBtn.setFont(MyDirectGraphVars.tahomaPlainFont11);
-                enlargeBtn.addActionListener(new ActionListener() {
-                    @Override public void actionPerformed(ActionEvent e) {
-                        new Thread(new Runnable() {
-                            @Override public void run() {
-                                enlarge();
-                            }
-                        }).start();
-                    }
-                });
-
-                JPanel menuPanel = new JPanel();
-                menuPanel.setBackground(Color.WHITE);
-                menuPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 3, 3));
-                menuPanel.add(enlargeBtn);
-
-                JPanel topPanel = new JPanel();
-                topPanel.setBackground(Color.WHITE);
-                topPanel.setLayout(new BorderLayout(3, 3));
-                topPanel.add(titlePanel, BorderLayout.WEST);
-                topPanel.add(menuPanel, BorderLayout.EAST);
-
                 add(chartPanel, BorderLayout.CENTER);
-                add(topPanel, BorderLayout.NORTH);
 
                 revalidate();
                 repaint();
@@ -111,26 +71,26 @@ implements ActionListener {
         });
     }
 
-    public void enlarge() {
+    public void enlarge(MyGraphLevelTopLevelNodeValueDistribution nodeValueDistribution) {
             MyProgressBar pb = new MyProgressBar(false);
             try {
-                MyDirectGraphTopLevelNodeValueDistribution nodeValueDistribution = new MyDirectGraphTopLevelNodeValueDistribution();
                 nodeValueDistribution.MAXIMIZED = true;
 
                 String[] statTableColumns = {"PROPERTY", "VALUE"};
                 String[][] statTableData = {
-                        {"MAX. VALUE", MyDirectGraphMathUtil.twoDecimalFormat(maxValue)},
-                        {"NIN. VALUE", MyDirectGraphMathUtil.twoDecimalFormat(minValue)},
-                        {"AVG. VALUE", MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat(avgValue))},
-                        {"STD. VALUE", MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat(stdValue))}
+                        {"NODES", MyMathUtil.getCommaSeperatedNumber(this.nodes.size())},
+                        {"MAX. VALUE", MyMathUtil.twoDecimalFormat(this.maxValue)},
+                        {"NIN. VALUE", MyMathUtil.twoDecimalFormat(this.minValue)},
+                        {"AVG. VALUE", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(this.avgValue))},
+                        {"STD. VALUE", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(this.stdValue))}
                 };
 
                 DefaultTableModel statTableModel = new DefaultTableModel(statTableData, statTableColumns);
                 JTable statTable = new JTable(statTableModel);
                 statTable.setBackground(Color.WHITE);
-                statTable.setFont(MyDirectGraphVars.tahomaPlainFont12);
+                statTable.setFont(MySequentialGraphVars.tahomaPlainFont12);
                 statTable.setRowHeight(22);
-                statTable.getTableHeader().setFont(MyDirectGraphVars.tahomaBoldFont11);
+                statTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont11);
                 statTable.getTableHeader().setOpaque(false);
                 statTable.getTableHeader().setBackground(new Color(0, 0, 0, 0));
                 statTable.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(100);
@@ -143,9 +103,9 @@ implements ActionListener {
                 DefaultTableModel nodeTableModel = new DefaultTableModel(nodeTableData, nodeTableColumns);
                 JTable nodeTable = new JTable(nodeTableModel);
                 nodeTable.setBackground(Color.WHITE);
-                nodeTable.setFont(MyDirectGraphVars.f_pln_12);
+                nodeTable.setFont(MySequentialGraphVars.f_pln_12);
                 nodeTable.setRowHeight(22);
-                nodeTable.getTableHeader().setFont(MyDirectGraphVars.tahomaBoldFont11);
+                nodeTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont11);
                 nodeTable.getTableHeader().setOpaque(false);
                 nodeTable.getTableHeader().setBackground(new Color(0, 0, 0, 0));
                 nodeTable.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(25);
@@ -153,16 +113,16 @@ implements ActionListener {
                 nodeTable.getTableHeader().getColumnModel().getColumn(3).setPreferredWidth(25);
 
                 int i = 0;
-                Collection<MyDirectNode> nodes = MyDirectGraphVars.directGraph.getVertices();
+                Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
                 LinkedHashMap<String, Long> valueMap = new LinkedHashMap();
-                for (MyDirectNode n : nodes) {
-                    valueMap.put(n.getName(), (long) MyDirectGraphVars.directGraph.getSuccessorCount(n));
+                for (MyNode n : nodes) {
+                    valueMap.put(n.getName(), (long) MySequentialGraphVars.g.getSuccessorCount(n));
                 }
-                valueMap = MyDirectGraphSysUtil.sortMapByLongValue(valueMap);
+                valueMap = MySequentialGraphSysUtil.sortMapByLongValue(valueMap);
 
                 for (String n : valueMap.keySet()) {
-                    String pr = MyDirectGraphMathUtil.twoDecimalFormat((double) valueMap.get(n) / MyDirectGraphVars.directGraph.maxNodeValue);
-                    nodeTableModel.addRow(new String[]{"" + (++i), n, MyDirectGraphMathUtil.getCommaSeperatedNumber(valueMap.get(n)), pr});
+                    String pr = MyMathUtil.twoDecimalFormat((double) valueMap.get(n) / MySequentialGraphVars.g.MX_N_VAL);
+                    nodeTableModel.addRow(new String[]{"" + (++i), MySequentialGraphSysUtil.getNodeName(n), MyMathUtil.getCommaSeperatedNumber(valueMap.get(n)), pr});
                 }
 
                 JScrollPane nodeTableScrollPane = new JScrollPane(nodeTable);
@@ -229,12 +189,10 @@ implements ActionListener {
                     }
                 });
 
-                f.setAlwaysOnTop(true);
                 pb.updateValue(100, 100);
                 pb.dispose();
 
                 f.setVisible(true);
-                f.setAlwaysOnTop(false);
             } catch (Exception ex) {
                 pb.updateValue(100, 100);
                 pb.dispose();
@@ -242,18 +200,48 @@ implements ActionListener {
 
     }
 
+    private Set<MyNode> nodes = null;
+
     private JFreeChart setValueChart() {
         int nodeCount = 0;
         float totalValue = 0;
 
         TreeMap<Integer, Integer> valueMap = new TreeMap<>();
-        Collection<MyDirectNode> nodes = MyDirectGraphVars.directGraph.getVertices();
-        for (MyDirectNode n : nodes) {
+        if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
+            if (MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly) {
+                nodes = MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors;
+            } else if (MySequentialGraphVars.getSequentialGraphViewer().successorsOnly) {
+                nodes = MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors;
+            } else if (MySequentialGraphVars.getSequentialGraphViewer().neighborsOnly) {
+                nodes = MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors;
+                nodes.addAll(MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors);
+            }
+        } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null && MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size() > 0) {
+            if (MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly) {
+                nodes = MySequentialGraphVars.getSequentialGraphViewer().multiNodePredecessors;
+            } else if (MySequentialGraphVars.getSequentialGraphViewer().successorsOnly) {
+                nodes = MySequentialGraphVars.getSequentialGraphViewer().multiNodeSuccessors;
+            } else if (MySequentialGraphVars.getSequentialGraphViewer().neighborsOnly) {
+                nodes = MySequentialGraphVars.getSequentialGraphViewer().multiNodePredecessors;
+                nodes.addAll(MySequentialGraphVars.getSequentialGraphViewer().multiNodeSuccessors);
+            } else if (MySequentialGraphVars.getSequentialGraphViewer().sharedNeighborsOnly) {
+                nodes = MySequentialGraphVars.getSequentialGraphViewer().sharedSuccessors;
+                nodes.addAll(MySequentialGraphVars.getSequentialGraphViewer().sharedPredecessors);
+            } else if (MySequentialGraphVars.getSequentialGraphViewer().sharedPredecessorsOly) {
+                nodes = MySequentialGraphVars.getSequentialGraphViewer().sharedPredecessors;
+            } else if (MySequentialGraphVars.getSequentialGraphViewer().sharedSuccessorsOnly) {
+                nodes = MySequentialGraphVars.getSequentialGraphViewer().sharedSuccessors;
+            }
+        } else {
+            nodes = new HashSet<>(MySequentialGraphVars.g.getVertices());
+        }
+        for (MyNode n : nodes) {
+            if (n.getCurrentValue() == 0) continue;
             int value = (int) n.getCurrentValue();
             totalValue += value;
             nodeCount++;
 
-            if (value > maxValue) {
+            if (value > this.maxValue) {
                 this.maxValue = value;
             }
 
@@ -277,7 +265,7 @@ implements ActionListener {
         this.stdValue = getNodeValueStandardDeviation(valueMap);
 
         String plotTitle = "";
-        String xaxis = "NODE VALUE DISTRIBUTION";
+        String xaxis = "NODE VALUE";
         String yaxis = "";
         PlotOrientation orientation = PlotOrientation.VERTICAL;
         boolean show = false;

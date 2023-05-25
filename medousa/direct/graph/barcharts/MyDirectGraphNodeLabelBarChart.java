@@ -1,6 +1,7 @@
-package medousa.direct.graph;
+package medousa.direct.graph.barcharts;
 
 import medousa.MyProgressBar;
+import medousa.direct.graph.MyDirectNode;
 import medousa.direct.utils.MyDirectGraphMathUtil;
 import medousa.direct.utils.MyDirectGraphSysUtil;
 import medousa.direct.utils.MyDirectGraphVars;
