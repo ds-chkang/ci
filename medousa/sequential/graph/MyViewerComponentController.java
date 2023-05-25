@@ -5,11 +5,8 @@ import medousa.direct.utils.MyDirectGraphSysUtil;
 import medousa.message.MyMessageUtil;
 import medousa.sequential.graph.listener.MyEdgeLabelSelecterListener;
 import medousa.sequential.graph.listener.MyNodeLabelSelecterListener;
-import medousa.sequential.graph.stats.MyGraphLevelNodeValueDistributionLineChart;
-import medousa.sequential.graph.stats.MyGraphLevelTopLevelNodeValueDistribution;
-import medousa.sequential.graph.stats.MyGrayCellRenderer;
+import medousa.sequential.graph.stats.*;
 import medousa.sequential.graph.stats.barchart.*;
-import medousa.sequential.graph.stats.MyTextStatistics;
 import medousa.sequential.graph.listener.MyNodeEdgeExclusionActionListener;
 import medousa.sequential.utils.*;
 import medousa.sequential.utils.MySequentialGraphSysUtil;
@@ -1363,11 +1360,16 @@ implements ActionListener {
         edgeValueDistributionBtn.setFocusable(false);
         edgeValueDistributionBtn.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
-                if (edgeValueSelecter.getSelectedIndex() > 1) {
-
-                } else {
-                    MyMessageUtil.showInfoMsg(MySequentialGraphVars.app, "Select an edge value.");
-                }
+                new Thread(new Runnable() {
+                    @Override public void run() {
+                        if (edgeValueSelecter.getSelectedIndex() > 1) {
+                            MyGraphLevelTopLevelEdgeValueDistribution graphLevelTopLevelEdgeValueDistribution = new MyGraphLevelTopLevelEdgeValueDistribution();
+                            graphLevelTopLevelEdgeValueDistribution.enlarge(graphLevelTopLevelEdgeValueDistribution);
+                        } else {
+                            MyMessageUtil.showInfoMsg(MySequentialGraphVars.app, "Select an edge value.");
+                        }
+                    }
+                }).start();
             }
         });
 

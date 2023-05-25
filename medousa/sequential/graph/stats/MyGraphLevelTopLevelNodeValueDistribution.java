@@ -6,6 +6,7 @@ import medousa.sequential.graph.MyNode;
 import medousa.sequential.utils.MyMathUtil;
 import medousa.sequential.utils.MySequentialGraphSysUtil;
 import medousa.sequential.utils.MySequentialGraphVars;
+import medousa.table.MyTableToolTipper;
 import medousa.table.MyTableUtil;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -74,8 +75,6 @@ implements ActionListener {
     public void enlarge(MyGraphLevelTopLevelNodeValueDistribution nodeValueDistribution) {
             MyProgressBar pb = new MyProgressBar(false);
             try {
-                nodeValueDistribution.MAXIMIZED = true;
-
                 String[] statTableColumns = {"PROPERTY", "VALUE"};
                 String[][] statTableData = {
                         {"NODES", MyMathUtil.getCommaSeperatedNumber(this.nodes.size())},
@@ -111,18 +110,25 @@ implements ActionListener {
                 nodeTable.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(25);
                 nodeTable.getTableHeader().getColumnModel().getColumn(2).setPreferredWidth(25);
                 nodeTable.getTableHeader().getColumnModel().getColumn(3).setPreferredWidth(25);
+                nodeTable.setSelectionForeground(Color.BLACK);
+                nodeTable.setSelectionBackground(Color.LIGHT_GRAY);
+
+                String [] nodeTableColumnTooltips = {"NO.", "NODE", "CURRENT NODE VALUE", "CURRENT NODE VALUE RATIO AGAINST MAX. NODE VALUE"};
+                MyTableToolTipper nodeTooltipHeader = new MyTableToolTipper(nodeTable.getColumnModel());
+                nodeTooltipHeader.setToolTipStrings(nodeTableColumnTooltips);
+                nodeTable.setTableHeader(nodeTooltipHeader);
 
                 int i = 0;
-                Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
-                LinkedHashMap<String, Long> valueMap = new LinkedHashMap();
-                for (MyNode n : nodes) {
-                    valueMap.put(n.getName(), (long) MySequentialGraphVars.g.getSuccessorCount(n));
+                LinkedHashMap<String, Float> valueMap = new LinkedHashMap();
+                for (MyNode n : this.nodes) {
+                    valueMap.put(n.getName(),  n.getCurrentValue());
                 }
-                valueMap = MySequentialGraphSysUtil.sortMapByLongValue(valueMap);
+                valueMap = MySequentialGraphSysUtil.sortMapByFloatValue(valueMap);
 
                 for (String n : valueMap.keySet()) {
-                    String pr = MyMathUtil.twoDecimalFormat((double) valueMap.get(n) / MySequentialGraphVars.g.MX_N_VAL);
-                    nodeTableModel.addRow(new String[]{"" + (++i), MySequentialGraphSysUtil.getNodeName(n), MyMathUtil.getCommaSeperatedNumber(valueMap.get(n)), pr});
+                    String pr = MyMathUtil.twoDecimalFormat((double) valueMap.get(n) / this.maxValue);
+                    nodeTableModel.addRow(new String[]{"" + (++i), MySequentialGraphSysUtil.getNodeName(n),
+                        MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(valueMap.get(n))), pr});
                 }
 
                 JScrollPane nodeTableScrollPane = new JScrollPane(nodeTable);
