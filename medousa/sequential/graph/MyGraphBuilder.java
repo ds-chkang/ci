@@ -289,76 +289,6 @@ public class MyGraphBuilder {
         }
     }
 
-    public void createEdges() {
-        try {
-            if (MySequentialGraphVars.isSupplementaryOn) {
-                BufferedReader br = new BufferedReader(new FileReader(MySequentialGraphSysUtil.getWorkingDir()+ MySequentialGraphSysUtil.getDirectorySlash()+"sequences.txt"));
-                String line = "";
-                Map<MyEdge, Integer> plusEdgeUniqueContributionMap = new HashMap<>();
-                while ((line = br.readLine()) != null) {
-                    String[] itemsets = line.split(MySequentialGraphVars.hyphenDelimeter);
-                    String p = itemsets[0].split(":")[0];
-                    Map<MyEdge, Integer> uniqueContributionMap = new HashMap<>();
-                    ((MyNode) MySequentialGraphVars.g.vRefs.get(p)).updateContribution(itemsets.length-1);
-                    for (int i = 1; i < itemsets.length; i++) {
-                        String [] successors = itemsets[i].split(":");
-                        String edgeRef = p+"-"+successors[0];
-                        MyEdge plusEdge = (MyEdge) MySequentialGraphVars.g.edgeRefMap.get(edgeRef);
-                        if (plusEdge == null) {
-                            MyNode pN = (MyNode) MySequentialGraphVars.g.vRefs.get(p);
-                            MyNode sN = (MyNode) MySequentialGraphVars.g.vRefs.get(successors[0]);
-                            plusEdge = new MyEdge(pN, sN);
-                            MySequentialGraphVars.g.addEdge(plusEdge, pN, sN);
-                            MySequentialGraphVars.g.edgeRefMap.put(edgeRef, plusEdge);
-                        }
-                    }
-                }
-
-                // Create edges between items.
-                br = new BufferedReader(new FileReader(MySequentialGraphSysUtil.getWorkingDir()+ MySequentialGraphSysUtil.getDirectorySlash()+"sequences.txt"));
-                while ((line = br.readLine()) != null) {
-                    String [] itemsets = line.split(MySequentialGraphVars.hyphenDelimeter);
-                    Map<MyEdge, Integer> uniqueContributionMap = new HashMap<>();
-                    for (int i=1; i < itemsets.length; i++) {
-                        String p = itemsets[i-1].split(":")[0];
-                        String s = itemsets[i].split(":")[0];
-                        String edgeRef = p + "-" + s;
-                        MyEdge plusEdge = (MyEdge) MySequentialGraphVars.g.edgeRefMap.get(edgeRef);
-                        if (plusEdge == null) {
-                            MyNode pN = (MyNode) MySequentialGraphVars.g.vRefs.get(p);
-                            MyNode sN = (MyNode) MySequentialGraphVars.g.vRefs.get(s);
-                            plusEdge = new MyEdge(pN, sN);
-                            MySequentialGraphVars.g.addEdge(plusEdge, pN, sN);
-                            MySequentialGraphVars.g.edgeRefMap.put(edgeRef, plusEdge);
-                        }
-                    }
-
-                }
-            } else { // Not supplementary variables
-                BufferedReader br = new BufferedReader(new FileReader(MySequentialGraphSysUtil.getWorkingDir()+ MySequentialGraphSysUtil.getDirectorySlash()+"sequences.txt"));
-                String line = "";
-                while ((line = br.readLine()) != null) {
-                    Map<MyEdge, Integer> uniqueContributionMap = new HashMap<>();
-                    String [] itemsets = line.split(MySequentialGraphVars.hyphenDelimeter);
-                    for (int i=1; i < itemsets.length; i++) {
-                        String p = itemsets[i-1].split(":")[0];
-                        String s = itemsets[i].split(":")[0];
-                        String edgeRef = p + "-" + s;
-                        MyEdge plusEdge = (MyEdge) MySequentialGraphVars.g.edgeRefMap.get(edgeRef);
-                        if (plusEdge == null) {
-                            MyNode pN = (MyNode) MySequentialGraphVars.g.vRefs.get(p);
-                            MyNode sN = (MyNode) MySequentialGraphVars.g.vRefs.get(s);
-                            plusEdge = new MyEdge(pN, sN);
-                            MySequentialGraphVars.g.addEdge(plusEdge, pN, sN);
-                            MySequentialGraphVars.g.edgeRefMap.put(edgeRef, plusEdge);
-                        };
-                    }
-
-                }
-            }
-        } catch (Exception ex) {ex.printStackTrace();}
-    }
-
     public void setEdgeValues() {
         try {
             JTable edgeValueTable = MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getEdgeValueTable();
@@ -537,54 +467,6 @@ public class MyGraphBuilder {
         } catch (Exception ex) {ex.printStackTrace();}
     }
 
-    public void setEdgeTimeValues() {
-        try {
-            JTable edgeValueTable = MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getEdgeValueTable();
-            for (int i = 0; i < edgeValueTable.getRowCount(); i++) {
-                String value = edgeValueTable.getValueAt(i, 0).toString();
-                String isValue = edgeValueTable.getValueAt(i, 1).toString();
-                String valueType = edgeValueTable.getValueAt(i, 2).toString();
-                if (valueType.contains("MAXIMUM")) {
-                    String file = MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + value.replaceAll(" ", "").toLowerCase() + ".edgeval";
-                    BufferedReader bw = new BufferedReader(new FileReader(file));
-                    String line = "";
-                    while ((line = bw.readLine()) != null) {
-                        String [] itemsets = line.split(":");
-                        if (itemsets.length < 4) continue;
-                        for (int k = 3; k < itemsets.length; k++) {
-                            String pred = itemsets[k-3];
-                            String succ = itemsets[k-1];
-                            String predTime = itemsets[k-2].split(MySequentialGraphVars.commaDelimeter)[0];
-                            String succTime = itemsets[k].split(MySequentialGraphVars.commaDelimeter)[0];
-                            String edgeRef = pred + "-" + succ;
-                            MyEdge edge = (MyEdge) MySequentialGraphVars.g.edgeRefMap.get(edgeRef);
-                            edge.setEdgeSumValue(value.substring(2), Math.abs(Float.valueOf(MySequentialGraphSysUtil.getTimeDifference(predTime, succTime))));
-                            k++;
-                        }
-                    }
-                } else if (valueType.contains("DIFFERENCE")) {
-                    String file = MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + value.replaceAll(" ", "").toLowerCase() + ".edgeval";
-                    BufferedReader bw = new BufferedReader(new FileReader(file));
-                    String line = "";
-                    while ((line = bw.readLine()) != null) {
-                        String [] itemsets = line.split(":");
-                        if (itemsets.length < 4) continue;
-                        for (int k = 3; k < itemsets.length; k++) {
-                            String pred = itemsets[k-3];
-                            String succ = itemsets[k-1];
-                            String predTime = itemsets[k-2].split(MySequentialGraphVars.commaDelimeter)[0];
-                            String succTime = itemsets[k].split(MySequentialGraphVars.commaDelimeter)[0];
-                            String edgeRef = pred + "-" + succ;
-                            MyEdge edge = (MyEdge) MySequentialGraphVars.g.edgeRefMap.get(edgeRef);
-                            edge.setEdgeSumValue(value.substring(2), Math.abs(Float.valueOf(MySequentialGraphSysUtil.getTimeDifference(predTime, succTime))));
-                            k++;
-                        }
-                    }
-                }
-            }
-        } catch (Exception ex) {ex.printStackTrace();}
-    }
-
     public void setEndNodeCount() {
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
         for (MyNode n : nodes) {
@@ -723,6 +605,32 @@ public class MyGraphBuilder {
                 float avgLength = (totalLength == 0 ? 0 : (float) totalLength / lengths.size());
                 ((MyNode) MySequentialGraphVars.g.vRefs.get(n)).setAverageRecurrenceLength(avgLength);
             }
+        }
+    }
+
+    public void setNodeContributionCountByObject() {
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(new File(
+                MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "sequencesWithObjectIDs.txt")));
+            String line = "";
+            int i= (MySequentialGraphVars.isSupplementaryOn ? 2 : 1);
+            while ((line = br.readLine()) != null) {
+                String [] itemsets = line.split(MySequentialGraphVars.hyphenDelimeter);
+                String objectID = itemsets[0];
+                for (; i < itemsets.length; i++) {
+                    String itemset = itemsets[i].split(":")[0];
+                    MyNode n = (MyNode) MySequentialGraphVars.g.vRefs.get(itemset);
+                    if (itemset.equals(n.getName())) {
+                        if (n.contributionCountMapByObjectID.containsKey(objectID)) {
+                            n.contributionCountMapByObjectID.put(objectID, n.contributionCountMapByObjectID.get(objectID) + 1);
+                        } else {
+                            n.contributionCountMapByObjectID.put(objectID, 1);
+                        }
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 

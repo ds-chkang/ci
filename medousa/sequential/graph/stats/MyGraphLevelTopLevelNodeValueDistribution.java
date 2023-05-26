@@ -34,47 +34,39 @@ implements ActionListener {
     private float avgValue = 0;
     private float stdValue = 0;
 
-    public MyGraphLevelTopLevelNodeValueDistribution() {
-        decorate();
-    }
+    public MyGraphLevelTopLevelNodeValueDistribution() {}
 
     public void decorate() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override public void run() {
-                removeAll();
-                setLayout(new BorderLayout(3, 3));
-                setBackground(Color.WHITE);
+        setLayout(new BorderLayout(3, 3));
+        setBackground(Color.WHITE);
 
-                ChartPanel chartPanel = new ChartPanel(setValueChart());
-                chartPanel.getChart().getCategoryPlot().setRangeGridlinePaint(Color.DARK_GRAY);
-                chartPanel.getChart().getCategoryPlot().setDomainGridlinePaint(Color.DARK_GRAY);
-                chartPanel.getChart().getCategoryPlot().setBackgroundPaint(Color.WHITE);
-                chartPanel.getChart().getCategoryPlot().getDomainAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont10);
-                chartPanel.getChart().getCategoryPlot().getDomainAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont10);
-                chartPanel.getChart().getCategoryPlot().getRangeAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont10);
-                chartPanel.getChart().getCategoryPlot().getRangeAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont10);
+        ChartPanel chartPanel = new ChartPanel(setValueChart());
+        chartPanel.getChart().getCategoryPlot().setRangeGridlinePaint(Color.DARK_GRAY);
+        chartPanel.getChart().getCategoryPlot().setDomainGridlinePaint(Color.DARK_GRAY);
+        chartPanel.getChart().getCategoryPlot().setBackgroundPaint(Color.WHITE);
+        chartPanel.getChart().getCategoryPlot().getDomainAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont10);
+        chartPanel.getChart().getCategoryPlot().getDomainAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont10);
+        chartPanel.getChart().getCategoryPlot().getRangeAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont10);
+        chartPanel.getChart().getCategoryPlot().getRangeAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont10);
 
-                CategoryAxis domainAxis = chartPanel.getChart().getCategoryPlot().getDomainAxis();
-                domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_90);
+        CategoryAxis domainAxis = chartPanel.getChart().getCategoryPlot().getDomainAxis();
+        domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_90);
 
-                BarRenderer barRenderer = (BarRenderer) chartPanel.getChart().getCategoryPlot().getRenderer();
-                barRenderer.setSeriesPaint(0, new Color(0, 0, 0, 0.25f));//Color.LIGHT_GRAY);//Color.decode("#2084FE"));
-                barRenderer.setShadowPaint(Color.WHITE);
-                barRenderer.setBaseFillPaint(Color.decode("#07CF61"));
-                barRenderer.setBarPainter(new StandardBarPainter());
-                barRenderer.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont11);
+        BarRenderer barRenderer = (BarRenderer) chartPanel.getChart().getCategoryPlot().getRenderer();
+        barRenderer.setSeriesPaint(0, new Color(0, 0, 0, 0.25f));//Color.LIGHT_GRAY);//Color.decode("#2084FE"));
+        barRenderer.setShadowPaint(Color.WHITE);
+        barRenderer.setBaseFillPaint(Color.decode("#07CF61"));
+        barRenderer.setBarPainter(new StandardBarPainter());
+        barRenderer.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont11);
 
-                add(chartPanel, BorderLayout.CENTER);
-
-                revalidate();
-                repaint();
-            }
-        });
+        add(chartPanel, BorderLayout.CENTER);
     }
 
-    public void enlarge(MyGraphLevelTopLevelNodeValueDistribution nodeValueDistribution) {
+    public void enlarge() {
             MyProgressBar pb = new MyProgressBar(false);
             try {
+                this.decorate();
+
                 String[] statTableColumns = {"PROPERTY", "VALUE"};
                 String[][] statTableData = {
                         {"NODES", MyMathUtil.getCommaSeperatedNumber(this.nodes.size())},
@@ -140,7 +132,7 @@ implements ActionListener {
                 nodeSelectBtn.setFocusable(false);
                 nodeSearchTxt.setBackground(Color.WHITE);
                 nodeSearchTxt.setBorder(BorderFactory.createLoweredSoftBevelBorder());
-                JPanel nodeTableSearchPanel = MyTableUtil.searchAndSaveDataPanelForJTable2(nodeValueDistribution, nodeSearchTxt, nodeSelectBtn, nodeTableModel, nodeTable);
+                JPanel nodeTableSearchPanel = MyTableUtil.searchAndSaveDataPanelForJTable2(this, nodeSearchTxt, nodeSelectBtn, nodeTableModel, nodeTable);
                 nodeSearchTxt.setFont(MyDirectGraphVars.f_bold_12);
                 nodeSearchTxt.setToolTipText("TYPE A NODE NAME TO SEARCH");
                 nodeSearchTxt.setPreferredSize(new Dimension(90, 19));
@@ -157,17 +149,6 @@ implements ActionListener {
                 f.setBackground(Color.WHITE);
                 f.setPreferredSize(new Dimension(550, 450));
                 f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                f.addMouseListener(new MouseAdapter() {
-                    @Override public void mouseEntered(MouseEvent e) {
-                        super.mouseEntered(e);
-                        f.setAlwaysOnTop(true);
-                    }
-
-                    @Override public void mouseExited(MouseEvent e) {
-                        super.mouseExited(e);
-                        f.setAlwaysOnTop(false);
-                    }
-                });
 
                 JSplitPane tableSplitPane = new JSplitPane();
                 tableSplitPane.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
@@ -179,7 +160,7 @@ implements ActionListener {
 
                 JSplitPane contentPane = new JSplitPane();
                 contentPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
-                contentPane.setLeftComponent(nodeValueDistribution);
+                contentPane.setLeftComponent(this);
                 contentPane.setRightComponent(tableSplitPane);
                 contentPane.getRightComponent().setBackground(Color.WHITE);
                 contentPane.setDividerSize(5);
@@ -190,14 +171,13 @@ implements ActionListener {
                 f.addComponentListener(new ComponentAdapter() {
                     @Override public void componentResized(ComponentEvent e) {
                         super.componentResized(e);
-                        contentPane.setDividerLocation(0.86);
+                        contentPane.setDividerLocation(0.84);
                         tableSplitPane.setDividerLocation(0.20);
                     }
                 });
 
                 pb.updateValue(100, 100);
                 pb.dispose();
-
                 f.setVisible(true);
             } catch (Exception ex) {
                 pb.updateValue(100, 100);

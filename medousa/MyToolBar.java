@@ -160,15 +160,6 @@ implements ActionListener {
                             pb.updateValue(60, 100);
 
                             if (selectedTabIdx == 1) {
-                                /**if (MyDirectGraphVars.directGraph != null) {
-                                    synchronized (MyDirectGraphVars.directGraph) {
-                                        int response = MyMessageUtil.showConfirmMessage("Would you like to save the current direct graph?");
-                                        if (response == 1) {
-                                            MyNetworkSerializer networkSerializer = new MyNetworkSerializer();
-                                            networkSerializer.serializeNetworkToFile();
-                                        }
-                                    }
-                                }*/
                                 MyDirectGraphSysUtil.initVariables();
                                 MyDirectGraphConfigPanel directConfigPanel = new MyDirectGraphConfigPanel();
                                 MyDirectGraphVars.app.getDirectGraphMsgBroker().setDirectConfigPanel(directConfigPanel);
@@ -178,21 +169,7 @@ implements ActionListener {
                                 }
                                 MyDirectGraphVars.app.getContentTabbedPane().addTab("      CONFIGURATION       ", scrollPane);
                                 MyDirectGraphVars.app.getContentTabbedPane().addTab("      DASHBOARD       ", MyDirectGraphVars.app.resetDirectGraphDashBoard());
-
-                                //setButton(runBtn, run_img_icon, "Discover relations", false);
-                                //setButton(networkBtn, network_img_icon, "Network Analyses", false);
                             } else if (selectedTabIdx == 2) {
-                                /**
-                                if (MySequentialGraphVars.g != null) {
-                                    synchronized (MySequentialGraphVars.g) {
-                                        int response = MyMessageUtil.showConfirmMessage("Would you like to save the current sequential graph?");
-                                        if (response == 1) {
-                                            MyNetworkSerializer networkSerializer = new MyNetworkSerializer();
-                                            networkSerializer.serializeNetworkToFile();
-                                        }
-                                        MySequentialGraphSysUtil.initVariables();
-                                    }
-                                }*/
                                 MySequentialGraphSysUtil.initVariables();
                                 MySequentialGraphConfigPanel sequentialGraphConfigPanel = new MySequentialGraphConfigPanel();
                                 MySequentialGraphVars.app.getSequentialGraphMsgBroker().setSequentialConfigPanel(sequentialGraphConfigPanel);
@@ -204,6 +181,11 @@ implements ActionListener {
                                 setButton(inputBtn, input_img_icon, "FUNNEL EXPLORER", false);
                                 setButton(runBtn, run_img_icon, "CREATE NETWORK", false);
                                 setButton(funnelBtn, funnel_img_icon, "Funnel Analyses", false);
+
+                                headerBtn.setEnabled(true);
+                                headerBtn.setVisible(true);
+                                inputBtn.setVisible(true);
+                                runBtn.setVisible(true);
 
                                 funnelBtn.setVisible(false);
                             }
@@ -236,8 +218,9 @@ implements ActionListener {
                 new Thread(new Runnable() {
                     @Override public void run() {
                         try {
-                            if (projectMenuComboBox.getSelectedIndex() == 0) {setInitialToolbar();}
-                            else {setToolBar();}
+                            if (projectMenuComboBox.getSelectedIndex() == 0) {
+                                setInitialToolbar();
+                            } else {setToolBar();}
                         } catch (Exception ex) {}
                     }
                 }).start();
@@ -247,7 +230,6 @@ implements ActionListener {
 
     private void setLogoToolBar() {
         this.logoToolBar = new JToolBar();
-        //this.logoToolBar.setBorder(BorderFactory.createRaisedBevelBorder());
         this.logoToolBar.setBackground(Color.decode("#D6D9DF"));
         this.logoToolBar.setLayout(new BorderLayout(0,0));
         this.logoToolBar.setPreferredSize(new Dimension(169, 28));
@@ -317,7 +299,6 @@ implements ActionListener {
                     new Thread(new Runnable() {
                         @Override public void run() {
                             try {
-                                inputBtn.setEnabled(false);
                                 JFileChooser fc = new JFileChooser();
                                 fc.setFocusable(false);
                                 fc.setFont(MySequentialGraphVars.f_pln_12);
@@ -364,6 +345,10 @@ implements ActionListener {
                                 new Thread(new Runnable() {
                                     @Override public void run() {
                                         try {
+                                            headerBtn.setVisible(false);
+                                            inputBtn.setVisible(false);
+                                            runBtn.setVisible(false);
+
                                             MyFRLayout layout = new MyFRLayout<>(MySequentialGraphVars.app.getSequentialGraphMsgBroker().createGraph(pb), new Dimension(5500, 4500));
                                             MySequentialGraphVars.app.setSequentialGrpahViewer(MySequentialGraphVars.app.getSequentialGraphMsgBroker().createSequentialGraphView(layout, new Dimension(5500, 4500)));
 
@@ -393,12 +378,19 @@ implements ActionListener {
                                         } catch (Exception ex) {
                                             pb.updateValue(100, 100);
                                             pb.dispose();
+
+                                            headerBtn.setVisible(true);
+                                            inputBtn.setVisible(true);
+                                            runBtn.setVisible(true);
+
+                                            headerBtn.setEnabled(true);
+                                            inputBtn.setEnabled(false);
+                                            runBtn.setEnabled(false);
+
                                             funnelBtn.setVisible(false);
                                             MyMessageUtil.showInfoMsg("<html><body>An exception has occurred while creating a network.<br>Please, check the information provided in the configuration panel.</body></html>");
                                         } finally {
-                                            headerBtn.setVisible(false);
-                                            inputBtn.setVisible(false);
-                                            runBtn.setVisible(false);
+
                                         }
                                     }
                                 }).start();

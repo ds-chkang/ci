@@ -137,6 +137,7 @@ implements ActionListener {
     public JComboBox edgeLabelExcludeSelecter = new JComboBox();
     public JComboBox depthExcludeSelecter = new JComboBox();
     public JComboBox depthExcludeSymbolSelecter = new JComboBox();
+    public JComboBox distributionSelecter = new JComboBox();
     public JComboBox edgeLabelValueExcludeSelecter = new JComboBox();
     public JComboBox selectedNodeNeighborNodeTypeSelector = new JComboBox();
     public JComboBox depthNeighborNodeTypeSelector = new JComboBox();
@@ -169,11 +170,11 @@ implements ActionListener {
     JPanel shortestDistanceDestTablePanel;
     public boolean isTableUpdating;
     public Set<MyNode> visitedNodes;
-    public JLabel edgeLabelExcludeComboBoxMenuLabel = new JLabel("   E. L.");
+    public JLabel edgeLabelExcludeComboBoxMenuLabel = new JLabel(" E. L.");
     public JLabel edgeLabelLabel = new JLabel("  E. L.");
     public JLabel edgeValueLabel = new JLabel("   E. V.");
-    public JLabel edgeValueExludeLabel = new JLabel("  E. V.");
-    public JLabel nodeLabelLabel = new JLabel("  N. L.");
+    public JLabel edgeValueExludeLabel = new JLabel(" E. V.");
+    public JLabel nodeLabelLabel = new JLabel(" N. L.");
 
     public MyViewerComponentController() {}
 
@@ -1133,7 +1134,9 @@ implements ActionListener {
         this.edgeLabelSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.edgeLabelSelecter.setBackground(Color.WHITE);
         this.edgeLabelSelecter.addItem("NONE");
-        for (String edgeLabel : MySequentialGraphVars.userDefinedEdgeLabelSet) {this.edgeLabelSelecter.addItem(edgeLabel);}
+        for (String edgeLabel : MySequentialGraphVars.userDefinedEdgeLabelSet) {
+            this.edgeLabelSelecter.addItem(edgeLabel);
+        }
         this.edgeLabelSelecter.addActionListener(this);
 
         nodeLabelLabel.setToolTipText("NODE LABEL");
@@ -1145,7 +1148,9 @@ implements ActionListener {
         this.nodeLabelSelecter.setBackground(Color.WHITE);
         this.nodeLabelSelecter.addItem("NONE");
         this.nodeLabelSelecter.addItem("NAME");
-        for (String nodeLabel : MySequentialGraphVars.userDefinedNodeLabelSet) {this.nodeLabelSelecter.addItem(nodeLabel);}
+        for (String nodeLabel : MySequentialGraphVars.userDefinedNodeLabelSet) {
+            this.nodeLabelSelecter.addItem(nodeLabel);
+        }
         this.nodeLabelSelecter.setSelectedIndex(1);
         this.nodeLabelSelecter.addActionListener(this);
 
@@ -1264,8 +1269,55 @@ implements ActionListener {
             this.topLeftPanel.add(this.nodeLabelValueExcludeSelecter);
         }
 
-        edgeLabelExcludeComboBoxMenuLabel.setBackground(Color.WHITE);
-        edgeLabelExcludeComboBoxMenuLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.edgeLabelExcludeComboBoxMenuLabel.setBackground(Color.WHITE);
+        this.edgeLabelExcludeComboBoxMenuLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
+
+        this.distributionSelecter.setBackground(Color.WHITE);
+        this.distributionSelecter.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.distributionSelecter.setFocusable(false);
+        this.distributionSelecter.setToolTipText("SELECT A DISTRIBUTION");
+        this.distributionSelecter.addItem("DIST.");
+        this.distributionSelecter.addItem("C. D. BY OBJ.");
+        if (MySequentialGraphVars.isTimeOn) {
+            this.distributionSelecter.addItem("R. T. BY OBJ.");
+        }
+        String[] distributionSelecterTooltips = new String[15];
+        distributionSelecterTooltips[0] = "SELECT A DISTRIBUTION";
+        distributionSelecterTooltips[1] = "CONTRIBUTION COUNT DISTRIBUTION BY OBJECT";
+        if (MySequentialGraphVars.isTimeOn) {
+            distributionSelecterTooltips[2] = "TOTAL REACH TIME DISTRIBUTION BY OBJECT";
+        }
+        this.distributionSelecter.setRenderer(new MyComboBoxTooltipRenderer(distributionSelecterTooltips));
+        this.distributionSelecter.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                if (MySequentialGraphVars.isTimeOn) {
+                    if (distributionSelecter.getSelectedIndex() == 1) {
+                        new Thread(new Runnable() {
+                            @Override public void run() {
+                                MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution graphLevelContributionCountByObjectIDDistribution = new MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution();
+                                graphLevelContributionCountByObjectIDDistribution.enlarge();
+                            }
+                        }).start();
+                    } else if (distributionSelecter.getSelectedIndex() == 2) {
+                        new Thread(new Runnable() {
+                            @Override public void run() {
+                                MyGraphLevelTopLevelReachTimeByObjectIDDistribution graphLevelTopLevelReachTimeByObjectIDDistribution = new MyGraphLevelTopLevelReachTimeByObjectIDDistribution();
+                                graphLevelTopLevelReachTimeByObjectIDDistribution.enlarge();
+                            }
+                        }).start();
+                    }
+                } else {
+                    if (distributionSelecter.getSelectedIndex() == 1) {
+                        new Thread(new Runnable() {
+                            @Override public void run() {
+                                MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution graphLevelContributionCountByObjectIDDistribution = new MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution();
+                                graphLevelContributionCountByObjectIDDistribution.enlarge();
+                            }
+                        }).start();
+                    }
+                }
+            }
+        });
 
         this.edgeLabelExcludeMathSymbolSelecter.setBackground(Color.WHITE);
         this.edgeLabelExcludeMathSymbolSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
@@ -1303,11 +1355,11 @@ implements ActionListener {
 
         this.clusteringSectorLabel.setBackground(Color.WHITE);
         this.clusteringSectorLabel.setToolTipText("FIND CLUSTERS");
-        this.clusteringSectorLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.clusteringSectorLabel.setFont(MySequentialGraphVars.tahomaPlainFont11);
 
         this.clusteringSelector.setBackground(Color.WHITE);
         this.clusteringSelector.setToolTipText("FIND CLUSTERS");
-        this.clusteringSelector.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.clusteringSelector.setFont(MySequentialGraphVars.tahomaPlainFont11);
         this.clusteringSelector.setFocusable(false);
         this.clusteringSelector.addItem("");
         this.clusteringSelector.addItem("BTW.");
@@ -1356,7 +1408,8 @@ implements ActionListener {
         JButton edgeValueDistributionBtn = new JButton("E. V.");
         edgeValueDistributionBtn.setBackground(Color.WHITE);
         edgeValueDistributionBtn.setToolTipText("CURRENT EDGE VALUE DISTRIBUTION");
-        edgeValueDistributionBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        edgeValueDistributionBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        edgeValueDistributionBtn.setPreferredSize(new Dimension(50, 22));
         edgeValueDistributionBtn.setFocusable(false);
         edgeValueDistributionBtn.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
@@ -1364,7 +1417,7 @@ implements ActionListener {
                     @Override public void run() {
                         if (edgeValueSelecter.getSelectedIndex() > 1) {
                             MyGraphLevelTopLevelEdgeValueDistribution graphLevelTopLevelEdgeValueDistribution = new MyGraphLevelTopLevelEdgeValueDistribution();
-                            graphLevelTopLevelEdgeValueDistribution.enlarge(graphLevelTopLevelEdgeValueDistribution);
+                            graphLevelTopLevelEdgeValueDistribution.enlarge();
                         } else {
                             MyMessageUtil.showInfoMsg(MySequentialGraphVars.app, "Select an edge value.");
                         }
@@ -1376,14 +1429,15 @@ implements ActionListener {
         JButton nodeValueDistributionBtn = new JButton("N. V.");
         nodeValueDistributionBtn.setBackground(Color.WHITE);
         nodeValueDistributionBtn.setToolTipText("CURRENT NODE VALUE DISTRIBUTION");
-        nodeValueDistributionBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        nodeValueDistributionBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        nodeValueDistributionBtn.setPreferredSize(new Dimension(52, 22));
         nodeValueDistributionBtn.setFocusable(false);
         nodeValueDistributionBtn.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 new Thread(new Runnable() {
                     @Override public void run() {
                         MyGraphLevelTopLevelNodeValueDistribution graphLevelTopLevelNodeValueDistribution = new MyGraphLevelTopLevelNodeValueDistribution();
-                        graphLevelTopLevelNodeValueDistribution.enlarge(graphLevelTopLevelNodeValueDistribution);
+                        graphLevelTopLevelNodeValueDistribution.enlarge();
                     }
                 }).start();
             }
@@ -1402,6 +1456,7 @@ implements ActionListener {
         topRightPanel.add(this.clusteringSelector);
         topRightPanel.add(nodeValueDistributionBtn);
         topRightPanel.add(edgeValueDistributionBtn);
+        topRightPanel.add(distributionSelecter);
 
         topPanel.add(topRightPanel, BorderLayout.EAST);
         topPanel.add(this.topLeftPanel, BorderLayout.WEST);

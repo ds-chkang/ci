@@ -35,165 +35,168 @@ implements ActionListener {
     private float stdValue = 0;
 
     public MyGraphLevelTopLevelEdgeValueDistribution() {
-        decorate();
+
     }
 
-    public synchronized void decorate() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override public void run() {
-                setLayout(new BorderLayout(3, 3));
-                setBackground(Color.WHITE);
+    public void decorate() {
+        setLayout(new BorderLayout(3, 3));
+        setBackground(Color.WHITE);
 
-                ChartPanel chartPanel = new ChartPanel(setValueChart());
-                chartPanel.getChart().getCategoryPlot().setRangeGridlinePaint(Color.DARK_GRAY);
-                chartPanel.getChart().getCategoryPlot().setDomainGridlinePaint(Color.DARK_GRAY);
-                chartPanel.getChart().getCategoryPlot().setBackgroundPaint(Color.WHITE);
-                chartPanel.getChart().getCategoryPlot().getDomainAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont10);
-                chartPanel.getChart().getCategoryPlot().getDomainAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont10);
-                chartPanel.getChart().getCategoryPlot().getRangeAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont10);
-                chartPanel.getChart().getCategoryPlot().getRangeAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont10);
+        ChartPanel chartPanel = new ChartPanel(setValueChart());
+        chartPanel.getChart().getCategoryPlot().setRangeGridlinePaint(Color.DARK_GRAY);
+        chartPanel.getChart().getCategoryPlot().setDomainGridlinePaint(Color.DARK_GRAY);
+        chartPanel.getChart().getCategoryPlot().setBackgroundPaint(Color.WHITE);
+        chartPanel.getChart().getCategoryPlot().getDomainAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont10);
+        chartPanel.getChart().getCategoryPlot().getDomainAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont10);
+        chartPanel.getChart().getCategoryPlot().getRangeAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont10);
+        chartPanel.getChart().getCategoryPlot().getRangeAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont10);
 
-                CategoryAxis domainAxis = chartPanel.getChart().getCategoryPlot().getDomainAxis();
-                domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_90);
+        CategoryAxis domainAxis = chartPanel.getChart().getCategoryPlot().getDomainAxis();
+        domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_90);
 
-                BarRenderer barRenderer = (BarRenderer) chartPanel.getChart().getCategoryPlot().getRenderer();
-                barRenderer.setSeriesPaint(0, new Color(0, 0, 0, 0.25f));//Color.LIGHT_GRAY);//Color.decode("#2084FE"));
-                barRenderer.setShadowPaint(Color.WHITE);
-                barRenderer.setBaseFillPaint(Color.decode("#07CF61"));
-                barRenderer.setBarPainter(new StandardBarPainter());
-                barRenderer.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont11);
+        BarRenderer barRenderer = (BarRenderer) chartPanel.getChart().getCategoryPlot().getRenderer();
+        barRenderer.setSeriesPaint(0, new Color(0, 0, 0, 0.25f));//Color.LIGHT_GRAY);//Color.decode("#2084FE"));
+        barRenderer.setShadowPaint(Color.WHITE);
+        barRenderer.setBaseFillPaint(Color.decode("#07CF61"));
+        barRenderer.setBarPainter(new StandardBarPainter());
+        barRenderer.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont11);
 
-                add(chartPanel, BorderLayout.CENTER);
+        add(chartPanel, BorderLayout.CENTER);
+    }
+
+    public void enlarge() {
+        MyProgressBar pb = new MyProgressBar(false);
+        try {
+            this.decorate();
+
+            String[] edgeStatTableColumns = {"PROPERTY", "VALUE"};
+            String[][] edgeStatTableData = {
+                    {"EDGES", MyMathUtil.getCommaSeperatedNumber(this.edges.size())},
+                    {"MAX. VALUE", MyMathUtil.twoDecimalFormat(this.maxValue)},
+                    {"NIN. VALUE", MyMathUtil.twoDecimalFormat(this.minValue)},
+                    {"AVG. VALUE", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(this.avgValue))},
+                    {"STD. VALUE", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(this.stdValue))}
+            };
+
+            DefaultTableModel edgeStatTableModel = new DefaultTableModel(edgeStatTableData, edgeStatTableColumns);
+            JTable edgeStatTable = new JTable(edgeStatTableModel);
+            edgeStatTable.setBackground(Color.WHITE);
+            edgeStatTable.setFont(MySequentialGraphVars.tahomaPlainFont12);
+            edgeStatTable.setRowHeight(22);
+            edgeStatTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont11);
+            edgeStatTable.getTableHeader().setOpaque(false);
+            edgeStatTable.getTableHeader().setBackground(new Color(0, 0, 0, 0));
+            edgeStatTable.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(100);
+
+            JScrollPane edgeStatTableScrollPane = new JScrollPane(edgeStatTable);
+            edgeStatTableScrollPane.setBackground(Color.WHITE);
+
+            String[] edgeTableColumns = {"NO.", "S.", "D.", "V.", "V. R."};
+            String[][] edgeTableData = {};
+
+            DefaultTableModel edgeTableModel = new DefaultTableModel(edgeTableData, edgeTableColumns);
+            JTable edgeTable = new JTable(edgeTableModel);
+            edgeTable.setBackground(Color.WHITE);
+            edgeTable.setFont(MySequentialGraphVars.f_pln_12);
+            edgeTable.setRowHeight(22);
+            edgeTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont11);
+            edgeTable.getTableHeader().setOpaque(false);
+            edgeTable.getTableHeader().setBackground(new Color(0, 0, 0, 0));
+            edgeTable.setSelectionForeground(Color.BLACK);
+            edgeTable.setSelectionBackground(Color.LIGHT_GRAY);
+            edgeTable.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(35);
+            edgeTable.getTableHeader().getColumnModel().getColumn(3).setPreferredWidth(35);
+            edgeTable.getTableHeader().getColumnModel().getColumn(4).setPreferredWidth(35);
+
+            String[] edgeTableColumnTooltips = {"NO.", "SOURCE", "DEST", "CURRENT EDGE VALUE", "CURRENT EDGE VALUE RATIO AGAINST MAX. EDGE VALUE"};
+            MyTableToolTipper edgeTooltipHeader = new MyTableToolTipper(edgeTable.getColumnModel());
+            edgeTooltipHeader.setToolTipStrings(edgeTableColumnTooltips);
+            edgeTable.setTableHeader(edgeTooltipHeader);
+
+            int i = 0;
+            LinkedHashMap<String, Float> valueMap = new LinkedHashMap();
+            for (MyEdge e : this.edges) {
+                String edgeName = e.getSource().getName() + "-" + e.getDest().getName();
+                valueMap.put(edgeName, e.getCurrentValue());
             }
-        });
-    }
+            valueMap = MySequentialGraphSysUtil.sortMapByFloatValue(valueMap);
 
-    public void enlarge(MyGraphLevelTopLevelEdgeValueDistribution edgeValueDistribution) {
-            try {
-                String[] edgeStatTableColumns = {"PROPERTY", "VALUE"};
-                String[][] edgeStatTableData = {
-                        {"EDGES", MyMathUtil.getCommaSeperatedNumber(this.edges.size())},
-                        {"MAX. VALUE", MyMathUtil.twoDecimalFormat(this.maxValue)},
-                        {"NIN. VALUE", MyMathUtil.twoDecimalFormat(this.minValue)},
-                        {"AVG. VALUE", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(this.avgValue))},
-                        {"STD. VALUE", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(this.stdValue))}
-                };
-
-                DefaultTableModel edgeStatTableModel = new DefaultTableModel(edgeStatTableData, edgeStatTableColumns);
-                JTable edgeStatTable = new JTable(edgeStatTableModel);
-                edgeStatTable.setBackground(Color.WHITE);
-                edgeStatTable.setFont(MySequentialGraphVars.tahomaPlainFont12);
-                edgeStatTable.setRowHeight(22);
-                edgeStatTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont11);
-                edgeStatTable.getTableHeader().setOpaque(false);
-                edgeStatTable.getTableHeader().setBackground(new Color(0, 0, 0, 0));
-                edgeStatTable.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(100);
-
-                JScrollPane edgeStatTableScrollPane = new JScrollPane(edgeStatTable);
-                edgeStatTableScrollPane.setBackground(Color.WHITE);
-
-                String[] edgeTableColumns = {"NO.", "S.", "D.", "V.", "V. R."};
-                String[][] edgeTableData = {};
-
-                DefaultTableModel edgeTableModel = new DefaultTableModel(edgeTableData, edgeTableColumns);
-                JTable edgeTable = new JTable(edgeTableModel);
-                edgeTable.setBackground(Color.WHITE);
-                edgeTable.setFont(MySequentialGraphVars.f_pln_12);
-                edgeTable.setRowHeight(22);
-                edgeTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont11);
-                edgeTable.getTableHeader().setOpaque(false);
-                edgeTable.getTableHeader().setBackground(new Color(0, 0, 0, 0));
-                edgeTable.setSelectionForeground(Color.BLACK);
-                edgeTable.setSelectionBackground(Color.LIGHT_GRAY);
-                edgeTable.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(35);
-                edgeTable.getTableHeader().getColumnModel().getColumn(3).setPreferredWidth(35);
-                edgeTable.getTableHeader().getColumnModel().getColumn(4).setPreferredWidth(35);
-
-                String [] edgeTableColumnTooltips = {"NO.", "SOURCE", "DEST", "CURRENT EDGE VALUE", "CURRENT EDGE VALUE RATIO AGAINST MAX. EDGE VALUE"};
-                MyTableToolTipper edgeTooltipHeader = new MyTableToolTipper(edgeTable.getColumnModel());
-                edgeTooltipHeader.setToolTipStrings(edgeTableColumnTooltips);
-                edgeTable.setTableHeader(edgeTooltipHeader);
-
-                int i = 0;
-                LinkedHashMap<String, Float> valueMap = new LinkedHashMap();
-                for (MyEdge e : this.edges) {
-                    String edgeName = e.getSource().getName() + "-" + e.getDest().getName();
-                    valueMap.put(edgeName, e.getCurrentValue());
-                }
-                valueMap = MySequentialGraphSysUtil.sortMapByFloatValue(valueMap);
-
-                for (String e : valueMap.keySet()) {
-                    String pr = MyMathUtil.twoDecimalFormat((double) valueMap.get(e) / this.maxValue);
-                    String [] nodes = e.split("-");
-                    edgeTableModel.addRow(new String[]{
+            for (String e : valueMap.keySet()) {
+                String pr = MyMathUtil.twoDecimalFormat((double) valueMap.get(e) / this.maxValue);
+                String[] nodes = e.split("-");
+                edgeTableModel.addRow(new String[]{
                         "" + (++i),
                         MySequentialGraphSysUtil.getNodeName(nodes[0]),
                         MySequentialGraphSysUtil.getNodeName(nodes[1]),
                         MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(valueMap.get(e))),
                         pr});
+            }
+
+            JScrollPane nodeTableScrollPane = new JScrollPane(edgeTable);
+            nodeTableScrollPane.setBackground(Color.WHITE);
+
+            JTextField edgeSearchTxt = new JTextField();
+            JButton edgeSelectBtn = new JButton("SEL.");
+            edgeSelectBtn.setFont(MyDirectGraphVars.tahomaPlainFont12);
+            edgeSelectBtn.setFocusable(false);
+            edgeSearchTxt.setBackground(Color.WHITE);
+            edgeSearchTxt.setBorder(BorderFactory.createLoweredSoftBevelBorder());
+            JPanel edgeTableSearchPanel = MyTableUtil.searchAndSaveDataPanelForJTable2(this, edgeSearchTxt, edgeSelectBtn, edgeTableModel, edgeTable);
+            edgeSearchTxt.setFont(MyDirectGraphVars.f_bold_12);
+            edgeSearchTxt.setToolTipText("TYPE AN EDGE NAME TO SEARCH");
+            edgeSearchTxt.setPreferredSize(new Dimension(90, 19));
+            edgeSelectBtn.setPreferredSize(new Dimension(54, 19));
+            edgeTableSearchPanel.remove(edgeSelectBtn);
+
+            JPanel edgeTablePanel = new JPanel();
+            edgeTablePanel.setBackground(Color.WHITE);
+            edgeTablePanel.setLayout(new BorderLayout(3, 3));
+            edgeTablePanel.add(nodeTableScrollPane, BorderLayout.CENTER);
+            edgeTablePanel.add(edgeTableSearchPanel, BorderLayout.SOUTH);
+
+            JFrame f = new JFrame(" EDGE VALUE DISTRIBUTION");
+            f.setBackground(Color.WHITE);
+            f.setPreferredSize(new Dimension(550, 450));
+            f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+            JSplitPane tableSplitPane = new JSplitPane();
+            tableSplitPane.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+            tableSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+            tableSplitPane.setTopComponent(edgeStatTableScrollPane);
+            tableSplitPane.setBottomComponent(edgeTablePanel);
+            tableSplitPane.getRightComponent().setBackground(Color.WHITE);
+            tableSplitPane.setDividerSize(5);
+
+            JSplitPane contentPane = new JSplitPane();
+            contentPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
+            contentPane.setLeftComponent(this);
+            contentPane.setRightComponent(tableSplitPane);
+            contentPane.getRightComponent().setBackground(Color.WHITE);
+            contentPane.setDividerSize(5);
+
+            f.setLayout(new BorderLayout(3, 3));
+            f.getContentPane().add(contentPane, BorderLayout.CENTER);
+            f.pack();
+            f.addComponentListener(new ComponentAdapter() {
+                @Override
+                public void componentResized(ComponentEvent e) {
+                    super.componentResized(e);
+                    contentPane.setDividerLocation(0.81);
+                    tableSplitPane.setDividerLocation(0.20);
                 }
-
-                JScrollPane nodeTableScrollPane = new JScrollPane(edgeTable);
-                nodeTableScrollPane.setBackground(Color.WHITE);
-
-                JTextField edgeSearchTxt = new JTextField();
-                JButton edgeSelectBtn = new JButton("SEL.");
-                edgeSelectBtn.setFont(MyDirectGraphVars.tahomaPlainFont12);
-                edgeSelectBtn.setFocusable(false);
-                edgeSearchTxt.setBackground(Color.WHITE);
-                edgeSearchTxt.setBorder(BorderFactory.createLoweredSoftBevelBorder());
-                JPanel edgeTableSearchPanel = MyTableUtil.searchAndSaveDataPanelForJTable2(edgeValueDistribution, edgeSearchTxt, edgeSelectBtn, edgeTableModel, edgeTable);
-                edgeSearchTxt.setFont(MyDirectGraphVars.f_bold_12);
-                edgeSearchTxt.setToolTipText("TYPE AN EDGE NAME TO SEARCH");
-                edgeSearchTxt.setPreferredSize(new Dimension(90, 19));
-                edgeSelectBtn.setPreferredSize(new Dimension(54, 19));
-                edgeTableSearchPanel.remove(edgeSelectBtn);
-
-                JPanel edgeTablePanel = new JPanel();
-                edgeTablePanel.setBackground(Color.WHITE);
-                edgeTablePanel.setLayout(new BorderLayout(3, 3));
-                edgeTablePanel.add(nodeTableScrollPane, BorderLayout.CENTER);
-                edgeTablePanel.add(edgeTableSearchPanel, BorderLayout.SOUTH);
-
-                JFrame f = new JFrame(" EDGE VALUE DISTRIBUTION");
-                f.setBackground(Color.WHITE);
-                f.setPreferredSize(new Dimension(550, 450));
-                f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-                JSplitPane tableSplitPane = new JSplitPane();
-                tableSplitPane.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
-                tableSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-                tableSplitPane.setTopComponent(edgeStatTableScrollPane);
-                tableSplitPane.setBottomComponent(edgeTablePanel);
-                tableSplitPane.getRightComponent().setBackground(Color.WHITE);
-                tableSplitPane.setDividerSize(5);
-
-                JSplitPane contentPane = new JSplitPane();
-                contentPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
-                contentPane.setLeftComponent(edgeValueDistribution);
-                contentPane.setRightComponent(tableSplitPane);
-                contentPane.getRightComponent().setBackground(Color.WHITE);
-                contentPane.setDividerSize(5);
-
-                f.setLayout(new BorderLayout(3, 3));
-                f.getContentPane().add(contentPane, BorderLayout.CENTER);
-                f.pack();
-                f.addComponentListener(new ComponentAdapter() {
-                    @Override public void componentResized(ComponentEvent e) {
-                        super.componentResized(e);
-                        contentPane.setDividerLocation(0.81);
-                        tableSplitPane.setDividerLocation(0.20);
-                    }
-                });
-                f.setVisible(true);
-            } catch (Exception ex) {}
-
+            });
+            pb.updateValue(100, 100);
+            pb.dispose();
+            f.setVisible(true);
+        } catch (Exception ex) {
+            pb.updateValue(100, 100);
+            pb.dispose();
+        }
     }
 
     private Set<MyEdge> edges = new HashSet<>();
 
     private JFreeChart setValueChart() {
-        MyProgressBar pb = new MyProgressBar(false);
         int edgeCount = 0;
         float totalValue = 0;
 
@@ -311,9 +314,6 @@ implements ActionListener {
         boolean show = false;
         boolean toolTips = true;
         boolean urls = false;
-
-        pb.updateValue(100, 100);
-        pb.dispose();
 
         return ChartFactory.createBarChart(plotTitle, xaxis, yaxis, dataset, orientation, show, toolTips, urls);
     }

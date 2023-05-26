@@ -53,9 +53,10 @@ implements Serializable, Cloneable, Comparable<MyNode> {
     protected double closeness;
     protected double eignevector;
     protected double pageRankScore;
-    public Ellipse2D.Double nodeSize;
 
-    protected Map<Integer, Integer> recursiveLengthMap = new HashMap<>();
+    public Map<String, Integer> contributionCountMapByObjectID = new HashMap<>();
+    public Map<String, Map<Long, Integer>> reachTimeMapByObjectID = new HashMap<>();
+    public Map<Integer, Integer> recursiveLengthMap = new HashMap<>();
     public float avgRecursiveTime;
 
     private Map<String, Integer> variableStrengthMap = new HashMap<>();

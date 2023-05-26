@@ -4,7 +4,6 @@ import medousa.sequential.graph.stats.depthnode.*;
 import medousa.sequential.graph.stats.multinode.*;
 import medousa.sequential.graph.stats.singlenode.*;
 import medousa.sequential.graph.stats.*;
-import medousa.sequential.utils.MyMathUtil;
 import medousa.sequential.utils.MySequentialGraphSysUtil;
 import medousa.sequential.utils.MySequentialGraphVars;
 
@@ -37,7 +36,6 @@ extends JPanel {
     public MyGraphLevelShortestDistanceUnreachableNodeCountDistributionLineChart graphLevelShortestDistanceUnreachableNodeCountDistributionLineChart;
     public MyGraphLevelAverageNodeValueByDistanceDistributionLineChart graphLevelAverageNodeValueByDistanceDistributionLineChart;
 
-    public MyGraphLevelContributionDistributionByObjectLineChart graphLevelContributionDistributionByObjectLineChart;
 
     public MySequentialGraphDashBoard() {}
     public void setDashboard() {
@@ -133,16 +131,8 @@ extends JPanel {
                     dataProfilePanel.add(graphLevelContributionByDepthLineChart);
                     dataProfilePanel.setBorder(dataProfileTitledBorder);
 
-                    graphLevelContributionDistributionByObjectLineChart = new MyGraphLevelContributionDistributionByObjectLineChart();
-
-                    JPanel graphProfilePanel = new JPanel();
-                    graphProfilePanel.setBackground(Color.WHITE);
-                    graphProfilePanel.add(graphLevelContributionDistributionByObjectLineChart);
-                    graphProfilePanel.setBorder(dataProfileTitledBorder);
-
                     JTabbedPane tabbedPane = new JTabbedPane();
                     tabbedPane.addTab("D. P.", null, dataProfilePanel, "DATA PROFILE");
-                    //tabbedPane.addTab("G. P.", null, graphProfilePanel, "GRAPH PROFILE");
                     tabbedPane.addTab("G. S.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setStatTable(), "GRAPH TEXT STATISTICS");
                     tabbedPane.setFont(MySequentialGraphVars.tahomaBoldFont12);
 

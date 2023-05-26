@@ -529,21 +529,6 @@ public class MyTimeConstrainedBuilider {
         }
     }
 
-    public void setNodeUniqueContribution() {
-        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
-        for (MyNode n : nodes) {
-            for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
-                for (int i = 0; i < MySequentialGraphVars.seqs[s].length; i++) {
-                    String itemset = MySequentialGraphVars.seqs[s][i].split(":")[0];
-                    if (itemset.equals(n.getName())) {
-                        n.setUniqueContribution();
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
     public void setEndNodeCount() {
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
         for (MyNode n : nodes) {
@@ -763,6 +748,67 @@ public class MyTimeConstrainedBuilider {
         }
     }
 
+    public void setNodeContributionCountByObject() {
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(new File(
+                MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "sequencesWithObjectIDs.txt")));
+            int i= (MySequentialGraphVars.isSupplementaryOn ? 2 : 1);
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                String [] itemsets = line.split(MySequentialGraphVars.hyphenDelimeter);
+                String objectID = itemsets[0];
+                for (; i < itemsets.length; i++) {
+                    String itemset = itemsets[i].split(":")[0];
+                    MyNode n = (MyNode) MySequentialGraphVars.g.vRefs.get(itemset);
+                    if (n.contributionCountMapByObjectID.containsKey(objectID)) {
+                        n.contributionCountMapByObjectID.put(objectID, n.contributionCountMapByObjectID.get(objectID) + 1);
+                    } else {
+                        n.contributionCountMapByObjectID.put(objectID, 1);
+                    }
+                }
+                i= (MySequentialGraphVars.isSupplementaryOn ? 2 : 1);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void setReachTimesByObject() {
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(new File(
+                MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "sequencesWithObjectIDs.txt")));
+            int i= (MySequentialGraphVars.isSupplementaryOn ? 3 : 2);
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                String [] itemsets = line.split(MySequentialGraphVars.hyphenDelimeter);
+                String objectID = itemsets[0];
+                for (; i < itemsets.length; i++) {
+                    String [] itemset = itemsets[i].split(":");
+                    MyNode n = (MyNode) MySequentialGraphVars.g.vRefs.get(itemset[0]);
+                    if (n.reachTimeMapByObjectID.containsKey(objectID)) {
+                        if (n.reachTimeMapByObjectID.get(objectID).containsKey(Long.parseLong(itemset[1]))) {
+                            Map<Long, Integer> reachTimeMap = n.reachTimeMapByObjectID.get(objectID);
+                            long reachTimeKey = Long.parseLong(itemset[1]);
+                            reachTimeMap.put(reachTimeKey, reachTimeMap.get(reachTimeKey) + 1);
+                            n.reachTimeMapByObjectID.put(objectID, reachTimeMap);
+                        } else {
+                            Map<Long, Integer> reachTimeMap = new HashMap<>();
+                            reachTimeMap.put(Long.parseLong(itemset[1]), 1);
+                            n.reachTimeMapByObjectID.put(objectID, reachTimeMap);
+                        }
+                    } else {
+                        Map<Long, Integer> reachTimeMap = new HashMap<>();
+                        reachTimeMap.put(Long.parseLong(itemset[1]), 1);
+                        n.reachTimeMapByObjectID.put(objectID, reachTimeMap);
+                    }
+                }
+                i= (MySequentialGraphVars.isSupplementaryOn ? 3 : 2);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public void setNodeDepthInformation() {
         try {
             Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
@@ -891,57 +937,6 @@ public class MyTimeConstrainedBuilider {
                 n.setNodeDepthInfoMap(nodeDepthInfoMap);
             }
         } catch (Exception ex) {ex.printStackTrace();}
-    }
-
-    public void setNodeInContribution() {
-        for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
-            for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
-                String itemset = MySequentialGraphVars.seqs[s][i].split(":")[0];
-                MyNode n = (MyNode) MySequentialGraphVars.g.vRefs.get(itemset);
-                n.setInContribution(1);
-            }
-        }
-    }
-
-    public void setNodeOutContribution() {
-        for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
-            for (int i = 0; i < (MySequentialGraphVars.seqs[s].length-1); i++) {
-                String itemset = MySequentialGraphVars.seqs[s][i].split(":")[0];
-                MyNode n = (MyNode) MySequentialGraphVars.g.vRefs.get(itemset);
-                n.setOutContribution(1);
-            }
-        }
-    }
-
-    public void setEdgeContribution() {
-        Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
-        for (MyEdge edge : edges) {
-            for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
-                for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
-                    String ps = MySequentialGraphVars.seqs[s][i-1];
-                    String ss = MySequentialGraphVars.seqs[s][i];
-                    if (ps.equals(edge.getSource().getName()) && ss.equals(edge.getDest().getName())) {
-                        edge.setContribution(1);
-                    }
-                }
-            }
-        }
-    }
-
-    public void setEdgeUniqueContribution() {
-        Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
-        for (MyEdge e : edges) {
-            for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
-                for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
-                    String p = MySequentialGraphVars.seqs[s][i-1].split(":")[0];
-                    String ss = MySequentialGraphVars.seqs[s][i].split(":")[0];
-                    if (p.equals(e.getSource().getName()) && ss.equals(e.getDest().getName())) {
-                        e.setUniqueContribution(1);
-                        break;
-                    }
-                }
-            }
-        }
     }
 
     public void setEdgeTotalAndAverageTime() {

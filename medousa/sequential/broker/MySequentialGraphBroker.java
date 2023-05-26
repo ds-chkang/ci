@@ -46,6 +46,7 @@ extends MySequentialGraphEngineBroker {
                 graphBuilder.setConnectedNetworkComponentCountByGraph();
                 graphBuilder.setGraphLevelTotalEdgeContribution();
                 graphBuilder.setNumberOfGraphs();
+                graphBuilder.setNodeContributionCountByObject();
                 MySequentialGraphVars.g.edRefs = null;
                 MySequentialGraphVars.g.edgeRefMap = null;
             } else {
@@ -85,6 +86,8 @@ extends MySequentialGraphEngineBroker {
                 timeConstrainedGraphBuilider.setConnectedNetworkComponentCountByGraph();
                 timeConstrainedGraphBuilider.setGraphLevelTotalEdgeContribution();
                 timeConstrainedGraphBuilider.setNumberOfGraphs();
+                timeConstrainedGraphBuilider.setNodeContributionCountByObject();
+                timeConstrainedGraphBuilider.setReachTimesByObject();
                 MySequentialGraphVars.g.edRefs = null;
                 MySequentialGraphVars.g.edgeRefMap = null;
             }
