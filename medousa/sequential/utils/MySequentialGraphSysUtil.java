@@ -73,11 +73,6 @@ public class MySequentialGraphSysUtil {
         return result;
     }
 
-    public static void sleepExecution(int sleepTime) {
-        try {Thread.sleep(sleepTime);
-        } catch (Exception ex) {ex.printStackTrace();}
-    }
-
     public static String decodeNodeName(String nodeName) {
         if (nodeName.contains("x")) {
             String decodedVariableSet = "";

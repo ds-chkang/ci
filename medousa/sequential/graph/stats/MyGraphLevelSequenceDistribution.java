@@ -1,6 +1,7 @@
 package medousa.sequential.graph.stats;
 
 import medousa.MyProgressBar;
+import medousa.sequential.graph.MyNode;
 import medousa.sequential.utils.MyMathUtil;
 import medousa.sequential.utils.MySequentialGraphSysUtil;
 import medousa.sequential.utils.MySequentialGraphVars;
@@ -18,6 +19,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
 import java.util.TreeMap;
 
 public class MyGraphLevelSequenceDistribution
@@ -26,7 +28,7 @@ extends JPanel {
 
     public MyGraphLevelSequenceDistribution() {
         this.decorate();
-        JFrame f = new JFrame(" INPUT SEQUENCE LENGTH DISTRIBUTION");
+        JFrame f = new JFrame(" SEQUENCE DISTRIBUTION");
         f.setPreferredSize(new Dimension(350, 350));
         f.setBackground(Color.WHITE);
         f.setLayout(new BorderLayout(3,3));
@@ -68,24 +70,9 @@ extends JPanel {
                     titleLabel.setBackground(Color.WHITE);
                     titleLabel.setForeground(Color.DARK_GRAY);
 
-                    JButton enlargeBtn = new JButton("+");
-                    enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
-                    enlargeBtn.setFocusable(false);
-                    enlargeBtn.setBackground(Color.WHITE);
-                    enlargeBtn.addActionListener(new ActionListener() {
-                        @Override public void actionPerformed(ActionEvent e) {
-                            new Thread(new Runnable() {
-                                @Override public void run() {
-                                    enlarge();
-                                }
-                            }).start();
-                        }
-                    });
-
                     JPanel enlargePanel = new JPanel();
                     enlargePanel.setBackground(Color.WHITE);
                     enlargePanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 3, 3));
-                    enlargePanel.add(enlargeBtn);
 
                     JPanel topPanel = new JPanel();
                     topPanel.setLayout(new BorderLayout(3, 3));
@@ -107,7 +94,7 @@ extends JPanel {
     public void enlarge() {
         MyProgressBar pb = new MyProgressBar(false);
         try {
-            JFrame f = new JFrame(" INPUT SEQUENCE DISTRIBUTION");
+            JFrame f = new JFrame(" SEQUENCE DISTRIBUTION");
             f.setLayout(new BorderLayout(3, 3));
             f.getContentPane().add(new ChartPanel(setChart()), BorderLayout.CENTER);
             f.setPreferredSize(new Dimension(350, 350));
@@ -130,16 +117,19 @@ extends JPanel {
         for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
             totalLength += MySequentialGraphVars.seqs[s].length;
             if (seqLengthMap.containsKey(MySequentialGraphVars.seqs[s].length)) {
-                seqLengthMap.put(MySequentialGraphVars.seqs[s].length, seqLengthMap.get(MySequentialGraphVars.seqs[s].length)+1);
-            } else {seqLengthMap.put(MySequentialGraphVars.seqs[s].length, 1);}
+                seqLengthMap.put(MySequentialGraphVars.seqs[s].length, seqLengthMap.get(MySequentialGraphVars.seqs[s].length) + 1);
+            } else {
+                seqLengthMap.put(MySequentialGraphVars.seqs[s].length, 1);
+            }
         }
+
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         for (Integer contributionCount : seqLengthMap.keySet()) {
-            dataset.addValue(seqLengthMap.get(contributionCount), "INPUT SEQUENCE LENGTH", contributionCount);
+            dataset.addValue(seqLengthMap.get(contributionCount), "SEQUENCE LENGTH", contributionCount);
         }
         double avgLength = (double)totalLength/ MySequentialGraphVars.seqs.length;
         String plotTitle = "";
-        String xaxis = "INPUT SEQUENCE LENGTH[AVG.: " + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(avgLength)) + "]";
+        String xaxis = "SEQUENCE LENGTH[AVG.: " + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(avgLength)) + "]";
         String yaxis = "";
         PlotOrientation orientation = PlotOrientation.VERTICAL;
         boolean show = false;

@@ -106,7 +106,7 @@ public class MyTimeConstrainedBuilider {
 
                         pNode.setContribution(1);
                         pNode.setOutContribution(1);
-                        sNode.setContribution(1);
+                        //sNode.setContribution(1);
                         sNode.setInContribution(1);
 
                         MyEdge edge = new MyEdge(pNode, sNode);
@@ -120,7 +120,7 @@ public class MyTimeConstrainedBuilider {
 
                         pNode.setContribution(1);
                         pNode.setOutContribution(1);
-                        sNode.setContribution(1);
+                        //sNode.setContribution(1);
                         sNode.setInContribution(1);
 
                         ((MyEdge) MySequentialGraphVars.g.edgeRefMap.get(edgeName)).setContribution(1);
@@ -167,7 +167,9 @@ public class MyTimeConstrainedBuilider {
 
                         pNode.setContribution(1);
                         pNode.setOutContribution(1);
-                        sNode.setContribution(1);
+                        if ((i+1) == itemsets.length) {
+                            sNode.setContribution(1);
+                        }
                         sNode.setInContribution(1);
 
                         MyEdge edge = new MyEdge(pNode, sNode);
@@ -181,9 +183,10 @@ public class MyTimeConstrainedBuilider {
 
                         pNode.setContribution(1);
                         pNode.setOutContribution(1);
-                        sNode.setContribution(1);
+                        if ((i+1) == itemsets.length) {
+                            sNode.setContribution(1);
+                        }
                         sNode.setInContribution(1);
-
                         ((MyEdge) MySequentialGraphVars.g.edgeRefMap.get(edgeName)).setContribution(1);
                     }
                 }
@@ -253,7 +256,9 @@ public class MyTimeConstrainedBuilider {
 
                         pNode.setContribution(1);
                         pNode.setOutContribution(1);
-                        sNode.setContribution(1);
+                        if ((i+1) == itemsets.length) {
+                            sNode.setContribution(1);
+                        }
                         sNode.setInContribution(1);
 
                         MyEdge edge = new MyEdge(pNode, sNode);
@@ -265,7 +270,9 @@ public class MyTimeConstrainedBuilider {
 
                         pNode.setContribution(1);
                         pNode.setOutContribution(1);
-                        sNode.setContribution(1);
+                        if ((i+1) == itemsets.length) {
+                            sNode.setContribution(1);
+                        }
                         sNode.setInContribution(1);
 
                         ((MyEdge) MySequentialGraphVars.g.edgeRefMap.get(edgeName)).setContribution(1);
@@ -516,15 +523,13 @@ public class MyTimeConstrainedBuilider {
         } catch (Exception ex) {ex.printStackTrace();}
     }
 
-    public void setNodeDuration() {
+    public void setTotalNodeDuration() {
         for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
             for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
-                String ps = MySequentialGraphVars.seqs[s][i-1].split(":")[0];
-                long pTime = Long.parseLong(MySequentialGraphVars.seqs[s][i-1].split(":")[1]);
-                long sTime = Long.parseLong(MySequentialGraphVars.seqs[s][i].split(":")[1]);
-                long rTime = sTime - pTime;
-                MyNode n = (MyNode) MySequentialGraphVars.g.vRefs.get(ps);
-                n.setDuration(rTime);
+                String pitemset = MySequentialGraphVars.seqs[s][i-1].split(":")[0];
+                long duration = Long.parseLong(MySequentialGraphVars.seqs[s][i].split(":")[1]);
+                MyNode n = (MyNode) MySequentialGraphVars.g.vRefs.get(pitemset);
+                n.setTotalDuration(duration);
             }
         }
     }
@@ -606,13 +611,9 @@ public class MyTimeConstrainedBuilider {
         for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
             for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
                 String ss = MySequentialGraphVars.seqs[s][i].split(":")[0];
-
-                long pTime = Long.parseLong(MySequentialGraphVars.seqs[s][i-1].split(":")[1]);
-                long sTime = Long.parseLong(MySequentialGraphVars.seqs[s][i].split(":")[1]);
-
-                long rTime = sTime - pTime;
+                long time = Long.parseLong(MySequentialGraphVars.seqs[s][i].split(":")[1]);
                 MyNode n = (MyNode) MySequentialGraphVars.g.vRefs.get(ss);
-                n.setTotalReachTime(rTime);
+                n.setTotalReachTime(time);
             }
         }
     }
@@ -680,33 +681,19 @@ public class MyTimeConstrainedBuilider {
         }
     }
 
-    public void setNodeAverageTime() {
-        Map<String, ArrayList<Long>> nodeTimeMap = new HashMap<>();
-        for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
-            for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
-                String ss = MySequentialGraphVars.seqs[s][i].split(":")[0];
-
-                long pTime = Long.parseLong(MySequentialGraphVars.seqs[s][i-1].split(":")[1]);
-                long sTime = Long.parseLong(MySequentialGraphVars.seqs[s][i].split(":")[1]);
-                long rTime = sTime - pTime;                if (nodeTimeMap.containsKey(ss))  {
-                    ArrayList<Long> times = nodeTimeMap.get(ss);
-                    times.add(rTime);
-                } else {
-                    ArrayList<Long> times = new ArrayList<>();
-                    times.add(rTime);
-                    nodeTimeMap.put(ss, times);
+    public void setNodeAverageReachTime() {
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        for (MyNode n : nodes) {
+            int count = 0;
+            for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
+                for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
+                    String itemset = MySequentialGraphVars.seqs[s][i].split(":")[0];
+                    if (itemset.equals(n.getName())) {
+                        count++;
+                    }
                 }
             }
-        }
-
-        for (String nn : nodeTimeMap.keySet()) {
-            ArrayList<Long> times = nodeTimeMap.get(nn);
-            int totalTime = 0;
-            for (long time : times) {
-                totalTime += time;
-            }
-            MyNode n = (MyNode) MySequentialGraphVars.g.vRefs.get(nn);
-            n.setAverageTime((double) totalTime/times.size());
+            n.setAverageTime((double) n.getTotalReachTime()/count);
         }
     }
 
@@ -752,7 +739,7 @@ public class MyTimeConstrainedBuilider {
         try {
             BufferedReader br = new BufferedReader(new FileReader(new File(
                 MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "sequencesWithObjectIDs.txt")));
-            int i= (MySequentialGraphVars.isSupplementaryOn ? 2 : 1);
+            int i= 1;
             String line = "";
             while ((line = br.readLine()) != null) {
                 String [] itemsets = line.split(MySequentialGraphVars.hyphenDelimeter);
@@ -766,7 +753,7 @@ public class MyTimeConstrainedBuilider {
                         n.contributionCountMapByObjectID.put(objectID, 1);
                     }
                 }
-                i= (MySequentialGraphVars.isSupplementaryOn ? 2 : 1);
+                i= 1;
             }
         } catch (Exception ex) {
             ex.printStackTrace();

@@ -33,6 +33,7 @@ implements GraphMouseListener {
 
             MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
             MyViewerComponentControllerUtil.removeSharedNodeValueBarCharts();
+            MyViewerComponentControllerUtil.removeEdgeValueBarChartFromViewer();
             pb.updateValue(95, 100);
 
             MySequentialGraphVars.sequentialGraphDashBoard.setSingleNodeDashBoard();

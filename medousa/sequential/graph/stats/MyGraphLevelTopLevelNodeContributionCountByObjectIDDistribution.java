@@ -73,13 +73,131 @@ implements ActionListener {
             try {
                 this.decorate();
 
-                JFrame f = new JFrame(" CONTRIBUTION COUNTS BY OBJECT DISTRIBUTION");
+                String[] statTableColumns = {"PROPERTY", "VALUE"};
+                String[][] statTableData = {
+                        {"NODES", MyMathUtil.getCommaSeperatedNumber(this.nodes.size())},
+                        {"MAX. VALUE", MyMathUtil.twoDecimalFormat(this.maxValue)},
+                        {"NIN. VALUE", MyMathUtil.twoDecimalFormat(this.minValue)},
+                        {"AVG. VALUE", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(this.avgValue))},
+                        {"STD. VALUE", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(this.stdValue))}
+                };
+
+                DefaultTableModel statTableModel = new DefaultTableModel(statTableData, statTableColumns);
+                JTable statTable = new JTable(statTableModel);
+                statTable.setBackground(Color.WHITE);
+                statTable.setFont(MySequentialGraphVars.tahomaPlainFont12);
+                statTable.setRowHeight(22);
+                statTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont11);
+                statTable.getTableHeader().setOpaque(false);
+                statTable.getTableHeader().setBackground(new Color(0, 0, 0, 0));
+                statTable.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(100);
+
+                String [] statTableColumnTooltips = {"NO. OF NODES", "MAX. CONTRIBUTION VALUE", "MIN. CONTRIBUTION VALUE", "AVG. CONTRIBUTION VALUE", "STANDARD DEVIATION CONTRIBUTION VALUE"};
+                MyTableToolTipper statTooltipHeader = new MyTableToolTipper(statTable.getColumnModel());
+                statTooltipHeader.setToolTipStrings(statTableColumnTooltips);
+                statTable.setTableHeader(statTooltipHeader);
+
+                JScrollPane statTableScrollPane = new JScrollPane(statTable);
+                statTableScrollPane.setBackground(Color.WHITE);
+
+                String[] nodeTableColumns = {"NO.", "NODE", "OBJ.", "T. CONT.", "AVG.", "R."};
+                String[][] nodeTableData = {};
+                DefaultTableModel nodeTableModel = new DefaultTableModel(nodeTableData, nodeTableColumns);
+                JTable nodeTable = new JTable(nodeTableModel);
+                nodeTable.setBackground(Color.WHITE);
+                nodeTable.setFont(MySequentialGraphVars.f_pln_12);
+                nodeTable.setRowHeight(22);
+                nodeTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont11);
+                nodeTable.getTableHeader().setOpaque(false);
+                nodeTable.getTableHeader().setBackground(new Color(0, 0, 0, 0));
+                nodeTable.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(25);
+                nodeTable.getTableHeader().getColumnModel().getColumn(2).setPreferredWidth(30);
+                nodeTable.getTableHeader().getColumnModel().getColumn(3).setPreferredWidth(30);
+                nodeTable.getTableHeader().getColumnModel().getColumn(4).setPreferredWidth(30);
+                nodeTable.getTableHeader().getColumnModel().getColumn(5).setPreferredWidth(30);
+                nodeTable.setSelectionForeground(Color.BLACK);
+                nodeTable.setSelectionBackground(Color.LIGHT_GRAY);
+
+                String [] nodeTableColumnTooltips = {"NO.", "NODE", "NO. OF OBJECTS", "TOTAL CONTRIBUTIONS BY OBJECTS", "AVG. BY OBJECT", "RATIO OT TOTAL CONTRIBUTION AGAINST MAX. TOTAL CONTRIBUTION BY OBJECTS"};
+                MyTableToolTipper nodeTooltipHeader = new MyTableToolTipper(nodeTable.getColumnModel());
+                nodeTooltipHeader.setToolTipStrings(nodeTableColumnTooltips);
+                nodeTable.setTableHeader(nodeTooltipHeader);
+
+                float max = 0f;
+                LinkedHashMap<String, Long> valueMap = new LinkedHashMap();
+                for (MyNode n : this.nodes) {
+                    long totalContributionByObject = n.getTotalContributionByObjects();
+                    valueMap.put(n.getName(), totalContributionByObject);
+                    if (max < totalContributionByObject) {
+                        max = totalContributionByObject;
+                    }
+                }
+                valueMap = MySequentialGraphSysUtil.sortMapByLongValue(valueMap);
+
+                int i = 0;
+                for (String n : valueMap.keySet()) {
+                    String pr = MyMathUtil.twoDecimalFormat(valueMap.get(n) / max);
+                    nodeTableModel.addRow(new String[]{"" + (++i),
+                        MySequentialGraphSysUtil.getNodeName(n),
+                        MyMathUtil.getCommaSeperatedNumber(((MyNode)MySequentialGraphVars.g.vRefs.get(n)).contributionCountMapByObjectID.size()),
+                        MyMathUtil.getCommaSeperatedNumber(((MyNode)MySequentialGraphVars.g.vRefs.get(n)).getTotalContributionByObjects()),
+                        MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat((float) ((MyNode)MySequentialGraphVars.g.vRefs.get(n)).getTotalContributionByObjects()/((MyNode)MySequentialGraphVars.g.vRefs.get(n)).contributionCountMapByObjectID.size())),
+                        pr});
+                }
+
+                JScrollPane nodeTableScrollPane = new JScrollPane(nodeTable);
+                nodeTableScrollPane.setBackground(Color.WHITE);
+
+                JTextField nodeSearchTxt = new JTextField();
+                JButton nodeSelectBtn = new JButton("SEL.");
+                nodeSelectBtn.setFont(MyDirectGraphVars.tahomaPlainFont12);
+                nodeSelectBtn.setFocusable(false);
+                nodeSearchTxt.setBackground(Color.WHITE);
+                nodeSearchTxt.setBorder(BorderFactory.createLoweredSoftBevelBorder());
+                JPanel nodeTableSearchPanel = MyTableUtil.searchAndSaveDataPanelForJTable2(this, nodeSearchTxt, nodeSelectBtn, nodeTableModel, nodeTable);
+                nodeSearchTxt.setFont(MyDirectGraphVars.f_bold_12);
+                nodeSearchTxt.setToolTipText("TYPE A NODE NAME TO SEARCH");
+                nodeSearchTxt.setPreferredSize(new Dimension(90, 19));
+                nodeSelectBtn.setPreferredSize(new Dimension(54, 19));
+                nodeTableSearchPanel.remove(nodeSelectBtn);
+
+                JPanel nodeTablePanel = new JPanel();
+                nodeTablePanel.setBackground(Color.WHITE);
+                nodeTablePanel.setLayout(new BorderLayout(3, 3));
+                nodeTablePanel.add(nodeTableScrollPane, BorderLayout.CENTER);
+                nodeTablePanel.add(nodeTableSearchPanel, BorderLayout.SOUTH);
+
+                JFrame f = new JFrame(" CONTRIBUTION COUNT BY OBJECT DISTRIBUTION");
                 f.setBackground(Color.WHITE);
                 f.setPreferredSize(new Dimension(550, 450));
                 f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+                JSplitPane tableSplitPane = new JSplitPane();
+                tableSplitPane.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+                tableSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+                tableSplitPane.setTopComponent(statTableScrollPane);
+                tableSplitPane.setBottomComponent(nodeTablePanel);
+                tableSplitPane.getRightComponent().setBackground(Color.WHITE);
+                tableSplitPane.setDividerSize(5);
+
+                JSplitPane contentPane = new JSplitPane();
+                contentPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
+                contentPane.setLeftComponent(this);
+                contentPane.setRightComponent(tableSplitPane);
+                contentPane.getRightComponent().setBackground(Color.WHITE);
+                contentPane.setDividerSize(5);
+
                 f.setLayout(new BorderLayout(3, 3));
-                f.getContentPane().add(this, BorderLayout.CENTER);
+                f.getContentPane().add(contentPane, BorderLayout.CENTER);
                 f.pack();
+                f.addComponentListener(new ComponentAdapter() {
+                    @Override public void componentResized(ComponentEvent e) {
+                    super.componentResized(e);
+                    contentPane.setDividerLocation(0.79);
+                    tableSplitPane.setDividerLocation(0.20);
+                    }
+                });
+
                 pb.updateValue(100, 100);
                 pb.dispose();
                 f.setVisible(true);
@@ -93,9 +211,6 @@ implements ActionListener {
     private Set<MyNode> nodes = null;
 
     private JFreeChart setValueChart() {
-        int nodeCount = 0;
-        float totalValue = 0;
-
         TreeMap<Integer, Integer> valueMap = new TreeMap<>();
         if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
             if (MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly) {
@@ -126,6 +241,9 @@ implements ActionListener {
             this.nodes = new HashSet<>(MySequentialGraphVars.g.getVertices());
         }
 
+        int nodeCount = 0;
+        float totalValue = 0;
+
         for (MyNode n : this.nodes) {
             if (n.getCurrentValue() == 0) continue;
             for (int contCount : n.contributionCountMapByObjectID.values()) {
@@ -154,6 +272,7 @@ implements ActionListener {
             dataset.addValue(valueMap.get(nodeValue), "", nodeValue);
         }
 
+        if (nodeCount == 0) nodeCount = 1;
         this.avgValue = totalValue/nodeCount;
         this.stdValue = getNodeValueStandardDeviation(valueMap);
 

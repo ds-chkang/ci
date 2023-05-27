@@ -12,6 +12,7 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.Collection;
 
 public class MySequentialGraphDashBoard
 extends JPanel {
@@ -294,6 +295,18 @@ extends JPanel {
                 TitledBorder networkTitledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK),
                         "NETWORK EXPLORER", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
 
+
+                /**
+                 * Set nodes that are not neighbor nodes to zeros.
+                 */
+                Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+                for (MyNode n : nodes) {
+                    if (!MySequentialGraphVars.getSequentialGraphViewer().multiNodeSuccessors.contains(n) &&
+                        !MySequentialGraphVars.getSequentialGraphViewer().multiNodePredecessors.contains(n)) {
+                        n.setCurrentValue(0f);
+                    }
+                }
+
                 MyMultiNodeAppearanceByDepthLineChart sharedNodeLevelSelectedNodesByDepthLineChart = new MyMultiNodeAppearanceByDepthLineChart();
                 MyMultiLevelSharedSuccessorAppearancesByDepthLineChart sharedNodeLevelSharedSuccessorAppearancesByDepthLineChart = new MyMultiLevelSharedSuccessorAppearancesByDepthLineChart();
                 MyMultiLevelSharedPredecessorAppearancesByDepthLineChart sharedNodeLevelSharedPredecessorAppearancesByDepthLineChart = new MyMultiLevelSharedPredecessorAppearancesByDepthLineChart();
@@ -347,6 +360,18 @@ extends JPanel {
 
                 TitledBorder networkTitledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK),
                     "NETWORK EXPLORER", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
+
+
+                /**
+                 * Set nodes that are not neighbor nodes to zeros.
+                 */
+                Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+                for (MyNode n : nodes) {
+                    if (!MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors.contains(n) &&
+                        !MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors.contains(n)) {
+                        n.setCurrentValue(0f);
+                    }
+                }
 
                 if (MySequentialGraphVars.isTimeOn) {
                     MySingleNodeAverageValuesByDepthLineChart singleNodeAverageValuesByDepthLineChart = new MySingleNodeAverageValuesByDepthLineChart();

@@ -19,6 +19,7 @@ public class MyViewerMenu
 extends JPopupMenu
 implements ActionListener {
 
+    private JMenuItem contributionCountByObjectDistribution = new JMenuItem("CONTRIBUTION COUNT BY OBJECT DISTRIBUTION");
     private JMenuItem picking = new JMenuItem("PICKING");
     private JMenuItem tranform = new JMenuItem("TRANSORMING");
     private JMenuItem showNodeLabel = new JMenuItem("NODE LABEL");
@@ -27,9 +28,8 @@ implements ActionListener {
     private JMenuItem showEdgeLabel = new JMenuItem("EDGE LABEL");
     private JMenuItem showNodeValueDistribution = new JMenuItem("NODE VALUE DISTRIBUTION");
     private JMenuItem showEdgeValueDistribution = new JMenuItem("EDGE VALUE DISTRIBUTION");
-    private JMenuItem nodeStatistics = new JMenuItem("NODE SUMMARY STATISTICS");
-    private JMenuItem edgeStatistics = new JMenuItem("EDGE SUMMARY STATISTICS");
-    private JMenuItem nodeDepthAppearanceByDepthStatistics = new JMenuItem("NODE APPEARANCE STATISTICS BY DEPTH");
+    private JMenuItem nodeStatistics = new JMenuItem("NODE STATISTICS");
+    private JMenuItem edgeStatistics = new JMenuItem("EDGE STATISTICS");
     private JMenuItem inOutDifferenceByDepthStatistics = new JMenuItem("INOUT VALUE DIFFERENCES BY DEPTH");
     private JMenuItem sequenceLengthDistribution = new JMenuItem("SEQUENCE DISTRIBUTION");
     private JMenuItem searchNode = new JMenuItem("SEARCH NODE");
@@ -37,7 +37,7 @@ implements ActionListener {
     private JMenuItem showEndNodes = new JMenuItem("END NODES");
     private JMenuItem showBetweenNodeProperty = new JMenuItem("BETWEEN NODE PROPERTIES");
     private JMenuItem hopCountDistribution = new JMenuItem("AVERAGE HOP COUNT DISTRIBUTION");
-    private JMenuItem sequenceTotalTimeDistribution = new JMenuItem("SEQUENCE TOTAL TIME DISTRIBUTION");
+    private JMenuItem timeDistribution = new JMenuItem("TIME DISTRIBUTION");
     private JMenuItem nodesByDepth = new JMenuItem("NODES BY DEPTH");
     private JMenuItem dataFlowGraph = new JMenuItem("DATA FLOWS");
     private JMenuItem clustering = new JMenuItem("CLUSTERING");
@@ -56,37 +56,33 @@ implements ActionListener {
         this.add(new JSeparator());
         this.setMenuItem(this.searchNode);
         this.add(new JSeparator());
+        this.setMenuItem(this.showNodeValue);
         this.setMenuItem(this.nodeStatistics);
         if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() > 1) {
             this.setMenuItem(this.edgeStatistics);
         }
-        this.setMenuItem(this.nodeDepthAppearanceByDepthStatistics);
-        this.setMenuItem(this.inOutDifferenceByDepthStatistics);
-        this.add(new JSeparator());
-        this.setMenuItem(this.sequenceLengthDistribution);
-        if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() > 1) {
-            this.setMenuItem(this.showEdgeValueDistribution);
-        }
-       // this.setMenuItem(this.hopCountDistribution);
-        this.add(new JSeparator());
+        this.setMenuItem(this.nodesByDepth);
         if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelSelecter.getSelectedIndex() > 1) {
             this.setMenuItem(this.showNodeLabel);
         }
-        this.setMenuItem(this.showNodeValue);
         if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelSelecter.getSelectedIndex() > 0) {
             this.setMenuItem(this.showEdgeLabel);
         }
         if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() > 1) {
             this.setMenuItem(this.showEdgeValue);
         }
-       // this.setMenuItem(this.showEndNodes);
-        this.setMenuItem(this.nodesByDepth);
+        this.add(new JSeparator());
+        this.setMenuItem(this.inOutDifferenceByDepthStatistics);
+        this.setMenuItem(this.sequenceLengthDistribution);
+        this.setMenuItem(this.contributionCountByObjectDistribution);
+        if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() > 1) {
+            this.setMenuItem(this.showEdgeValueDistribution);
+        }
+        if (MySequentialGraphVars.isTimeOn) {
+            this.setMenuItem(this.timeDistribution);
+        }
         this.add(new JSeparator());
         this.setMenuItem(this.dataFlowGraph);
-        if (MySequentialGraphVars.isTimeOn) {
-            this.add(new JSeparator());
-            this.setMenuItem(this.sequenceTotalTimeDistribution);
-        }
         this.add(new JSeparator());
         this.setMenuItem(this.nodeFont);
         this.setMenuItem(this.edgeFont);
@@ -102,7 +98,10 @@ implements ActionListener {
     @Override public void actionPerformed(ActionEvent e) {
         new Thread(new Runnable() {
             @Override public void run() {
-                if (e.getSource() == betweenTimeDistribution) {
+                if (e.getSource() == contributionCountByObjectDistribution) {
+                    MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution graphLevelContributionCountByObjectIDDistribution = new MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution();
+                    graphLevelContributionCountByObjectIDDistribution.enlarge();
+                } else if (e.getSource() == betweenTimeDistribution) {
                     MyBetweenReachTimeDistributionLineChart betweenReachTimeDistributionLineChart = new MyBetweenReachTimeDistributionLineChart();
                     betweenReachTimeDistributionLineChart.show(betweenReachTimeDistributionLineChart);
                 } else if (e.getSource() == picking) {
@@ -115,8 +114,6 @@ implements ActionListener {
                     MySequentialGraphVars.getSequentialGraphViewer().setGraphMouse(graphMouse);
                 } else if (e.getSource() == nodeStatistics) {
                     MyNodeStatistics nodeStatistics = new MyNodeStatistics();
-                } else if (e.getSource() == nodeDepthAppearanceByDepthStatistics) {
-                    MyNodeDepthAppearnaceStatistics nodeDepthAppearnaceStatistics = new MyNodeDepthAppearnaceStatistics();
                 } else if (e.getSource() == inOutDifferenceByDepthStatistics) {
                     MyInOutValueDifferenceStatByDepthChart inOutDifferenceStatByDepthChart = new MyInOutValueDifferenceStatByDepthChart();
                     inOutDifferenceStatByDepthChart.enlarge();
@@ -127,13 +124,10 @@ implements ActionListener {
                     hopCountDistribution.enlarge();
                 } else if (e.getSource() == sequenceLengthDistribution) {
                     MyGraphLevelSequenceDistribution sequenceDistribution = new MyGraphLevelSequenceDistribution();
-                } else if (e.getSource() == sequenceTotalTimeDistribution) {
-                    MyGraphLevelSequenceTotalTimeDistribution sequenceTotalTimeDistribution = new MyGraphLevelSequenceTotalTimeDistribution();
+                } else if (e.getSource() == timeDistribution) {
+                    MyGraphLevelSequenceTimeDistribution sequenceTotalTimeDistribution = new MyGraphLevelSequenceTimeDistribution();
                 } else if (e.getSource() == showNodeValue) {
-                    MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-                    MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelSelecter.setSelectedIndex(0);
-                    MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-                    MyViewerComponentControllerUtil.showNodeValue();
+                   MyNodeValue nodeValue = new MyNodeValue();
                 } else if (e.getSource() == showEdgeValue) {
                     MyViewerComponentControllerUtil.showEdgeValue();
                 } else if (e.getSource() == showEdgeLabel) {

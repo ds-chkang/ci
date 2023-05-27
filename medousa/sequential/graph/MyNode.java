@@ -160,6 +160,13 @@ implements Serializable, Cloneable, Comparable<MyNode> {
         this.totalPatternCount = totalPatternCount;
         this.value = contribution;
     }
+    public int getTotalContributionByObjects() {
+        int totalCont = 0;
+        for (int cont : contributionCountMapByObjectID.values()) {
+            totalCont += cont;
+        }
+        return totalCont;
+    }
     public void setVariableNodeStrength(String variableNode) {
         if (this.variableStrengthMap.containsKey(variableNode)) {
             this.variableStrengthMap.put(variableNode, this.variableStrengthMap.get(variableNode));
@@ -243,7 +250,7 @@ implements Serializable, Cloneable, Comparable<MyNode> {
     public void setAverageTime(double avgReachTime) {
         this.avgReachTime = avgReachTime;
     }
-    public void setDuration(long duration) {
+    public void setTotalDuration(long duration) {
         this.duration += duration;
         this.durationCount++;
         this.setMaxDuration(duration);
@@ -285,7 +292,7 @@ implements Serializable, Cloneable, Comparable<MyNode> {
     public double getBetweeness() { return this.betweeness; }
     public double getCloseness() { return this.closeness; }
     public double getEignevector() { return this.eignevector; }
-    public long getDuration() {return this.duration;}
+    public long getTotalDuration() {return this.duration;}
     public void setEndPositionNodeCount(int endPositionNodeCount) {
         this.endPositionNodeCount += endPositionNodeCount;
     }
@@ -357,7 +364,7 @@ implements Serializable, Cloneable, Comparable<MyNode> {
                 case 11: return (int) ((this.getCloseness() - n.getCloseness())*1000);
                 case 12: return (int) ((this.getEignevector() - n.getEignevector())*1000);
                 case 13: return (int) (this.getTotalReachTime() - n.getTotalReachTime());
-                case 14: return (int) (this.getDuration() - n.getDuration());
+                case 14: return (int) (this.getTotalDuration() - n.getTotalDuration());
                 default: return (int) (this.getContribution() - n.getContribution());
             }
         } else {

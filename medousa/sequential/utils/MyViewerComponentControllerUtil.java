@@ -721,19 +721,7 @@ public class MyViewerComponentControllerUtil {
 
     public static void showNodeValue() {
         new Thread(new Runnable() {@Override public void run() {
-            MyNodeValueRankFrame nodeValueRankFrame = new MyNodeValueRankFrame();}}).start();
-        MySequentialGraphVars.getSequentialGraphViewer().getRenderContext().setVertexLabelTransformer(new Transformer<MyNode, String>() {@Override
-        public String transform(MyNode n) {
-            String value = MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(n.getCurrentValue()));
-            value = (value.endsWith(".0") || value.endsWith(".00") ? value.substring(0, value.indexOf(".0")) : value);
-            if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
-                if (n == MySequentialGraphVars.getSequentialGraphViewer().selectedNode || MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors.contains(n) ||
-                        MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors.contains(n)) {
-                    return value;
-                } else {return "";}
-            }
-            return value;
-        }});
+            MyNodeValue nodeValueRankFrame = new MyNodeValue();}}).start();
     }
 
     public static void setSharedNodeLevelNodeValueBarChart() {

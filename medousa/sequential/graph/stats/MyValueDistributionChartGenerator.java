@@ -43,7 +43,6 @@ extends JFrame {
         titledBorder.setTitleJustification(TitledBorder.LEFT);
         titledBorder.setTitleFont(new Font("Arial", Font.PLAIN, 0));
         titledBorder.setTitleColor(Color.DARK_GRAY);
-        //this.contentPanel.setBorder(titledBorder);
         this.setVisible(true);
     }
 
@@ -120,7 +119,7 @@ extends JFrame {
                 float nodeValue = node.getCurrentValue();
                 if (nodeValueDistributionMap.containsKey(nodeValue)) {nodeValueDistributionMap.put(nodeValue, nodeValueDistributionMap.get(nodeValue) + 1);
                 } else {nodeValueDistributionMap.put(nodeValue, 1);}
-                totalValue += (double) nodeValue;
+                totalValue += nodeValue;
             }
 
             DefaultCategoryDataset dataset = new DefaultCategoryDataset();

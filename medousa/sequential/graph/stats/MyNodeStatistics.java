@@ -38,10 +38,10 @@ implements ActionListener {
             "BETWEENESS",
             "CLOSENESS",
             "EIGENVECTOR",
+            "REACH TIME",
             "AVG. REACH TIME",
             "DURATION",
-            "RECURRENCE L."
-    };
+            "AVG. DURATION"};
 
     private String [] columns = {
             "NO.",
@@ -58,9 +58,7 @@ implements ActionListener {
             "RECURRENCE",
             "BETWEENESS",
             "CLOSENESS",
-            "EIGENVECTOR",
-            "RECURRENCE L."
-    };
+            "EIGENVECTOR"};
 
     private String [][] data = {};
 
@@ -68,20 +66,19 @@ implements ActionListener {
     private DefaultTableModel model;
     private JTextField searchTxt = new JTextField();
     private JButton save = new JButton(" SAVE ");
-    private JFrame frame;
 
     public MyNodeStatistics() {
         this.decorate();
-        this.frame = new JFrame("NODE SUMMARY STATISTICS");
-        this.frame.setLayout(new BorderLayout(5,5));
-        this.frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.frame.getContentPane().add(this, BorderLayout.CENTER);
-        this.frame.setPreferredSize(new Dimension(800, 600));
-        this.frame.pack();
-        this.frame.setLocation(MySequentialGraphSysUtil.getViewerWidth()-800, 5);
-        this.frame.setAlwaysOnTop(true);
-        this.frame.setVisible(true);
-        this.frame.setAlwaysOnTop(false);    }
+        JFrame f = new JFrame("NODE STATISTICS");
+        f.setLayout(new BorderLayout(5,5));
+        f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        f.getContentPane().add(this, BorderLayout.CENTER);
+        f.setPreferredSize(new Dimension(800, 600));
+        f.pack();
+        f.setAlwaysOnTop(true);
+        f.setVisible(true);
+        f.setAlwaysOnTop(false);
+    }
 
     private void decorate() {
         MyProgressBar pb = new MyProgressBar(false);
@@ -117,8 +114,8 @@ implements ActionListener {
         distributionComboBox.setBackground(Color.WHITE);
         distributionComboBox.setFont(MySequentialGraphVars.tahomaPlainFont12);
         distributionComboBox.addItem("CONTRIBUTION");
-        distributionComboBox.addItem("IN CONTRIBUTION");
-        distributionComboBox.addItem("OUT CONTRIBUTIOIN");
+        distributionComboBox.addItem("IN-CONTRIBUTION");
+        distributionComboBox.addItem("OUT-CONTRIBUTIOIN");
         distributionComboBox.addItem("UNIQUE CONTRIBUTION");
         distributionComboBox.addItem("OPEN NODE COUNT");
         distributionComboBox.addItem("END NODE COUNT");
@@ -129,10 +126,11 @@ implements ActionListener {
         distributionComboBox.addItem("BETWEENESS");
         distributionComboBox.addItem("CLOSENESS");
         distributionComboBox.addItem("EIGENVECTOR");
-        distributionComboBox.addItem("RECURRENCE L.");
         if (MySequentialGraphVars.isTimeOn) {
             distributionComboBox.addItem("REACH TIME");
+            distributionComboBox.addItem("AVG. REACH TIME");
             distributionComboBox.addItem("DURATION");
+            distributionComboBox.addItem("AVG. DURATION");
         }
         distributionComboBox.addActionListener(new ActionListener() {
             @Override
@@ -141,9 +139,9 @@ implements ActionListener {
                     if (distributionComboBox.getSelectedIndex() == 0) {
                         showDistribution("NODE CONTRIBUTION DISTRIBUTION", 2, "CONTRIBUTION");
                     } else if (distributionComboBox.getSelectedIndex() == 1) {
-                        showDistribution("NODE IN CONTRIBUTION DISTRIBUTION", 3, "IN CONTRIBUTION");
+                        showDistribution("NODE IN CONTRIBUTION DISTRIBUTION", 3, "IN-CONTRIBUTION");
                     } else if (distributionComboBox.getSelectedIndex() == 2) {
-                        showDistribution("NODE OUT CONTRIBUTION DISTRIBUTION", 4, "OUT CONTRIBUTION");
+                        showDistribution("NODE OUT CONTRIBUTION DISTRIBUTION", 4, "OUT-CONTRIBUTION");
                     } else if (distributionComboBox.getSelectedIndex() == 3) {
                         showDistribution("NODE UNIQUE CONTRIBUTION DISTRIBUTION", 5, "UNIQUE CONTRIBUTION");
                     } else if (distributionComboBox.getSelectedIndex() == 4) {
@@ -165,11 +163,13 @@ implements ActionListener {
                     } else if (distributionComboBox.getSelectedIndex() == 12) {
                         showDistribution("EIGENVECTOR DISTRIBUTION", 14, "EIGENVECTOR");
                     } else if (distributionComboBox.getSelectedIndex() == 13) {
-                        showDistribution("NODE REACH TIME DISTRIBUTION", 15, "AVG. REACH TIME");
+                        showDistribution("TOTAL REACH TIME DISTRIBUTION", 15, "TOTAL REACH TIME BY NODE");
                     } else if (distributionComboBox.getSelectedIndex() == 14) {
-                        showDistribution("NODE DURATION DISTRIBUTION", 16, "DURATION");
+                        showDistribution("AVG. REACH TIME DISTRIBUTION", 16, "AVG. REACH TIME BY NODE");
                     } else if (distributionComboBox.getSelectedIndex() == 15) {
-                        showDistribution("RECURRENCE LENGTH DISTRIBUTION", 17, "RECURRENCE LENGTH");
+                        showDistribution("TOTAL DURATION BY NODE DISTRIBUTION", 17, "TOTAL DURATION BY NODE");
+                    } else if (distributionComboBox.getSelectedIndex() == 16) {
+                        showDistribution("AVG. DURATION BY NODE DISTRIBUTION", 18, "AVG. DURATION BY NODE");
                     }
                 } else {
                     if (distributionComboBox.getSelectedIndex() == 0) {
@@ -198,8 +198,6 @@ implements ActionListener {
                         showDistribution("CLOSENESS DISTRIBUTION", 13, "CLOSENESS");
                     } else if (distributionComboBox.getSelectedIndex() == 12) {
                         showDistribution("EIGENVECTOR DISTRIBUTION", 14, "EIGENVECTOR");
-                    } else if (distributionComboBox.getSelectedIndex() == 13) {
-                        showDistribution("RECURRENCE LENGTH DISTRIBUTION", 15, "RECURRENCE LENGTH");
                     }
                 }
             }
@@ -211,8 +209,8 @@ implements ActionListener {
         nodeOrderByComboBox.setBackground(Color.WHITE);
         nodeOrderByComboBox.setFont(MySequentialGraphVars.tahomaPlainFont12);
         nodeOrderByComboBox.addItem("CONTRIBUTION");
-        nodeOrderByComboBox.addItem("IN CONTRIBUTION");
-        nodeOrderByComboBox.addItem("OUT CONTRIBUTION");
+        nodeOrderByComboBox.addItem("IN-CONTRIBUTION");
+        nodeOrderByComboBox.addItem("OUT-CONTRIBUTION");
         nodeOrderByComboBox.addItem("UNIQ. CONT.");
         nodeOrderByComboBox.addItem("OPEN NODE");
         nodeOrderByComboBox.addItem("END NODE");
@@ -223,20 +221,18 @@ implements ActionListener {
         nodeOrderByComboBox.addItem("BETWEENESS");
         nodeOrderByComboBox.addItem("CLOSENESS");
         nodeOrderByComboBox.addItem("EIGENVECTOR");
-        nodeOrderByComboBox.addItem("RECURRENCE L.");
         if (MySequentialGraphVars.isTimeOn) {
             nodeOrderByComboBox.addItem("REACH TIME");
+            nodeOrderByComboBox.addItem("AVG. REACH TIME");
             nodeOrderByComboBox.addItem("DURATION");
+            nodeOrderByComboBox.addItem("AVG. DURATION");
         }
         nodeOrderByComboBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+            @Override public void actionPerformed(ActionEvent e) {
                 new Thread(new Runnable() {
-                    @Override
-                    public void run() {
+                    @Override public void run() {
                         try {
                             if (MySequentialGraphVars.isTimeOn) {
-                                frame.setAlwaysOnTop(true);
                                 MyProgressBar pb = new MyProgressBar(false);
                                 MySequentialGraphVars.nodeOrderByComboBoxIdx = nodeOrderByComboBox.getSelectedIndex();
                                 for (int i = model.getRowCount() - 1; i >= 0; i--) {
@@ -260,21 +256,20 @@ implements ActionListener {
                                             MyMathUtil.getCommaSeperatedNumber(n.getStartPositionNodeCount()),
                                             MyMathUtil.getCommaSeperatedNumber(n.getEndPositionNodeCount()),
                                             MyMathUtil.getCommaSeperatedNumber(n.getSuccessorCount()),
+                                            MyMathUtil.getCommaSeperatedNumber(n.getPredecessorCount()-n.getSuccessorCount()),
                                             MyMathUtil.getCommaSeperatedNumber(n.getPredecessorCount()),
-                                            MyMathUtil.getCommaSeperatedNumber(Math.abs(n.getSuccessorCount() - n.getPredecessorCount())),
                                             MyMathUtil.getCommaSeperatedNumber(n.getTotalNodeRecurrentCount()),
                                             MyMathUtil.twoDecimalFormat(n.getBetweeness()),
                                             MyMathUtil.twoDecimalFormat(n.getCloseness()),
                                             MyMathUtil.twoDecimalFormat(n.getEignevector()),
-                                            MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(n.getAverageReachTime())),
-                                            MyMathUtil.getCommaSeperatedNumber(n.getDuration()),
-                                            MyMathUtil.twoDecimalFormat(n.getAverageRecurrenceLength())});
+                                            MyMathUtil.getCommaSeperatedNumber(n.getTotalReachTime()),
+                                            MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(n.getAverageReachTime())).split("\\.")[0],
+                                            MyMathUtil.getCommaSeperatedNumber(n.getTotalDuration()),
+                                            MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(n.getAverageDuration())).split("\\.")[0]});
                                 }
                                 pb.updateValue(100, 100);
                                 pb.dispose();
-                                frame.setAlwaysOnTop(false);
                             } else {
-                                frame.setAlwaysOnTop(true);
                                 MyProgressBar pb = new MyProgressBar(false);
                                 MySequentialGraphVars.nodeOrderByComboBoxIdx = nodeOrderByComboBox.getSelectedIndex();
                                 for (int i = model.getRowCount() - 1; i >= 0; i--) {
@@ -299,16 +294,14 @@ implements ActionListener {
                                             MyMathUtil.getCommaSeperatedNumber(n.getEndPositionNodeCount()),
                                             MyMathUtil.getCommaSeperatedNumber(n.getSuccessorCount()),
                                             MyMathUtil.getCommaSeperatedNumber(n.getPredecessorCount()),
-                                            MyMathUtil.getCommaSeperatedNumber(Math.abs(n.getSuccessorCount() - n.getPredecessorCount())),
+                                            MyMathUtil.getCommaSeperatedNumber(n.getPredecessorCount()-n.getSuccessorCount()),
                                             MyMathUtil.getCommaSeperatedNumber(n.getTotalNodeRecurrentCount()),
                                             MyMathUtil.twoDecimalFormat(n.getBetweeness()),
                                             MyMathUtil.twoDecimalFormat(n.getCloseness()),
-                                            MyMathUtil.twoDecimalFormat(n.getEignevector()),
-                                            MyMathUtil.twoDecimalFormat(n.getAverageRecurrenceLength())});
+                                            MyMathUtil.twoDecimalFormat(n.getEignevector())});
                                 }
                                 pb.updateValue(100, 100);
                                 pb.dispose();
-                                frame.setAlwaysOnTop(false);
                             }
                         } catch (Exception ex) {ex.printStackTrace();}
                     }
@@ -337,8 +330,10 @@ implements ActionListener {
         this.add(searchAndSavePanel, BorderLayout.SOUTH);
         this.save.setPreferredSize(new Dimension(70, 29));
         this.table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        this.table.getTableHeader().setOpaque(false);
+        this.table.getTableHeader().setBackground(new Color(0,0,0,0f));
         this.table.setRowSorter(MyTableUtil.setJTableRowSorterWithTextField(this.model, this.searchTxt));
-        this.table.setSelectionBackground(Color.BLACK);
+        this.table.setSelectionBackground(Color.GRAY);
         this.table.setSelectionForeground(Color.WHITE);
         this.table.setFocusable(false);
         this.table.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont12);
@@ -438,17 +433,17 @@ implements ActionListener {
                             MyMathUtil.getCommaSeperatedNumber(n.getEndPositionNodeCount()),
                             MyMathUtil.getCommaSeperatedNumber(n.getSuccessorCount()),
                             MyMathUtil.getCommaSeperatedNumber(n.getPredecessorCount()),
-                            MyMathUtil.getCommaSeperatedNumber(Math.abs(n.getSuccessorCount() - n.getPredecessorCount())),
+                            MyMathUtil.getCommaSeperatedNumber(n.getPredecessorCount()-n.getSuccessorCount()),
                             MyMathUtil.getCommaSeperatedNumber(n.getTotalNodeRecurrentCount()),
                             MyMathUtil.twoDecimalFormat(n.getBetweeness()),
                             MyMathUtil.twoDecimalFormat(n.getCloseness()),
                             MyMathUtil.twoDecimalFormat(n.getEignevector()),
                             MyMathUtil.getCommaSeperatedNumber(n.getTotalReachTime()),
-                            MyMathUtil.getCommaSeperatedNumber(n.getDuration()),
-                            MyMathUtil.twoDecimalFormat(n.getAverageRecurrenceLength())});
+                            MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(n.getAverageReachTime())).split("\\.")[0],
+                            MyMathUtil.getCommaSeperatedNumber(n.getTotalDuration()),
+                            MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(n.getAverageDuration())).split("\\.")[0]});
                 }
                 this.table = new JTable(model);
-                this.table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
                 this.table.getColumnModel().getColumn(0).setPreferredWidth(60);
                 this.table.getColumnModel().getColumn(1).setPreferredWidth(100);
                 this.table.getColumnModel().getColumn(2).setPreferredWidth(100);
@@ -467,6 +462,7 @@ implements ActionListener {
                 this.table.getColumnModel().getColumn(15).setPreferredWidth(60);
                 this.table.getColumnModel().getColumn(16).setPreferredWidth(60);
                 this.table.getColumnModel().getColumn(17).setPreferredWidth(60);
+                this.table.getColumnModel().getColumn(18).setPreferredWidth(60);
 
                 this.table.setBackground(Color.WHITE);
                 this.table.setFont(MySequentialGraphVars.f_pln_12);
@@ -490,17 +486,16 @@ implements ActionListener {
                             MyMathUtil.getCommaSeperatedNumber(n.getEndPositionNodeCount()),
                             MyMathUtil.getCommaSeperatedNumber(n.getSuccessorCount()),
                             MyMathUtil.getCommaSeperatedNumber(n.getPredecessorCount()),
-                            MyMathUtil.getCommaSeperatedNumber(Math.abs(n.getSuccessorCount() - n.getPredecessorCount())),
+                            MyMathUtil.getCommaSeperatedNumber(n.getPredecessorCount()-n.getSuccessorCount()),
                             MyMathUtil.getCommaSeperatedNumber(n.getTotalNodeRecurrentCount()),
                             MyMathUtil.twoDecimalFormat(n.getBetweeness()),
                             MyMathUtil.twoDecimalFormat(n.getCloseness()),
-                            MyMathUtil.twoDecimalFormat(n.getEignevector()),
-                            MyMathUtil.twoDecimalFormat(n.getAverageRecurrenceLength())
+                            MyMathUtil.twoDecimalFormat(n.getEignevector())
 
                     });
                 }
+
                 this.table = new JTable(model);
-                this.table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
                 this.table.getColumnModel().getColumn(0).setPreferredWidth(60);
                 this.table.getColumnModel().getColumn(1).setPreferredWidth(150);
                 this.table.getColumnModel().getColumn(2).setPreferredWidth(60);
@@ -516,7 +511,6 @@ implements ActionListener {
                 this.table.getColumnModel().getColumn(11).setPreferredWidth(60);
                 this.table.getColumnModel().getColumn(12).setPreferredWidth(60);
                 this.table.getColumnModel().getColumn(13).setPreferredWidth(60);
-                this.table.getColumnModel().getColumn(14).setPreferredWidth(60);
 
                 this.table.setBackground(Color.WHITE);
                 this.table.setFont(MySequentialGraphVars.f_pln_12);

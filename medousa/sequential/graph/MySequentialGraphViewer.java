@@ -1125,7 +1125,7 @@ implements Serializable {
         if (MySequentialGraphVars.isTimeOn) {
             toolTip += "<BR>REACH TIME: " + MyMathUtil.getCommaSeperatedNumber(n.getTotalReachTime()) +
                 "<BR>AVG. REACH TIME: " + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(n.getAverageReachTime())) +
-                "<BR>DURATION: " + MyMathUtil.getCommaSeperatedNumber(n.getDuration()) +
+                "<BR>DURATION: " + MyMathUtil.getCommaSeperatedNumber(n.getTotalDuration()) +
                 "<BR>MAX. DURATION: " + MyMathUtil.getCommaSeperatedNumber(n.getMaxDuration()) +
                 "<BR>MIN. DURATION: " + MyMathUtil.getCommaSeperatedNumber(n.getMinDuration()) +
                 "<BR>AVG. DURATION: " + MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(n.getAverageDuration()));

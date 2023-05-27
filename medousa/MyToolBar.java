@@ -40,6 +40,7 @@ implements ActionListener {
     private final ImageIcon funnel_img_icon = new ImageIcon(getClass().getResource(MyDirectGraphVars.imgDir +"simulation.png"));
     private final ImageIcon pathfinder_img_icon = new ImageIcon(getClass().getResource(MyDirectGraphVars.imgDir + "network.png"));
 
+
     protected   JComboBox projectMenuComboBox;
     private final String [] projectMenuItems = {"", "DIRECT NETWORK", "SEQUENTIAL NETWORK"};
 
