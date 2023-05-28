@@ -38,7 +38,7 @@ implements ActionListener {
     public MyNodeDepthAppearnaceStatistics() {
         this.setColumns();
         this.decorate();
-        JFrame f = new JFrame("NODE APPEARANCES BY DEPTH STATISTICS");
+        JFrame f = new JFrame("NODES BY DEPTH");
         f.setLayout(new BorderLayout(5,5));
         f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         f.getContentPane().add(this, BorderLayout.CENTER);
@@ -91,24 +91,62 @@ implements ActionListener {
             }
         });
 
+        JPanel topPanel = new JPanel();
+        topPanel.setBackground(Color.WHITE);
+        topPanel.setLayout(new BorderLayout(3,3));
+
         JPanel infoPanel = new JPanel();
         infoPanel.setBackground(Color.WHITE);
         infoPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         infoPanel.add(numberOfNodeLabel);
         infoPanel.add(selectedNode);
 
+        JPanel orderByPanel = new JPanel();
+        orderByPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 2,2));
+        orderByPanel.setBackground(Color.WHITE);
+
+        JLabel orderByLabel = new JLabel("ORDER BY");
+        orderByLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        orderByLabel.setBackground(Color.WHITE);
+
+        JComboBox orderByComboBox = new JComboBox();
+        for (int i=1; i <= MySequentialGraphVars.mxDepth; i++) {
+            orderByComboBox.addItem("DEPTH " + i);
+        }
+        orderByComboBox.setFocusable(false);
+        orderByComboBox.setBackground(Color.WHITE);
+        orderByComboBox.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        orderByComboBox.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                new Thread(new Runnable() {
+                    @Override public void run() {
+
+                    }
+                }).start();
+            }
+        });
+
+        orderByPanel.add(orderByLabel);
+        orderByPanel.add(orderByComboBox);
+
+        topPanel.add(infoPanel, BorderLayout.WEST);
+        topPanel.add(orderByPanel, BorderLayout.CENTER);
+
         JScrollPane tableScrollPane = new JScrollPane(this.table);
         tableScrollPane.setPreferredSize(new Dimension(1000, 650));
-        this.add(infoPanel, BorderLayout.NORTH);
+        this.add(topPanel, BorderLayout.NORTH);
         this.add(tableScrollPane, BorderLayout.CENTER);
-        JPanel searchAndSavePanel = MyTableUtil.searchAndSaveDataPanelForJTable2(this, searchTxt, this.save, this.model, this.table);
+        JPanel searchAndSavePanel = MyTableUtil.searchTablePanel(this, searchTxt, this.save, this.model, this.table);
+        searchAndSavePanel.remove(this.save);
         this.add(searchAndSavePanel, BorderLayout.SOUTH);;
         this.save.setPreferredSize(new Dimension(70, 28));
         this.searchTxt.setBorder(BorderFactory.createLoweredSoftBevelBorder());
         this.searchTxt.setPreferredSize(new Dimension(100, 28));
+        this.table.setOpaque(false);
+        this.table.getTableHeader().setBackground(new Color(0,0,0,0f));
         this.table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.table.setRowSorter(MyTableUtil.setJTableRowSorterWithTextField(this.model, this.searchTxt));
-        this.table.setSelectionBackground(Color.PINK);
+        this.table.setSelectionBackground(Color.GRAY);
         this.table.setSelectionForeground(Color.BLACK);
         this.table.setFocusable(false);
         Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
@@ -131,7 +169,8 @@ implements ActionListener {
             for (MyNode n : nodes) {
                 for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
                     for (int i = 0; i < MySequentialGraphVars.seqs[s].length; i++) {
-                        String itemset = (MySequentialGraphVars.isTimeOn ? MySequentialGraphVars.seqs[s][i].split(":")[0] : MySequentialGraphVars.seqs[s][i]);
+                        String itemset =
+                            (MySequentialGraphVars.isTimeOn ? MySequentialGraphVars.seqs[s][i].split(":")[0] : MySequentialGraphVars.seqs[s][i]);
                         if (itemset.equals(n.getName())) {
                             if (nodeDepthAppearanceCountMap.containsKey(n)) {
                                 if (nodeDepthAppearanceCountMap.get(n).containsKey(i+1)) {
@@ -184,6 +223,8 @@ implements ActionListener {
             }
 
             this.table.setBackground(Color.WHITE);
+            this.table.getTableHeader().setBackground(new Color(0,0,0,0f));
+            this.table.getTableHeader().setOpaque(false);
             this.table.setFont(MySequentialGraphVars.f_pln_12);
             this.table.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont12);
             this.table.getTableHeader().setBackground(Color.LIGHT_GRAY);

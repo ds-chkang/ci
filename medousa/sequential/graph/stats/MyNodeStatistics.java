@@ -5,6 +5,7 @@ import medousa.sequential.graph.MyNode;
 import medousa.sequential.utils.MyMathUtil;
 import medousa.sequential.utils.MySequentialGraphSysUtil;
 import medousa.sequential.utils.MySequentialGraphVars;
+import medousa.table.MyTableToolTipper;
 import medousa.table.MyTableUtil;
 
 import javax.swing.*;
@@ -12,10 +13,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.util.*;
 
 public class MyNodeStatistics
@@ -163,11 +161,11 @@ implements ActionListener {
                     } else if (distributionComboBox.getSelectedIndex() == 12) {
                         showDistribution("EIGENVECTOR DISTRIBUTION", 14, "EIGENVECTOR");
                     } else if (distributionComboBox.getSelectedIndex() == 13) {
-                        showDistribution("TOTAL REACH TIME DISTRIBUTION", 15, "TOTAL REACH TIME BY NODE");
+                        showDistribution("REACH TIME DISTRIBUTION", 15, "REACH TIME BY NODE");
                     } else if (distributionComboBox.getSelectedIndex() == 14) {
                         showDistribution("AVG. REACH TIME DISTRIBUTION", 16, "AVG. REACH TIME BY NODE");
                     } else if (distributionComboBox.getSelectedIndex() == 15) {
-                        showDistribution("TOTAL DURATION BY NODE DISTRIBUTION", 17, "TOTAL DURATION BY NODE");
+                        showDistribution("DURATION BY NODE DISTRIBUTION", 17, "DURATION BY NODE");
                     } else if (distributionComboBox.getSelectedIndex() == 16) {
                         showDistribution("AVG. DURATION BY NODE DISTRIBUTION", 18, "AVG. DURATION BY NODE");
                     }
@@ -344,8 +342,8 @@ implements ActionListener {
         this.searchTxt.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
-                super.keyTyped(e);
-                numberOfNodeLabel.setText("NO. OF NODES: " + MyMathUtil.getCommaSeperatedNumber(table.getRowCount()));
+            super.keyTyped(e);
+            numberOfNodeLabel.setText("NO. OF NODES: " + MyMathUtil.getCommaSeperatedNumber(table.getRowCount()));
             }
         });
         pb.updateValue(100,100);
@@ -443,7 +441,19 @@ implements ActionListener {
                             MyMathUtil.getCommaSeperatedNumber(n.getTotalDuration()),
                             MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(n.getAverageDuration())).split("\\.")[0]});
                 }
-                this.table = new JTable(model);
+                this.table = new JTable(model) {
+                    //Implement table cell tool tips.
+                    public String getToolTipText(MouseEvent e) {
+                        String tip = null;
+                        Point p = e.getPoint();
+                        int rowIndex = rowAtPoint(p);
+                        int colIndex = columnAtPoint(p);
+                        try {
+                            tip = getValueAt(rowIndex, colIndex).toString();
+                        } catch (RuntimeException e1) {}
+                        return tip;
+                    }
+                };
                 this.table.getColumnModel().getColumn(0).setPreferredWidth(60);
                 this.table.getColumnModel().getColumn(1).setPreferredWidth(100);
                 this.table.getColumnModel().getColumn(2).setPreferredWidth(100);
@@ -467,6 +477,30 @@ implements ActionListener {
                 this.table.setBackground(Color.WHITE);
                 this.table.setFont(MySequentialGraphVars.f_pln_12);
                 this.table.setRowHeight(24);
+
+                String [] tableColumnTooltips = {
+                    "NO.",
+                    "NODE",
+                    "CONTRIBUTION",
+                    "IN CONTRIBUTION",
+                    "OUT CONTRIBUTION",
+                    "UNIQUE CONTRIBUTION",
+                    "START NODE COUNT",
+                    "END NODE COUNT",
+                    "SUCCESSORS",
+                    "PREDECESSORS",
+                    "INOUT NODE DIFFERENCE",
+                    "RECURRENCE",
+                    "BETWEENESS",
+                    "CLOSENESS",
+                    "EIGENVECTOR",
+                    "REACH TIME",
+                    "AVG. REACH TIME",
+                    "DURATION",
+                    "AVG. DURATION"};
+                MyTableToolTipper nodeTooltipHeader = new MyTableToolTipper(this.table.getColumnModel());
+                nodeTooltipHeader.setToolTipStrings(tableColumnTooltips);
+                this.table.setTableHeader(nodeTooltipHeader);
             } else {
                 this.model = new DefaultTableModel(this.data, this.columns);
                 ArrayList<MyNode> nodes = new ArrayList<>(MySequentialGraphVars.g.getVertices());
@@ -495,7 +529,43 @@ implements ActionListener {
                     });
                 }
 
-                this.table = new JTable(model);
+                String [] tableColumnTooltips = {
+                        "NO.",
+                        "NODE",
+                        "CONTRIBUTION",
+                        "IN CONTRIBUTION",
+                        "OUT CONTRIBUTION",
+                        "UNIQUE CONTRIBUTION",
+                        "START NODE COUNT",
+                        "END NODE COUNT",
+                        "SUCCESSORS",
+                        "PREDECESSORS",
+                        "INOUT NODE DIFFERENCE",
+                        "RECURRENCE",
+                        "BETWEENESS",
+                        "CLOSENESS",
+                        "EIGENVECTOR",
+                        "REACH TIME",
+                        "AVG. REACH TIME",
+                        "DURATION",
+                        "AVG. DURATION"};
+                MyTableToolTipper nodeTooltipHeader = new MyTableToolTipper(this.table.getColumnModel());
+                nodeTooltipHeader.setToolTipStrings(tableColumnTooltips);
+                this.table.setTableHeader(nodeTooltipHeader);
+
+                this.table = new JTable(model) {
+                    //Implement table cell tool tips.
+                    public String getToolTipText(MouseEvent e) {
+                        String tip = null;
+                        Point p = e.getPoint();
+                        int rowIndex = rowAtPoint(p);
+                        int colIndex = columnAtPoint(p);
+                        try {
+                            tip = getValueAt(rowIndex, colIndex).toString();
+                        } catch (RuntimeException e1) {}
+                        return tip;
+                    }
+                };
                 this.table.getColumnModel().getColumn(0).setPreferredWidth(60);
                 this.table.getColumnModel().getColumn(1).setPreferredWidth(150);
                 this.table.getColumnModel().getColumn(2).setPreferredWidth(60);
@@ -515,6 +585,8 @@ implements ActionListener {
                 this.table.setBackground(Color.WHITE);
                 this.table.setFont(MySequentialGraphVars.f_pln_12);
                 this.table.setRowHeight(24);
+
+
             }
         } catch (Exception ex) {
             ex.printStackTrace();

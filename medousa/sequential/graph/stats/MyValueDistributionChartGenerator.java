@@ -63,7 +63,6 @@ extends JFrame {
         titledBorder.setTitleJustification(TitledBorder.LEFT);
         titledBorder.setTitleFont(new Font("Arial", Font.PLAIN, 0));
         titledBorder.setTitleColor(Color.DARK_GRAY);
-        //this.contentPanel.setBorder(titledBorder);
         this.setVisible(true);
     }
 
@@ -75,8 +74,12 @@ extends JFrame {
             double totalValue = 0.0D;
             for (int j=0; j < table.getRowCount(); j++) {
                 double numberColumnValue = Double.valueOf(table.getValueAt(j, column).toString().split("\\.")[0].replaceAll("\\,", ""));
-                if (columnValueDistributionMap.containsKey(numberColumnValue)) {columnValueDistributionMap.put(numberColumnValue, columnValueDistributionMap.get(numberColumnValue)+1);
-                } else {columnValueDistributionMap.put(numberColumnValue, 1);}
+                if (numberColumnValue == 0) continue;
+                if (columnValueDistributionMap.containsKey(numberColumnValue)) {
+                    columnValueDistributionMap.put(numberColumnValue, columnValueDistributionMap.get(numberColumnValue)+1);
+                } else {
+                    columnValueDistributionMap.put(numberColumnValue, 1);
+                }
                 totalValue += numberColumnValue;
             }
             DefaultCategoryDataset dataset = new DefaultCategoryDataset();
@@ -114,9 +117,10 @@ extends JFrame {
             TreeMap<Float, Integer> nodeValueDistributionMap = new TreeMap<>();
             double totalValue = 0.0D;
             Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
-            for (MyNode node : nodes) {
-                if (Double.isNaN(node.getCurrentValue())) continue;
-                float nodeValue = node.getCurrentValue();
+            for (MyNode n : nodes) {
+                if (Double.isNaN(n.getCurrentValue())) continue;
+                if (n.getCurrentValue() == 0) continue;
+                float nodeValue = n.getCurrentValue();
                 if (nodeValueDistributionMap.containsKey(nodeValue)) {nodeValueDistributionMap.put(nodeValue, nodeValueDistributionMap.get(nodeValue) + 1);
                 } else {nodeValueDistributionMap.put(nodeValue, 1);}
                 totalValue += nodeValue;

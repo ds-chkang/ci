@@ -38,6 +38,7 @@ implements ActionListener {
     private JMenuItem showBetweenNodeProperty = new JMenuItem("BETWEEN NODE PROPERTIES");
     private JMenuItem hopCountDistribution = new JMenuItem("AVERAGE HOP COUNT DISTRIBUTION");
     private JMenuItem timeDistribution = new JMenuItem("TIME DISTRIBUTION");
+    private JMenuItem durationDistribution = new JMenuItem("DURATION DISTRIBUTION");
     private JMenuItem nodesByDepth = new JMenuItem("NODES BY DEPTH");
     private JMenuItem dataFlowGraph = new JMenuItem("DATA FLOWS");
     private JMenuItem clustering = new JMenuItem("CLUSTERING");
@@ -80,6 +81,7 @@ implements ActionListener {
         }
         if (MySequentialGraphVars.isTimeOn) {
             this.setMenuItem(this.timeDistribution);
+            this.setMenuItem(this.durationDistribution);
         }
         this.add(new JSeparator());
         this.setMenuItem(this.dataFlowGraph);
@@ -101,10 +103,7 @@ implements ActionListener {
                 if (e.getSource() == contributionCountByObjectDistribution) {
                     MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution graphLevelContributionCountByObjectIDDistribution = new MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution();
                     graphLevelContributionCountByObjectIDDistribution.enlarge();
-                } else if (e.getSource() == betweenTimeDistribution) {
-                    MyBetweenReachTimeDistributionLineChart betweenReachTimeDistributionLineChart = new MyBetweenReachTimeDistributionLineChart();
-                    betweenReachTimeDistributionLineChart.show(betweenReachTimeDistributionLineChart);
-                } else if (e.getSource() == picking) {
+                }  else if (e.getSource() == picking) {
                     DefaultModalGraphMouse graphMouse = new DefaultModalGraphMouse();
                     graphMouse.setMode(DefaultModalGraphMouse.Mode.PICKING);
                     MySequentialGraphVars.getSequentialGraphViewer().setGraphMouse(graphMouse);
@@ -112,6 +111,8 @@ implements ActionListener {
                     DefaultModalGraphMouse graphMouse = new DefaultModalGraphMouse();
                     graphMouse.setMode(DefaultModalGraphMouse.Mode.TRANSFORMING);
                     MySequentialGraphVars.getSequentialGraphViewer().setGraphMouse(graphMouse);
+                } else if (e.getSource() == nodesByDepth) {
+                    MyNodeDepthAppearnaceStatistics nodeDepthAppearnaceStatistics = new MyNodeDepthAppearnaceStatistics();
                 } else if (e.getSource() == nodeStatistics) {
                     MyNodeStatistics nodeStatistics = new MyNodeStatistics();
                 } else if (e.getSource() == inOutDifferenceByDepthStatistics) {
@@ -125,23 +126,21 @@ implements ActionListener {
                 } else if (e.getSource() == sequenceLengthDistribution) {
                     MyGraphLevelSequenceDistribution sequenceDistribution = new MyGraphLevelSequenceDistribution();
                 } else if (e.getSource() == timeDistribution) {
-                    MyGraphLevelSequenceTimeDistribution sequenceTotalTimeDistribution = new MyGraphLevelSequenceTimeDistribution();
+                    MyGraphTopLevelReachTimeDistribution timeDistribution = new MyGraphTopLevelReachTimeDistribution();
+                    timeDistribution.enlarge();
+                } else if (e.getSource() == durationDistribution) {
+                    MyGraphTopLevelDurationDistribution durationDistribution = new MyGraphTopLevelDurationDistribution();
+                    durationDistribution.enlarge();
                 } else if (e.getSource() == showNodeValue) {
                    MyNodeValue nodeValue = new MyNodeValue();
                 } else if (e.getSource() == showEdgeValue) {
                     MyViewerComponentControllerUtil.showEdgeValue();
                 } else if (e.getSource() == showEdgeLabel) {
                     MyViewerComponentControllerUtil.showEdgeLabel();
-                } else if (e.getSource() == nodesByDepth) {
-                    MyNodeDepthAppearnaceStatistics nodeDepthAppearnaceStatistics = new MyNodeDepthAppearnaceStatistics();
                 } else if (e.getSource() == searchNode) {
                     MyNodeLister nodeSearch = new MyNodeLister();
-                } else if (e.getSource() == showNodesBetweenNodes) {
-                    MyBetweenNodesFinder betweenNodeSetFinder = new MyBetweenNodesFinder();
                 } else if (e.getSource() == showEndNodes) {
                     MyNodeLister nodeSearch = new MyNodeLister("SHOW ENDING NODES");
-                } else if (e.getSource() == showBetweenNodeProperty) {
-                    MyBetweenNodePropertyFinder betweenNodePropertyFinder = new MyBetweenNodePropertyFinder();
                 } else if (e.getSource() == showNodeValueDistribution) {
                     MyValueDistributionChartGenerator nodeValueDistributionChart = new MyValueDistributionChartGenerator("NODE VALUE DISTRIBUTION", "NODE VALUE");
                 } else if (e.getSource() == showEdgeValueDistribution) {

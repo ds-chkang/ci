@@ -10,6 +10,7 @@ public class MyNodeUtil {
 
     public static void setUserDefinedNodeValuesToNodes() {
         float maxVal = 0.00f;
+        MySequentialGraphVars.getSequentialGraphViewer().nodeValueName = MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedItem().toString();
         ArrayList<MyNode> nodes = new ArrayList<>(MySequentialGraphVars.g.getVertices());
         for (MyNode n : nodes) {
             n.setCurrentValue(n.nodeNumericValueMap.get(MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedItem().toString()));
@@ -19,8 +20,6 @@ public class MyNodeUtil {
         if (maxVal > 0) {
             MySequentialGraphVars.g.MX_N_VAL = maxVal;
         }
-        MySequentialGraphVars.getSequentialGraphViewer().nodeValueName =
-            MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedItem().toString();
     }
 
     public static void setDefaultValuesToNodes() {

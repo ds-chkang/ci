@@ -30,7 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.TreeMap;
 
-public class MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution
+public class MyGraphLevelTopLevelNodeTimeValueDistribution
 extends JPanel
 implements ActionListener {
 
@@ -39,10 +39,15 @@ implements ActionListener {
     private float minValue = 1000000000;
     private float avgValue = 0;
     private float stdValue = 0;
+    private Set<MyNode> nodes = null;
+    private float toTime = 0f;
+    private int selectedMenu = 0;
+    private JTable nodeTable;
 
-    public MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution() {}
+    public MyGraphLevelTopLevelNodeTimeValueDistribution() {}
 
     public void decorate() {
+        removeAll();
         setLayout(new BorderLayout(3, 3));
         setBackground(Color.WHITE);
 
@@ -65,7 +70,69 @@ implements ActionListener {
         barRenderer.setBarPainter(new StandardBarPainter());
         barRenderer.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont11);
 
+        JComboBox timeConvertMenu = new JComboBox();
+        timeConvertMenu.addItem("SECOND");
+        timeConvertMenu.addItem("MINUTE");
+        timeConvertMenu.addItem("HOUR");
+        timeConvertMenu.setSelectedIndex(selectedMenu);
+        timeConvertMenu.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        timeConvertMenu.setFocusable(false);
+        timeConvertMenu.setBackground(Color.WHITE);
+        timeConvertMenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new Thread(new Runnable() {
+                    @Override public void run() {
+                        if (timeConvertMenu.getSelectedIndex() == 0) {
+                            maxValue = 0;
+                            toTime = 0;
+                            selectedMenu = 0;
+                            decorate();
+                            updateNodeTable();
+                        } else if (timeConvertMenu.getSelectedIndex() == 1) {
+                            maxValue = 0;
+                            selectedMenu = 1;
+                            toTime = 60;
+                            decorate();
+                            updateNodeTable();
+                        } else if (timeConvertMenu.getSelectedIndex() == 2) {
+                            maxValue = 0;
+                            toTime = 3600;
+                            selectedMenu = 2;
+                            decorate();
+                            updateNodeTable();
+                        }
+                    }
+                }).start();
+            }
+        });
+
+        JPanel timeConvertMenuPanel = new JPanel();
+        timeConvertMenuPanel.setBackground(Color.WHITE);
+        timeConvertMenuPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 3, 3));
+        timeConvertMenuPanel.add(timeConvertMenu);
+
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BorderLayout(3, 3));
+        topPanel.setBackground(Color.WHITE);
+        topPanel.add(timeConvertMenuPanel, BorderLayout.EAST);
+
+        add(topPanel, BorderLayout.NORTH);
         add(chartPanel, BorderLayout.CENTER);
+    }
+
+    private void updateNodeTable() {
+        int row = 0;
+        while (row < nodeTable.getRowCount()) {
+            String node = MySequentialGraphVars.nodeNameMap.get(nodeTable.getValueAt(row, 1).toString());
+            MyNode n = (MyNode) MySequentialGraphVars.g.vRefs.get(node);
+            long time = (this.toTime > 0 ? (long) (n.getCurrentValue()/this.toTime): (long) n.getCurrentValue());
+            String strTime = MyMathUtil.getCommaSeperatedNumber(time);
+            String strTimeRatio = MyMathUtil.twoDecimalFormat((float) time/maxValue);
+            nodeTable.setValueAt(strTime, row, 2);
+            nodeTable.setValueAt(strTimeRatio, row, 3);
+            row++;
+        }
     }
 
     public void enlarge() {
@@ -89,60 +156,48 @@ implements ActionListener {
                 statTable.setRowHeight(22);
                 statTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont11);
                 statTable.getTableHeader().setOpaque(false);
-                statTable.getTableHeader().setBackground(new Color(0, 0, 0, 0f));
+                statTable.getTableHeader().setBackground(new Color(0, 0, 0, 0));
                 statTable.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(100);
-
-                String [] statTableColumnTooltips = {"NO. OF NODES", "MAX. CONTRIBUTION VALUE", "MIN. CONTRIBUTION VALUE", "AVG. CONTRIBUTION VALUE", "STANDARD DEVIATION CONTRIBUTION VALUE"};
-                MyTableToolTipper statTooltipHeader = new MyTableToolTipper(statTable.getColumnModel());
-                statTooltipHeader.setToolTipStrings(statTableColumnTooltips);
-                statTable.setTableHeader(statTooltipHeader);
 
                 JScrollPane statTableScrollPane = new JScrollPane(statTable);
                 statTableScrollPane.setBackground(Color.WHITE);
 
-                String[] nodeTableColumns = {"NO.", "NODE", "OBJ.", "T. CONT.", "AVG.", "R."};
+                String[] nodeTableColumns = {"NO.", "NODE", "V.", "V. R."};
                 String[][] nodeTableData = {};
                 DefaultTableModel nodeTableModel = new DefaultTableModel(nodeTableData, nodeTableColumns);
-                JTable nodeTable = new JTable(nodeTableModel);
+                nodeTable = new JTable(nodeTableModel);
                 nodeTable.setBackground(Color.WHITE);
                 nodeTable.setFont(MySequentialGraphVars.f_pln_12);
                 nodeTable.setRowHeight(22);
                 nodeTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont11);
                 nodeTable.getTableHeader().setOpaque(false);
-                nodeTable.getTableHeader().setBackground(new Color(0, 0, 0, 0f));
+                nodeTable.getTableHeader().setBackground(new Color(0, 0, 0, 0));
                 nodeTable.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(25);
-                nodeTable.getTableHeader().getColumnModel().getColumn(2).setPreferredWidth(30);
-                nodeTable.getTableHeader().getColumnModel().getColumn(3).setPreferredWidth(30);
-                nodeTable.getTableHeader().getColumnModel().getColumn(4).setPreferredWidth(30);
-                nodeTable.getTableHeader().getColumnModel().getColumn(5).setPreferredWidth(30);
+                nodeTable.getTableHeader().getColumnModel().getColumn(2).setPreferredWidth(25);
+                nodeTable.getTableHeader().getColumnModel().getColumn(3).setPreferredWidth(25);
                 nodeTable.setSelectionForeground(Color.BLACK);
                 nodeTable.setSelectionBackground(Color.LIGHT_GRAY);
 
-                String [] nodeTableColumnTooltips = {"NO.", "NODE", "NO. OF OBJECTS", "TOTAL CONTRIBUTIONS BY OBJECTS", "AVG. BY OBJECT", "RATIO OT TOTAL CONTRIBUTION AGAINST MAX. TOTAL CONTRIBUTION BY OBJECTS"};
+                String [] nodeTableColumnTooltips = {"NO.", "NODE", "CURRENT NODE VALUE", "CURRENT NODE VALUE RATIO AGAINST MAX. NODE VALUE"};
                 MyTableToolTipper nodeTooltipHeader = new MyTableToolTipper(nodeTable.getColumnModel());
                 nodeTooltipHeader.setToolTipStrings(nodeTableColumnTooltips);
                 nodeTable.setTableHeader(nodeTooltipHeader);
 
-                float max = 0f;
-                LinkedHashMap<String, Long> valueMap = new LinkedHashMap();
-                for (MyNode n : this.nodes) {
-                    long totalContributionByObject = n.getTotalContributionByObjects();
-                    valueMap.put(n.getName(), totalContributionByObject);
-                    if (max < totalContributionByObject) {
-                        max = totalContributionByObject;
-                    }
-                }
-                valueMap = MySequentialGraphSysUtil.sortMapByLongValue(valueMap);
-
                 int i = 0;
+                LinkedHashMap<String, Float> valueMap = new LinkedHashMap();
+                for (MyNode n : this.nodes) {
+                    valueMap.put(n.getName(),  n.getCurrentValue());
+                }
+                valueMap = MySequentialGraphSysUtil.sortMapByFloatValue(valueMap);
+
                 for (String n : valueMap.keySet()) {
-                    String pr = MyMathUtil.twoDecimalFormat(valueMap.get(n) / max);
-                    nodeTableModel.addRow(new String[]{"" + (++i),
+                    String pr = MyMathUtil.twoDecimalFormat((double) valueMap.get(n) / this.maxValue);
+                    nodeTableModel.addRow(new String[]{
+                        "" + (++i),
                         MySequentialGraphSysUtil.getNodeName(n),
-                        MyMathUtil.getCommaSeperatedNumber(((MyNode)MySequentialGraphVars.g.vRefs.get(n)).contributionCountMapByObjectID.size()),
-                        MyMathUtil.getCommaSeperatedNumber(((MyNode)MySequentialGraphVars.g.vRefs.get(n)).getTotalContributionByObjects()),
-                        MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat((float) ((MyNode)MySequentialGraphVars.g.vRefs.get(n)).getTotalContributionByObjects()/((MyNode)MySequentialGraphVars.g.vRefs.get(n)).contributionCountMapByObjectID.size())),
-                        pr});
+                        MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(valueMap.get(n))),
+                        pr
+                    });
                 }
 
                 JScrollPane nodeTableScrollPane = new JScrollPane(nodeTable);
@@ -167,7 +222,7 @@ implements ActionListener {
                 nodeTablePanel.add(nodeTableScrollPane, BorderLayout.CENTER);
                 nodeTablePanel.add(nodeTableSearchPanel, BorderLayout.SOUTH);
 
-                JFrame f = new JFrame(" CONTRIBUTION COUNT BY OBJECT DISTRIBUTION");
+                JFrame f = new JFrame(" " + MySequentialGraphVars.getSequentialGraphViewer().nodeValueName + " BY NODE DISTRIBUTION");
                 f.setBackground(Color.WHITE);
                 f.setPreferredSize(new Dimension(550, 450));
                 f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -192,9 +247,9 @@ implements ActionListener {
                 f.pack();
                 f.addComponentListener(new ComponentAdapter() {
                     @Override public void componentResized(ComponentEvent e) {
-                    super.componentResized(e);
-                    contentPane.setDividerLocation(0.79);
-                    tableSplitPane.setDividerLocation(0.20);
+                        super.componentResized(e);
+                        contentPane.setDividerLocation(0.84);
+                        tableSplitPane.setDividerLocation(0.20);
                     }
                 });
 
@@ -208,76 +263,70 @@ implements ActionListener {
 
     }
 
-    private Set<MyNode> nodes = null;
-
     private JFreeChart setValueChart() {
-        TreeMap<Integer, Integer> valueMap = new TreeMap<>();
-        if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
-            if (MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly) {
-                this.nodes = MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors;
-            } else if (MySequentialGraphVars.getSequentialGraphViewer().successorsOnly) {
-                this.nodes = MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors;
-            } else if (MySequentialGraphVars.getSequentialGraphViewer().neighborsOnly) {
-                this.nodes = MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors;
-                this.nodes.addAll(MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors);
-            }
-        } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null && MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size() > 0) {
-            if (MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly) {
-                this.nodes = MySequentialGraphVars.getSequentialGraphViewer().multiNodePredecessors;
-            } else if (MySequentialGraphVars.getSequentialGraphViewer().successorsOnly) {
-                this.nodes = MySequentialGraphVars.getSequentialGraphViewer().multiNodeSuccessors;
-            } else if (MySequentialGraphVars.getSequentialGraphViewer().neighborsOnly) {
-                this.nodes = MySequentialGraphVars.getSequentialGraphViewer().multiNodePredecessors;
-                this.nodes.addAll(MySequentialGraphVars.getSequentialGraphViewer().multiNodeSuccessors);
-            } else if (MySequentialGraphVars.getSequentialGraphViewer().sharedNeighborsOnly) {
-                this.nodes = MySequentialGraphVars.getSequentialGraphViewer().sharedSuccessors;
-                this.nodes.addAll(MySequentialGraphVars.getSequentialGraphViewer().sharedPredecessors);
-            } else if (MySequentialGraphVars.getSequentialGraphViewer().sharedPredecessorsOly) {
-                this.nodes = MySequentialGraphVars.getSequentialGraphViewer().sharedPredecessors;
-            } else if (MySequentialGraphVars.getSequentialGraphViewer().sharedSuccessorsOnly) {
-                this.nodes = MySequentialGraphVars.getSequentialGraphViewer().sharedSuccessors;
-            }
-        } else {
-            this.nodes = new HashSet<>(MySequentialGraphVars.g.getVertices());
-        }
-
         int nodeCount = 0;
         float totalValue = 0;
 
-        for (MyNode n : this.nodes) {
+        TreeMap<Long, Integer> valueMap = new TreeMap<>();
+        if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
+            if (MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly) {
+                nodes = MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors;
+            } else if (MySequentialGraphVars.getSequentialGraphViewer().successorsOnly) {
+                nodes = MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors;
+            } else if (MySequentialGraphVars.getSequentialGraphViewer().neighborsOnly) {
+                nodes = MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors;
+                nodes.addAll(MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors);
+            }
+        } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null && MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size() > 0) {
+            if (MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly) {
+                nodes = MySequentialGraphVars.getSequentialGraphViewer().multiNodePredecessors;
+            } else if (MySequentialGraphVars.getSequentialGraphViewer().successorsOnly) {
+                nodes = MySequentialGraphVars.getSequentialGraphViewer().multiNodeSuccessors;
+            } else if (MySequentialGraphVars.getSequentialGraphViewer().neighborsOnly) {
+                nodes = MySequentialGraphVars.getSequentialGraphViewer().multiNodePredecessors;
+                nodes.addAll(MySequentialGraphVars.getSequentialGraphViewer().multiNodeSuccessors);
+            } else if (MySequentialGraphVars.getSequentialGraphViewer().sharedNeighborsOnly) {
+                nodes = MySequentialGraphVars.getSequentialGraphViewer().sharedSuccessors;
+                nodes.addAll(MySequentialGraphVars.getSequentialGraphViewer().sharedPredecessors);
+            } else if (MySequentialGraphVars.getSequentialGraphViewer().sharedPredecessorsOly) {
+                nodes = MySequentialGraphVars.getSequentialGraphViewer().sharedPredecessors;
+            } else if (MySequentialGraphVars.getSequentialGraphViewer().sharedSuccessorsOnly) {
+                nodes = MySequentialGraphVars.getSequentialGraphViewer().sharedSuccessors;
+            }
+        } else {
+            nodes = new HashSet<>(MySequentialGraphVars.g.getVertices());
+        }
+        for (MyNode n : nodes) {
             if (n.getCurrentValue() == 0) continue;
-            for (int contCount : n.contributionCountMapByObjectID.values()) {
-                int value = contCount;
-                totalValue += value;
-                nodeCount++;
+            long value = (this.toTime > 0 ? (long) (n.getCurrentValue()/this.toTime): (long) n.getCurrentValue());
+            totalValue += value;
+            nodeCount++;
 
-                if (value > this.maxValue) {
-                    this.maxValue = value;
-                }
+            if (value > this.maxValue) {
+                this.maxValue = value;
+            }
 
-                if (value > 0 && value < this.minValue) {
-                    this.minValue = value;
-                }
+            if (value > 0 && value < this.minValue) {
+                this.minValue = value;
+            }
 
-                if (valueMap.containsKey(value)) {
-                    valueMap.put(value, valueMap.get(value) + 1);
-                } else {
-                    valueMap.put(value, 1);
-                }
+            if (valueMap.containsKey(value)) {
+                valueMap.put(value, valueMap.get(value) + 1);
+            } else {
+                valueMap.put(value, 1);
             }
         }
 
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        for (Integer nodeValue : valueMap.keySet()) {
+        for (Long nodeValue : valueMap.keySet()) {
             dataset.addValue(valueMap.get(nodeValue), "", nodeValue);
         }
 
-        if (nodeCount == 0) nodeCount = 1;
         this.avgValue = totalValue/nodeCount;
         this.stdValue = getNodeValueStandardDeviation(valueMap);
 
         String plotTitle = "";
-        String xaxis = "CONTRIBUTION COUNT BY OBJECT";
+        String xaxis = MySequentialGraphVars.getSequentialGraphViewer().nodeValueName + " BY NODE";
         String yaxis = "";
         PlotOrientation orientation = PlotOrientation.VERTICAL;
         boolean show = false;
@@ -286,14 +335,14 @@ implements ActionListener {
         return ChartFactory.createBarChart(plotTitle, xaxis, yaxis, dataset, orientation, show, toolTips, urls);
     }
 
-    public float getNodeValueStandardDeviation(TreeMap<Integer, Integer> valueMap) {
+    public float getNodeValueStandardDeviation(TreeMap<Long, Integer> valueMap) {
         float sum = 0.00f;
-        for (int n : valueMap.keySet()) {
+        for (long n : valueMap.keySet()) {
             sum += n;
         }
         double mean = sum / valueMap.size();
         sum = 0f;
-        for (int n : valueMap.keySet()) {
+        for (long n : valueMap.keySet()) {
             sum += Math.pow(n - mean, 2);
         }
         return (sum == 0.00f ? 0.00f : (float) Math.sqrt(sum / valueMap.size()));

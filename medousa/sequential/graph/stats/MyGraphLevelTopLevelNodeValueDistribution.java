@@ -33,12 +33,14 @@ implements ActionListener {
     private float minValue = 1000000000;
     private float avgValue = 0;
     private float stdValue = 0;
+    private Set<MyNode> nodes = null;
 
     public MyGraphLevelTopLevelNodeValueDistribution() {}
 
     public void decorate() {
         setLayout(new BorderLayout(3, 3));
         setBackground(Color.WHITE);
+
 
         ChartPanel chartPanel = new ChartPanel(setValueChart());
         chartPanel.getChart().getCategoryPlot().setRangeGridlinePaint(Color.DARK_GRAY);
@@ -58,7 +60,6 @@ implements ActionListener {
         barRenderer.setBaseFillPaint(Color.decode("#07CF61"));
         barRenderer.setBarPainter(new StandardBarPainter());
         barRenderer.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont11);
-
         add(chartPanel, BorderLayout.CENTER);
     }
 
@@ -119,8 +120,12 @@ implements ActionListener {
 
                 for (String n : valueMap.keySet()) {
                     String pr = MyMathUtil.twoDecimalFormat((double) valueMap.get(n) / this.maxValue);
-                    nodeTableModel.addRow(new String[]{"" + (++i), MySequentialGraphSysUtil.getNodeName(n),
-                        MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(valueMap.get(n))), pr});
+                    nodeTableModel.addRow(new String[]{
+                        "" + (++i),
+                        MySequentialGraphSysUtil.getNodeName(n),
+                        MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(valueMap.get(n))),
+                        pr
+                    });
                 }
 
                 JScrollPane nodeTableScrollPane = new JScrollPane(nodeTable);
@@ -145,7 +150,7 @@ implements ActionListener {
                 nodeTablePanel.add(nodeTableScrollPane, BorderLayout.CENTER);
                 nodeTablePanel.add(nodeTableSearchPanel, BorderLayout.SOUTH);
 
-                JFrame f = new JFrame(" NODE VALUE DISTRIBUTION");
+                JFrame f = new JFrame(" " + MySequentialGraphVars.getSequentialGraphViewer().nodeValueName + " NODE VALUE DISTRIBUTION");
                 f.setBackground(Color.WHITE);
                 f.setPreferredSize(new Dimension(550, 450));
                 f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -185,8 +190,6 @@ implements ActionListener {
             }
 
     }
-
-    private Set<MyNode> nodes = null;
 
     private JFreeChart setValueChart() {
         int nodeCount = 0;
@@ -251,7 +254,7 @@ implements ActionListener {
         this.stdValue = getNodeValueStandardDeviation(valueMap);
 
         String plotTitle = "";
-        String xaxis = "NODE VALUE";
+        String xaxis = MySequentialGraphVars.getSequentialGraphViewer().nodeValueName + " NODE VALUE";
         String yaxis = "";
         PlotOrientation orientation = PlotOrientation.VERTICAL;
         boolean show = false;

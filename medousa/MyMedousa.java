@@ -180,7 +180,7 @@ extends JFrame {
     }
 
     public JPanel getSequentialGraphViewerPanel() {
-        return MySequentialGraphVars.getSequentialGraphViewer().vc.getSequentialGraphControllerPanel();
+        return MySequentialGraphVars.getSequentialGraphViewer().vc.getGraphControllerPanel();
     }
 
     public MySequentialGraphDashBoard getSequentialGraphDashboard() {

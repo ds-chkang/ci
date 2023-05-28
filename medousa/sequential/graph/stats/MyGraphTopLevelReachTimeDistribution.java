@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-public class MyGraphLevelTopLevelReachTimeByObjectIDDistribution
+public class MyGraphTopLevelReachTimeDistribution
 extends JPanel
 implements ActionListener {
 
@@ -32,10 +32,14 @@ implements ActionListener {
     private float minValue = 1000000000;
     private float avgValue = 0;
     private float stdValue = 0;
+    private float toTime = 0f;
+    private int selectedMenu = 0;
 
-    public MyGraphLevelTopLevelReachTimeByObjectIDDistribution() {}
+    public MyGraphTopLevelReachTimeDistribution() {}
 
     public void decorate() {
+        MyProgressBar pb = new MyProgressBar(false);
+        removeAll();
         setLayout(new BorderLayout(3, 3));
         setBackground(Color.WHITE);
 
@@ -58,27 +62,66 @@ implements ActionListener {
         barRenderer.setBarPainter(new StandardBarPainter());
         barRenderer.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont11);
 
+        JComboBox timeConvertMenu = new JComboBox();
+        timeConvertMenu.addItem("SECOND");
+        timeConvertMenu.addItem("MINUTE");
+        timeConvertMenu.addItem("HOUR");
+        timeConvertMenu.setSelectedIndex(selectedMenu);
+        timeConvertMenu.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        timeConvertMenu.setFocusable(false);
+        timeConvertMenu.setBackground(Color.WHITE);
+        timeConvertMenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new Thread(new Runnable() {
+                    @Override public void run() {
+                        if (timeConvertMenu.getSelectedIndex() == 0) {
+                            toTime = 0;
+                            selectedMenu = 0;
+                            decorate();
+                        } else if (timeConvertMenu.getSelectedIndex() == 1) {
+                            selectedMenu = 1;
+                            toTime = 60;
+                            decorate();
+                        } else if (timeConvertMenu.getSelectedIndex() == 2) {
+                            toTime = 3600;
+                            selectedMenu = 2;
+                            decorate();
+                        }
+                    }
+                }).start();
+            }
+        });
+        JPanel timeConvertMenuPanel = new JPanel();
+        timeConvertMenuPanel.setBackground(Color.WHITE);
+        timeConvertMenuPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 3, 3));
+        timeConvertMenuPanel.add(timeConvertMenu);
+
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BorderLayout(3, 3));
+        topPanel.setBackground(Color.WHITE);
+        topPanel.add(timeConvertMenuPanel, BorderLayout.EAST);
+
+        add(topPanel, BorderLayout.NORTH);
         add(chartPanel, BorderLayout.CENTER);
+
+        pb.updateValue(100, 100);
+        pb.dispose();
     }
 
     public void enlarge() {
-            MyProgressBar pb = new MyProgressBar(false);
             try {
                 this.decorate();
 
-                JFrame f = new JFrame(" INDIVIDUAL REACH TIME BY OBJECT DISTRIBUTION");
+                JFrame f = new JFrame(" REACH TIME DISTRIBUTION");
                 f.setBackground(Color.WHITE);
                 f.setPreferredSize(new Dimension(550, 450));
                 f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 f.setLayout(new BorderLayout(3, 3));
                 f.getContentPane().add(this, BorderLayout.CENTER);
                 f.pack();
-                pb.updateValue(100, 100);
-                pb.dispose();
                 f.setVisible(true);
             } catch (Exception ex) {
-                pb.updateValue(100, 100);
-                pb.dispose();
             }
 
     }
@@ -123,7 +166,8 @@ implements ActionListener {
             if (n.getCurrentValue() == 0) continue;
             for (Map<Long, Integer> reachTimeMap : n.reachTimeMapByObjectID.values()) {
                 for (long reachTime : reachTimeMap.keySet()) {
-                    long value = reachTime;
+                    if (reachTime == 0) continue;
+                    long value = (this.toTime > 0 ? (long) (reachTime/this.toTime) : reachTime);
                     totalValue += value;
                     nodeCount++;
 
@@ -153,7 +197,7 @@ implements ActionListener {
         this.stdValue = getNodeValueStandardDeviation(valueMap);
 
         String plotTitle = "";
-        String xaxis = "INDIVIDUAL REACH TIME BY OBJECT";
+        String xaxis = "REACH TIME";
         String yaxis = "";
         PlotOrientation orientation = PlotOrientation.VERTICAL;
         boolean show = false;

@@ -45,7 +45,7 @@ implements ActionListener {
         "INOUT-NODE DIFFERENCE", //10
         "END POSITION COUNT", //11
         "AVG. SHORTEST DISTANCE", //12
-        "TOTAL RECURSIVE LENGTH", //13
+        "RECURSIVE LENGTH", //13
         "MIN. RECURSIVE LENGTH", //14
         "MAX. RECURSIVE LENGTH", //15
         "AVG. RECURSIVE LENGTH", //16
@@ -55,9 +55,9 @@ implements ActionListener {
         "MAX. DURATION", //20
         "MIN. DURATION", //21
         "AVG. REACH TIME", //22
-        "TOTAL REACH TIME", //23
-        "TOTAL RECURRENCE COUNT",  //24
-        "TOTAL RECURRENCE TIME", //25
+        "REACH TIME", //23
+        "RECURRENCE COUNT",  //24
+        "RECURRENCE TIME", //25
         "MAX. RECURRENCE TIME",  //26
         "MIN. RECURRENCE TIME",  //27
         "ITEMSET LENGTH",    //28
@@ -961,6 +961,9 @@ implements ActionListener {
         return null;
     }
 
+    public JButton edgeValueDistributionBtn = new JButton("E. V.");
+    public JButton nodeValueDistributionBtn = new JButton("N. V.");
+
     public void decorateGraphViewer(JPanel graphViewer) {
         this.setLayout(new BorderLayout());
         this.setBorder(BorderFactory.createLoweredSoftBevelBorder());
@@ -1359,7 +1362,7 @@ implements ActionListener {
         this.bottomPanel.add(this.bottomLeftControlPanel, BorderLayout.WEST);
         this.bottomPanel.add(this.bottomRightControlPanel, BorderLayout.CENTER);
 
-        JButton edgeValueDistributionBtn = new JButton("E. V.");
+
         edgeValueDistributionBtn.setBackground(Color.WHITE);
         edgeValueDistributionBtn.setToolTipText("CURRENT EDGE VALUE DISTRIBUTION");
         edgeValueDistributionBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
@@ -1380,7 +1383,6 @@ implements ActionListener {
             }
         });
 
-        JButton nodeValueDistributionBtn = new JButton("N. V.");
         nodeValueDistributionBtn.setBackground(Color.WHITE);
         nodeValueDistributionBtn.setToolTipText("CURRENT NODE VALUE DISTRIBUTION");
         nodeValueDistributionBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
@@ -1390,8 +1392,14 @@ implements ActionListener {
             @Override public void actionPerformed(ActionEvent e) {
                 new Thread(new Runnable() {
                     @Override public void run() {
-                        MyGraphLevelTopLevelNodeValueDistribution graphLevelTopLevelNodeValueDistribution = new MyGraphLevelTopLevelNodeValueDistribution();
-                        graphLevelTopLevelNodeValueDistribution.enlarge();
+                        if (MySequentialGraphVars.getSequentialGraphViewer().nodeValueName.contains("TIME") ||
+                            MySequentialGraphVars.getSequentialGraphViewer().nodeValueName.contains("DURATION")) {
+                            MyGraphLevelTopLevelNodeTimeValueDistribution graphLevelTopLevelNodeTimeValueDistribution = new MyGraphLevelTopLevelNodeTimeValueDistribution();
+                            graphLevelTopLevelNodeTimeValueDistribution.enlarge();
+                        } else {
+                            MyGraphLevelTopLevelNodeValueDistribution graphLevelTopLevelNodeValueDistribution = new MyGraphLevelTopLevelNodeValueDistribution();
+                            graphLevelTopLevelNodeValueDistribution.enlarge();
+                        }
                     }
                 }).start();
             }
@@ -2887,7 +2895,7 @@ implements ActionListener {
         }
     }
 
-    public MyViewerComponentController getSequentialGraphControllerPanel() {return this;}
+    public MyViewerComponentController getGraphControllerPanel() {return this;}
 
     @Override public void actionPerformed(ActionEvent ae) {
 
@@ -3105,9 +3113,9 @@ implements ActionListener {
 
 
                   if (edgeValueSelecter.getSelectedIndex() < 2) {
-                      edgeValueBarChart.removeActionListener(getSequentialGraphControllerPanel());
+                      edgeValueBarChart.removeActionListener(getGraphControllerPanel());
                       edgeValueBarChart.setSelected(false);
-                      edgeValueBarChart.addActionListener(getSequentialGraphControllerPanel());
+                      edgeValueBarChart.addActionListener(getGraphControllerPanel());
                   }
 
                   updateNodeTable();
@@ -3135,9 +3143,9 @@ implements ActionListener {
                     updateNodeTable();
                     edgeValueSelecter.setToolTipText("EDGE VALUE: " + edgeValueSelecter.getSelectedItem().toString());
                     if (edgeValueSelecter.getSelectedIndex() < 2) {
-                        edgeValueBarChart.removeActionListener(getSequentialGraphControllerPanel());
+                        edgeValueBarChart.removeActionListener(getGraphControllerPanel());
                         edgeValueBarChart.setSelected(false);
-                        edgeValueBarChart.addActionListener(getSequentialGraphControllerPanel());
+                        edgeValueBarChart.addActionListener(getGraphControllerPanel());
                     }
 
                     MySequentialGraphVars.getSequentialGraphViewer().revalidate();

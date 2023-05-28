@@ -24,7 +24,7 @@ import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
 import java.util.*;
 
-public class MyGraphLevelValueDistributionLineChart
+public class MyGraphLevelCurrentNodeValueDistributionLineChart
 extends JPanel {
 
     public static int instances = 0;
@@ -35,7 +35,7 @@ extends JPanel {
     private ArrayList<Color> colors;
     private static boolean MAXIMIZED;
 
-    public MyGraphLevelValueDistributionLineChart() {
+    public MyGraphLevelCurrentNodeValueDistributionLineChart() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
                 setNodeValueLineChart();
