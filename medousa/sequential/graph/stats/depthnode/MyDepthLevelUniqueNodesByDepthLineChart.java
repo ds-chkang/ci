@@ -54,7 +54,7 @@ extends JPanel{
             }
             dataset.addSeries(uniqueNodeSeries);
 
-            JFreeChart chart = ChartFactory.createXYLineChart("", "DEPTH", "", dataset);
+            JFreeChart chart = ChartFactory.createXYLineChart("", "", "", dataset);
             chart.getTitle().setHorizontalAlignment(HorizontalAlignment.LEFT);
             chart.getXYPlot().setBackgroundPaint(Color.WHITE);
             chart.getXYPlot().setDomainGridlinePaint(Color.DARK_GRAY);
@@ -78,7 +78,7 @@ extends JPanel{
             ChartPanel chartPanel = new ChartPanel(chart);
             chartPanel.setPreferredSize(new Dimension(560, 367));
 
-            JLabel titleLabel = new JLabel(" UNIQUE N. R.");
+            JLabel titleLabel = new JLabel(" UNIQ. N. R.");
             titleLabel.setToolTipText("UNIQUE NODE RATIO BY DEPTH");
             titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
             titleLabel.setBackground(Color.WHITE);
@@ -117,6 +117,7 @@ extends JPanel{
             add(topPanel, BorderLayout.NORTH);
             renderer.setBaseLegendTextFont(MySequentialGraphVars.tahomaPlainFont11);
             add(chartPanel, BorderLayout.CENTER);
+            chart.removeLegend();
 
             revalidate();
             repaint();

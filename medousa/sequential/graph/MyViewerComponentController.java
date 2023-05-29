@@ -2203,12 +2203,17 @@ implements ActionListener {
                                 nodeValueBarChart.removeActionListener(viewerController);
                                 nodeValueBarChart.setSelected(false);
                                 nodeValueBarChart.addActionListener(viewerController);
+                            } else {
+                                MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
+                                MyViewerComponentControllerUtil.removeSharedNodeValueBarCharts();
                             }
 
                             if (edgeValueBarChart.isSelected()) {
                                 edgeValueBarChart.removeActionListener(viewerController);
                                 edgeValueBarChart.setSelected(false);
                                 edgeValueBarChart.addActionListener(viewerController);
+                            } else {
+                                MyViewerComponentControllerUtil.removeEdgeValueBarChartFromViewer();
                             }
 
                             if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() > 0) {
@@ -3157,9 +3162,8 @@ implements ActionListener {
         } else if (ae.getSource() == depthSelecter) {
             new Thread(new Runnable() { // When depth option selected, edge values and edge label components are disabled.
                 @Override public void run() {
-                    if (depthSelecter.getSelectedIndex() == 0) MySequentialGraphVars.currentGraphDepth = 0;
-                    else MySequentialGraphVars.currentGraphDepth = Integer.parseInt(depthSelecter.getSelectedItem().toString().trim());
                     if (depthSelecter.getSelectedIndex() == 0) {
+                        MySequentialGraphVars.currentGraphDepth = 0;
                         clusteringSectorLabel.setEnabled(true);
                         clusteringSelector.setEnabled(true);
                         tableTabbedPane.setEnabledAt(1, true);
@@ -3167,7 +3171,10 @@ implements ActionListener {
 
                         MyViewerComponentControllerUtil.setDefaultViewerLook();
                         return;
-                    } else if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
+                    }
+                    clusteringSelector.setVisible(false);
+                    MySequentialGraphVars.currentGraphDepth = Integer.parseInt(depthSelecter.getSelectedItem().toString().trim());
+                    if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
                         clusteringSectorLabel.setEnabled(false);
                         clusteringSelector.setEnabled(false);
 

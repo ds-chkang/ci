@@ -75,7 +75,7 @@ extends JPanel {
                 shortestDistanceProfilePanel.setBorder(shortestDistanceTitledBorder);
 
                 JTabbedPane tabbedPane = new JTabbedPane();
-                tabbedPane.addTab("NODE DISTANCE PROFILE", null, shortestDistanceProfilePanel, "NODE DISTANCE PROFILE");
+                tabbedPane.addTab("N. D. P.", null, shortestDistanceProfilePanel, "NODE DISTANCE PROFILE");
                 //tabbedPane.addTab("GRAPH STATS.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setStatTable(), "GRAPH STATISTICS");
                 tabbedPane.setFont(MySequentialGraphVars.tahomaBoldFont12);
 
@@ -170,9 +170,8 @@ extends JPanel {
                     dataProfilePanel.setBorder(dataProfileTitledBorder);
 
                     JTabbedPane tabbedPane = new JTabbedPane();
-                    tabbedPane.addTab("DATA PROFILE", null, dataProfilePanel, "DATA PROFILE");
-                    tabbedPane.addTab("GRAPH PROFILE", null, dataProfilePanel, "GRAPH PROFILE");
-                    tabbedPane.addTab("GRAPH STATS.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setStatTable(), "GRAPH STATISTICS");
+                    tabbedPane.addTab("D. P.", null, dataProfilePanel, "DATA PROFILE");
+                    tabbedPane.addTab("G. S.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setStatTable(), "GRAPH STATISTICS");
                     tabbedPane.setFont(MySequentialGraphVars.tahomaBoldFont12);
 
                     MySequentialGraphVars.app.getSequentialGraphViewerPanel().setBorder(networkTitledBorder);
@@ -326,8 +325,8 @@ extends JPanel {
                 dataProfilePanel.setBorder(dataProfileTitledBorder);
 
                 JTabbedPane tabbedPane = new JTabbedPane();
-                tabbedPane.addTab("DATA PROFILE", null, dataProfilePanel, "SELECTED MULTINODE DATA PROFILE");
-                tabbedPane.addTab("NODE STATS.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setMultiNodeStatTable(), "SELECTED MULTINODE STATISTICS");
+                tabbedPane.addTab("D. P.", null, dataProfilePanel, "SELECTED MULTINODE DATA PROFILE");
+                tabbedPane.addTab("N. S.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setMultiNodeStatTable(), "SELECTED MULTINODE STATISTICS");
                 tabbedPane.setFont(MySequentialGraphVars.tahomaBoldFont12);
 
                 MySequentialGraphVars.app.getSequentialGraphViewerPanel().setBorder(networkTitledBorder);
@@ -368,7 +367,8 @@ extends JPanel {
                 Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
                 for (MyNode n : nodes) {
                     if (!MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors.contains(n) &&
-                        !MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors.contains(n)) {
+                        !MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors.contains(n) &&
+                        MySequentialGraphVars.getSequentialGraphViewer().selectedNode != n) {
                         n.setCurrentValue(0f);
                     }
                 }
@@ -393,8 +393,8 @@ extends JPanel {
                     dataProfilePanel.setBorder(dataProfileTitledBorder);
 
                     JTabbedPane tabbedPane = new JTabbedPane();
-                    tabbedPane.addTab("DATA PROFILE", null, dataProfilePanel, "SELECTED NODE DATA PROFILE");
-                    tabbedPane.addTab("NODE STATS.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setSelectedNodeStatTable(), "SELECTED NODE STATISTICS");
+                    tabbedPane.addTab("D. P.", null, dataProfilePanel, "SELECTED NODE DATA PROFILE");
+                    tabbedPane.addTab("N. S.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setSelectedNodeStatTable(), "SELECTED NODE STATISTICS");
                     tabbedPane.setFont(MySequentialGraphVars.tahomaBoldFont12);
 
                     MySequentialGraphVars.app.getSequentialGraphViewerPanel().setBorder(networkTitledBorder);
@@ -409,7 +409,7 @@ extends JPanel {
                     add(graphAndGraphChartSplitPane, BorderLayout.CENTER);
                     MySequentialGraphVars.app.addComponentListener(new ComponentAdapter() {
                         public void componentResized(ComponentEvent evt) {
-                        graphAndGraphChartSplitPane.setDividerSize(5);
+                        graphAndGraphChartSplitPane.setDividerSize(4);
                         graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
                         }
                     });
@@ -429,8 +429,8 @@ extends JPanel {
                     dataProfilePanel.setBorder(dataProfileTitledBorder);
 
                     JTabbedPane tabbedPane = new JTabbedPane();
-                    tabbedPane.addTab("DATA PROFILE", null, dataProfilePanel, "NODE PROFILE");
-                    tabbedPane.addTab("NODE STATS.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setSelectedNodeStatTable(), "NODE STATISTICS");
+                    tabbedPane.addTab("D. P.", null, dataProfilePanel, "SELECTED NODE DATA PROFILE");
+                    tabbedPane.addTab("N. S.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setSelectedNodeStatTable(), "SELECTED NODE STATISTICS");
                     tabbedPane.setFont(MySequentialGraphVars.tahomaBoldFont12);
 
                     MySequentialGraphVars.app.getSequentialGraphViewerPanel().setBorder(networkTitledBorder);
