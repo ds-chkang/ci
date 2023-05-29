@@ -93,8 +93,8 @@ implements GraphMouseListener {
                         MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.getSelectedIndex() == 0) {
                         new Thread(new Runnable() {
                             @Override public void run() {
-                                MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.setVisible(false);
-                                MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecterLabel.setVisible(false);
+                                //MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.setVisible(false);
+                                //MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecterLabel.setVisible(false);
                                 MySequentialGraphVars.getSequentialGraphViewer().selectedTableNodeSet = null;
                                 setSingleNodeDashBoard(obj);
                             }

@@ -34,15 +34,40 @@ public class MyEdgeUtil {
         });
     }
 
+    private static void rewindEdgeValues() {
+        if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
+            Collection<MyEdge> es = MySequentialGraphVars.g.getEdges();
+            for (MyEdge e : es) {
+                if (e.getSource() == MySequentialGraphVars.getSequentialGraphViewer().selectedNode ||
+                    e.getDest() == MySequentialGraphVars.getSequentialGraphViewer().selectedNode) {
+                    e.setCurrentValue(1);
+                }
+            }
+        } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null && MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size() > 0) {
+            Collection<MyEdge> es = MySequentialGraphVars.g.getEdges();
+            for (MyEdge e : es) {
+                if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes.contains(e.getSource()) ||
+                    MySequentialGraphVars.getSequentialGraphViewer().multiNodes.contains(e.getDest())) {
+                    e.setCurrentValue(1);
+                }
+            }
+        } else {
+            Collection<MyEdge> es = MySequentialGraphVars.g.getEdges();
+            for (MyEdge e : es) {
+                e.setCurrentValue(1);
+            }
+        }
+    }
+
     public static void setEdgeValue() {
+        rewindEdgeValues();
         if (MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodeNeighborNodeTypeSelector.getSelectedIndex() > 0) {
             if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() == 0) {
                 MySequentialGraphVars.getSequentialGraphViewer().edgeValName = "NONE";
                 Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
                 for (MyEdge e : edges) {
-                    if (e.getCurrentValue() > 0) {
-                        e.setCurrentValue(0);
-                    }
+                    if (e.getCurrentValue() == 0 || e.getSource().getCurrentValue() == 0 || e.getDest().getCurrentValue() == 0) continue;
+                    e.setCurrentValue(0);
                 }
                 MySequentialGraphVars.getSequentialGraphViewer().getRenderContext().setEdgeStrokeTransformer(new Transformer<MyEdge, Stroke>() {
                     @Override public Stroke transform(MyEdge myEdge) {

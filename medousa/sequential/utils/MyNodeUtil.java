@@ -8,6 +8,37 @@ import java.util.*;
 
 public class MyNodeUtil {
 
+    private static void rewindNodeValues() {
+        if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
+            Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
+            for (MyEdge e : edges) {
+                if (e.getSource() == MySequentialGraphVars.getSequentialGraphViewer().selectedNode ||
+                    e.getDest() == MySequentialGraphVars.getSequentialGraphViewer().selectedNode) {
+                    e.setCurrentValue(1);
+                    e.getSource().setCurrentValue(1);
+                    e.getDest().setCurrentValue(1);
+                }
+            }
+        } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null && MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size() > 0) {
+            Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
+            for (MyEdge e : edges) {
+                if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes.contains(e.getSource()) ||
+                    MySequentialGraphVars.getSequentialGraphViewer().multiNodes.contains(e.getDest())) {
+                    e.setCurrentValue(1);
+                    e.getSource().setCurrentValue(1);
+                    e.getDest().setCurrentValue(1);
+                }
+            }
+        } else {
+            Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
+            for (MyEdge e : edges) {
+                e.setCurrentValue(1);
+                e.getSource().setCurrentValue(1);
+                e.getDest().setCurrentValue(1);
+            }
+        }
+    }
+
     public static void setUserDefinedNodeValuesToNodes() {
         float maxVal = 0.00f;
         MySequentialGraphVars.getSequentialGraphViewer().nodeValueName = MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedItem().toString();
