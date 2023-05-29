@@ -7,7 +7,6 @@ import medousa.sequential.utils.MyFontChooser;
 import medousa.sequential.utils.MySequentialGraphVars;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
@@ -25,10 +24,10 @@ implements ActionListener {
     private JMenuItem downloadUsers = new JMenuItem("OBJECT ID LIST");
     private JMenuItem fromPathFlow = new JMenuItem("FROM PATH FLOW");
     private JMenuItem toPathFlow = new JMenuItem("TO PATH FLOW");
-    private JMenuItem timeDistribution = new JMenuItem("BETWEEN TIME DISTRIBUTION");
+    private JMenuItem betweenTimeDistribution = new JMenuItem("BETWEEN TIME DISTRIBUTION");
     private JMenuItem nodeFont = new JMenuItem("NODE FONT");
     private JMenuItem edgeFont = new JMenuItem("EDGE FONT");
-    private JMenuItem contributionDistributionNyObject = new JMenuItem("CONT. DIST. BY OBJ.");
+    private JMenuItem contributionDistributionNyObject = new JMenuItem("CONTRIBUTION COUNT DISTRIBUTION BY OBJECT");
 
     public MySingleNodeMenu( ) {
         this.decorate();
@@ -38,7 +37,7 @@ implements ActionListener {
         this.setMenuItem(null, this.predecessorStatistics, "PREDECESSOR STATISTICS");
         this.setMenuItem(null, this.successorStatistics, "SUCCESSOR STATISTICS");
         this.add(new JSeparator());
-        this.setMenuItem(null, this.contributionDistributionNyObject, "CONTRIBUTION DISTRIBUTION");
+        this.setMenuItem(null, this.contributionDistributionNyObject, "CONTRIBUTION COUNT BY OBJECT DISTRIBUTION");
         this.add(new JSeparator());
         this.setMenuItem(null, this.showPredecessorsOnly, "PREDECESSORS ONLY VIEW");
         this.setMenuItem(null, this.showSuccessorsOnly, "SUCCESSORS ONLY VIEW");
@@ -52,7 +51,7 @@ implements ActionListener {
         this.setMenuItem(null, this.toPathFlow, "TO PATH FLOW");
         if (MySequentialGraphVars.isTimeOn) {
             this.add(new JSeparator());
-            this.setMenuItem(null, this.timeDistribution, "TIME DISTRIBUTION");
+            this.setMenuItem(null, this.betweenTimeDistribution, "TIME DISTRIBUTION");
         }
         this.add(new JSeparator());
         this.setMenuItem(null, this.nodeFont, "NODE FONT SETUP DIALOG");
@@ -68,14 +67,14 @@ implements ActionListener {
         } else {
             root.add(menuItem);
         }
-        menuItem.setPreferredSize(new Dimension(240, 26));
     }
 
     @Override public void actionPerformed(ActionEvent e) {
         new Thread(new Runnable() {
             @Override public void run() {
-                if (e.getSource() == timeDistribution) {
-                    MyBetweenReachTimeDistributionLineChart betweenReachTimeDistributionLineChart = new MyBetweenReachTimeDistributionLineChart();
+                if (e.getSource() == contributionDistributionNyObject) {
+                    MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution graphLevelContributionCountByObjectIDDistribution = new MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution();
+                    graphLevelContributionCountByObjectIDDistribution.enlarge();
                 } else if (e.getSource() == predecessorStatistics) {
                     MyPredecessorStatistics predecessorStatistics = new MyPredecessorStatistics();
                 } else if (e.getSource() == successorStatistics) {

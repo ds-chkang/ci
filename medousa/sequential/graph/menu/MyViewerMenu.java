@@ -80,6 +80,7 @@ implements ActionListener {
             this.setMenuItem(this.showEdgeValueDistribution);
         }
         if (MySequentialGraphVars.isTimeOn) {
+            this.setMenuItem(this.betweenTimeDistribution);
             this.setMenuItem(this.timeDistribution);
             this.setMenuItem(this.durationDistribution);
         }
@@ -100,7 +101,7 @@ implements ActionListener {
     @Override public void actionPerformed(ActionEvent e) {
         new Thread(new Runnable() {
             @Override public void run() {
-                if (e.getSource() == contributionCountByObjectDistribution) {
+               if (e.getSource() == contributionCountByObjectDistribution) {
                     MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution graphLevelContributionCountByObjectIDDistribution = new MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution();
                     graphLevelContributionCountByObjectIDDistribution.enlarge();
                 }  else if (e.getSource() == picking) {

@@ -473,7 +473,9 @@ public class MyViewerComponentControllerUtil {
             MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.setVisible(true);
             MySequentialGraphVars.getSequentialGraphViewer().vc.clusteringSelector.setVisible(true);
             MySequentialGraphVars.getSequentialGraphViewer().vc.clusteringSectorLabel.setVisible(true);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.tableTabbedPane.setSelectedIndex(0);
+            if (MySequentialGraphVars.getSequentialGraphViewer().vc.tableTabbedPane.getSelectedIndex() == 2) {
+                MySequentialGraphVars.getSequentialGraphViewer().vc.tableTabbedPane.setSelectedIndex(0);
+            }
             MySequentialGraphVars.getSequentialGraphViewer().vc.shortestDistanceSourceNode = null;
 
             pb.updateValue(80, 100);
@@ -509,96 +511,6 @@ public class MyViewerComponentControllerUtil {
             //MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
             MySequentialGraphVars.getSequentialGraphViewer().revalidate();
             MySequentialGraphVars.getSequentialGraphViewer().repaint();
-            pb.dispose();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public static void setClusteringDefaultViewerLook() {
-        try {
-            MyProgressBar pb = new MyProgressBar(false);
-            if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) MySequentialGraphVars.getSequentialGraphViewer().selectedNode.pathLengthByDepthMap = null;
-            MySequentialGraphVars.getSequentialGraphViewer().selectedNode = null;
-            MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeNameSet = null;
-            MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodePredecessorDepthNodeMap = null;
-            MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodeSuccessorDepthNodeMap = null;
-            MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodePredecessorMaps = null;
-            MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeSuccessorMaps = null;
-            MySequentialGraphVars.getSequentialGraphViewer().selectedTableNodeSet = null;
-            MySequentialGraphVars.getSequentialGraphViewer().multiNodes = null;
-            MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors = new HashSet<>();
-            MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors = new HashSet<>();
-            MySequentialGraphVars.getSequentialGraphViewer().multiNodePredecessors = new HashSet<>();
-            MySequentialGraphVars.getSequentialGraphViewer().multiNodeSuccessors = new HashSet<>();
-            MySequentialGraphVars.getSequentialGraphViewer().sharedSuccessors = new HashSet<>();
-            MySequentialGraphVars.getSequentialGraphViewer().sharedPredecessors = new HashSet<>();
-            MySequentialGraphVars.getSequentialGraphViewer().neighborsOnly = false;
-            MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly = false;
-            MySequentialGraphVars.getSequentialGraphViewer().successorsOnly = false;
-            MySequentialGraphVars.getSequentialGraphViewer().excluded = false;
-            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueExcludeTxt.setText("");
-            MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueExcludeTxt.setText("");
-            pb.updateValue(60, 100);
-
-            MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueExcludeSymbolSelecter.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueExcludeSymbolSelecter.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueBarChart.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.weightedNodeColor.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelSelecter.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelSelecter.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.clusteringSelector.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.setSelected(false);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueBarChart.setSelected(false);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.weightedNodeColor.setSelected(false);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.setSelectedIndex(0);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.setSelectedIndex(1);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelSelecter.setSelectedIndex(0);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelSelecter.setSelectedIndex(1);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueExcludeTxt.setText("");
-            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueExcludeTxt.setText("");
-            MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueExcludeSymbolSelecter.setSelectedIndex(0);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueExcludeSymbolSelecter.setSelectedIndex(0);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.depthExcludeSymbolSelecter.setSelectedIndex(0);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.depthExcludeSelecter.setSelectedIndex(0);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueExcludeSymbolSelecter.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueExcludeSymbolSelecter.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueBarChart.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.weightedNodeColor.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelSelecter.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelSelecter.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodeNeighborNodeTypeSelector.setVisible(false);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.depthNeighborNodeTypeSelector.setVisible(false);
-
-            pb.updateValue(80, 100);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.nodeListTable.clearSelection();
-            MySequentialGraphVars.getSequentialGraphViewer().vc.currentNodeListTable.clearSelection();
-            MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.clearSelection();
-            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeListTable.clearSelection();
-            MySequentialGraphVars.getSequentialGraphViewer().vc.shortestDistanceSourceTable.clearSelection();
-            MySequentialGraphVars.getSequentialGraphViewer().vc.shortestDistanceDestTable.clearSelection();
-
-            MyNodeUtil.setClusteringDefaultValuesToNodes();
-            MyEdgeUtil.setClusteringDefaultValuesToEdges();
-            MySequentialGraphVars.getSequentialGraphViewer().vc.updateTableInfos();
-            MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelSelecter.setSelectedIndex(1);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.setText("C. N. V. B.");
-            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueBarChart.setText("C. E. V. B.");
-            pb.updateValue(95, 100);
-
-            MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
-            MyViewerComponentControllerUtil.removeEdgeValueBarChartFromViewer();
-            MySequentialGraphVars.getSequentialGraphViewer().getRenderContext().setEdgeDrawPaintTransformer(MySequentialGraphVars.getSequentialGraphViewer().edgeColor);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setClusterTextStatistics();
-            MySequentialGraphVars.getSequentialGraphViewer().revalidate();
-            MySequentialGraphVars.getSequentialGraphViewer().repaint();
-            pb.updateValue(100, 100);
             pb.dispose();
         } catch (Exception ex) {
             ex.printStackTrace();

@@ -30,12 +30,10 @@ implements ActionListener {
                     f.pack();
                     f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                     f.setCursor(Cursor.HAND_CURSOR);
-                    f.setAlwaysOnTop(true);
                     MySequentialGraphVars.app.setAlwaysOnTop(false);
                     pb.updateValue(100, 100);
                     pb.dispose();
                     f.setVisible(true);
-                    f.setAlwaysOnTop(false);
                 } catch (Exception ex) {
                     pb.updateValue(100, 100);
                     pb.dispose();
@@ -74,6 +72,7 @@ implements ActionListener {
             destTxt.setPreferredSize(new Dimension(250, 25));
 
             JButton runBtn = new JButton(" RUN ");
+            runBtn.setFocusable(false);
             runBtn.setPreferredSize(new Dimension(60, 24));
             runBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
 

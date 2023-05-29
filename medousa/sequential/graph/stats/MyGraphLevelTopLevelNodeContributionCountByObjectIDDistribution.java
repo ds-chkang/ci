@@ -208,37 +208,16 @@ implements ActionListener {
 
     }
 
-    private Set<MyNode> nodes = null;
+    private Set<MyNode> nodes = new HashSet<>();
 
     private JFreeChart setValueChart() {
         TreeMap<Integer, Integer> valueMap = new TreeMap<>();
         if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
-            if (MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly) {
-                this.nodes = MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors;
-            } else if (MySequentialGraphVars.getSequentialGraphViewer().successorsOnly) {
-                this.nodes = MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors;
-            } else if (MySequentialGraphVars.getSequentialGraphViewer().neighborsOnly) {
-                this.nodes = MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors;
-                this.nodes.addAll(MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors);
-            }
+            this.nodes.add(MySequentialGraphVars.getSequentialGraphViewer().selectedNode);
         } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null && MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size() > 0) {
-            if (MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly) {
-                this.nodes = MySequentialGraphVars.getSequentialGraphViewer().multiNodePredecessors;
-            } else if (MySequentialGraphVars.getSequentialGraphViewer().successorsOnly) {
-                this.nodes = MySequentialGraphVars.getSequentialGraphViewer().multiNodeSuccessors;
-            } else if (MySequentialGraphVars.getSequentialGraphViewer().neighborsOnly) {
-                this.nodes = MySequentialGraphVars.getSequentialGraphViewer().multiNodePredecessors;
-                this.nodes.addAll(MySequentialGraphVars.getSequentialGraphViewer().multiNodeSuccessors);
-            } else if (MySequentialGraphVars.getSequentialGraphViewer().sharedNeighborsOnly) {
-                this.nodes = MySequentialGraphVars.getSequentialGraphViewer().sharedSuccessors;
-                this.nodes.addAll(MySequentialGraphVars.getSequentialGraphViewer().sharedPredecessors);
-            } else if (MySequentialGraphVars.getSequentialGraphViewer().sharedPredecessorsOly) {
-                this.nodes = MySequentialGraphVars.getSequentialGraphViewer().sharedPredecessors;
-            } else if (MySequentialGraphVars.getSequentialGraphViewer().sharedSuccessorsOnly) {
-                this.nodes = MySequentialGraphVars.getSequentialGraphViewer().sharedSuccessors;
-            }
+            this.nodes.addAll(MySequentialGraphVars.getSequentialGraphViewer().multiNodes);
         } else {
-            this.nodes = new HashSet<>(MySequentialGraphVars.g.getVertices());
+            this.nodes.addAll(MySequentialGraphVars.g.getVertices());
         }
 
         int nodeCount = 0;

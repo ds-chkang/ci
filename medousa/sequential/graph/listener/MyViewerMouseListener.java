@@ -37,7 +37,7 @@ implements MouseListener {
                     MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null ||
                     MySequentialGraphVars.getSequentialGraphViewer().vc.tableTabbedPane.getSelectedIndex() == 2 ||
                     MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() > 0 ||
-                    MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() > 1 ||
+                    MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() != 1 ||
                     MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelSelecter.getSelectedIndex() != 1 ||
                     MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelSelecter.getSelectedIndex() > 0 ||
                     MySequentialGraphVars.getSequentialGraphViewer().excluded) {

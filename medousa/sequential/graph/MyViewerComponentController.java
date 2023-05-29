@@ -109,7 +109,7 @@ implements ActionListener {
         "SUPPORT",
         "CONFIDENCE",
         "LIFT",
-        "BETWEENESE"
+        "BETWEENNESS"
     };
 
     public JTable statTable;
@@ -174,6 +174,9 @@ implements ActionListener {
     public JLabel edgeValueLabel = new JLabel("   E. V.");
     public JLabel edgeValueExludeLabel = new JLabel(" E. V.");
     public JLabel nodeLabelLabel = new JLabel(" N. L.");
+    public JButton edgeValueDistributionBtn = new JButton("E. V.");
+    public JButton nodeValueDistributionBtn = new JButton("N. V.");
+    public int previousTableTabbedPane;
 
     public MyViewerComponentController() {}
 
@@ -961,8 +964,6 @@ implements ActionListener {
         return null;
     }
 
-    public JButton edgeValueDistributionBtn = new JButton("E. V.");
-    public JButton nodeValueDistributionBtn = new JButton("N. V.");
 
     public void decorateGraphViewer(JPanel graphViewer) {
         this.setLayout(new BorderLayout());
@@ -1437,8 +1438,10 @@ implements ActionListener {
                     @Override public void run() {
                         if (tableTabbedPane.getSelectedIndex() == 2) {
                             setShortestDistanceConfiguration();
-                        } else if (tableTabbedPane.getSelectedIndex() == 0) {
+                            previousTableTabbedPane = 2;
+                        } else if (previousTableTabbedPane == 2 && (tableTabbedPane.getSelectedIndex() == 0 || tableTabbedPane.getSelectedIndex() == 1)) {
                             MyViewerComponentControllerUtil.setDefaultViewerLook();
+                            previousTableTabbedPane = 0;
                         }
                     }
                 }).start();
@@ -1473,7 +1476,7 @@ implements ActionListener {
         this.graphTableSplitPane.addComponentListener(new ComponentAdapter() {
             @Override public synchronized void componentResized(ComponentEvent e) {
                 super.componentResized(e);
-                graphTableSplitPane.setDividerLocation(0.12);
+                graphTableSplitPane.setDividerLocation(0.13);
                 if (nodeValueBarChart.isSelected()) {
                     MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
                     MyViewerComponentControllerUtil.removeSharedNodeValueBarCharts();
@@ -2056,15 +2059,15 @@ implements ActionListener {
                 });
         }
 
-        edgeListTable.setRowHeight(22);
-        edgeListTable.setBackground(Color.WHITE);
-        edgeListTable.setFont(MySequentialGraphVars.f_pln_10);
-        edgeListTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont10);
-        edgeListTable.getTableHeader().setOpaque(false);
-        edgeListTable.getTableHeader().setBackground(new Color(0,0,0,0f));
-        edgeListTable.getColumnModel().getColumn(0).setPreferredWidth(60);
-        edgeListTable.getColumnModel().getColumn(1).setPreferredWidth(60);
-        edgeListTable.getColumnModel().getColumn(2).setPreferredWidth(30);
+        this.edgeListTable.setRowHeight(22);
+        this.edgeListTable.setBackground(Color.WHITE);
+        this.edgeListTable.setFont(MySequentialGraphVars.f_pln_10);
+        this.edgeListTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont10);
+        this.edgeListTable.getTableHeader().setOpaque(false);
+        this.edgeListTable.getTableHeader().setBackground(new Color(0,0,0,0f));
+        this.edgeListTable.getColumnModel().getColumn(0).setPreferredWidth(60);
+        this.edgeListTable.getColumnModel().getColumn(1).setPreferredWidth(60);
+        this.edgeListTable.getColumnModel().getColumn(2).setPreferredWidth(30);
 
         JTextField edgeTableNodeTableNodeSearchTxt = new JTextField();
         JButton edgeTableNodeSelectBtn = new JButton("SEL.");
@@ -2072,21 +2075,21 @@ implements ActionListener {
         edgeTableNodeSelectBtn.setFocusable(false);
         edgeTableNodeTableNodeSearchTxt.setBackground(Color.WHITE);
         edgeTableNodeTableNodeSearchTxt.setBorder(BorderFactory.createLoweredSoftBevelBorder());
-        JPanel bottomTableSearchAndSavePanel = MyTableUtil.searchAndSaveDataPanelForJTable2(this, edgeTableNodeTableNodeSearchTxt, edgeTableNodeSelectBtn, bottomTableModel, edgeListTable);
+        JPanel bottomTableSearchAndSavePanel = MyTableUtil.searchAndSaveDataPanelForJTable2(this, edgeTableNodeTableNodeSearchTxt, edgeTableNodeSelectBtn, bottomTableModel, this.edgeListTable);
         edgeTableNodeTableNodeSearchTxt.setFont(MySequentialGraphVars.f_bold_10);
         edgeTableNodeTableNodeSearchTxt.setToolTipText("TYPE A NODE NAME TO SEARCH");
         edgeTableNodeTableNodeSearchTxt.setPreferredSize(new Dimension(90, 19));
         edgeTableNodeSelectBtn.setPreferredSize(new Dimension(50, 19));
         bottomTableSearchAndSavePanel.remove(edgeTableNodeSelectBtn);
 
-        edgeListTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        edgeListTable.setSelectionBackground(Color.LIGHT_GRAY);
-        edgeListTable.setForeground(Color.BLACK);
-        edgeListTable.setSelectionForeground(Color.BLACK);
-        edgeListTable.setFocusable(false);
-        edgeListTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        edgeListTable.setRowSorter(MyTableUtil.setJTableRowSorterWithTextField(bottomTableModel, edgeTableNodeTableNodeSearchTxt));
-        edgeListTable.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+        this.edgeListTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        this.edgeListTable.setSelectionBackground(Color.LIGHT_GRAY);
+        this.edgeListTable.setForeground(Color.BLACK);
+        this.edgeListTable.setSelectionForeground(Color.BLACK);
+        this.edgeListTable.setFocusable(false);
+        this.edgeListTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        this.edgeListTable.setRowSorter(MyTableUtil.setJTableRowSorterWithTextField(bottomTableModel, edgeTableNodeTableNodeSearchTxt));
+        this.edgeListTable.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
             public void valueChanged(ListSelectionEvent event) {
                 new Thread(new Runnable() {
                     @Override public void run() {
@@ -2163,15 +2166,15 @@ implements ActionListener {
             });
         }
 
-        nodeListTable.setRowHeight(22);
-        nodeListTable.setBackground(Color.WHITE);
-        nodeListTable.setFont(MySequentialGraphVars.f_pln_10);
-        nodeListTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont10);
-        nodeListTable.getTableHeader().setOpaque(false);
-        nodeListTable.getTableHeader().setBackground(new Color(0,0,0,0f));
-        nodeListTable.getColumnModel().getColumn(0).setPreferredWidth(35);
-        nodeListTable.getColumnModel().getColumn(1).setPreferredWidth(80);
-        nodeListTable.getColumnModel().getColumn(2).setPreferredWidth(40);
+        this.nodeListTable.setRowHeight(21);
+        this.nodeListTable.setBackground(Color.WHITE);
+        this.nodeListTable.setFont(MySequentialGraphVars.f_pln_10);
+        this.nodeListTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont10);
+        this.nodeListTable.getTableHeader().setOpaque(false);
+        this.nodeListTable.getTableHeader().setBackground(new Color(0,0,0,0f));
+        this.nodeListTable.getColumnModel().getColumn(0).setPreferredWidth(35);
+        this.nodeListTable.getColumnModel().getColumn(1).setPreferredWidth(80);
+        this.nodeListTable.getColumnModel().getColumn(2).setPreferredWidth(40);
 
         JTextField bottomTableNodeTableNodeSearchTxt = new JTextField();
         JButton bottomTableNodeSelectBtn = new JButton("SEL.");
@@ -2179,7 +2182,7 @@ implements ActionListener {
         bottomTableNodeSelectBtn.setFocusable(false);
         bottomTableNodeTableNodeSearchTxt.setBackground(Color.WHITE);
         bottomTableNodeTableNodeSearchTxt.setBorder(BorderFactory.createLoweredSoftBevelBorder());
-        JPanel bottomTableSearchAndSavePanel = MyTableUtil.searchAndSaveDataPanelForJTable2(this, bottomTableNodeTableNodeSearchTxt, bottomTableNodeSelectBtn, nodeListTableModel, nodeListTable);
+        JPanel bottomTableSearchAndSavePanel = MyTableUtil.searchAndSaveDataPanelForJTable2(this, bottomTableNodeTableNodeSearchTxt, bottomTableNodeSelectBtn, nodeListTableModel, this.nodeListTable);
         bottomTableNodeTableNodeSearchTxt.setFont(MySequentialGraphVars.f_bold_10);
         bottomTableNodeTableNodeSearchTxt.setToolTipText("TYPE A NODE NAME TO SEARCH");
         bottomTableNodeTableNodeSearchTxt.setPreferredSize(new Dimension(100, 19));
@@ -2188,13 +2191,13 @@ implements ActionListener {
         bottomTableNodeSelectBtn.removeActionListener(this);
         bottomTableSearchAndSavePanel.remove(bottomTableNodeSelectBtn);
 
-        nodeListTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        nodeListTable.setSelectionBackground(Color.LIGHT_GRAY);
-        nodeListTable.setForeground(Color.BLACK);
-        nodeListTable.setSelectionForeground(Color.BLACK);
-        nodeListTable.setFocusable(false);
-        nodeListTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        nodeListTable.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+        this.nodeListTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        this.nodeListTable.setSelectionBackground(Color.LIGHT_GRAY);
+        this.nodeListTable.setForeground(Color.BLACK);
+        this.nodeListTable.setSelectionForeground(Color.BLACK);
+        this.nodeListTable.setFocusable(false);
+        this.nodeListTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        this.nodeListTable.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
             public void valueChanged(ListSelectionEvent event) {
                 new Thread(new Runnable() {
                     @Override public synchronized void run() {
@@ -2248,10 +2251,10 @@ implements ActionListener {
         topTablePanel.setLayout(new BorderLayout(3,3));
         topTablePanel.setBackground(Color.WHITE);
 
-        String [] topTableColumns = {"NO.", "CURRENT NODE", "V."};
+        String [] topTableColumns = {"NO.", "RELATED N.", "V."};
         String [][] topTableData = {};
         DefaultTableModel topTableModel = new DefaultTableModel(topTableData, topTableColumns);
-        currentNodeListTable = new JTable(topTableModel) {
+        this.currentNodeListTable = new JTable(topTableModel) {
             //Implement table cell tool tips.
             public String getToolTipText(MouseEvent e) {
                 String tip = null;
@@ -2275,7 +2278,7 @@ implements ActionListener {
         for (String n : nodeMap.keySet()) {
             MyNode nn = (MyNode) MySequentialGraphVars.g.vRefs.get(n);
             if (nn.getCurrentValue() > 0) {
-                ((DefaultTableModel) currentNodeListTable.getModel()).addRow(new String[]{
+                ((DefaultTableModel) this.currentNodeListTable.getModel()).addRow(new String[]{
                     "" + (++i),
                     MySequentialGraphSysUtil.getDecodedNodeName(nn.getName()),
                     MyMathUtil.getCommaSeperatedNumber((long) nn.getCurrentValue())}
@@ -2283,20 +2286,20 @@ implements ActionListener {
             }
         }
 
-        String [] currentNodeTableHeaderTooltips = {"NO.", "CURRENT NODE", "CURRENT NODE VALUE"};
+        String [] currentNodeTableHeaderTooltips = {"NO.", "RELATED NODE", "CURRENT NODE VALUE"};
         MyTableToolTipper currentNodeTooltipHeader = new MyTableToolTipper(this.currentNodeListTable.getColumnModel());
         currentNodeTooltipHeader.setToolTipStrings(currentNodeTableHeaderTooltips);
         this.currentNodeListTable.setTableHeader(currentNodeTooltipHeader);
 
-        currentNodeListTable.setRowHeight(22);
-        currentNodeListTable.setBackground(Color.WHITE);
-        currentNodeListTable.setFont(MySequentialGraphVars.f_pln_10);
-        currentNodeListTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont10);
-        currentNodeListTable.getTableHeader().setOpaque(false);
-        currentNodeListTable.getTableHeader().setBackground(new Color(0,0,0,0f));
-        currentNodeListTable.getColumnModel().getColumn(0).setPreferredWidth(35);
-        currentNodeListTable.getColumnModel().getColumn(1).setPreferredWidth(80);
-        currentNodeListTable.getColumnModel().getColumn(2).setPreferredWidth(40);
+        this.currentNodeListTable.setRowHeight(21);
+        this.currentNodeListTable.setBackground(Color.WHITE);
+        this.currentNodeListTable.setFont(MySequentialGraphVars.f_pln_10);
+        this.currentNodeListTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont10);
+        this.currentNodeListTable.getTableHeader().setOpaque(false);
+        this.currentNodeListTable.getTableHeader().setBackground(new Color(0,0,0,0f));
+        this.currentNodeListTable.getColumnModel().getColumn(0).setPreferredWidth(35);
+        this.currentNodeListTable.getColumnModel().getColumn(1).setPreferredWidth(80);
+        this.currentNodeListTable.getColumnModel().getColumn(2).setPreferredWidth(40);
 
         JTextField topTableNodeSearchTxt = new JTextField();
         JButton topTableNodeSelectBtn = new JButton("SEL.");
@@ -2877,27 +2880,29 @@ implements ActionListener {
             for (String edgeName : edgeMap.keySet()) {
                 String[] pairNames = edgeName.split("-");
                 ((DefaultTableModel) edgeListTable.getModel()).addRow(
-                        new String[]{
-                                MySequentialGraphSysUtil.getNodeName(pairNames[0]),
-                                MySequentialGraphSysUtil.getNodeName(pairNames[1]),
-                                MyMathUtil.getCommaSeperatedNumber(edgeMap.get(edgeName))});
+                    new String[]{
+                        MySequentialGraphSysUtil.getNodeName(pairNames[0]),
+                        MySequentialGraphSysUtil.getNodeName(pairNames[1]),
+                        MyMathUtil.getCommaSeperatedNumber(edgeMap.get(edgeName))});
             }
         } else {
-            LinkedHashMap<String, Long> edgeMap = new LinkedHashMap<>();
+            LinkedHashMap<String, Float> edgeMap = new LinkedHashMap<>();
             Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
             for (MyEdge e : edges) {
-                edgeMap.put(e.getSource() + "-" + e.getDest(), (long)e.getContribution());
+                edgeMap.put(e.getSource() + "-" + e.getDest(), e.getCurrentValue());
             }
-            edgeMap = MySequentialGraphSysUtil.sortMapByLongValue(edgeMap);
+            edgeMap = MySequentialGraphSysUtil.sortMapByFloatValue(edgeMap);
             for (String edgeName : edgeMap.keySet()) {
                 String [] pairNames = edgeName.split("-");
                 ((DefaultTableModel) edgeListTable.getModel()).addRow(
                         new String[]{
-                                MySequentialGraphSysUtil.getNodeName(pairNames[0]),
-                                MySequentialGraphSysUtil.getNodeName(pairNames[1]),
-                                MyMathUtil.getCommaSeperatedNumber(edgeMap.get(edgeName))});
+                            MySequentialGraphSysUtil.getNodeName(pairNames[0]),
+                            MySequentialGraphSysUtil.getNodeName(pairNames[1]),
+                            MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(edgeMap.get(edgeName)))});
             }
         }
+        edgeListTable.revalidate();
+        edgeListTable.repaint();
     }
 
     public MyViewerComponentController getGraphControllerPanel() {return this;}
@@ -3044,6 +3049,7 @@ implements ActionListener {
                             nodeValueBarChart.setText("C. N. V. B");
                             MyViewerComponentControllerUtil.setDefaultViewerLook();
                             MyClusteringConfig clusteringConfig = new MyClusteringConfig();
+                            depthSelecter.setVisible(false);
                         }
                     } else if (clusteringSelector.getSelectedIndex() == 0) {
                         if (MySequentialGraphVars.getSequentialGraphViewer().isClustered) {
@@ -3051,7 +3057,7 @@ implements ActionListener {
                             MySequentialGraphVars.getSequentialGraphViewer().isClustered = false;
                         }
                     } else if (clusteringSelector.getSelectedIndex() == 2) {
-
+                        MyMessageUtil.showInfoMsg(MySequentialGraphVars.app, "This feature is offered in Ver 1.1");
                     }
                 }
             }).start();
@@ -3145,7 +3151,7 @@ implements ActionListener {
                     MyProgressBar pb = new MyProgressBar(false);
                     MyEdgeUtil.setEdgeValue();
 
-                    updateNodeTable();
+                    updateEdgeTable();
                     edgeValueSelecter.setToolTipText("EDGE VALUE: " + edgeValueSelecter.getSelectedItem().toString());
                     if (edgeValueSelecter.getSelectedIndex() < 2) {
                         edgeValueBarChart.removeActionListener(getGraphControllerPanel());
@@ -3173,6 +3179,7 @@ implements ActionListener {
                         return;
                     }
                     clusteringSelector.setVisible(false);
+                    clusteringSectorLabel.setVisible(false);
                     MySequentialGraphVars.currentGraphDepth = Integer.parseInt(depthSelecter.getSelectedItem().toString().trim());
                     if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
                         clusteringSectorLabel.setEnabled(false);

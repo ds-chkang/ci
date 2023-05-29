@@ -75,7 +75,7 @@ extends JPanel {
                 shortestDistanceProfilePanel.setBorder(shortestDistanceTitledBorder);
 
                 JTabbedPane tabbedPane = new JTabbedPane();
-                tabbedPane.addTab("N. D. P.", null, shortestDistanceProfilePanel, "NODE DISTANCE PROFILE");
+                tabbedPane.addTab("D. P.", null, shortestDistanceProfilePanel, "DISTANCE PROFILE");
                 //tabbedPane.addTab("GRAPH STATS.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setStatTable(), "GRAPH STATISTICS");
                 tabbedPane.setFont(MySequentialGraphVars.tahomaBoldFont12);
 
@@ -301,7 +301,8 @@ extends JPanel {
                 Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
                 for (MyNode n : nodes) {
                     if (!MySequentialGraphVars.getSequentialGraphViewer().multiNodeSuccessors.contains(n) &&
-                        !MySequentialGraphVars.getSequentialGraphViewer().multiNodePredecessors.contains(n)) {
+                        !MySequentialGraphVars.getSequentialGraphViewer().multiNodePredecessors.contains(n) &&
+                        !MySequentialGraphVars.getSequentialGraphViewer().multiNodes.contains(n)) {
                         n.setCurrentValue(0f);
                     }
                 }
@@ -401,7 +402,7 @@ extends JPanel {
 
                     JSplitPane graphAndGraphChartSplitPane = new JSplitPane();
                     graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
-                    graphAndGraphChartSplitPane.setDividerSize(5);
+                    graphAndGraphChartSplitPane.setDividerSize(4);
                     graphAndGraphChartSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
                     graphAndGraphChartSplitPane.setLeftComponent(tabbedPane);
                     graphAndGraphChartSplitPane.setRightComponent(MySequentialGraphVars.app.getSequentialGraphViewerPanel());
