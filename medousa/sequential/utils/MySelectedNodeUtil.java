@@ -12,7 +12,7 @@ public class MySelectedNodeUtil {
     public static double getMinimumInNodeValueFromSelectedNodePredecessors() {
         double minVal = 1000000000000D;
         Set<MyNode> ns = new HashSet<>();
-        ns.addAll(MySequentialGraphVars.g.getPredecessors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode));
+        ns.addAll(MySequentialGraphVars.g.getPredecessors(MySequentialGraphVars.getSequentialGraphViewer().singleNode));
         for (MyNode n : ns) {if (minVal > n.getCurrentValue()) {minVal = n.getCurrentValue();}}
         if (minVal == 1000000000000L) {return 0;}
         return minVal;
@@ -21,21 +21,21 @@ public class MySelectedNodeUtil {
     public static double getMinimumNodeOutValueFromSelectedNodeSuccessors() {
         double minVal = 1000000000000D;
         Set<MyNode> ns = new HashSet<>();
-        ns.addAll(MySequentialGraphVars.g.getSuccessors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode));
+        ns.addAll(MySequentialGraphVars.g.getSuccessors(MySequentialGraphVars.getSequentialGraphViewer().singleNode));
         for (MyNode n : ns) {if (minVal > n.getCurrentValue()) {minVal = n.getCurrentValue();}}
         if (minVal == 1000000000000L) {return 0;}
         return minVal;
     }
 
     public static String getSelectedNodeAvgInValue() {
-        Collection<MyNode> ps = MySequentialGraphVars.g.getPredecessors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode);
+        Collection<MyNode> ps = MySequentialGraphVars.g.getPredecessors(MySequentialGraphVars.getSequentialGraphViewer().singleNode);
         double totalValue = 0D;
         for (MyNode p : ps) {totalValue += p.getCurrentValue();}
         if (totalValue == 0) {return "0.00";}
         else {return MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(totalValue/ps.size()));}
     }
     public static String getSelectedNodeAvgOutValue() {
-        Collection<MyNode> ss = MySequentialGraphVars.g.getSuccessors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode);
+        Collection<MyNode> ss = MySequentialGraphVars.g.getSuccessors(MySequentialGraphVars.getSequentialGraphViewer().singleNode);
         double totalVal = 0D;
         for (MyNode s : ss) {totalVal += s.getCurrentValue();}
         if (totalVal == 0) {return "0.00";}
@@ -45,7 +45,7 @@ public class MySelectedNodeUtil {
     public static double getMaximumInNodeValueFromSelectedNodePredecessors() {
         double maxVal = 0D;
         Set<MyNode> ns = new HashSet<>();
-        ns.addAll(MySequentialGraphVars.g.getPredecessors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode));
+        ns.addAll(MySequentialGraphVars.g.getPredecessors(MySequentialGraphVars.getSequentialGraphViewer().singleNode));
         for (MyNode n : ns) {if (maxVal < n.getCurrentValue()) {maxVal = n.getCurrentValue();}}
         return maxVal;
     }
@@ -54,7 +54,7 @@ public class MySelectedNodeUtil {
         double maxVal = 0D;
         Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
         for (MyEdge e : edges) {
-            if (e.getSource() == MySequentialGraphVars.getSequentialGraphViewer().selectedNode) {
+            if (e.getSource() == MySequentialGraphVars.getSequentialGraphViewer().singleNode) {
                 if (maxVal < e.getCurrentValue()) {
                     maxVal = e.getCurrentValue();
                 }
@@ -70,16 +70,16 @@ public class MySelectedNodeUtil {
                 e.setCurrentValue(0f);
             }
 
-            if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != e.getSource() &&
-                !MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors.contains(e.getSource()) && !MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors.contains(e.getSource())) {
+            if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != e.getSource() &&
+                !MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors.contains(e.getSource()) && !MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors.contains(e.getSource())) {
                 if (e.getSource().getCurrentValue() > 0) {
                     e.getSource().setOriginalValue(e.getSource().getCurrentValue());
                     e.getSource().setCurrentValue(0f);
                 }
             }
 
-            if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != e.getDest() &&
-                !MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors.contains(e.getDest()) && !MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors.contains(e.getDest())) {
+            if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != e.getDest() &&
+                !MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors.contains(e.getDest()) && !MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors.contains(e.getDest())) {
                 if (e.getDest().getCurrentValue() > 0) {
                     e.getDest().setOriginalValue(e.getDest().getCurrentValue());
                     e.getDest().setCurrentValue(0f);

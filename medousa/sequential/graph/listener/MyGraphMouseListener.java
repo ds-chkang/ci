@@ -20,13 +20,13 @@ implements GraphMouseListener {
     public void setSingleNodeDashBoard(Object obj) {
         try {
             MyProgressBar pb = new MyProgressBar(false);
-            MySequentialGraphVars.getSequentialGraphViewer().selectedNode = (MyNode) obj;
-            MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors = new HashSet<>();
-            MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors = new HashSet<>();
-            MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors.addAll(MySequentialGraphVars.g.getPredecessors(obj));
-            MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors.addAll(MySequentialGraphVars.g.getSuccessors(obj));
+            MySequentialGraphVars.getSequentialGraphViewer().singleNode = (MyNode) obj;
+            MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors = new HashSet<>();
+            MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors = new HashSet<>();
+            MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors.addAll(MySequentialGraphVars.g.getPredecessors(obj));
+            MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors.addAll(MySequentialGraphVars.g.getSuccessors(obj));
             pb.updateValue(35, 100);
-            MySelectedNodeUtil.adjustSelectedNodeNeighborNodeValues(MySequentialGraphVars.getSequentialGraphViewer().selectedNode);
+            MySelectedNodeUtil.adjustSelectedNodeNeighborNodeValues(MySequentialGraphVars.getSequentialGraphViewer().singleNode);
             pb.updateValue(65, 100);
             MyViewerComponentControllerUtil.setDepthOptionForSelectedNode();
             pb.updateValue(90, 100);
@@ -74,21 +74,21 @@ implements GraphMouseListener {
                             MySingleNodeMenu grapNodeMenu = new MySingleNodeMenu();
                             grapNodeMenu.show(MySequentialGraphVars.getSequentialGraphViewer(), e.getX(), e.getY());
                         }
-                    } else if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null &&
-                            obj == MySequentialGraphVars.getSequentialGraphViewer().selectedNode &&
+                    } else if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null &&
+                            obj == MySequentialGraphVars.getSequentialGraphViewer().singleNode &&
                             SwingUtilities.isRightMouseButton(e)) {
                         MySingleNodeMenu grapNodeMenu = new MySingleNodeMenu();
                         grapNodeMenu.show(MySequentialGraphVars.getSequentialGraphViewer(), e.getX(), e.getY());
                     } else if (MySequentialGraphVars.getSequentialGraphViewer().getPickedVertexState().getPicked().size() > 0 &&
-                            MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null &&
-                            MySequentialGraphVars.getSequentialGraphViewer().selectedNode == MySequentialGraphVars.getSequentialGraphViewer().getPickedVertexState().getPicked().iterator().next()) {
+                            MySequentialGraphVars.getSequentialGraphViewer().singleNode != null &&
+                            MySequentialGraphVars.getSequentialGraphViewer().singleNode == MySequentialGraphVars.getSequentialGraphViewer().getPickedVertexState().getPicked().iterator().next()) {
                         ;
                     } else if (MySequentialGraphVars.getSequentialGraphViewer().getPickedVertexState().getPicked().size() == 0 &&
-                            MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null &&
-                            MySequentialGraphVars.getSequentialGraphViewer().selectedNode != MySequentialGraphVars.getSequentialGraphViewer().getPickedVertexState().getPicked().iterator().next()) {
+                            MySequentialGraphVars.getSequentialGraphViewer().singleNode != null &&
+                            MySequentialGraphVars.getSequentialGraphViewer().singleNode != MySequentialGraphVars.getSequentialGraphViewer().getPickedVertexState().getPicked().iterator().next()) {
                         setSingleNodeDashBoard(obj);
                     } else if (SwingUtilities.isLeftMouseButton(e) &&
-                        MySequentialGraphVars.getSequentialGraphViewer().selectedNode == null &&
+                        MySequentialGraphVars.getSequentialGraphViewer().singleNode == null &&
                         MySequentialGraphVars.getSequentialGraphViewer().getPickedVertexState().getPicked().size() == 1 &&
                         MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.getSelectedIndex() == 0) {
                         new Thread(new Runnable() {
@@ -106,12 +106,12 @@ implements GraphMouseListener {
                         try {
                             if (!MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeNameSet.contains(((MyNode)obj).getName())) return;
                             MyProgressBar pb = new MyProgressBar(false);
-                            MySequentialGraphVars.getSequentialGraphViewer().selectedNode = (MyNode) obj;
+                            MySequentialGraphVars.getSequentialGraphViewer().singleNode = (MyNode) obj;
 
                             int i=0;
                             Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
                             for (MyEdge e : edges) {
-                                if (e.getSource() == MySequentialGraphVars.getSequentialGraphViewer().selectedNode || e.getDest() == MySequentialGraphVars.getSequentialGraphViewer().selectedNode) {
+                                if (e.getSource() == MySequentialGraphVars.getSequentialGraphViewer().singleNode || e.getDest() == MySequentialGraphVars.getSequentialGraphViewer().singleNode) {
                                     e.getSource().setCurrentValue(e.getSource().getContribution());
                                     e.getDest().setCurrentValue(e.getDest().getContribution());
                                     e.setCurrentValue(e.getContribution());
@@ -122,8 +122,8 @@ implements GraphMouseListener {
                                 }
                                 pb.updateValue(++i, edges.size());
                             }
-                            MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors = new HashSet<>(MySequentialGraphVars.g.getPredecessors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode));
-                            MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors = new HashSet<>(MySequentialGraphVars.g.getSuccessors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode));
+                            MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors = new HashSet<>(MySequentialGraphVars.g.getPredecessors(MySequentialGraphVars.getSequentialGraphViewer().singleNode));
+                            MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors = new HashSet<>(MySequentialGraphVars.g.getSuccessors(MySequentialGraphVars.getSequentialGraphViewer().singleNode));
 
                           //  MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
                             MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();

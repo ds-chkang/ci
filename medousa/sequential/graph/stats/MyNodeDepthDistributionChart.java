@@ -30,11 +30,11 @@ extends JPanel {
     private Map<Integer, Integer> getNodeDepthDistribution() {
         Map<Integer, Integer> nodeDepthCountMap = new HashMap<>();
         try {
-            if (!MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName().contains("x")) {
+            if (!MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName().contains("x")) {
                 for (int sequence = 0; sequence < MySequentialGraphVars.seqs.length; sequence++) {
                     for (int i = 1; i < MySequentialGraphVars.seqs[sequence].length; i++) {
                         String itemset = (MySequentialGraphVars.isTimeOn ? MySequentialGraphVars.seqs[sequence][i].split(":")[0] : MySequentialGraphVars.seqs[sequence][i]);
-                        if (itemset.equals(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName())) {
+                        if (itemset.equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
                             if (nodeDepthCountMap.containsKey(i)) {
                                 nodeDepthCountMap.put(i, nodeDepthCountMap.get(i)+1);
                             } else {
@@ -46,7 +46,7 @@ extends JPanel {
             } else {
                 for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
                     String itemset = (MySequentialGraphVars.isTimeOn ? MySequentialGraphVars.seqs[s][0].split(":")[0] : MySequentialGraphVars.seqs[s][0]);
-                    if (itemset.equals(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName())) {
+                    if (itemset.equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
                         if (nodeDepthCountMap.containsKey(1)) {
                             nodeDepthCountMap.put(1, nodeDepthCountMap.get(1)+1);
                         } else {
@@ -100,7 +100,7 @@ extends JPanel {
             int toalDepthAppearance = this.getTotalDepthAppearnace(nodeDepthCountMap);
 
             String avgDepthAppearance = "";
-            if (!MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName().contains("x")) {
+            if (!MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName().contains("x")) {
                 avgDepthAppearance = MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat((double) toalDepthAppearance/(MySequentialGraphVars.mxDepth - 1)));
             } else {
                 avgDepthAppearance = MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat((double) toalDepthAppearance/ MySequentialGraphVars.sequeceFeatureCount));

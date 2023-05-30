@@ -19,8 +19,6 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.awt.geom.Ellipse2D;
 import java.util.*;
 
@@ -52,8 +50,8 @@ implements ActionListener {
                     MyNode selectedSingleNode = null;
                     if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeNameSet != null && MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeNameSet.size() == 1) {
                         selectedSingleNode = ((MyNode) MySequentialGraphVars.g.vRefs.get(MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeNameSet.iterator().next()));
-                    } else if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
-                        selectedSingleNode = MySequentialGraphVars.getSequentialGraphViewer().selectedNode;
+                    } else if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
+                        selectedSingleNode = MySequentialGraphVars.getSequentialGraphViewer().singleNode;
                     }
 
                     graphOptionComboBox = new JComboBox();

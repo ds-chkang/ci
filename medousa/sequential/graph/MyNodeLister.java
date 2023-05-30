@@ -102,7 +102,7 @@ implements ActionListener {
         int cnt = 0;
         for (MyNode n : nodes) {
             if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null && MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size() > 0 && MySequentialGraphVars.getSequentialGraphViewer().multiNodes.contains(n)) continue;
-            else if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode == n) continue;
+            else if (MySequentialGraphVars.getSequentialGraphViewer().singleNode == n) continue;
             else if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.getSelectedIndex() > 0 && n.getCurrentValue() == 0) continue;
             String decodedNode = MySequentialGraphSysUtil.decodeNodeName(n.getName());
             this.tableModel.addRow(new String[]{String.valueOf(++cnt), decodedNode});
@@ -145,10 +145,10 @@ implements ActionListener {
         MyNode n = (MyNode) MySequentialGraphVars.g.vRefs.get(nodeName);
         dispose();
         MyProgressBar pb = new MyProgressBar(false);
-        if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
+        if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
             pb.updateValue(10, 100);
             MySequentialGraphVars.getSequentialGraphViewer().multiNodes = new HashSet<>();
-            MySequentialGraphVars.getSequentialGraphViewer().multiNodes.add(MySequentialGraphVars.getSequentialGraphViewer().selectedNode);
+            MySequentialGraphVars.getSequentialGraphViewer().multiNodes.add(MySequentialGraphVars.getSequentialGraphViewer().singleNode);
             pb.updateValue(20, 100);
             MySequentialGraphVars.getSequentialGraphViewer().multiNodes.add(n);
             pb.updateValue(30, 100);
@@ -156,20 +156,20 @@ implements ActionListener {
             pb.updateValue(40, 100);
             MySequentialGraphVars.getSequentialGraphViewer().multiNodeSuccessors.addAll(MySequentialGraphVars.g.getSuccessors(n));
             pb.updateValue(50, 100);
-            MySequentialGraphVars.getSequentialGraphViewer().multiNodePredecessors.addAll(MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors);
+            MySequentialGraphVars.getSequentialGraphViewer().multiNodePredecessors.addAll(MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors);
             pb.updateValue(60, 100);
-            MySequentialGraphVars.getSequentialGraphViewer().multiNodeSuccessors.addAll(MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors);
+            MySequentialGraphVars.getSequentialGraphViewer().multiNodeSuccessors.addAll(MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors);
             pb.updateValue(70, 100);
-            MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors = new HashSet<>();
+            MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors = new HashSet<>();
             pb.updateValue(80, 100);
-            MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors = new HashSet<>();
-            MySequentialGraphVars.getSequentialGraphViewer().selectedNode = null;
+            MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors = new HashSet<>();
+            MySequentialGraphVars.getSequentialGraphViewer().singleNode = null;
 
             pb.updateValue(90, 100);
             MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
             MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
-            MySequentialGraphSysUtil.setSharedPredecessors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode, n);
-            MySequentialGraphSysUtil.setSharedSuccessors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode, n);
+            MySequentialGraphSysUtil.setSharedPredecessors(MySequentialGraphVars.getSequentialGraphViewer().singleNode, n);
+            MySequentialGraphSysUtil.setSharedSuccessors(MySequentialGraphVars.getSequentialGraphViewer().singleNode, n);
             MySequentialGraphVars.sequentialGraphDashBoard.setMultiNodeDashBoard();
             MyViewerComponentControllerUtil.setSharedNodeLevelNodeValueBarChart();
             pb.updateValue(95, 100);
@@ -193,15 +193,15 @@ implements ActionListener {
             pb.updateValue(95, 100);
 
         } else {
-            MySequentialGraphVars.getSequentialGraphViewer().selectedNode = n;
+            MySequentialGraphVars.getSequentialGraphViewer().singleNode = n;
             pb.updateValue(10, 100);
-            MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors = new HashSet<>();
+            MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors = new HashSet<>();
             pb.updateValue(20, 100);
-            MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors = new HashSet<>();
+            MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors = new HashSet<>();
             pb.updateValue(30, 100);
-            MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors.addAll(MySequentialGraphVars.g.getPredecessors(n));
+            MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors.addAll(MySequentialGraphVars.g.getPredecessors(n));
             pb.updateValue(40, 100);
-            MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors.addAll(MySequentialGraphVars.g.getSuccessors(n));
+            MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors.addAll(MySequentialGraphVars.g.getSuccessors(n));
             pb.updateValue(50, 100);
             MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
             pb.updateValue(60, 100);

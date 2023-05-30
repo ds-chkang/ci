@@ -14,6 +14,7 @@ import medousa.sequential.graph.stats.barchart.MyDepthLevelNeighborNodeValueBarC
 import medousa.sequential.graph.stats.barchart.MyDepthLevelNodeValueBarChart;
 import medousa.sequential.graph.stats.barchart.MyMultiLevelEdgeValueBarChart;
 import medousa.sequential.graph.stats.barchart.MyMultiLevelNeighborNodeValueBarChart;
+import medousa.sequential.graph.MyAperiodicityChecker;
 import org.apache.commons.collections15.Transformer;
 
 import javax.swing.table.DefaultTableModel;
@@ -100,7 +101,7 @@ public class MyViewerComponentControllerUtil {
                 MySequentialGraphVars.getSequentialGraphViewer().add(MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart);
             }
         } else {
-            if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode == null) {
+            if (MySequentialGraphVars.getSequentialGraphViewer().singleNode == null) {
                 MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart = new MyGraphLevelEdgeValueBarChart();
                 MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart.setEdgeValueBarChart();
                 MySequentialGraphVars.getSequentialGraphViewer().add(MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart);
@@ -138,7 +139,7 @@ public class MyViewerComponentControllerUtil {
 
             MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.addItem("DEPTH");
             for (int i = 1; i <= MySequentialGraphVars.mxDepth; i++) {
-                if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getNodeDepthInfoMap().containsKey(i)) {
+                if (MySequentialGraphVars.getSequentialGraphViewer().singleNode.getNodeDepthInfoMap().containsKey(i)) {
                     MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.addItem("" + i);
                 }
             }
@@ -156,7 +157,7 @@ public class MyViewerComponentControllerUtil {
         if (MySequentialGraphVars.currentGraphDepth == 0) {
             for (int i = 0; i < MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueItems.length; i++) {
                 if (!MySequentialGraphVars.isTimeOn) {
-                    if (i == 16 || i == 17 || i == 18 || i == 19 || i == 20 || i == 21 || i == 22 || i == 24 || i == 25 || i == 26) continue;
+                    if (i == 17 || i == 18 || i == 19 || i == 20 || i == 21 || i == 22 || i == 23 || i == 25 || i == 26 || i == 27) continue;
                     MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.addItem(MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueItems[i]);
                 } else {
                     MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.addItem(MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueItems[i]);}
@@ -192,9 +193,9 @@ public class MyViewerComponentControllerUtil {
         int successors = 0;
         int predecessors = 0;
 
-        if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getNodeDepthInfoMap().containsKey(MySequentialGraphVars.currentGraphDepth)) {
-            successors = MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getNodeDepthInfo(MySequentialGraphVars.currentGraphDepth).getSuccessorCount();
-            predecessors = MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getNodeDepthInfo(MySequentialGraphVars.currentGraphDepth).getPredecessorCount();
+        if (MySequentialGraphVars.getSequentialGraphViewer().singleNode.getNodeDepthInfoMap().containsKey(MySequentialGraphVars.currentGraphDepth)) {
+            successors = MySequentialGraphVars.getSequentialGraphViewer().singleNode.getNodeDepthInfo(MySequentialGraphVars.currentGraphDepth).getSuccessorCount();
+            predecessors = MySequentialGraphVars.getSequentialGraphViewer().singleNode.getNodeDepthInfo(MySequentialGraphVars.currentGraphDepth).getPredecessorCount();
         }
 
         if (predecessors > 0) {
@@ -210,7 +211,7 @@ public class MyViewerComponentControllerUtil {
     public static void setSelectedNodeVisibleOnly() {
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
         for (MyNode n : nodes) {
-            if (n != MySequentialGraphVars.getSequentialGraphViewer().selectedNode) {
+            if (n != MySequentialGraphVars.getSequentialGraphViewer().singleNode) {
                 n.setCurrentValue(0f);
             }
         }
@@ -380,16 +381,16 @@ public class MyViewerComponentControllerUtil {
     public static void setDefaultViewerLook() {
         try {
             MyProgressBar pb = new MyProgressBar(false);
-            if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) MySequentialGraphVars.getSequentialGraphViewer().selectedNode.pathLengthByDepthMap = null;
-            MySequentialGraphVars.getSequentialGraphViewer().selectedNode = null;
+            if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) MySequentialGraphVars.getSequentialGraphViewer().singleNode.pathLengthByDepthMap = null;
+            MySequentialGraphVars.getSequentialGraphViewer().singleNode = null;
             MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeNameSet = null;
             MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodePredecessorDepthNodeMap = null;
             MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodeSuccessorDepthNodeMap = null;
             MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodePredecessorMaps = null;
             MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeSuccessorMaps = null;
             MySequentialGraphVars.getSequentialGraphViewer().selectedTableNodeSet = null;
-            MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors = new HashSet<>();
-            MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors = new HashSet<>();
+            MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors = new HashSet<>();
+            MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors = new HashSet<>();
             MySequentialGraphVars.getSequentialGraphViewer().multiNodes = null;
             MySequentialGraphVars.getSequentialGraphViewer().multiNodePredecessors = new HashSet<>();
             MySequentialGraphVars.getSequentialGraphViewer().multiNodeSuccessors = new HashSet<>();
@@ -402,6 +403,7 @@ public class MyViewerComponentControllerUtil {
             MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueExcludeTxt.setText("");
             MySequentialGraphVars.getSequentialGraphViewer().excluded = false;
             MySequentialGraphVars.getSequentialGraphViewer().isClustered = false;
+            MySequentialGraphVars.getSequentialGraphViewer().hoveredNode = null;
             MySequentialGraphVars.currentGraphDepth = 0;
             MyViewerComponentControllerUtil.setEdgeValueSelecterMenu();
             MyViewerComponentControllerUtil.setDepthValueSelecterMenu();
@@ -580,10 +582,27 @@ public class MyViewerComponentControllerUtil {
         // Avg. shortest distance.
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"AVG. SHORT. D.", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(MySequentialGraphSysUtil.getAverageShortestDistance()))});
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"NO. OF GRAPHS", MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.numberOfGraphs)});
+        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"IRREDUCIBLE", "" + isIrreducible()});
+        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"APERIODIC", "" + isAperiodic()});
 
         dm.fireTableDataChanged();
         MySequentialGraphVars.getSequentialGraphViewer().revalidate();
         MySequentialGraphVars.getSequentialGraphViewer().repaint();
+    }
+
+    private static String isIrreducible() {
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        for (MyNode n : nodes) {
+            if (n.unreachableNodeCount > 0) {
+                return "False";
+            }
+        }
+        return "True";
+    }
+
+    private static String isAperiodic() {
+        MyAperiodicityChecker aperiodicityChecker = new MyAperiodicityChecker();
+        return aperiodicityChecker.isAperiodic();
     }
 
     public static void showEdgeLabel() {
@@ -610,8 +629,8 @@ public class MyViewerComponentControllerUtil {
             MyEdgeValueRankFrame edgeValueRankFrame = new MyEdgeValueRankFrame();}}).start();
         MySequentialGraphVars.getSequentialGraphViewer().getRenderContext().setEdgeLabelTransformer(new Transformer<MyEdge, String>() {@Override
         public String transform(MyEdge e) {
-            if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
-                if (e.getSource() == MySequentialGraphVars.getSequentialGraphViewer().selectedNode || e.getDest() == MySequentialGraphVars.getSequentialGraphViewer().selectedNode) {
+            if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
+                if (e.getSource() == MySequentialGraphVars.getSequentialGraphViewer().singleNode || e.getDest() == MySequentialGraphVars.getSequentialGraphViewer().singleNode) {
                     String value = MyMathUtil.getCommaSeperatedNumber((long)e.getCurrentValue());
                     if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelSelecter.getSelectedIndex() > 0) {
                         return e.edgeLabelMap.get(MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelSelecter.getSelectedItem().toString())+"["+ MySequentialGraphSysUtil.formatAverageValue(MySequentialGraphSysUtil.formatAverageValue(value))+"]";
@@ -689,26 +708,26 @@ public class MyViewerComponentControllerUtil {
                     } else {
                         return "";
                     }
-                } else if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
+                } else if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
                     if (MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly) {
-                        if (n == MySequentialGraphVars.getSequentialGraphViewer().selectedNode || MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors.contains(n)) {
+                        if (n == MySequentialGraphVars.getSequentialGraphViewer().singleNode || MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors.contains(n)) {
                             return name;
                         } else {
                             return "";
                         }
                     } else if (MySequentialGraphVars.getSequentialGraphViewer().successorsOnly) {
-                        if (n == MySequentialGraphVars.getSequentialGraphViewer().selectedNode || MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors.contains(n)) {
+                        if (n == MySequentialGraphVars.getSequentialGraphViewer().singleNode || MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors.contains(n)) {
                             return name;
                         } else {
                             return "";
                         }
                     } else if (MySequentialGraphVars.getSequentialGraphViewer().neighborsOnly) {
-                        if (n == MySequentialGraphVars.getSequentialGraphViewer().selectedNode || MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors.contains(n) || MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors.contains(n)) {
+                        if (n == MySequentialGraphVars.getSequentialGraphViewer().singleNode || MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors.contains(n) || MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors.contains(n)) {
                             return name;
                         } else {
                             return "";
                         }
-                    } else if (n == MySequentialGraphVars.getSequentialGraphViewer().selectedNode || MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors.contains(n) || MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors.contains(n)) {
+                    } else if (n == MySequentialGraphVars.getSequentialGraphViewer().singleNode || MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors.contains(n) || MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors.contains(n)) {
                         return name;
                     } else {
                         return "";
@@ -726,26 +745,26 @@ public class MyViewerComponentControllerUtil {
                     } else {
                         return "";
                     }
-                } else if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
+                } else if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
                     if (MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly) {
-                        if (n == MySequentialGraphVars.getSequentialGraphViewer().selectedNode || MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors.contains(n)) {
+                        if (n == MySequentialGraphVars.getSequentialGraphViewer().singleNode || MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors.contains(n)) {
                             return n.nodeLabelMap.get(MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelSelecter.getSelectedItem().toString());
                         } else {
                             return "";
                         }
                     } else if (MySequentialGraphVars.getSequentialGraphViewer().successorsOnly) {
-                        if (n == MySequentialGraphVars.getSequentialGraphViewer().selectedNode || MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors.contains(n)) {
+                        if (n == MySequentialGraphVars.getSequentialGraphViewer().singleNode || MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors.contains(n)) {
                             return n.nodeLabelMap.get(MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelSelecter.getSelectedItem().toString());
                         } else {
                             return "";
                         }
                     } else if (MySequentialGraphVars.getSequentialGraphViewer().neighborsOnly) {
-                        if (n == MySequentialGraphVars.getSequentialGraphViewer().selectedNode || MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors.contains(n) || MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors.contains(n)) {
+                        if (n == MySequentialGraphVars.getSequentialGraphViewer().singleNode || MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors.contains(n) || MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors.contains(n)) {
                             return n.nodeLabelMap.get(MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelSelecter.getSelectedItem().toString());
                         } else {
                             return "";
                         }
-                    } else if (n == MySequentialGraphVars.getSequentialGraphViewer().selectedNode || MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors.contains(n) || MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors.contains(n)) {
+                    } else if (n == MySequentialGraphVars.getSequentialGraphViewer().singleNode || MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors.contains(n) || MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors.contains(n)) {
                         return n.nodeLabelMap.get(MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelSelecter.getSelectedItem().toString());
                     } else {
                         return "";

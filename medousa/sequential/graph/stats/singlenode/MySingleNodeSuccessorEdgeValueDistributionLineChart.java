@@ -41,8 +41,8 @@ extends JPanel {
                     MyNode selectedSingleNode = null;
                     if (MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodeNeighborNodeTypeSelector.isShowing()) {
                         selectedSingleNode = ((MyNode) MySequentialGraphVars.g.vRefs.get(MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeNameSet.iterator().next()));
-                    } else if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null){
-                        selectedSingleNode = MySequentialGraphVars.getSequentialGraphViewer().selectedNode;
+                    } else if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null){
+                        selectedSingleNode = MySequentialGraphVars.getSequentialGraphViewer().singleNode;
                     }
 
                     if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() < 2) {
@@ -172,8 +172,8 @@ extends JPanel {
         MyNode selectedSingleNode = null;
         if (MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodeNeighborNodeTypeSelector.isShowing()) {
             selectedSingleNode = ((MyNode) MySequentialGraphVars.g.vRefs.get(MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeNameSet.iterator().next()));
-        } else if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null){
-            selectedSingleNode = MySequentialGraphVars.getSequentialGraphViewer().selectedNode;
+        } else if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null){
+            selectedSingleNode = MySequentialGraphVars.getSequentialGraphViewer().singleNode;
         }
 
         MySingleNodeSuccessorEdgeValueDistributionLineChart edgeCurrentValueDistribution = new MySingleNodeSuccessorEdgeValueDistributionLineChart();

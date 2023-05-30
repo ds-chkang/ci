@@ -221,7 +221,7 @@ implements ActionListener {
         for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
             for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
                 String ps = MySequentialGraphVars.seqs[s][i-1].split(":")[0];
-                if (ps.equals(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName())) {
+                if (ps.equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
                     int depth = 1;
                     for (int j = i; j < MySequentialGraphVars.seqs[s].length; j++) {
                         ps = MySequentialGraphVars.seqs[s][j-1].split(":")[0] + "-" + (depth-1);
@@ -360,7 +360,7 @@ implements ActionListener {
         int itemset = -1;
         for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
             String n = MySequentialGraphVars.seqs[s][i].split(":")[0];
-            if (n.equals(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName())) {
+            if (n.equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
                 itemset = i;
             }
         }
@@ -530,7 +530,7 @@ implements ActionListener {
         DefaultVertexLabelRenderer vertexLabelRenderer = new DefaultVertexLabelRenderer(Color.RED) {
             @Override public <V> Component getVertexLabelRendererComponent(JComponent vv, Object value, Font font, boolean isSelected, V n) {
                 super.getVertexLabelRendererComponent(vv, value, font, isSelected, n);
-                if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null && ((MyDepthNode) n).getName().split("-")[0].equals(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName())) {
+                if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null && ((MyDepthNode) n).getName().split("-")[0].equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
                     setForeground(Color.RED);
                 }  else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null && MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size() > 0) {
                     if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes.contains(MySequentialGraphVars.g.vRefs.get(((MyNode)n).getName().split("-")[0]))) {
@@ -547,8 +547,8 @@ implements ActionListener {
 
         this.graphViewer.getRenderContext().setVertexFontTransformer(new Transformer<MyDepthNode, Font>() {
             @Override public Font transform(MyDepthNode n) {
-                if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
-                    if (n.getName().split("-")[0].equals(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName())) {
+                if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
+                    if (n.getName().split("-")[0].equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
                         return new Font("Noto Sans", Font.BOLD, 26);
                     } else {
                         return new Font("Noto Sans", Font.BOLD, 20);

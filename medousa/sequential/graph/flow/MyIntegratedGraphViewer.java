@@ -7,7 +7,6 @@ import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.renderers.DefaultVertexLabelRenderer;
 import edu.uci.ics.jung.visualization.renderers.Renderer;
-import medousa.sequential.graph.MyDepthNode;
 import medousa.sequential.graph.MyEdge;
 import medousa.sequential.graph.MyNode;
 import medousa.sequential.utils.MyMathUtil;
@@ -53,7 +52,7 @@ implements Serializable {
         DefaultVertexLabelRenderer vertexLabelRenderer = new DefaultVertexLabelRenderer(Color.RED) {
             @Override public <V> Component getVertexLabelRendererComponent(JComponent vv, Object value, Font font, boolean isSelected, V n) {
                 super.getVertexLabelRendererComponent(vv, value, font, isSelected, n);
-                if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null && ((MyNode) n).getName().split("-")[0].equals(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName())) {
+                if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null && ((MyNode) n).getName().split("-")[0].equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
                     setForeground(Color.RED);
                 }  else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null && MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size() > 0) {
                     if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes.contains(MySequentialGraphVars.g.vRefs.get(((MyNode)n).getName().split("-")[0]))) {
@@ -72,8 +71,8 @@ implements Serializable {
 
         this.getRenderContext().setVertexFontTransformer(new Transformer<MyNode, Font>() {
             @Override public Font transform(MyNode n) {
-                if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
-                    if (n.getName().split("-")[0].equals(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName())) {
+                if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
+                    if (n.getName().split("-")[0].equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
                         return new Font("Noto Sans", Font.BOLD, 26);
                     } else {
                         return new Font("Noto Sans", Font.BOLD, 20);

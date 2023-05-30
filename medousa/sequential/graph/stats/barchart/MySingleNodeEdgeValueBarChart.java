@@ -35,7 +35,7 @@ extends JPanel {
         for (MyEdge e : edges) {
             if (MySequentialGraphVars.getSequentialGraphViewer().edgeValName.contains("NONE")) {continue;}
             else if (e.getDest().getCurrentValue() ==0 || e.getSource().getCurrentValue() == 0) continue;
-            else if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != e.getSource() && MySequentialGraphVars.getSequentialGraphViewer().selectedNode != e.getDest()) continue;
+            else if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != e.getSource() && MySequentialGraphVars.getSequentialGraphViewer().singleNode != e.getDest()) continue;
             String predecessor = (e.getSource().getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(e.getSource().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getSource().getName()));
             String successor = (e.getDest().getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(e.getDest().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getDest().getName()));
             String name = predecessor+"-"+successor;

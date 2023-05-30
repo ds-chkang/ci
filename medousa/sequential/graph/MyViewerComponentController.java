@@ -45,6 +45,7 @@ implements ActionListener {
         "INOUT-NODE DIFFERENCE", //10
         "END POSITION COUNT", //11
         "AVG. SHORTEST DISTANCE", //12
+        "MAX. SHORTEST DISTANCE",
         "RECURSIVE LENGTH", //13
         "MIN. RECURSIVE LENGTH", //14
         "MAX. RECURSIVE LENGTH", //15
@@ -66,7 +67,8 @@ implements ActionListener {
         "EIGENVECTOR",   //31
         "PAGERANK",  //32
         "START POSITION COUNT",  //33
-        "UNREACHABLE NODE CCOUNT"  //34
+        "UNREACHABLE NODE CCOUNT",  //34
+        "CLUSTERING COEFFICIENT"
     };
 
     public final String [] depthNodeValueItems = {
@@ -985,6 +987,7 @@ implements ActionListener {
         this.selectedNodeNeighborNodeTypeSelector.addActionListener(this);
         this.selectedNodeNeighborNodeTypeSelector.setVisible(false);
 
+
         this.depthNeighborNodeTypeSelector.setBackground(Color.WHITE);
         this.depthNeighborNodeTypeSelector.setToolTipText("SELECT A NEIGHBOR NODE TYPE FOR SELECTED NODES");
         this.depthNeighborNodeTypeSelector.setFont(MySequentialGraphVars.tahomaPlainFont11);
@@ -1027,7 +1030,7 @@ implements ActionListener {
         this.nodeValueSelecter.setFont(MySequentialGraphVars.tahomaPlainFont11);
         this.nodeValueSelecter.setFocusable(false);
         if (MySequentialGraphVars.isTimeOn) {
-            String[] nodeValueTooltips = new String[34];
+            String[] nodeValueTooltips = new String[36];
             nodeValueTooltips[0] = "CONTRIBUTION";
             nodeValueTooltips[1] = "IN-CONTRIBUTION";
             nodeValueTooltips[2] = "AVG. IN-CONTRIBUTION";
@@ -1040,31 +1043,33 @@ implements ActionListener {
             nodeValueTooltips[9] = "INOUT NODE DIFFERENCE";
             nodeValueTooltips[10] = "ENDING POSITION NODE COUNT";
             nodeValueTooltips[11] = "AVERAGE SHORTEST DISTANCE";
-            nodeValueTooltips[12] = "TOTAL RECURSIVE LENGTH";
-            nodeValueTooltips[13] = "MIN. RECURSIVE LEGNTH";
-            nodeValueTooltips[14] = "MAX. RECURSIVE LENGTH";
-            nodeValueTooltips[15] = "AVERAGE RECURSIVE LENGTH";
-            nodeValueTooltips[16] = "AVERAGE RECURSIVE TIME";
-            nodeValueTooltips[17] = "DURATION";
-            nodeValueTooltips[18] = "AVERAGE DURATION";
-            nodeValueTooltips[19] = "MAX. DURATION";
-            nodeValueTooltips[20] = "MIN. DURATION";
-            nodeValueTooltips[21] = "AVERAGE REACH TIME";
-            nodeValueTooltips[22] = "TOTAL REACH TIME";
-            nodeValueTooltips[23] = "RECURRENCE COUNT";
-            nodeValueTooltips[24] = "TOTAL RECURRENCE TIME";
-            nodeValueTooltips[25] = "MAX. RECURRENCE TIME";
-            nodeValueTooltips[26] = "MIN. RECURRENCE TIME";
-            nodeValueTooltips[27] = "ITEMSET LENGTH";
-            nodeValueTooltips[28] = "BTWEENESS";
-            nodeValueTooltips[29] = "CLOSENESS";
-            nodeValueTooltips[30] = "EIGENVECTOR";
-            nodeValueTooltips[31] = "PAGERANK";
-            nodeValueTooltips[32] = "STARTING POSITION NODE COUNT";
-            nodeValueTooltips[33] = "UNREACHABLE NODE COUNT";
+            nodeValueTooltips[12] = "MAX. SHORTEST DISTANCE";
+            nodeValueTooltips[13] = "TOTAL RECURSIVE LENGTH";
+            nodeValueTooltips[14] = "MIN. RECURSIVE LEGNTH";
+            nodeValueTooltips[15] = "MAX. RECURSIVE LENGTH";
+            nodeValueTooltips[16] = "AVERAGE RECURSIVE LENGTH";
+            nodeValueTooltips[17] = "AVERAGE RECURSIVE TIME";
+            nodeValueTooltips[18] = "DURATION";
+            nodeValueTooltips[19] = "AVERAGE DURATION";
+            nodeValueTooltips[20] = "MAX. DURATION";
+            nodeValueTooltips[21] = "MIN. DURATION";
+            nodeValueTooltips[22] = "AVERAGE REACH TIME";
+            nodeValueTooltips[23] = "TOTAL REACH TIME";
+            nodeValueTooltips[24] = "RECURRENCE COUNT";
+            nodeValueTooltips[25] = "TOTAL RECURRENCE TIME";
+            nodeValueTooltips[26] = "MAX. RECURRENCE TIME";
+            nodeValueTooltips[27] = "MIN. RECURRENCE TIME";
+            nodeValueTooltips[28] = "ITEMSET LENGTH";
+            nodeValueTooltips[29] = "BTWEENESS";
+            nodeValueTooltips[30] = "CLOSENESS";
+            nodeValueTooltips[31] = "EIGENVECTOR";
+            nodeValueTooltips[32] = "PAGERANK";
+            nodeValueTooltips[33] = "STARTING POSITION NODE COUNT";
+            nodeValueTooltips[34] = "UNREACHABLE NODE COUNT";
+            nodeValueTooltips[35] = "CLUSTERING COEFFICIENT";
             this.nodeValueSelecter.setRenderer(new MyComboBoxTooltipRenderer(nodeValueTooltips));
         } else {
-            String[] nodeValueTooltips = new String[24];
+            String[] nodeValueTooltips = new String[26];
             nodeValueTooltips[0] = "CONTRIBUTION";
             nodeValueTooltips[1] = "IN-CONTRIBUTION";
             nodeValueTooltips[2] = "AVG. IN-CONTRIBUTION";
@@ -1077,18 +1082,20 @@ implements ActionListener {
             nodeValueTooltips[9] = "INOUT NODE DIFFERENCE";
             nodeValueTooltips[10] = "ENDING POSITION NODE COUNT";
             nodeValueTooltips[11] = "AVERAGE SHORTEST DISTANCE";
-            nodeValueTooltips[12] = "TOTAL RECURSIVE LENGTH";
-            nodeValueTooltips[13] = "MIN. RECURSIVE LEGNTH";
-            nodeValueTooltips[14] = "MAX. RECURSIVE LENGTH";
-            nodeValueTooltips[15] = "AVERAGE RECURSIVE LENGTH";
-            nodeValueTooltips[16] = "RECURRENCE";
-            nodeValueTooltips[17] = "ITEMSET LENGTH";
-            nodeValueTooltips[18] = "BTWEENESS";
-            nodeValueTooltips[19] = "CLOSENESS";
-            nodeValueTooltips[20] = "EIGENVECTOR";
-            nodeValueTooltips[21] = "PAGERANK";
-            nodeValueTooltips[22] = "STARTING POSITION NODE COUNT";
-            nodeValueTooltips[23] = "UNREACHABLE NODE COUNT";
+            nodeValueTooltips[12] = "MAX. SHORTEST DISTANCE";
+            nodeValueTooltips[13] = "TOTAL RECURSIVE LENGTH";
+            nodeValueTooltips[14] = "MIN. RECURSIVE LEGNTH";
+            nodeValueTooltips[15] = "MAX. RECURSIVE LENGTH";
+            nodeValueTooltips[16] = "AVERAGE RECURSIVE LENGTH";
+            nodeValueTooltips[17] = "RECURRENCE";
+            nodeValueTooltips[18] = "ITEMSET LENGTH";
+            nodeValueTooltips[19] = "BTWEENESS";
+            nodeValueTooltips[20] = "CLOSENESS";
+            nodeValueTooltips[21] = "EIGENVECTOR";
+            nodeValueTooltips[22] = "PAGERANK";
+            nodeValueTooltips[23] = "STARTING POSITION NODE COUNT";
+            nodeValueTooltips[24] = "UNREACHABLE NODE COUNT";
+            nodeValueTooltips[25] = "CLUSTERING COEFFICIENT";
             this.nodeValueSelecter.setRenderer(new MyComboBoxTooltipRenderer(nodeValueTooltips));
         }
         MyViewerComponentControllerUtil.setNodeValueComboBoxMenu();
@@ -1352,7 +1359,7 @@ implements ActionListener {
         this.bottomRightControlPanel.add(this.selectedNodeNeighborNodeTypeSelector);
         this.bottomRightControlPanel.add(this.nodeValueSelecterLabel);
         this.bottomRightControlPanel.add(this.nodeValueSelecter);
-        this.bottomRightControlPanel.add(nodeLabelLabel) ;
+        this.bottomRightControlPanel.add(this.nodeLabelLabel) ;
         this.bottomRightControlPanel.add(this.nodeLabelSelecter);
         this.bottomRightControlPanel.add(this.edgeValueLabel);
         this.bottomRightControlPanel.add(this.edgeValueSelecter);
@@ -1360,6 +1367,7 @@ implements ActionListener {
             bottomRightControlPanel.add(this.edgeLabelLabel);
             bottomRightControlPanel.add(this.edgeLabelSelecter);
         }
+
         this.bottomPanel.add(this.bottomLeftControlPanel, BorderLayout.WEST);
         this.bottomPanel.add(this.bottomRightControlPanel, BorderLayout.CENTER);
 
@@ -1480,7 +1488,7 @@ implements ActionListener {
                 if (nodeValueBarChart.isSelected()) {
                     MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
                     MyViewerComponentControllerUtil.removeSharedNodeValueBarCharts();
-                    if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
+                    if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
                         MyViewerComponentControllerUtil.setSelectedNodeNeighborValueBarChartToViewer();
                     } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null) {
                         MyViewerComponentControllerUtil.setSharedNodeLevelNodeValueBarChart();
@@ -1630,7 +1638,9 @@ implements ActionListener {
             "MIN. EDGE VALUE",
             "EDGE VALUE STANDARD DEVIATION",
             "AVG. SHORTEST DISTANCE",
-            "NO. OF GRAPHS"
+            "NO. OF GRAPHS",
+            "IRREDUCIBLE",
+            "APERIODIC"
         };
 
         this.statTable = new JTable(statTableModel) {
@@ -1702,6 +1712,7 @@ implements ActionListener {
         DefaultTableModel selectedNodeStatTableModel = new DefaultTableModel(statTableData, statTableColumns);
 
         String [] tablePropertyTooltips = {
+                "SELECTED NODE",
                 "NODES",
                 "PREDECESSORS",
                 "SUCCESSORS",
@@ -1768,6 +1779,7 @@ implements ActionListener {
         float edgePercent = (float) edges / MySequentialGraphVars.g.getEdgeCount();
         String edgePercentStr = MyMathUtil.twoDecimalFormat((edgePercent*100));
 
+        selectedNodeStatTableModel.addRow(new String[]{"S. N.", MySequentialGraphSysUtil.getNodeName(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())});
         selectedNodeStatTableModel.addRow(new String[]{"NODES", nodeStr + "[" + nodePercentStr + "]"});
         selectedNodeStatTableModel.addRow(new String[]{"P.", predecessorStr + "[" + predecessorPercentStr + "]"});
         selectedNodeStatTableModel.addRow(new String[]{"S.", successorStr + "[" + successorPercentStr + "]"});
@@ -1825,6 +1837,7 @@ implements ActionListener {
         float edgePercent = (float) edges / MySequentialGraphVars.g.getEdgeCount();
         String edgePercentStr = MyMathUtil.twoDecimalFormat((edgePercent*100));
 
+        selectedNodeStatTableModel.addRow(new String[]{"S. N.", MySequentialGraphSysUtil.getNodeName(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())});
         selectedNodeStatTableModel.addRow(new String[]{"NODES", nodeStr + "[" + nodePercentStr + "]"});
         selectedNodeStatTableModel.addRow(new String[]{"PREDECESSORS", predecessorStr + "[" + predecessorPercentStr + "]"});
         selectedNodeStatTableModel.addRow(new String[]{"SUCCESSORS", successorStr + "[" + successorPercentStr + "]"});
@@ -2136,13 +2149,13 @@ implements ActionListener {
                 Point p = e.getPoint();
                 int rowIndex = rowAtPoint(p);
                 int colIndex = columnAtPoint(p);
-
                 try {
                     tip = getValueAt(rowIndex, colIndex).toString();
                 } catch (RuntimeException e1) {}
                 return tip;
             }
         };
+
 
         String [] toolTips = {"NO.", "NODE", "NODE VALUE"};
         MyTableToolTipper tooltipHeader = new MyTableToolTipper(this.nodeListTable.getColumnModel());
@@ -2262,11 +2275,21 @@ implements ActionListener {
                 int rowIndex = rowAtPoint(p);
                 int colIndex = columnAtPoint(p);
                 try {
+                    if (MySequentialGraphVars.getSequentialGraphViewer().singleNode == null &&
+                        MySequentialGraphVars.getSequentialGraphViewer().multiNodes == null &&
+                        depthSelecter.getSelectedIndex() == 0) {
+                        String node = getValueAt(rowIndex, 1).toString();
+                        node = MySequentialGraphVars.nodeNameMap.get(node);
+                        MySequentialGraphVars.getSequentialGraphViewer().hoveredNode = (MyNode) MySequentialGraphVars.g.vRefs.get(node);
+                        MySequentialGraphVars.getSequentialGraphViewer().revalidate();
+                        MySequentialGraphVars.getSequentialGraphViewer().repaint();
+                    }
                     tip = getValueAt(rowIndex, colIndex).toString();
                 } catch (RuntimeException e1) {}
                 return tip;
             }
         };
+
 
         LinkedHashMap<String, Long> nodeMap = new LinkedHashMap<>();
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
@@ -2442,7 +2465,7 @@ implements ActionListener {
             if (depthNodeNameSet != null && depthNodeNameSet.size() == 1) {
                 int tableRowCount = 0;
                 LinkedHashMap<String, Long> predecessorMap = new LinkedHashMap<>();
-                Collection<MyNode> predecessors = MySequentialGraphVars.g.getPredecessors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode);
+                Collection<MyNode> predecessors = MySequentialGraphVars.g.getPredecessors(MySequentialGraphVars.getSequentialGraphViewer().singleNode);
                 for (MyNode n : predecessors) {
                     predecessorMap.put(n.getName(), n.getContribution());
                 }
@@ -2624,7 +2647,7 @@ implements ActionListener {
                          MySequentialGraphSysUtil.getDecodedNodeName(selectedSingleNode.getName()),
                          MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(selectedSingleNode.getContribution()))
                     });
-            } else if (depthNodeNameSet != null && MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
+            } else if (depthNodeNameSet != null && MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
                 int tableRowCount = 0;
                 for (String n : depthNodeNameSet) {
                     ((DefaultTableModel) nodeListTable.getModel()).addRow(
@@ -2636,13 +2659,13 @@ implements ActionListener {
                 }
 
                 LinkedHashMap<String, Long> nodeMap = new LinkedHashMap<>();
-                Set<MyEdge> edges = new HashSet<>(MySequentialGraphVars.g.getInEdges(MySequentialGraphVars.getSequentialGraphViewer().selectedNode));
-                edges.addAll(MySequentialGraphVars.g.getOutEdges(MySequentialGraphVars.getSequentialGraphViewer().selectedNode));
+                Set<MyEdge> edges = new HashSet<>(MySequentialGraphVars.g.getInEdges(MySequentialGraphVars.getSequentialGraphViewer().singleNode));
+                edges.addAll(MySequentialGraphVars.g.getOutEdges(MySequentialGraphVars.getSequentialGraphViewer().singleNode));
                 if (edges != null) {
                     for (MyEdge e : edges) {
-                        if (e.getDest() == MySequentialGraphVars.getSequentialGraphViewer().selectedNode) {
+                        if (e.getDest() == MySequentialGraphVars.getSequentialGraphViewer().singleNode) {
                             nodeMap.put(e.getDest().getName(), (long)e.getContribution());
-                        } else if (e.getSource() == MySequentialGraphVars.getSequentialGraphViewer().selectedNode) {
+                        } else if (e.getSource() == MySequentialGraphVars.getSequentialGraphViewer().singleNode) {
                             nodeMap.put(e.getSource().getName(), (long)e.getContribution());
                         }
                     }
@@ -2657,7 +2680,7 @@ implements ActionListener {
 
 
                 }
-            } else if (depthNodeNameSet != null && MySequentialGraphVars.getSequentialGraphViewer().selectedNode == null) {
+            } else if (depthNodeNameSet != null && MySequentialGraphVars.getSequentialGraphViewer().singleNode == null) {
                 LinkedHashMap<String, Long> nodeMap = new LinkedHashMap<>();
                 for (String depthNode : depthNodeNameSet) {
                     nodeMap.put(depthNode, (long) ((MyNode) MySequentialGraphVars.g.vRefs.get(depthNode)).getCurrentValue());
@@ -2685,10 +2708,10 @@ implements ActionListener {
                     );
                 }
             }
-        } else if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
+        } else if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
             if (MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly || MySequentialGraphVars.getSequentialGraphViewer().neighborsOnly || MySequentialGraphVars.getSequentialGraphViewer().successorsOnly) {
                 LinkedHashMap<String, Long> nodeValueMap = new LinkedHashMap<>();
-                Collection<MyNode> nodes = MySequentialGraphVars.g.getNeighbors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode);
+                Collection<MyNode> nodes = MySequentialGraphVars.g.getNeighbors(MySequentialGraphVars.getSequentialGraphViewer().singleNode);
                 for (MyNode n : nodes) {
                     if (n.getCurrentValue() > 0) {
                         nodeValueMap.put(n.getName(), (long) n.getCurrentValue());
@@ -2725,8 +2748,8 @@ implements ActionListener {
                 }
             } else {
                 LinkedHashMap<String, Long> nodeValueMap = new LinkedHashMap<>();
-                ArrayList<MyNode> nodes = new ArrayList<>(MySequentialGraphVars.g.getSuccessors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode));
-                nodes.addAll(MySequentialGraphVars.g.getPredecessors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode));
+                ArrayList<MyNode> nodes = new ArrayList<>(MySequentialGraphVars.g.getSuccessors(MySequentialGraphVars.getSequentialGraphViewer().singleNode));
+                nodes.addAll(MySequentialGraphVars.g.getPredecessors(MySequentialGraphVars.getSequentialGraphViewer().singleNode));
                 for (MyNode n : nodes) {
                     nodeValueMap.put(n.getName(), (long) n.getCurrentValue());
                 }
@@ -2831,15 +2854,15 @@ implements ActionListener {
             row = this.edgeListTable.getRowCount();
         }
 
-        if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
+        if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
             if (MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly ||
                 MySequentialGraphVars.getSequentialGraphViewer().successorsOnly) {
                 LinkedHashMap<String, Long> edgeValueMap = new LinkedHashMap<>();
-                Collection<MyEdge> edges = MySequentialGraphVars.g.getIncidentEdges(MySequentialGraphVars.getSequentialGraphViewer().selectedNode);
+                Collection<MyEdge> edges = MySequentialGraphVars.g.getIncidentEdges(MySequentialGraphVars.getSequentialGraphViewer().singleNode);
                 for (MyEdge e : edges) {
-                    if (MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly && e.getDest().getName().equals(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName())) {
+                    if (MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly && e.getDest().getName().equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
                         edgeValueMap.put(e.getSource() + "-" + e.getDest(), (long) e.getContribution());
-                    } else if (MySequentialGraphVars.getSequentialGraphViewer().successorsOnly && e.getSource().getName().equals(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName())) {
+                    } else if (MySequentialGraphVars.getSequentialGraphViewer().successorsOnly && e.getSource().getName().equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
                         edgeValueMap.put(e.getSource() + "-" + e.getDest(), (long) e.getContribution());
                     }
                 }
@@ -2854,7 +2877,7 @@ implements ActionListener {
                 }
             } else {
                 LinkedHashMap<String, Long> edgeValueMap = new LinkedHashMap<>();
-                Collection<MyEdge> edges = MySequentialGraphVars.g.getIncidentEdges(MySequentialGraphVars.getSequentialGraphViewer().selectedNode);
+                Collection<MyEdge> edges = MySequentialGraphVars.g.getIncidentEdges(MySequentialGraphVars.getSequentialGraphViewer().singleNode);
                 for (MyEdge e : edges) {
                     edgeValueMap.put(e.getSource() + "-" + e.getDest(), (long) e.getContribution());
                 }
@@ -2923,7 +2946,7 @@ implements ActionListener {
                             }
                             MySequentialGraphVars.getSequentialGraphViewer().clusteredGraphLevelNodeValueBarChart = new MyClusteredGraphLevelNodeValueBarChart();
                             MySequentialGraphVars.getSequentialGraphViewer().add(MySequentialGraphVars.getSequentialGraphViewer().clusteredGraphLevelNodeValueBarChart);
-                        } else if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
+                        } else if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
                             MyViewerComponentControllerUtil.setSelectedNodeNeighborValueBarChartToViewer();
                         } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null) {
                             MyViewerComponentControllerUtil.setSharedNodeLevelNodeValueBarChart();
@@ -2999,7 +3022,7 @@ implements ActionListener {
                                 MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart.setEdgeValueBarChartForDepthNodes();
                                 MySequentialGraphVars.getSequentialGraphViewer().add(MySequentialGraphVars.getSequentialGraphViewer().graphLevelEdgeValueBarChart);
                             }
-                        } else if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
+                        } else if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
                             MyViewerComponentControllerUtil.setSingleNodeLevelEdgeBarChartToViewer();
                         } else {
                             MyViewerComponentControllerUtil.setEdgeBarChartToViewer();
@@ -3181,7 +3204,7 @@ implements ActionListener {
                     clusteringSelector.setVisible(false);
                     clusteringSectorLabel.setVisible(false);
                     MySequentialGraphVars.currentGraphDepth = Integer.parseInt(depthSelecter.getSelectedItem().toString().trim());
-                    if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
+                    if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
                         clusteringSectorLabel.setEnabled(false);
                         clusteringSelector.setEnabled(false);
 
@@ -3197,7 +3220,7 @@ implements ActionListener {
                             MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
                             MyViewerComponentControllerUtil.removeEdgeValueBarChartFromViewer();
                             depthNodeNameSet = new HashSet<>();
-                            depthNodeNameSet.add(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName());
+                            depthNodeNameSet.add(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName());
                             selectedNodeNeighborNodeTypeSelector.setVisible(true);
                             Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
                             for (MyNode n : nodes) {
@@ -3207,7 +3230,7 @@ implements ActionListener {
                             }
                             updateNodeTable();
                             MyViewerComponentControllerUtil.setSelectedNodeNeighborNodeTypeOption();
-                            MySequentialGraphVars.getSequentialGraphViewer().selectedNode = null;
+                            MySequentialGraphVars.getSequentialGraphViewer().singleNode = null;
                         }
                     } else if (selectedNodeNeighborNodeTypeSelector.isShowing()) {
                         MySequentialGraphVars.currentGraphDepth = Integer.parseInt(depthSelecter.getSelectedItem().toString().trim());

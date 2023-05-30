@@ -55,14 +55,14 @@ implements ActionListener {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override public void run() {
                     final Set<String> filterNodes = new HashSet<>();
-                    if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
-                        for (MyNode n : MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors) {
+                    if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
+                        for (MyNode n : MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors) {
                             if (n.getCurrentValue() == 0) {
                                 filterNodes.add(n.getName());
                             }
                         }
 
-                        for (MyNode n : MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors) {
+                        for (MyNode n : MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors) {
                             if (n.getCurrentValue() == 0) {
                                 filterNodes.add(n.getName());
                             }

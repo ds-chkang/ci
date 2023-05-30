@@ -44,7 +44,7 @@ extends JPanel {
                     if (MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodeNeighborNodeTypeSelector.isVisible()) {
                         selectedSingleNode = ((MyNode) MySequentialGraphVars.g.vRefs.get(MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeNameSet.iterator().next()));
                     } else {
-                        selectedSingleNode = MySequentialGraphVars.getSequentialGraphViewer().selectedNode;
+                        selectedSingleNode = MySequentialGraphVars.getSequentialGraphViewer().singleNode;
                     }
 
                     XYSeries avgReachTimeByDepthSeries = new XYSeries("AVERAGE REACH TIME");

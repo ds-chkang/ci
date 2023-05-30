@@ -127,7 +127,7 @@ implements ActionListener {
                     for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
                         String pred = MySequentialGraphVars.seqs[s][i-1].split(":")[0];
                         String suc = MySequentialGraphVars.seqs[s][i].split(":")[0];
-                        if (sNode.getName().equals(suc) && pred.equals(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName())) {
+                        if (sNode.getName().equals(suc) && pred.equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
                             cont++;
                         }
                     }
@@ -149,7 +149,7 @@ implements ActionListener {
                     for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
                         String pred = MySequentialGraphVars.seqs[s][i-1].split(":")[0];
                         String suc = MySequentialGraphVars.seqs[s][i].split(":")[0];
-                        if (sNode.getName().equals(suc) && pred.equals(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName())) {
+                        if (sNode.getName().equals(suc) && pred.equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
                             uniqCont++;
                             break;
                         }
@@ -172,7 +172,7 @@ implements ActionListener {
                     for (int i = 1; i < MySequentialGraphVars.seqs[sequence].length; i++) {
                         String pred = MySequentialGraphVars.seqs[sequence][i - 1].split(":")[0];
                         String suc = MySequentialGraphVars.seqs[sequence][i].split(":")[0];
-                        if (sNode.getName().equals(suc) && pred.equals(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName())) {
+                        if (sNode.getName().equals(suc) && pred.equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
                             reachTime += Long.valueOf(MySequentialGraphVars.seqs[sequence][i].split(":")[1]);
                         }
                     }
@@ -191,7 +191,7 @@ implements ActionListener {
             if (MySequentialGraphVars.seqs[s].length-1 > MySequentialGraphVars.currentGraphDepth) {
                 String pred = MySequentialGraphVars.seqs[s][MySequentialGraphVars.currentGraphDepth].split(":")[0];
                 String suc = MySequentialGraphVars.seqs[s][MySequentialGraphVars.currentGraphDepth +1].split(":")[0];
-                if (pred.equals(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName())) {
+                if (pred.equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
                     MyNode sNode = (MyNode) MySequentialGraphVars.g.vRefs.get(suc);
                     if (!depthSuccessorSet.contains(sNode)) {
                         depthSuccessorSet.add(sNode);
@@ -211,7 +211,7 @@ implements ActionListener {
                     if (MySequentialGraphVars.seqs[s].length-1 > MySequentialGraphVars.currentGraphDepth) {
                         String pred = MySequentialGraphVars.seqs[s][MySequentialGraphVars.currentGraphDepth].split(":")[0];
                         String suc = MySequentialGraphVars.seqs[s][MySequentialGraphVars.currentGraphDepth +1].split(":")[0];
-                        if (pred.equals(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName()) && suc.equals(sNode.getName())) {
+                        if (pred.equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName()) && suc.equals(sNode.getName())) {
                             cont++;
                         }
                     }
@@ -233,7 +233,7 @@ implements ActionListener {
                     if (MySequentialGraphVars.seqs[s].length-1 > MySequentialGraphVars.currentGraphDepth) {
                         String pred = MySequentialGraphVars.seqs[s][MySequentialGraphVars.currentGraphDepth].split(":")[0];
                         String suc = MySequentialGraphVars.seqs[s][MySequentialGraphVars.currentGraphDepth +1].split(":")[0];
-                        if (pred.equals(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName()) && suc.equals(sNode.getName())) {
+                        if (pred.equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName()) && suc.equals(sNode.getName())) {
                             cont++;
                         }
                     }
@@ -255,7 +255,7 @@ implements ActionListener {
                     if (MySequentialGraphVars.seqs[s].length-1 > MySequentialGraphVars.currentGraphDepth) {
                         String pred = MySequentialGraphVars.seqs[s][MySequentialGraphVars.currentGraphDepth].split(":")[0];
                         String suc = MySequentialGraphVars.seqs[s][MySequentialGraphVars.currentGraphDepth +1].split(":")[0];
-                        if (pred.equals(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName()) && suc.equals(sNode.getName())) {
+                        if (pred.equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName()) && suc.equals(sNode.getName())) {
                             reachTime += Long.valueOf(MySequentialGraphVars.seqs[s][MySequentialGraphVars.currentGraphDepth].split(":")[1]);
                         }
                     }
@@ -323,7 +323,7 @@ implements ActionListener {
                 successorContributionMap = this.getDepthSuccessorContributions(successors);
                 successorUniqueContributionMap = this.getDepthSuccessorUniqueContributions(successors);
             } else {
-                successors = MySequentialGraphVars.g.getSuccessors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode);
+                successors = MySequentialGraphVars.g.getSuccessors(MySequentialGraphVars.getSequentialGraphViewer().singleNode);
                 successorContributionMap = this.getSuccessorContributions(successors);
                 successorUniqueContributionMap = this.getSuccessorUniqueContributions(successors);
             }

@@ -645,8 +645,8 @@ public class MyDepthNodeUtil {
             int i = 0;
             ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.nodeListTable.getModel()).addRow(
                     new String[]{"" + MyMathUtil.getCommaSeperatedNumber(++i),
-                            MySequentialGraphSysUtil.getDecodedNodeName(MySequentialGraphSysUtil.getDecodedNodeName(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName())),
-                            MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(((MyNode) MySequentialGraphVars.g.vRefs.get(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName())).getCurrentValue()))
+                            MySequentialGraphSysUtil.getDecodedNodeName(MySequentialGraphSysUtil.getDecodedNodeName(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())),
+                            MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(((MyNode) MySequentialGraphVars.g.vRefs.get(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())).getCurrentValue()))
                     });
         } else {
             int i = 0;

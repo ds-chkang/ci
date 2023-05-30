@@ -34,8 +34,8 @@ extends JPanel {
                     setBackground(Color.WHITE);
                     XYSeries series = new XYSeries("NO. OF APPEARANCES BY DEPTH");
                     for (int i = 1; i <= MySequentialGraphVars.mxDepth; i++) {
-                        if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getNodeDepthInfoMap().containsKey(i)) {
-                            series.add(i, MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getNodeDepthInfo(i).getContribution());
+                        if (MySequentialGraphVars.getSequentialGraphViewer().singleNode.getNodeDepthInfoMap().containsKey(i)) {
+                            series.add(i, MySequentialGraphVars.getSequentialGraphViewer().singleNode.getNodeDepthInfo(i).getContribution());
                         } else {
                             series.add(i, 0);
                         }

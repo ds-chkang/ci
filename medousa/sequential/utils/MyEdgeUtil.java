@@ -1,6 +1,5 @@
 package medousa.sequential.utils;
 
-import medousa.sequential.graph.MyClusteringConfig;
 import medousa.sequential.graph.MyEdge;
 import medousa.sequential.graph.MyNode;
 import edu.uci.ics.jung.algorithms.importance.BetweennessCentrality;
@@ -35,11 +34,11 @@ public class MyEdgeUtil {
     }
 
     private static void rewindEdgeValues() {
-        if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
+        if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
             Collection<MyEdge> es = MySequentialGraphVars.g.getEdges();
             for (MyEdge e : es) {
-                if (e.getSource() == MySequentialGraphVars.getSequentialGraphViewer().selectedNode ||
-                    e.getDest() == MySequentialGraphVars.getSequentialGraphViewer().selectedNode) {
+                if (e.getSource() == MySequentialGraphVars.getSequentialGraphViewer().singleNode ||
+                    e.getDest() == MySequentialGraphVars.getSequentialGraphViewer().singleNode) {
                     e.setCurrentValue(1);
                 }
             }

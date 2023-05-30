@@ -367,9 +367,9 @@ extends JPanel {
                  */
                 Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
                 for (MyNode n : nodes) {
-                    if (!MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors.contains(n) &&
-                        !MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors.contains(n) &&
-                        MySequentialGraphVars.getSequentialGraphViewer().selectedNode != n) {
+                    if (!MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors.contains(n) &&
+                        !MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors.contains(n) &&
+                        MySequentialGraphVars.getSequentialGraphViewer().singleNode != n) {
                         n.setCurrentValue(0f);
                     }
                 }

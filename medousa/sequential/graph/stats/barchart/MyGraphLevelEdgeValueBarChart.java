@@ -121,7 +121,7 @@ extends JPanel {
         this.colors = new ArrayList<>();
         Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
         for (MyEdge e : edges) {
-            if (e.getSource() != MySequentialGraphVars.getSequentialGraphViewer().selectedNode && e.getDest() != MySequentialGraphVars.getSequentialGraphViewer().selectedNode) continue;
+            if (e.getSource() != MySequentialGraphVars.getSequentialGraphViewer().singleNode && e.getDest() != MySequentialGraphVars.getSequentialGraphViewer().singleNode) continue;
             else if (e.getDest().getCurrentValue() ==0 || e.getSource().getCurrentValue() == 0) continue;
             String predecessor = MySequentialGraphSysUtil.getNodeName(e.getSource().getName());
             String successor = MySequentialGraphSysUtil.getNodeName(e.getDest().getName());

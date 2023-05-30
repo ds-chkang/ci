@@ -268,14 +268,14 @@ implements ActionListener {
         float totalValue = 0;
 
         TreeMap<Long, Integer> valueMap = new TreeMap<>();
-        if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
+        if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
             if (MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly) {
-                nodes = MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors;
+                nodes = MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors;
             } else if (MySequentialGraphVars.getSequentialGraphViewer().successorsOnly) {
-                nodes = MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors;
+                nodes = MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors;
             } else if (MySequentialGraphVars.getSequentialGraphViewer().neighborsOnly) {
-                nodes = MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors;
-                nodes.addAll(MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors);
+                nodes = MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors;
+                nodes.addAll(MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors);
             }
         } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null && MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size() > 0) {
             if (MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly) {

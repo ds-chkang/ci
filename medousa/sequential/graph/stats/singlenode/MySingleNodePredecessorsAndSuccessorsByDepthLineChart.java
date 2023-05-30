@@ -48,11 +48,11 @@ extends JPanel{
             XYSeriesCollection dataset = new XYSeriesCollection();
 
             if (selectedChart == 0) {
-                if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName().contains("x")) {
+                if (MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName().contains("x")) {
                     int total = 0;
                     for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
                         String n = MySequentialGraphVars.seqs[s][0].split(":")[0];
-                        if (n.equals(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName())) {
+                        if (n.equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
                             total += (MySequentialGraphVars.seqs[s].length-1);
                         }
                     }
@@ -74,7 +74,7 @@ extends JPanel{
                         for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
                             String ps = MySequentialGraphVars.seqs[s][i-1].split(":")[0];
                             String n = MySequentialGraphVars.seqs[s][i].split(":")[0];
-                            if (n.equals(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName())) {
+                            if (n.equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
                                 if (predecessorMap.containsKey(i + 1)) {
                                     Set<String> predecessors = predecessorMap.get(i + 1);
                                     predecessors.add(ps);
@@ -93,7 +93,7 @@ extends JPanel{
                         for (int i = 0; i < MySequentialGraphVars.seqs[s].length - 1; i++) {
                             String n = MySequentialGraphVars.seqs[s][i].split(":")[0];
                             String ss = MySequentialGraphVars.seqs[s][i+1].split(":")[0];
-                            if (n.equals(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName())) {
+                            if (n.equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
                                 if (successorMap.containsKey(i + 1)) {
                                     Set<String> successors = successorMap.get(i + 1);
                                     successors.add(ss);
@@ -232,7 +232,7 @@ extends JPanel{
                     for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
                         String ps = MySequentialGraphVars.seqs[s][i - 1].split(":")[0];
                         String n = MySequentialGraphVars.seqs[s][i].split(":")[0];
-                        if (n.equals(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName())) {
+                        if (n.equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
                             if (predecessorMap.containsKey(i + 1)) {
                                 Set<String> predecessors = predecessorMap.get(i + 1);
                                 predecessors.add(ps);
@@ -351,11 +351,11 @@ extends JPanel{
                 revalidate();
                 repaint();
             } else if (selectedChart == 2) {
-                if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName().contains("x")) {
+                if (MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName().contains("x")) {
                     int total = 0;
                     for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
                         String n = MySequentialGraphVars.seqs[s][0].split(":")[0];
-                        if (n.equals(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName())) {
+                        if (n.equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
                             total += (MySequentialGraphVars.seqs[s].length - 1);
                         }
                     }
@@ -377,7 +377,7 @@ extends JPanel{
                         for (int i = 0; i < MySequentialGraphVars.seqs[s].length - 1; i++) {
                             String n = MySequentialGraphVars.seqs[s][i].split(":")[0];
                             String ss = MySequentialGraphVars.seqs[s][i + 1].split(":")[0];
-                            if (n.equals(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName())) {
+                            if (n.equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
                                 if (successorMap.containsKey(i + 1)) {
                                     Set<String> successors = successorMap.get(i + 1);
                                     successors.add(ss);

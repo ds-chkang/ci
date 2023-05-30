@@ -14,8 +14,6 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.HorizontalAlignment;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -44,7 +42,7 @@ extends JPanel {
                     if (MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodeNeighborNodeTypeSelector.isVisible()) {
                         selectedSingleNode = ((MyNode) MySequentialGraphVars.g.vRefs.get(MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeNameSet.iterator().next()));
                     } else {
-                        selectedSingleNode = MySequentialGraphVars.getSequentialGraphViewer().selectedNode;
+                        selectedSingleNode = MySequentialGraphVars.getSequentialGraphViewer().singleNode;
                     }
 
                     if (MySequentialGraphVars.currentGraphDepth > 0) {

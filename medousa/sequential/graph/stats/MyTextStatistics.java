@@ -340,24 +340,24 @@ extends JLabel {
                     "   <br>" + sharedSuccessors;
                 statStr += "<br>AVERAGE SHORTEST DISTANCE: " + MyMathUtil.twoDecimalFormat(MySequentialGraphSysUtil.getAverageMultiNodeShortestPathLength()) + " </body></html>";
                 setToolTipText(statStr);
-            } else if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
+            } else if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
                 Set<MyNode> uniqNodes = new HashSet<>();
-                uniqNodes.addAll(MySequentialGraphVars.g.getSuccessors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode));
-                uniqNodes.addAll(MySequentialGraphVars.g.getPredecessors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode));
-                int numOfSuccessors = MySequentialGraphVars.g.getSuccessorCount(MySequentialGraphVars.getSequentialGraphViewer().selectedNode);
-                int numOfPredecessors = MySequentialGraphVars.g.getPredecessorCount(MySequentialGraphVars.getSequentialGraphViewer().selectedNode);
+                uniqNodes.addAll(MySequentialGraphVars.g.getSuccessors(MySequentialGraphVars.getSequentialGraphViewer().singleNode));
+                uniqNodes.addAll(MySequentialGraphVars.g.getPredecessors(MySequentialGraphVars.getSequentialGraphViewer().singleNode));
+                int numOfSuccessors = MySequentialGraphVars.g.getSuccessorCount(MySequentialGraphVars.getSequentialGraphViewer().singleNode);
+                int numOfPredecessors = MySequentialGraphVars.g.getPredecessorCount(MySequentialGraphVars.getSequentialGraphViewer().singleNode);
                 String ss = "SUCCESSORS: " + MyMathUtil.getCommaSeperatedNumber(numOfSuccessors) + "[" + MyMathUtil.oneDecimalFormat(((float) numOfSuccessors / MySequentialGraphVars.g.getVertexCount()) * 100) + "]" + "\n";
                 String ps = "PREDECESSORS: " + MyMathUtil.getCommaSeperatedNumber(numOfPredecessors) + "[" + MyMathUtil.oneDecimalFormat(((float) numOfPredecessors / MySequentialGraphVars.g.getVertexCount()) * 100) + "]" + "\n";
-                uniqNodes.addAll(MySequentialGraphVars.g.getPredecessors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode));
-                uniqNodes.addAll(MySequentialGraphVars.g.getSuccessors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode));
-                String cont = "CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getContribution()) + "\n";
-                String inCont = "IN-CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getInContribution()) + "\n";
-                String outCont = "OUT-CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getOutContribution()) + "\n";
-                String uniqCont = "UNIQUE CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getUniqueContribution()) + "\n";
+                uniqNodes.addAll(MySequentialGraphVars.g.getPredecessors(MySequentialGraphVars.getSequentialGraphViewer().singleNode));
+                uniqNodes.addAll(MySequentialGraphVars.g.getSuccessors(MySequentialGraphVars.getSequentialGraphViewer().singleNode));
+                String cont = "CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getContribution()) + "\n";
+                String inCont = "IN-CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getInContribution()) + "\n";
+                String outCont = "OUT-CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getOutContribution()) + "\n";
+                String uniqCont = "UNIQUE CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getUniqueContribution()) + "\n";
                 String numOfEdges = "EDGE: " + MyMathUtil.getCommaSeperatedNumber(MyEdgeUtil.getEdgesGreaterThanZero()) + "[" +
                         MyMathUtil.twoDecimalFormat(((float) MyEdgeUtil.getEdgesGreaterThanZero() / MySequentialGraphVars.g.getEdgeCount()) * 100) + "]" + "\n";
-                String statStr = "<html><body>NO. OF NODES: " + MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors.size()+ MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors.size()+1) + "   " +
-                        "   <br>NODE: " + MySequentialGraphSysUtil.decodeNodeName(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getName()) +
+                String statStr = "<html><body>NO. OF NODES: " + MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors.size()+ MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors.size()+1) + "   " +
+                        "   <br>NODE: " + MySequentialGraphSysUtil.decodeNodeName(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName()) +
                         "   <br>" + cont +
                         "   <br>" + inCont +
                         "   <br>" + outCont +
@@ -374,7 +374,7 @@ extends JLabel {
                     String avgOutVal = "AVG. OUT-VALUE: " + MySelectedNodeUtil.getSelectedNodeAvgOutValue();
                     statStr += "    <br>" + minInVal + "   <br>" + maxInVal + "   <br>" + avgInVal + "   <br>" + minOutVal + "   <br>" + maxOutVal + "   <br>" + avgOutVal;
                 }
-                statStr += "<br>AVERAGE SHORTEST DISTANCE: " + MyMathUtil.twoDecimalFormat(MySequentialGraphVars.getSequentialGraphViewer().selectedNode.getAverageShortestDistance());
+                statStr += "<br>AVERAGE SHORTEST DISTANCE: " + MyMathUtil.twoDecimalFormat(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getAverageShortestDistance());
                 statStr = statStr + "</body></html>";
                 setToolTipText(statStr);
             } else {

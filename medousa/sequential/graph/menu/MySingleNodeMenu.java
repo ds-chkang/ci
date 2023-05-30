@@ -131,9 +131,9 @@ implements ActionListener {
     }
 
     private void setOnlyPredecessorNodes() {
-        Collection<MyNode> neighbors = MySequentialGraphVars.g.getNeighbors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode);
+        Collection<MyNode> neighbors = MySequentialGraphVars.g.getNeighbors(MySequentialGraphVars.getSequentialGraphViewer().singleNode);
         for (MyNode n : neighbors) {
-            if (MySequentialGraphVars.g.getSuccessors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode).contains(n)) {
+            if (MySequentialGraphVars.g.getSuccessors(MySequentialGraphVars.getSequentialGraphViewer().singleNode).contains(n)) {
                 if (n.getCurrentValue() != 0) {
                     n.setOriginalValue(n.getCurrentValue());
                     n.setCurrentValue(0);
@@ -145,9 +145,9 @@ implements ActionListener {
     }
 
     private void setOnlySuccessorNodes() {
-        Collection<MyNode> neighbors = MySequentialGraphVars.g.getNeighbors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode);
+        Collection<MyNode> neighbors = MySequentialGraphVars.g.getNeighbors(MySequentialGraphVars.getSequentialGraphViewer().singleNode);
         for (MyNode n : neighbors) {
-            if (MySequentialGraphVars.g.getPredecessors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode).contains(n)) {
+            if (MySequentialGraphVars.g.getPredecessors(MySequentialGraphVars.getSequentialGraphViewer().singleNode).contains(n)) {
                 if (n.getCurrentValue() != 0) {
                     n.setOriginalValue(n.getCurrentValue());
                     n.setCurrentValue(0);
@@ -159,7 +159,7 @@ implements ActionListener {
     }
 
     private void setNeighborNodes() {
-        Collection<MyNode> neighbors = MySequentialGraphVars.g.getNeighbors(MySequentialGraphVars.getSequentialGraphViewer().selectedNode);
+        Collection<MyNode> neighbors = MySequentialGraphVars.g.getNeighbors(MySequentialGraphVars.getSequentialGraphViewer().singleNode);
         for (MyNode n : neighbors) {
             if (n.getCurrentValue() == 0) {
                 n.setCurrentValue(n.getOriginalValue());

@@ -122,11 +122,11 @@ implements Serializable {
     }
 
     public int getGraphPredecessorCount() {
-        return MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors.size();
+        return MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors.size();
     }
 
     public int getGraphSuccessorCount() {
-        return MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors.size();
+        return MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors.size();
     }
 
     public float getClusteredAverageNodeValue() {

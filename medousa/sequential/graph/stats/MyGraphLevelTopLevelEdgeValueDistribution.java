@@ -201,26 +201,26 @@ implements ActionListener {
         float totalValue = 0;
 
         TreeMap<Integer, Integer> valueMap = new TreeMap<>();
-        if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
+        if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
             if (MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly) {
                 this.edges = new HashSet<>(MySequentialGraphVars.g.getEdges());
                 for (MyEdge e : this.edges) {
-                    if (!MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors.contains(e.getSource())) {
+                    if (!MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors.contains(e.getSource())) {
                          this.edges.remove(e);
                     }
                 }
             } else if (MySequentialGraphVars.getSequentialGraphViewer().successorsOnly) {
                 this.edges = new HashSet<>(MySequentialGraphVars.g.getEdges());
                 for (MyEdge e : this.edges) {
-                    if (!MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors.contains(e.getDest())) {
+                    if (!MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors.contains(e.getDest())) {
                         this.edges.remove(e);
                     }
                 }
             } else if (MySequentialGraphVars.getSequentialGraphViewer().neighborsOnly) {
                 this.edges = new HashSet<>(MySequentialGraphVars.g.getEdges());
                 for (MyEdge e : this.edges) {
-                    if (!MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors.contains(e.getDest()) &&
-                        !MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors.contains(e.getSource())) {
+                    if (!MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors.contains(e.getDest()) &&
+                        !MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors.contains(e.getSource())) {
                         this.edges.remove(e);
                     }
                 }

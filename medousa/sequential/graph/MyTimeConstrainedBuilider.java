@@ -1044,8 +1044,62 @@ public class MyTimeConstrainedBuilider {
         MySequentialGraphVars.g.graphEbasilon = (double) MySequentialGraphVars.g.getEdgeCount()/ MySequentialGraphVars.g.getVertexCount();
     }
 
-    public void setAverageShortestDistance(MyGraph<MyNode, MyEdge> g) {
-        MySequentialGraphSysUtil.setAverageShortestDistance(g);}
+    public void setShortestDistanceProperties(MyGraph<MyNode, MyEdge> g) {
+        long gTotalD = 0L;
+        long gCount = 0L;
+        Collection<MyNode> nodes = g.getVertices();
+        for (MyNode start : nodes) {
+            int maxShortestDistance = 0;
+            Queue<MyNode> Qu =  new LinkedList<>();
+            Set<MyNode> visitedNodeSet = new HashSet();
+            Map<MyNode, Integer> distanceMap =  new HashMap();
+
+            Qu.add(start);
+            distanceMap.put(start, 0);
+            while (!Qu.isEmpty()) {
+                MyNode vertex = Qu.remove();
+                Collection<MyNode> successors = g.getSuccessors(vertex);
+                for (MyNode neighbor : successors) {
+                    if (!visitedNodeSet.contains(neighbor)) {
+                        distanceMap.put(neighbor, distanceMap.get(vertex) + 1);
+                        Qu.add(neighbor);
+                        maxShortestDistance = distanceMap.get(vertex) + 1;
+                    }
+                }
+                visitedNodeSet.add(vertex);
+            }
+            start.maxShortestOutDistance = maxShortestDistance;
+
+            // Calculate average path length.
+            int totalD = 0;
+            int count = 0;
+            for (int d : distanceMap.values()) {
+                if (d > 0) {
+                    totalD += d;
+                    count++;
+                    if (d > MySequentialGraphVars.diameter) {
+                        MySequentialGraphVars.diameter = d;
+                    }
+                }
+            }
+
+            if (count == 0) {
+                start.setAverageShortestDistance(0);
+            } else {
+                start.setAverageShortestDistance((float) totalD / count);
+            }
+
+            gTotalD += totalD;
+            gCount += count;
+            start.setUnreachableNodeCount((MySequentialGraphVars.g.getVertexCount()-1)-count);
+        }
+
+        if (gTotalD > 0) {
+            double avg = (double) gTotalD / gCount;
+            MySequentialGraphVars.avgShortestDistance = avg;
+        } else {
+            MySequentialGraphVars.avgShortestDistance = 0.0D;
+        }    }
     public void setMaxNodeValue() {
         MySequentialGraphVars.g.setMaxNodeValue();}
     public void cleanWork(){ MySequentialGraphVars.g.edRefs = null; }

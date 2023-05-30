@@ -58,22 +58,22 @@ public class MyNodeSearcher {
     }
 
     public synchronized void setSelectedNodes(MyNode selectedNode) {
-        if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null &&
-            selectedNode == MySequentialGraphVars.getSequentialGraphViewer().selectedNode) {return;}
+        if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null &&
+            selectedNode == MySequentialGraphVars.getSequentialGraphViewer().singleNode) {return;}
         else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null &&
             MySequentialGraphVars.getSequentialGraphViewer().multiNodes.contains(selectedNode)) {return;}
 
-        if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
+        if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
             MySequentialGraphVars.getSequentialGraphViewer().viewerMouseListener.setMultiNodes(selectedNode);
         } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null) {
             MySequentialGraphVars.getSequentialGraphViewer().multiNodes.add(selectedNode);
             MySequentialGraphVars.getSequentialGraphViewer().viewerMouseListener.setMultiNodes(MySequentialGraphVars.getSequentialGraphViewer().multiNodes);
         } else {
             MyProgressBar pb = new MyProgressBar(false);
-            MySequentialGraphVars.getSequentialGraphViewer().selectedNode = selectedNode;
-            MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodePredecessors = new HashSet<>(MySequentialGraphVars.g.getPredecessors(selectedNode));
-            MySequentialGraphVars.getSequentialGraphViewer().selectedSingleNodeSuccessors = new HashSet<>(MySequentialGraphVars.g.getSuccessors(selectedNode));
-            MySelectedNodeUtil.adjustSelectedNodeNeighborNodeValues(MySequentialGraphVars.getSequentialGraphViewer().selectedNode);
+            MySequentialGraphVars.getSequentialGraphViewer().singleNode = selectedNode;
+            MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors = new HashSet<>(MySequentialGraphVars.g.getPredecessors(selectedNode));
+            MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors = new HashSet<>(MySequentialGraphVars.g.getSuccessors(selectedNode));
+            MySelectedNodeUtil.adjustSelectedNodeNeighborNodeValues(MySequentialGraphVars.getSequentialGraphViewer().singleNode);
             MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
             pb.updateValue(85, 100);
             MyViewerComponentControllerUtil.setDepthOptionForSelectedNode();

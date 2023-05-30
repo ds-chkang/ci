@@ -78,7 +78,7 @@ extends MySequentialGraphEngineBroker {
                 timeConstrainedGraphBuilider.setNodeAverageReachTime();
                 timeConstrainedGraphBuilider.setEdgeTotalAndAverageTime();
                 timeConstrainedGraphBuilider.setMaxNodeValue();
-                timeConstrainedGraphBuilider.setAverageShortestDistance(MySequentialGraphVars.g);
+                timeConstrainedGraphBuilider.setShortestDistanceProperties(MySequentialGraphVars.g);
                 timeConstrainedGraphBuilider.setVariableNodeStrength();
                 timeConstrainedGraphBuilider.setAverageNodeRecurrenceLength();
                 timeConstrainedGraphBuilider.setConnectance();

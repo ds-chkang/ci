@@ -37,8 +37,8 @@ public class MySingleNodePredecessorValueDistributionLineChart extends JPanel {
             MyNode selectedSingleNode = null;
             if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeNameSet != null && MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeNameSet.size() == 1) {
                 selectedSingleNode = ((MyNode) MySequentialGraphVars.g.vRefs.get(MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeNameSet.iterator().next()));
-            } else if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null){
-                selectedSingleNode = MySequentialGraphVars.getSequentialGraphViewer().selectedNode;
+            } else if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null){
+                selectedSingleNode = MySequentialGraphVars.getSequentialGraphViewer().singleNode;
             }
 
             Set<MyNode> predecessors = new HashSet<>(MySequentialGraphVars.g.getPredecessors(selectedSingleNode));

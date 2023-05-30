@@ -212,8 +212,8 @@ implements ActionListener {
 
     private JFreeChart setValueChart() {
         TreeMap<Integer, Integer> valueMap = new TreeMap<>();
-        if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null) {
-            this.nodes.add(MySequentialGraphVars.getSequentialGraphViewer().selectedNode);
+        if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
+            this.nodes.add(MySequentialGraphVars.getSequentialGraphViewer().singleNode);
         } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null && MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size() > 0) {
             this.nodes.addAll(MySequentialGraphVars.getSequentialGraphViewer().multiNodes);
         } else {

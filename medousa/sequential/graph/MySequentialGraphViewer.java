@@ -35,6 +35,7 @@ extends VisualizationViewer<MyNode, MyEdge>
 implements Serializable {
 
     public MyNode startNode;
+    public MyNode hoveredNode;
     public String nodeValueName = "CONTRIBUTION";
     public String edgeValName = "NONE";
     public boolean successorsOnly;
@@ -49,9 +50,9 @@ implements Serializable {
     public final float MIN_NODE_SZ = 50.0f;
     public Map<String, Integer> endNodesMap;
     public Set<String> nodesBetweenTwoNodes;
-    public MyNode selectedNode;
-    public Set<MyNode> selectedSingleNodePredecessors;
-    public Set<MyNode> selectedSingleNodeSuccessors;
+    public MyNode singleNode;
+    public Set<MyNode> singleNodePredecessors;
+    public Set<MyNode> singleNodeSuccessors;
     public Set<MyNode> multiNodes;
     public Set<MyNode> multiNodePredecessors;
     public Set<MyNode> multiNodeSuccessors;
@@ -113,7 +114,7 @@ implements Serializable {
                             if (tableNode.equals(MySequentialGraphSysUtil.getDecodedNodeName(n.getName()))) {return Color.ORANGE;
                             } else {return Color.DARK_GRAY;}
                         } else {return Color.DARK_GRAY;}
-                    } else if ((selectedNode != null && n == selectedNode) || (multiNodes != null && multiNodes.contains(n))) {return Color.ORANGE;
+                    } else if ((singleNode != null && n == singleNode) || (multiNodes != null && multiNodes.contains(n))) {return Color.ORANGE;
                     } else {return Color.DARK_GRAY;}
                 }
             });
@@ -190,13 +191,13 @@ implements Serializable {
         vc = null;
         startNode = null;
         multiNodes = null;
-        selectedSingleNodePredecessors = new HashSet<>();
-        selectedSingleNodeSuccessors = new HashSet<>();
+        singleNodePredecessors = new HashSet<>();
+        singleNodeSuccessors = new HashSet<>();
         sharedSuccessors = new HashSet<>();
         sharedPredecessors = new HashSet<>();
         multiNodePredecessors = new HashSet<>();
         multiNodeSuccessors = new HashSet<>();
-        selectedNode = null;
+        singleNode = null;
         neighborsOnly = false;
     }
 
@@ -252,26 +253,26 @@ implements Serializable {
                 } else {
                     return "";
                 }
-            } else if (selectedNode != null) {
+            } else if (singleNode != null) {
                 if (predecessorsOnly) {
-                    if (n == selectedNode || selectedSingleNodePredecessors.contains(n)) {
+                    if (n == singleNode || singleNodePredecessors.contains(n)) {
                         return name;
                     } else {
                         return "";
                     }
                 } else if (successorsOnly) {
-                    if (n == selectedNode || selectedSingleNodeSuccessors.contains(n)) {
+                    if (n == singleNode || singleNodeSuccessors.contains(n)) {
                         return name;
                     } else {
                         return "";
                     }
                 } else if (neighborsOnly) {
-                    if (n == selectedNode || selectedSingleNodeSuccessors.contains(n) || selectedSingleNodePredecessors.contains(n)) {
+                    if (n == singleNode || singleNodeSuccessors.contains(n) || singleNodePredecessors.contains(n)) {
                         return name;
                     } else {
                         return "";
                     }
-                } else if (n == selectedNode || selectedSingleNodeSuccessors.contains(n) || selectedSingleNodePredecessors.contains(n)) {
+                } else if (n == singleNode || singleNodeSuccessors.contains(n) || singleNodePredecessors.contains(n)) {
                     return name;
                 } else {
                     return "";
@@ -285,7 +286,7 @@ implements Serializable {
         @Override public Stroke transform(MyNode n) {
             if (vc.tableTabbedPane.getSelectedIndex() == 2) {
                 return new BasicStroke(4f);
-            } else if ((selectedNode != null && n == selectedNode) || (multiNodes != null && multiNodes.contains(n))) {
+            } else if ((singleNode != null && n == singleNode) || (multiNodes != null && multiNodes.contains(n))) {
                 return new BasicStroke(30f);
             } else {
                 float currentNodeValueWeight = n.getCurrentValue()/ MySequentialGraphVars.g.MX_N_VAL;
@@ -296,10 +297,19 @@ implements Serializable {
 
     public Transformer<MyEdge, Stroke> edgeStroker = new Transformer<MyEdge, Stroke>() {
         @Override public Stroke transform(MyEdge e) {
-            float edgeStrokeWeight = e.getCurrentValue() / MySequentialGraphVars.g.MX_E_VAL;
-            if (selectedNode != null) {
+            float edgeStrokeWeight = e.getCurrentValue() / (MySequentialGraphVars.g.MX_E_VAL+5);
+            if (hoveredNode != null) {
+                if (e.getDest() == hoveredNode || e.getSource() == hoveredNode) {
+                    edgeStrokeWeight = e.getCurrentValue() / MySequentialGraphVars.g.MX_E_VAL;
+                    float edgeStroke = edgeStrokeWeight * MX_E_STK;
+                    return new BasicStroke(edgeStroke+5);
+                } else {
+                    float edgeStroke = edgeStrokeWeight * (MX_E_STK+5);
+                    return new BasicStroke(edgeStroke);
+                }
+            } if (singleNode != null) {
                 if (predecessorsOnly) {
-                    if (selectedSingleNodePredecessors.contains(e.getSource())) {
+                    if (singleNodePredecessors.contains(e.getSource())) {
                         float edgeStroke = edgeStrokeWeight * MX_E_STK;
                         if (edgeStroke < 1) {
                             edgeStroke = 0.2f;
@@ -309,7 +319,7 @@ implements Serializable {
                         return new BasicStroke(0f);
                     }
                 } else if (successorsOnly) {
-                    if (selectedSingleNodeSuccessors.contains(e.getDest())) {
+                    if (singleNodeSuccessors.contains(e.getDest())) {
                         float edgeStroke = edgeStrokeWeight * MX_E_STK;
                         if (edgeStroke < 1) {
                             edgeStroke = 0.2f;
@@ -320,7 +330,7 @@ implements Serializable {
                         return new BasicStroke(0f);
                     }
                 } else if (neighborsOnly) {
-                    if (selectedSingleNodeSuccessors.contains(e.getDest()) || selectedSingleNodePredecessors.contains(e.getSource())) {
+                    if (singleNodeSuccessors.contains(e.getDest()) || singleNodePredecessors.contains(e.getSource())) {
                         float edgeStroke = edgeStrokeWeight * MX_E_STK;
                         if (edgeStroke < 1) {
                             edgeStroke = 0.2f;
@@ -329,7 +339,7 @@ implements Serializable {
                     } else {
                         return new BasicStroke(0f);
                     }
-                } else if (e.getSource() != selectedNode && e.getDest() != selectedNode) {
+                } else if (e.getSource() != singleNode && e.getDest() != singleNode) {
                     return new BasicStroke(0f);
                 } else {
                     float edgeStroke = edgeStrokeWeight * MX_E_STK;
@@ -428,7 +438,9 @@ implements Serializable {
 
     public Transformer<MyNode, Paint> unWeightedNodeColor = new Transformer<MyNode, Paint>() {
         @Override public Paint transform(MyNode n) {
-            if (vc.shortestDistanceSourceNode != null && vc.shortestDistanceSourceNode == n) {
+            if (hoveredNode != null && hoveredNode == n) {
+                return Color.YELLOW;
+            } else if (vc.shortestDistanceSourceNode != null && vc.shortestDistanceSourceNode == n) {
                 return Color.ORANGE;
             } else if (isClustered) {
                 return n.clusteringColor;
@@ -461,7 +473,9 @@ implements Serializable {
 
     public Transformer<MyNode, Paint> weightedNodeColor = new Transformer<MyNode, Paint>() {
         @Override public Paint transform(MyNode n) {
-            if (vc.depthNeighborNodeTypeSelector.getSelectedIndex() > 0) {
+            if (hoveredNode != null && hoveredNode == n) {
+                return Color.YELLOW;
+            } else if (vc.depthNeighborNodeTypeSelector.getSelectedIndex() > 0) {
                 if (vc.depthNodeNameSet != null && vc.depthNodeNameSet.contains(n.getName())) {
                     return new Color(1.0f, 0.0f, 0.0f, 0.7f);
                 } else if (vc.depthNodePredecessorMaps != null && vc.depthNodePredecessorMaps.containsKey(n.getName())) {
@@ -529,36 +543,36 @@ implements Serializable {
                 } else {
                     return new Ellipse2D.Double(0, 0, 0, 0);
                 }
-            } else if (selectedNode != null) {
+            } else if (singleNode != null) {
                 if (predecessorsOnly) {
-                    if (n == selectedNode) {
+                    if (n == singleNode) {
                         return setNodeSize(n.getCurrentValue() / MySequentialGraphVars.g.MX_N_VAL);
-                    } else if (selectedSingleNodePredecessors.contains(n)) {
+                    } else if (singleNodePredecessors.contains(n)) {
                         return setNodeSize(n.getCurrentValue() / MySequentialGraphVars.g.MX_N_VAL);
                     } else {
                         return new Ellipse2D.Double(0, 0, 0, 0);
                     }
                 } else if (successorsOnly) {
-                    if (n == selectedNode) {
+                    if (n == singleNode) {
                         return setNodeSize(n.getCurrentValue() / MySequentialGraphVars.g.MX_N_VAL);
-                    } else if (selectedSingleNodeSuccessors.contains(n)) {
+                    } else if (singleNodeSuccessors.contains(n)) {
                         return setNodeSize(n.getCurrentValue() / MySequentialGraphVars.g.MX_N_VAL);
                     } else {
                         return new Ellipse2D.Double(0, 0, 0, 0);
                     }
                 } else if (neighborsOnly) {
-                    if (n == selectedNode) {
+                    if (n == singleNode) {
                         return setNodeSize(n.getCurrentValue() / MySequentialGraphVars.g.MX_N_VAL);
-                    } else if (selectedSingleNodeSuccessors.contains(n)) {
+                    } else if (singleNodeSuccessors.contains(n)) {
                         return setNodeSize(n.getCurrentValue() / MySequentialGraphVars.g.MX_N_VAL);
-                    } else if (selectedSingleNodePredecessors.contains(n)) {
+                    } else if (singleNodePredecessors.contains(n)) {
                         return setNodeSize(n.getCurrentValue() / MySequentialGraphVars.g.MX_N_VAL);
                     } else {
                         return new Ellipse2D.Double(0, 0, 0, 0);
                     }
                 } else if (n.getCurrentValue() == 0) {
                     return new Ellipse2D.Double(0, 0, 0, 0);
-                } else if (n != selectedNode && !selectedSingleNodePredecessors.contains(n) && !selectedSingleNodeSuccessors.contains(n)) {
+                } else if (n != singleNode && !singleNodePredecessors.contains(n) && !singleNodeSuccessors.contains(n)) {
                     return new Ellipse2D.Double(0, 0, 0, 0);
                 } else {
                     return setNodeSize(n.getCurrentValue() / MySequentialGraphVars.g.MX_N_VAL);
@@ -581,7 +595,7 @@ implements Serializable {
         @Override public String transform(MyNode n) {
             if (MySequentialGraphVars.currentGraphDepth == 0) {return setTopNodeToolTip(n);}
             else if (vc.selectedNodeNeighborNodeTypeSelector.getSelectedIndex() > 0) {
-                if (n == selectedNode) {
+                if (n == singleNode) {
                     return setDepthNodeToolTipForSingleSelectedNode(n, MySequentialGraphVars.currentGraphDepth);
                 } else if (vc.selectedNodeNeighborNodeTypeSelector.getSelectedItem().toString().contains("P")) {
                     return setDepthNodeToolTipForSingleSelectedNode(n, MySequentialGraphVars.currentGraphDepth - 1);
@@ -722,7 +736,7 @@ implements Serializable {
 
     public Paint setEdgeColor(MyEdge e) {
         if (vc.depthNeighborNodeTypeSelector.getSelectedIndex() > 0) {
-            if (selectedNode != null && e.getSource() != selectedNode && e.getDest() != selectedNode) {
+            if (singleNode != null && e.getSource() != singleNode && e.getDest() != singleNode) {
                 return new Color(0f, 0f, 0.0f, 0.0f);
             } else if (vc.depthNeighborNodeTypeSelector.getSelectedItem().toString().equals("S.")) {
                 if (vc.depthNodeSuccessorMaps != null && vc.depthNodeSuccessorMaps.containsKey(e.getSource().getName()) &&
@@ -741,44 +755,52 @@ implements Serializable {
             } else {
                 return new Color(0f, 0f, 0.0f, 0.0f);
             }
+        } else if (hoveredNode != null) {
+            if (e.getSource() == hoveredNode) {
+                return new Color(1, 0, 0, 0.85f);
+            } else if (e.getDest() == hoveredNode) {
+                return new Color(0, 0, 1, 0.85f);
+            } else {
+                return Color.LIGHT_GRAY;
+            }
         } else if (multiNodes != null) {
             if (predecessorsOnly) {
                 if (multiNodePredecessors.contains(e.getSource()) && multiNodes.contains(e.getDest())) {
-                    return new Color(1,0,0, 0.35f);
+                    return new Color(1,0,0, 0.25f);
                 } else {
                     return new Color(0f, 0f, 0f, 0f);
                 }
             } else if (successorsOnly) {
                 if (multiNodeSuccessors.contains(e.getDest()) && multiNodes.contains(e.getSource())) {
-                    return new Color(0f, 0f, 1f, 0.35f);
+                    return new Color(0f, 0f, 1f, 0.25f);
                 } else {
                     return new Color(0f, 0f, 0f, 0f);
                 }
             } else if (neighborsOnly) {
                 if (multiNodePredecessors.contains(e.getSource()) && multiNodes.contains(e.getDest())) {
-                    return new Color(1f, 0f, 0f, 0.35f);
+                    return new Color(1f, 0f, 0f, 0.25f);
                 } else if (multiNodeSuccessors.contains(e.getDest()) && multiNodes.contains(e.getSource())) {
-                    return new Color(0f, 0f, 1f, 0.35f);
+                    return new Color(0f, 0f, 1f, 0.25f);
                 } else {
                     return new Color(0f, 0f, 0f, 0f);
                 }
             } else if (sharedPredecessorsOly) {
                 if (sharedPredecessors.contains(e.getSource()) && multiNodes.contains(e.getDest())) {
-                    return new Color(1f, 0f, 0f, 0.35f);
+                    return new Color(1f, 0f, 0f, 0.25f);
                 } else {
                     return new Color(0f, 0f, 0f, 0f);
                 }
             } else if (sharedSuccessorsOnly) {
                 if (sharedSuccessors.contains(e.getDest()) && multiNodes.contains(e.getSource())) {
-                    return new Color(0f, 0f, 1f, 0.35f);
+                    return new Color(0f, 0f, 1f, 0.25f);
                 } else {
                     return new Color(0f, 0f, 0f, 0f);
                 }
             } else if (sharedNeighborsOnly) {
                 if (sharedPredecessors.contains(e.getSource()) && multiNodes.contains(e.getDest())) {
-                    return new Color(1f, 0f, 0f, 0.35f);
+                    return new Color(1f, 0f, 0f, 0.25f);
                 } else if (sharedSuccessors.contains(e.getDest()) && multiNodes.contains(e.getSource())) {
-                    return new Color(0f, 0f, 1f, 0.35f);
+                    return new Color(0f, 0f, 1f, 0.25f);
                 } else {
                     return new Color(0f, 0f, 0f, 0f);
                 }
@@ -787,50 +809,50 @@ implements Serializable {
             } else if (e.getDest() == e.getSource() && multiNodes.contains(e.getDest()) && multiNodes.contains(e.getSource())) {
                 return Color.YELLOW;
             } else if (multiNodePredecessors.contains(e.getSource()) && multiNodes.contains(e.getDest())) {
-                return new Color(1f, 0f, 0f, 0.35f);
+                return new Color(1f, 0f, 0f, 0.25f);
             } else if (multiNodeSuccessors.contains(e.getDest()) && multiNodes.contains(e.getSource())) {
-                return new Color(0f, 0f, 1f, 0.35f);
+                return new Color(0f, 0f, 1f, 0.25f);
             } else if (e.getDest() != e.getSource() && multiNodes.contains(e.getDest()) && multiNodes.contains(e.getSource())) {
-                return new Color(0f, 1f, 0f, 0.35f);
+                return new Color(0f, 1f, 0f, 0.25f);
             } else {
                 return new Color(0f, 0f, 0f, 0f);
             }
-        } else if (selectedNode != null) {
+        } else if (singleNode != null) {
             if (predecessorsOnly) {
-                if (e.getSource() == selectedNode && e.getDest() == selectedNode) {
+                if (e.getSource() == singleNode && e.getDest() == singleNode) {
                     return Color.ORANGE;
-                } else if (e.getDest() == selectedNode && selectedSingleNodePredecessors.contains(e.getSource())) {
-                    return new Color(1.0f, 0, 0, 0.35f);
+                } else if (e.getDest() == singleNode && singleNodePredecessors.contains(e.getSource())) {
+                    return new Color(1.0f, 0, 0, 0.25f);
                 } else {
                     return new Color(0, 0, 0, 0f);
                 }
             } else if (successorsOnly) {
-                if (e.getSource() == selectedNode && e.getDest() == selectedNode) {
+                if (e.getSource() == singleNode && e.getDest() == singleNode) {
                     return Color.BLACK;
-                } else if (e.getSource() == selectedNode && selectedSingleNodeSuccessors.contains(e.getDest())) {
-                    return new Color(0, 0, 1.0f, 0.35f);
+                } else if (e.getSource() == singleNode && singleNodeSuccessors.contains(e.getDest())) {
+                    return new Color(0, 0, 1.0f, 0.25f);
                 } else {
                     return new Color(0, 0, 0, 0f);
                 }
             } else if (neighborsOnly) {
-                if (e.getSource() == selectedNode && e.getDest() == selectedNode) {
+                if (e.getSource() == singleNode && e.getDest() == singleNode) {
                     return Color.BLACK;
-                } else if (e.getSource() == selectedNode && selectedSingleNodeSuccessors.contains(e.getDest())) {
-                    return new Color(0, 0, 1.0f, 0.35f);
-                } else if (e.getDest() == selectedNode && selectedSingleNodePredecessors.contains(e.getSource())) {
-                    return new Color(1.0f, 0, 0, 0.35f);
+                } else if (e.getSource() == singleNode && singleNodeSuccessors.contains(e.getDest())) {
+                    return new Color(0, 0, 1.0f, 0.25f);
+                } else if (e.getDest() == singleNode && singleNodePredecessors.contains(e.getSource())) {
+                    return new Color(1.0f, 0, 0, 0.25f);
                 } else {
                     return new Color(0, 0, 0, 0f);
                 }
-            } else if (selectedNode != e.getDest() && selectedNode != e.getSource()) {
+            } else if (singleNode != e.getDest() && singleNode != e.getSource()) {
                 return new Color(0.0f, 0.0f, 0.0f, 0.0f);
             } else if (e.getCurrentValue() == 0 || e.getSource().getCurrentValue() == 0 || e.getDest().getCurrentValue() == 0) {
                 return new Color(0.0f, 0.0f, 0.0f, 0.0f);
-            } else if (e.getSource() == selectedNode && e.getDest() == selectedNode) {
+            } else if (e.getSource() == singleNode && e.getDest() == singleNode) {
                 return Color.ORANGE;
-            } else if (e.getSource() == selectedNode) {
+            } else if (e.getSource() == singleNode) {
                 return new Color(0f, 0f, 1f, 1f);
-            } else if (e.getDest() == selectedNode) {
+            } else if (e.getDest() == singleNode) {
                 return new Color(1f, 0f, 0f, 1f);
             } else {
                 return new Color(0, 0, 0, 0f);
@@ -1082,7 +1104,7 @@ implements Serializable {
                                 "<BR>CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(vc.depthNodePredecessorMaps.get(vc.depthNodeNameSet.iterator().next()).get(n.getName())) +
                                 "<BR>DEPTH: " + depth + " &nbsp;&nbsp;</BODY></HTML>";
             }
-        } else if (n == selectedNode) {
+        } else if (n == singleNode) {
             tooltip =
                 "<HTML><BODY>" +
                 "NODE: " + (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName())) +  "&nbsp;&nbsp;" +

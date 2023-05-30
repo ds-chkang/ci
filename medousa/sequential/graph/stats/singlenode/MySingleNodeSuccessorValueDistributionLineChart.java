@@ -35,8 +35,8 @@ public class MySingleNodeSuccessorValueDistributionLineChart extends JPanel {
             MyNode selectedSingleNode = null;
             if (MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodeNeighborNodeTypeSelector.isVisible()) {
                 selectedSingleNode = ((MyNode) MySequentialGraphVars.g.vRefs.get(MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeNameSet.iterator().next()));
-            } else if (MySequentialGraphVars.getSequentialGraphViewer().selectedNode != null){
-                selectedSingleNode = MySequentialGraphVars.getSequentialGraphViewer().selectedNode;
+            } else if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null){
+                selectedSingleNode = MySequentialGraphVars.getSequentialGraphViewer().singleNode;
             }
 
             Set<MyNode> successors = new HashSet<>(MySequentialGraphVars.g.getSuccessors(selectedSingleNode));

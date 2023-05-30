@@ -44,7 +44,7 @@ public class MyPathFlowNeighborNodeValueBarChart extends JPanel {
 
         Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
         for (MyEdge e : edges) {
-            if (e.getDest() == MySequentialGraphVars.getSequentialGraphViewer().selectedNode && e.getCurrentValue() > 0) {
+            if (e.getDest() == MySequentialGraphVars.getSequentialGraphViewer().singleNode && e.getCurrentValue() > 0) {
                 String pName = (e.getSource().getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(e.getSource().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getSource().getName()));
                 this.predecessors.put(pName, e.getSource().getCurrentValue());
                 final float hue = this.rand.nextFloat();
@@ -54,7 +54,7 @@ public class MyPathFlowNeighborNodeValueBarChart extends JPanel {
                 this.predecessorColors.add(predecessorRandomColor);
             }
 
-            if (e.getSource() == MySequentialGraphVars.getSequentialGraphViewer().selectedNode && e.getCurrentValue() > 0) {
+            if (e.getSource() == MySequentialGraphVars.getSequentialGraphViewer().singleNode && e.getCurrentValue() > 0) {
                 String sName = (e.getDest().getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(e.getDest().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getDest().getName()));
                 this.successors.put(sName, e.getDest().getCurrentValue());
                 final float hue = this.rand.nextFloat();

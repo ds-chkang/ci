@@ -36,12 +36,14 @@ implements Serializable, Cloneable, Comparable<MyNode> {
     public long duration;
     protected float maxDuration;
     public long minDuration = 100000000000000L;
+    public float clusteringCoefficient;
 
     public int endPositionNodeCount;
     public int startPositionNodeCount;
 
     public float shortestOutDistance;
     public float shortestInDistance;
+    public float maxShortestOutDistance;
 
     public int nodeRecurrentCount;
     public float avgRecurrenceLength;
