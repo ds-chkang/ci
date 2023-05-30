@@ -13,14 +13,8 @@ implements MouseMotionListener {
 
     @Override public void mouseDragged(MouseEvent e) {
         try {
-            new Thread(new Runnable() {
-                @Override public void run() {
-
-                }
-            }).start();
-        } catch (Exception ex) {
-
-        }
+            new Thread(new Runnable() {@Override public void run() {}}).start();
+        } catch (Exception ex) {}
     }
 
     @Override public void mouseMoved(MouseEvent e) {
@@ -28,15 +22,20 @@ implements MouseMotionListener {
             Point point = e.getPoint();
             MyNode n = MySequentialGraphVars.getSequentialGraphViewer().getPickSupport().getVertex(MySequentialGraphVars.getSequentialGraphViewer().getGraphLayout(), point.getX(), point.getY());
             if (n != null) {
-                MySequentialGraphVars.getSequentialGraphViewer().hoveredNode = n;
-                MySequentialGraphVars.getSequentialGraphViewer().revalidate();
-                MySequentialGraphVars.getSequentialGraphViewer().repaint();
-            } else if (n == null &&
-                MySequentialGraphVars.getSequentialGraphViewer().hoveredNode != null) {
-                //point.x = (int) (point.getX() + 120);
+                if (MySequentialGraphVars.getSequentialGraphViewer().singleNode == null &&
+                    MySequentialGraphVars.getSequentialGraphViewer().multiNodes == null &&
+                    MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.getSelectedIndex() == 0) {
+                    MySequentialGraphVars.getSequentialGraphViewer().hoveredNode = n;
+                    MySequentialGraphVars.getSequentialGraphViewer().revalidate();
+                    MySequentialGraphVars.getSequentialGraphViewer().repaint();
+                }
+            } else if (MySequentialGraphVars.getSequentialGraphViewer().hoveredNode != null) {
+                point.x = (int) (point.getX() + 120);
                 if (MySequentialGraphVars.getSequentialGraphViewer().vc.currentNodeListTable.getWidth() < point.getX()) {
                     MySequentialGraphVars.getSequentialGraphViewer().hoveredNode = null;
                 }
+                MySequentialGraphVars.getSequentialGraphViewer().revalidate();
+                MySequentialGraphVars.getSequentialGraphViewer().repaint();
             }
         } catch (Exception ex) {}
     }

@@ -1079,14 +1079,14 @@ implements Serializable {
             if (vc.depthNodeNameSet != null && vc.depthNodeNameSet.contains(n.getName())) {
                 tooltip =
                         "<HTML><BODY>" +
-                                "NODE: " + (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName())) +  "&nbsp;&nbsp;" +
+                                "NODE: " + MySequentialGraphSysUtil.getNodeName(n.getName()) +  "&nbsp;&nbsp;" +
                                 "<BR>CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(((MyNode) MySequentialGraphVars.g.vRefs.get(vc.depthNodeNameSet.iterator().next())).getContribution()) +
                                 "<BR>DEPTH: " + depth + " &nbsp;&nbsp;</BODY></HTML>";
             } else {
                 tooltip =
                         "<HTML>" +
                                 "<BODY>" +
-                                "NODE: " + (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName())) + "&nbsp;&nbsp;" +
+                                "NODE: " + MySequentialGraphSysUtil.getNodeName(n.getName()) + "&nbsp;&nbsp;" +
                                 "<BR>CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(vc.depthNodeSuccessorMaps.get(vc.depthNodeNameSet.iterator().next()).get(n.getName())) +
                                 "<BR>DEPTH: " + depth + " &nbsp;&nbsp;</BODY></HTML>";
             }
@@ -1094,20 +1094,20 @@ implements Serializable {
             if (vc.depthNodeNameSet != null && vc.depthNodeNameSet.contains(n.getName())) {
                 tooltip =
                         "<HTML><BODY>" +
-                                "NODE: " + (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName())) + "&nbsp;&nbsp;" +
+                                "NODE: " + MySequentialGraphSysUtil.getNodeName(n.getName()) + "&nbsp;&nbsp;" +
                                 "<BR>CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(n.getNodeDepthInfo(MySequentialGraphVars.currentGraphDepth).getContribution()) +
                                 "<BR>DEPTH: " + depth + " &nbsp;&nbsp;</BODY></HTML>";
             } else {
                 tooltip =
                         "<HTML><BODY>" +
-                                "NODE: " + (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName())) + "&nbsp;&nbsp;" +
+                                "NODE: " + MySequentialGraphSysUtil.getNodeName(n.getName()) + "&nbsp;&nbsp;" +
                                 "<BR>CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(vc.depthNodePredecessorMaps.get(vc.depthNodeNameSet.iterator().next()).get(n.getName())) +
                                 "<BR>DEPTH: " + depth + " &nbsp;&nbsp;</BODY></HTML>";
             }
         } else if (n == singleNode) {
             tooltip =
                 "<HTML><BODY>" +
-                "NODE: " + (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName())) +  "&nbsp;&nbsp;" +
+                "NODE: " + MySequentialGraphSysUtil.getNodeName(n.getName()) +  "&nbsp;&nbsp;" +
                 "<BR>CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(n.getNodeDepthInfo(depth).getContribution()) +  "&nbsp;&nbsp;</BODY></HTML>";
         }
         return tooltip;
@@ -1116,7 +1116,7 @@ implements Serializable {
     private String setDepthNodeToolTip(MyNode n, int depth) {
         String toolTip = "<HTML>" +
             "<BODY>" +
-            "NODE: " +(n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName())) +  "&nbsp;&nbsp;" +
+            "NODE: " + MySequentialGraphSysUtil.getNodeName(n.getName()) +  "&nbsp;&nbsp;" +
             "<BR>CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(n.getNodeDepthInfo(depth).getContribution()) +  "&nbsp;&nbsp;" +
             "<BR>IN CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(n.getNodeDepthInfo(depth).getInContribution()) +  "&nbsp;&nbsp;" +
             "<BR>OUT CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(n.getNodeDepthInfo(depth).getOutContribution()) +  "&nbsp;&nbsp;" +
@@ -1134,7 +1134,7 @@ implements Serializable {
 
     private String setTopNodeToolTip(MyNode n) {
         String toolTip = "<HTML>" +
-            "<BODY>NODE: " + (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName())) +
+            "<BODY>NODE: " + MySequentialGraphSysUtil.getNodeName(n.getName()) +
             (MySequentialGraphVars.isSupplementaryOn && !n.getName().contains("x") ? "<BR>RELATED VARIABLES: " + MyMathUtil.getCommaSeperatedNumber(n.getVariableStrengthMap().size()) : "") +
             (MySequentialGraphVars.isSupplementaryOn && !n.getName().contains("x") ? "<BR>VARIABLE STRENGTH: "  +  MyMathUtil.getCommaSeperatedNumber(n.getTotalVariableStrength()) : "") +
             "<BR>CONTRIBUTION: " + MyMathUtil.getCommaSeperatedNumber(n.getContribution()) +

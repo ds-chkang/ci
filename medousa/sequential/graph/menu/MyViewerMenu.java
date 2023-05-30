@@ -19,6 +19,8 @@ public class MyViewerMenu
 extends JPopupMenu
 implements ActionListener {
 
+    public static boolean isTooltipOff;
+
     private JMenuItem contributionCountByObjectDistribution = new JMenuItem("CONTRIBUTION COUNT BY OBJECT DISTRIBUTION");
     private JMenuItem picking = new JMenuItem("PICKING");
     private JMenuItem tranform = new JMenuItem("TRANSORMING");
@@ -45,6 +47,7 @@ implements ActionListener {
     private JMenuItem betweenTimeDistribution = new JMenuItem("BETWEEN TIME DISTRIBUTION");
     private JMenuItem nodeFont = new JMenuItem("NODE FONT");
     private JMenuItem edgeFont = new JMenuItem("EDGE FONT");
+    private JMenuItem nodeToolTipOnOff = new JMenuItem("NODE TOOLTIP-OFF");
 
 
     public MyViewerMenu( ) {
@@ -89,6 +92,14 @@ implements ActionListener {
         this.add(new JSeparator());
         this.setMenuItem(this.nodeFont);
         this.setMenuItem(this.edgeFont);
+        this.add(new JSeparator());
+        if (!isTooltipOff) {
+            this.nodeToolTipOnOff.setText("NODE TOOLTIP-OFF");
+            this.setMenuItem(this.nodeToolTipOnOff);
+        } else {
+            this.nodeToolTipOnOff.setText("NODE TOOLTIP-ON");
+            this.setMenuItem(this.nodeToolTipOnOff);
+        }
     }
 
     private void setMenuItem(JMenuItem menuItem) {
@@ -101,7 +112,19 @@ implements ActionListener {
     @Override public void actionPerformed(ActionEvent e) {
         new Thread(new Runnable() {
             @Override public void run() {
-               if (e.getSource() == contributionCountByObjectDistribution) {
+                if (e.getSource() == nodeToolTipOnOff) {
+                    if (!isTooltipOff) {
+                        MySequentialGraphVars.getSequentialGraphViewer().setVertexToolTipTransformer(null);
+                        nodeToolTipOnOff.setText("NODE TOOLTIP-ON");
+                        isTooltipOff = true;
+                    } else {
+                        MySequentialGraphVars.getSequentialGraphViewer().setVertexToolTipTransformer(
+                            MySequentialGraphVars.getSequentialGraphViewer().defaultToolTipper
+                        );
+                        nodeToolTipOnOff.setText("NODE TOOLTIP-OFF");
+                        isTooltipOff = false;
+                    }
+                } else if (e.getSource() == contributionCountByObjectDistribution) {
                     MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution graphLevelContributionCountByObjectIDDistribution = new MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution();
                     graphLevelContributionCountByObjectIDDistribution.enlarge();
                 }  else if (e.getSource() == picking) {

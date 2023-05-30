@@ -20,6 +20,7 @@ implements GraphMouseListener {
     public void setSingleNodeDashBoard(Object obj) {
         try {
             MyProgressBar pb = new MyProgressBar(false);
+            MySequentialGraphVars.getSequentialGraphViewer().hoveredNode = null;
             MySequentialGraphVars.getSequentialGraphViewer().singleNode = (MyNode) obj;
             MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors = new HashSet<>();
             MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors = new HashSet<>();

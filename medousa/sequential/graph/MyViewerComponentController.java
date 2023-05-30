@@ -973,12 +973,12 @@ implements ActionListener {
         this.setBackground(Color.WHITE);
         this.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        this.nodeValueBarChart.setFont(MySequentialGraphVars.tahomaPlainFont11);
-        this.nodeLabelBarChart.setFont(MySequentialGraphVars.tahomaPlainFont11);
-        this.edgeValueBarChart.setFont(MySequentialGraphVars.tahomaPlainFont11);
-        this.edgeLabelBarChart.setFont(MySequentialGraphVars.tahomaPlainFont11);
-        this.weightedNodeColor.setFont(MySequentialGraphVars.tahomaPlainFont11);
-        this.clusteringSectorLabel.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.nodeValueBarChart.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.nodeLabelBarChart.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.edgeValueBarChart.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.edgeLabelBarChart.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.weightedNodeColor.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.clusteringSectorLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
 
         this.selectedNodeNeighborNodeTypeSelector.setBackground(Color.WHITE);
         this.depthNeighborNodeTypeSelector.setToolTipText("SELECT A NEIGHBOR NODE TYPE FOR SELECTED NODES");
@@ -1005,12 +1005,12 @@ implements ActionListener {
         this.depthExcludeSelecter.setBackground(Color.WHITE);
         this.depthExcludeSelecter.setFocusable(false);
         this.depthExcludeSelecter.setToolTipText("SELECT A DEPTH");
-        this.depthExcludeSelecter.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.depthExcludeSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
         MyViewerComponentControllerUtil.setDepthExcludeSelecterMenu();
 
         this.depthExcludeSymbolSelecter.setBackground(Color.WHITE);
         this.depthExcludeSymbolSelecter.setFocusable(false);
-        this.depthExcludeSymbolSelecter.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.depthExcludeSymbolSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.depthExcludeSymbolSelecter.addItem("");
         this.depthExcludeSymbolSelecter.addItem("==");
         this.depthExcludeSymbolSelecter.addItem("!=");
@@ -1173,7 +1173,7 @@ implements ActionListener {
         this.setNodeValueExcludeSymbolComboBox();
         this.setEdgeValueExcludeSymbolComboBox();
 
-        this.nodeValueExcludeTxt.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.nodeValueExcludeTxt.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.nodeValueExcludeTxt.setToolTipText("ENTER A NUMERIC VALUE");
         this.nodeValueExcludeTxt.setHorizontalAlignment(JTextField.CENTER);
         this.nodeValueExcludeTxt.setBorder(new LineBorder(Color.DARK_GRAY,1));
@@ -1224,10 +1224,10 @@ implements ActionListener {
         this.endingNodeBarChart.setFont(MySequentialGraphVars.tahomaPlainFont11);
 
         JLabel nodeValueExcludeOptionLabel = new JLabel("N. V.");
-        nodeValueExcludeOptionLabel.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        nodeValueExcludeOptionLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
         nodeValueExcludeOptionLabel.setBackground(Color.WHITE);
 
-        this.edgeValueExludeLabel.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.edgeValueExludeLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.edgeValueExludeLabel.setBackground(Color.WHITE);
 
         this.topLeftPanel.setBackground(Color.WHITE);
@@ -1240,11 +1240,11 @@ implements ActionListener {
         this.topLeftPanel.add(this.edgeValueExcludeTxt);
 
         JLabel nodeLabelExcludeComboBoxMenuLabel = new JLabel( "  N. L.");
-        nodeLabelExcludeComboBoxMenuLabel.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        nodeLabelExcludeComboBoxMenuLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
         nodeLabelExcludeComboBoxMenuLabel.setBackground(Color.WHITE);
 
         this.nodeLabelExcludeMathSymbolSelecter.setBackground(Color.WHITE);
-        this.nodeLabelExcludeMathSymbolSelecter.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.nodeLabelExcludeMathSymbolSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.nodeLabelExcludeMathSymbolSelecter.setFocusable(false);
         this.nodeLabelExcludeMathSymbolSelecter.addItem("");
         this.nodeLabelExcludeMathSymbolSelecter.addItem("==");
@@ -1252,7 +1252,7 @@ implements ActionListener {
         this.nodeLabelExcludeMathSymbolSelecter.setToolTipText("SELECT AN ARITHMATIC SYMBOL TO EXCLUDE");
 
         this.nodeLabelExcludeSelecter.setBackground(Color.WHITE);
-        this.nodeLabelExcludeSelecter.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.nodeLabelExcludeSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.nodeLabelExcludeSelecter.setFocusable(false);
         this.nodeLabelExcludeSelecter.setToolTipText("SELECT A NODE LABEL TO EXCLUDE");
         this.nodeLabelExcludeSelecter.addItem("");
@@ -1263,11 +1263,11 @@ implements ActionListener {
 
         this.nodeLabelValueExcludeSelecter.setFocusable(false);
         this.nodeLabelValueExcludeSelecter.setToolTipText("SELECT A NODE LABEL VALUE TO EXCLUDE");
-        this.nodeLabelValueExcludeSelecter.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.nodeLabelValueExcludeSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.nodeLabelValueExcludeSelecter.setBackground(Color.WHITE);
 
 
-        this.edgeValueExcludeTxt.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.edgeValueExcludeTxt.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.edgeValueExcludeTxt.setToolTipText("ENTER A NUMERIC VALUE");
         this.edgeValueExcludeTxt.setHorizontalAlignment(JTextField.CENTER);
         this.edgeValueExcludeTxt.setBorder(new LineBorder(Color.DARK_GRAY,1));
@@ -1282,17 +1282,17 @@ implements ActionListener {
         }
 
         this.edgeLabelExcludeComboBoxMenuLabel.setBackground(Color.WHITE);
-        this.edgeLabelExcludeComboBoxMenuLabel.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.edgeLabelExcludeComboBoxMenuLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
 
         this.edgeLabelExcludeMathSymbolSelecter.setBackground(Color.WHITE);
-        this.edgeLabelExcludeMathSymbolSelecter.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.edgeLabelExcludeMathSymbolSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.edgeLabelExcludeMathSymbolSelecter.setFocusable(false);
         this.edgeLabelExcludeMathSymbolSelecter.addItem("");
         this.edgeLabelExcludeMathSymbolSelecter.addItem("==");
         this.edgeLabelExcludeMathSymbolSelecter.addItem("!=");
 
         this.edgeLabelExcludeSelecter.setBackground(Color.WHITE);
-        this.edgeLabelExcludeSelecter.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.edgeLabelExcludeSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.edgeLabelExcludeSelecter.setFocusable(false);
         this.edgeLabelExcludeSelecter.addItem("");
         for (String nodeLabel : MySequentialGraphVars.userDefinedEdgeLabelSet) {
@@ -1301,7 +1301,7 @@ implements ActionListener {
         this.edgeLabelExcludeSelecter.addActionListener(new MyEdgeLabelSelecterListener(this.edgeLabelExcludeSelecter, this.edgeLabelValueExcludeSelecter));
 
         this.edgeLabelValueExcludeSelecter.setBackground(Color.WHITE);
-        this.edgeLabelValueExcludeSelecter.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.edgeLabelValueExcludeSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.edgeLabelValueExcludeSelecter.setFocusable(false);
         this.edgeLabelValueExcludeSelecter.addItem("");
 

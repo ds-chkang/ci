@@ -155,6 +155,7 @@ implements MouseListener {
     public void setMultiNodes(Set<MyNode> selectedMultiNodes) {
         MyProgressBar pb = new MyProgressBar(false);
         try {
+            MySequentialGraphVars.getSequentialGraphViewer().hoveredNode = null;
             Iterator itr = selectedMultiNodes.iterator();
             MyNode n = (MyNode) itr.next();
             pb.updateValue(10, 100);
@@ -180,14 +181,11 @@ implements MouseListener {
             MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors = null;
             MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors = null;
             MyMultiNodeUtil.adjustMultiNodeNeighborNodeValues();
-            //MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
             MySequentialGraphVars.getSequentialGraphViewer().vc.updateTableInfos();
             MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.setText("SHARED N. V. B.");
             MySequentialGraphVars.sequentialGraphDashBoard.setMultiNodeDashBoard();
 
             MySequentialGraphVars.getSequentialGraphViewer().vc.graphRemovalPanel.setVisible(false);
-           // MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.setVisible(false);
-           // MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecterLabel.setVisible(false);
             pb.updateValue(100, 100);
             pb.dispose();
 
@@ -204,6 +202,7 @@ implements MouseListener {
     public void setMultiNodes(MyNode selectedNode) {
         MyProgressBar pb = new MyProgressBar(false);
         try {
+            MySequentialGraphVars.getSequentialGraphViewer().hoveredNode = null;
             MySequentialGraphVars.getSequentialGraphViewer().multiNodes = new HashSet<>();
             MySequentialGraphVars.getSequentialGraphViewer().multiNodes.add(selectedNode);
             MySequentialGraphVars.getSequentialGraphViewer().multiNodes.add(MySequentialGraphVars.getSequentialGraphViewer().singleNode);
@@ -232,12 +231,8 @@ implements MouseListener {
             MySequentialGraphVars.getSequentialGraphViewer().vc.updateTableInfos();
             MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.setText("SHARED N. V. B.");
             MySequentialGraphVars.sequentialGraphDashBoard.setMultiNodeDashBoard();
-            MySequentialGraphVars.getSequentialGraphViewer().getRenderContext().setEdgeDrawPaintTransformer(
-                    MySequentialGraphVars.getSequentialGraphViewer().edgeColor);
-
+            MySequentialGraphVars.getSequentialGraphViewer().getRenderContext().setEdgeDrawPaintTransformer(MySequentialGraphVars.getSequentialGraphViewer().edgeColor);
             MySequentialGraphVars.getSequentialGraphViewer().vc.graphRemovalPanel.setVisible(false);
-            //MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.setVisible(false);
-            //MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecterLabel.setVisible(false);
             pb.updateValue(100, 100);
             pb.dispose();
 
