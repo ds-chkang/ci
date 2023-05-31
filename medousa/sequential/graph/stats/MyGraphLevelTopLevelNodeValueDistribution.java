@@ -192,10 +192,6 @@ implements ActionListener {
     }
 
     private JFreeChart setValueChart() {
-        int nodeCount = 0;
-        float totalValue = 0;
-
-        TreeMap<Integer, Integer> valueMap = new TreeMap<>();
         if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
             if (MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly) {
                 nodes = MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors;
@@ -224,43 +220,89 @@ implements ActionListener {
         } else {
             nodes = new HashSet<>(MySequentialGraphVars.g.getVertices());
         }
-        for (MyNode n : nodes) {
-            if (n.getCurrentValue() == 0) continue;
-            int value = (int) n.getCurrentValue();
-            totalValue += value;
-            nodeCount++;
 
-            if (value > this.maxValue) {
-                this.maxValue = value;
+        int nodeCount = 0;
+        float totalValue = 0;
+        if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedItem().toString().contains("CLUSTERING")) {
+            TreeMap<Float, Integer> valueMap = new TreeMap<>();
+            for (MyNode n : nodes) {
+                if (n.getCurrentValue() == 0) continue;
+                float value = n.getCurrentValue();
+                totalValue += value;
+                nodeCount++;
+
+                if (value > this.maxValue) {
+                    this.maxValue = value;
+                }
+
+                if (value > 0 && value < this.minValue) {
+                    this.minValue = value;
+                }
+
+                if (valueMap.containsKey(value)) {
+                    valueMap.put(value, valueMap.get(value) + 1);
+                } else {
+                    valueMap.put(value, 1);
+                }
             }
 
-            if (value > 0 && value < this.minValue) {
-                this.minValue = value;
+            DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+            for (Float nodeValue : valueMap.keySet()) {
+                dataset.addValue(valueMap.get(nodeValue), "", MyMathUtil.oneDecimalFormat(nodeValue));
             }
 
-            if (valueMap.containsKey(value)) {
-                valueMap.put(value, valueMap.get(value) + 1);
-            } else {
-                valueMap.put(value, 1);
+            this.avgValue = totalValue/nodeCount;
+            this.stdValue = getFloatNodeValueStandardDeviation(valueMap);
+
+            String plotTitle = "";
+            String xaxis = MySequentialGraphVars.getSequentialGraphViewer().nodeValueName + " NODE VALUE";
+            String yaxis = "";
+            PlotOrientation orientation = PlotOrientation.VERTICAL;
+            boolean show = false;
+            boolean toolTips = true;
+            boolean urls = false;
+            return ChartFactory.createBarChart(plotTitle, xaxis, yaxis, dataset, orientation, show, toolTips, urls);
+        } else {
+            TreeMap<Integer, Integer> valueMap = new TreeMap<>();
+            for (MyNode n : nodes) {
+                if (n.getCurrentValue() == 0) continue;
+                int value = (int) n.getCurrentValue();
+                totalValue += value;
+                nodeCount++;
+
+                if (value > this.maxValue) {
+                    this.maxValue = value;
+                }
+
+                if (value > 0 && value < this.minValue) {
+                    this.minValue = value;
+                }
+
+                if (valueMap.containsKey(value)) {
+                    valueMap.put(value, valueMap.get(value) + 1);
+                } else {
+                    valueMap.put(value, 1);
+                }
             }
+            DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+            for (Integer nodeValue : valueMap.keySet()) {
+                dataset.addValue(valueMap.get(nodeValue), "", nodeValue);
+            }
+
+            this.avgValue = totalValue/nodeCount;
+            this.stdValue = getNodeValueStandardDeviation(valueMap);
+
+            String plotTitle = "";
+            String xaxis = MySequentialGraphVars.getSequentialGraphViewer().nodeValueName + " NODE VALUE";
+            String yaxis = "";
+            PlotOrientation orientation = PlotOrientation.VERTICAL;
+            boolean show = false;
+            boolean toolTips = true;
+            boolean urls = false;
+            return ChartFactory.createBarChart(plotTitle, xaxis, yaxis, dataset, orientation, show, toolTips, urls);
         }
 
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        for (Integer nodeValue : valueMap.keySet()) {
-            dataset.addValue(valueMap.get(nodeValue), "", nodeValue);
-        }
 
-        this.avgValue = totalValue/nodeCount;
-        this.stdValue = getNodeValueStandardDeviation(valueMap);
-
-        String plotTitle = "";
-        String xaxis = MySequentialGraphVars.getSequentialGraphViewer().nodeValueName + " NODE VALUE";
-        String yaxis = "";
-        PlotOrientation orientation = PlotOrientation.VERTICAL;
-        boolean show = false;
-        boolean toolTips = true;
-        boolean urls = false;
-        return ChartFactory.createBarChart(plotTitle, xaxis, yaxis, dataset, orientation, show, toolTips, urls);
     }
 
     public float getNodeValueStandardDeviation(TreeMap<Integer, Integer> valueMap) {
@@ -271,6 +313,19 @@ implements ActionListener {
         double mean = sum / valueMap.size();
         sum = 0f;
         for (int n : valueMap.keySet()) {
+            sum += Math.pow(n - mean, 2);
+        }
+        return (sum == 0.00f ? 0.00f : (float) Math.sqrt(sum / valueMap.size()));
+    }
+
+    public float getFloatNodeValueStandardDeviation(TreeMap<Float, Integer> valueMap) {
+        float sum = 0.00f;
+        for (float n : valueMap.keySet()) {
+            sum += n;
+        }
+        double mean = sum / valueMap.size();
+        sum = 0f;
+        for (float n : valueMap.keySet()) {
             sum += Math.pow(n - mean, 2);
         }
         return (sum == 0.00f ? 0.00f : (float) Math.sqrt(sum / valueMap.size()));

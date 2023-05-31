@@ -435,6 +435,16 @@ implements Serializable {
                 return Color.ORANGE;
             } else if (isClustered) {
                 return n.clusteringColor;
+            } else if (hoveredNode != null) {
+                if (n == hoveredNode) {
+                    return Color.YELLOW;
+                } else if (MySequentialGraphVars.g.getSuccessorCount(n) == 0 && MySequentialGraphVars.g.getPredecessorCount(n) > 0) {
+                    return new Color(0.0f, 1.0f, 0.0f, 0.7f);
+                } else if (MySequentialGraphVars.g.getSuccessorCount(n) > 0 && MySequentialGraphVars.g.getPredecessorCount(n) == 0) {
+                    return new Color(1.0f, 0.0f, 0.0f, 0.7f);
+                } else {
+                    return new Color(0.0f, 0.0f, 1.0f, 0.7f);
+                }
             } else if (multiNodes != null) {
                 if (MySequentialGraphVars.g.getSuccessors(n).containsAll(multiNodes)) {
                     return Color.ORANGE;
@@ -465,7 +475,15 @@ implements Serializable {
     public Transformer<MyNode, Paint> weightedNodeColor = new Transformer<MyNode, Paint>() {
         @Override public Paint transform(MyNode n) {
             if (hoveredNode != null && hoveredNode == n) {
-                return Color.YELLOW;
+                if (n == hoveredNode) {
+                    return Color.YELLOW;
+                } else if (MySequentialGraphVars.g.getSuccessorCount(n) == 0 && MySequentialGraphVars.g.getPredecessorCount(n) > 0) {
+                    return new Color(0.0f, 1.0f, 0.0f, 0.7f);
+                } else if (MySequentialGraphVars.g.getSuccessorCount(n) > 0 && MySequentialGraphVars.g.getPredecessorCount(n) == 0) {
+                    return new Color(1.0f, 0.0f, 0.0f, 0.7f);
+                } else {
+                    return new Color(0.0f, 0.0f, 1.0f, 0.7f);
+                }
             } else if (vc.depthNeighborNodeTypeSelector.getSelectedIndex() > 0) {
                 if (vc.depthNodeNameSet != null && vc.depthNodeNameSet.contains(n.getName())) {
                     return new Color(1.0f, 0.0f, 0.0f, 0.7f);
