@@ -203,13 +203,7 @@ implements Serializable {
 
     private Transformer<MyNode, String> nodeLabeller = new Transformer<MyNode, String>() {
         @Override public String transform(MyNode n) {
-            String name = "";
-
-            if (n.getName().contains("x")) {
-                name = MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName());
-            } else {
-                name = MySequentialGraphSysUtil.decodeNodeName(n.getName());
-            }
+            String name = MySequentialGraphSysUtil.getNodeName(n.getName());
 
             if (multiNodes != null) {
                 if (predecessorsOnly) {
@@ -289,7 +283,7 @@ implements Serializable {
             } else if ((singleNode != null && n == singleNode) || (multiNodes != null && multiNodes.contains(n))) {
                 return new BasicStroke(30f);
             } else {
-                float currentNodeValueWeight = n.getCurrentValue()/ MySequentialGraphVars.g.MX_N_VAL;
+                float currentNodeValueWeight = n.getCurrentValue() / MySequentialGraphVars.g.MX_N_VAL;
                 return setNodeDrawStroke(currentNodeValueWeight);
             }
         }
@@ -437,9 +431,7 @@ implements Serializable {
 
     public Transformer<MyNode, Paint> unWeightedNodeColor = new Transformer<MyNode, Paint>() {
         @Override public Paint transform(MyNode n) {
-            if (hoveredNode != null && hoveredNode == n) {
-                return Color.YELLOW;
-            } else if (vc.shortestDistanceSourceNode != null && vc.shortestDistanceSourceNode == n) {
+            if (vc.shortestDistanceSourceNode != null && vc.shortestDistanceSourceNode == n) {
                 return Color.ORANGE;
             } else if (isClustered) {
                 return n.clusteringColor;
