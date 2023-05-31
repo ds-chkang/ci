@@ -300,11 +300,10 @@ implements Serializable {
             float edgeStrokeWeight = e.getCurrentValue() / (MySequentialGraphVars.g.MX_E_VAL+5);
             if (hoveredNode != null) {
                 if (e.getDest() == hoveredNode || e.getSource() == hoveredNode) {
-                    edgeStrokeWeight = e.getCurrentValue() / MySequentialGraphVars.g.MX_E_VAL;
                     float edgeStroke = edgeStrokeWeight * MX_E_STK;
-                    return new BasicStroke(edgeStroke+5);
+                    return new BasicStroke(edgeStroke+8);
                 } else {
-                    float edgeStroke = edgeStrokeWeight * (MX_E_STK+5);
+                    float edgeStroke = edgeStrokeWeight * (MX_E_STK);
                     return new BasicStroke(edgeStroke);
                 }
             } if (singleNode != null) {
@@ -757,11 +756,11 @@ implements Serializable {
             }
         } else if (hoveredNode != null) {
             if (e.getSource() == hoveredNode) {
-                return new Color(1, 0, 0, 0.85f);
+                return new Color(0, 0, 1, 0.45f);
             } else if (e.getDest() == hoveredNode) {
-                return new Color(0, 0, 1, 0.85f);
+                return new Color(1, 0, 0, 0.6f);
             } else {
-                return Color.LIGHT_GRAY;
+                return Color.decode("#d8d8d8");
             }
         } else if (multiNodes != null) {
             if (predecessorsOnly) {

@@ -2,6 +2,7 @@ package medousa.sequential.graph;
 
 import edu.uci.ics.jung.algorithms.cluster.WeakComponentClusterer;
 import edu.uci.ics.jung.algorithms.importance.BetweennessCentrality;
+import edu.uci.ics.jung.algorithms.metrics.Metrics;
 import medousa.sequential.graph.common.MyClosenessCentrality;
 import medousa.sequential.graph.common.MyNodeEigenvectorCentrality;
 import medousa.sequential.utils.MyMathUtil;
@@ -678,6 +679,13 @@ public class MyTimeConstrainedBuilider {
             if (totalCount > 0) {
                 n.setAverageRecursiveTime((float) totalTime / totalCount);
             }
+        }
+    }
+
+    public void setClusteringCoefficient() {
+        Map<MyNode, Double> cc = Metrics.clusteringCoefficients(MySequentialGraphVars.g);
+        for (MyNode n : cc.keySet()) {
+            n.clusteringCoefficient = (float) (double) cc.get(n);
         }
     }
 

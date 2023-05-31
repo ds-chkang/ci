@@ -1185,7 +1185,7 @@ implements ActionListener {
         this.excludeBtn.setToolTipText("EXCLUDE NODES AND EDGES");
         this.excludeBtn.setBackground(Color.WHITE);
         this.excludeBtn.setFocusable(false);
-        this.excludeBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.excludeBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.excludeBtn.addActionListener(new MyNodeEdgeExclusionActionListener(this));
 
         JLabel removeEdgeEmptyLabel = new JLabel("  ");
@@ -1195,33 +1195,33 @@ implements ActionListener {
         this.nodeValueBarChart.setFocusable(false);
         this.nodeValueBarChart.setToolTipText("NODE VALUE BAR CHART");
         this.nodeValueBarChart.setBackground(Color.WHITE);
-        this.nodeValueBarChart.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.nodeValueBarChart.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.nodeValueBarChart.addActionListener(this);
 
         this.nodeLabelBarChart.setFocusable(false);
         this.nodeLabelBarChart.setToolTipText("NODE LABEL BAR CHART");
         this.nodeLabelBarChart.setBackground(Color.WHITE);
-        this.nodeLabelBarChart.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.nodeLabelBarChart.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.nodeLabelBarChart.addActionListener(this);
         this.nodeLabelBarChart.setVisible(false);
 
         this.edgeValueBarChart.setFocusable(false);
         this.edgeValueBarChart.setToolTipText("EDGE VALUE BAR CHART");
         this.edgeValueBarChart.setBackground(Color.WHITE);
-        this.edgeValueBarChart.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.edgeValueBarChart.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.edgeValueBarChart.addActionListener(this);
 
         this.edgeLabelBarChart.setFocusable(false);
         this.edgeLabelBarChart.setToolTipText("EDGE VALUE BAR CHART");
         this.edgeLabelBarChart.setBackground(Color.WHITE);
-        this.edgeLabelBarChart.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.edgeLabelBarChart.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.edgeLabelBarChart.setVisible(false);
         this.edgeLabelBarChart.addActionListener(this);
 
         this.endingNodeBarChart.setFocusable(false);
         this.endingNodeBarChart.setToolTipText("ENDING NODE BAR CHART");
         this.endingNodeBarChart.setBackground(Color.WHITE);
-        this.endingNodeBarChart.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.endingNodeBarChart.setFont(MySequentialGraphVars.tahomaPlainFont12);
 
         JLabel nodeValueExcludeOptionLabel = new JLabel("N. V.");
         nodeValueExcludeOptionLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
@@ -1640,7 +1640,11 @@ implements ActionListener {
             "AVG. SHORTEST DISTANCE",
             "NO. OF GRAPHS",
             "IRREDUCIBLE",
-            "APERIODIC"
+            "APERIODIC",
+            "CLUSTERING COEFFICIENT",
+            "MAX. CLUSTERING COEFFICIENT",
+            "MIN. CLUSTERING COEFFICIENT",
+            "STD. CLUSTERING COEFFICIENT"
         };
 
         this.statTable = new JTable(statTableModel) {

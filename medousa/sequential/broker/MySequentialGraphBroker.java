@@ -47,6 +47,7 @@ extends MySequentialGraphEngineBroker {
                 graphBuilder.setGraphLevelTotalEdgeContribution();
                 graphBuilder.setNumberOfGraphs();
                 graphBuilder.setNodeContributionCountByObject();
+                graphBuilder.setClusteringCoefficient();
                 MySequentialGraphVars.g.edRefs = null;
                 MySequentialGraphVars.g.edgeRefMap = null;
             } else {
@@ -88,6 +89,7 @@ extends MySequentialGraphEngineBroker {
                 timeConstrainedGraphBuilider.setNumberOfGraphs();
                 timeConstrainedGraphBuilider.setNodeContributionCountByObject();
                 timeConstrainedGraphBuilider.setReachTimesByObject();
+                timeConstrainedGraphBuilider.setClusteringCoefficient();
                 MySequentialGraphVars.g.edRefs = null;
                 MySequentialGraphVars.g.edgeRefMap = null;
             }

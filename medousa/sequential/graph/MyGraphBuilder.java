@@ -1,6 +1,7 @@
 package medousa.sequential.graph;
 
 import edu.uci.ics.jung.algorithms.cluster.WeakComponentClusterer;
+import edu.uci.ics.jung.algorithms.metrics.Metrics;
 import medousa.sequential.graph.common.MyNodeBetweennessCentrality;
 import medousa.sequential.graph.common.MyClosenessCentrality;
 import medousa.sequential.graph.common.MyNodeEigenvectorCentrality;
@@ -82,6 +83,13 @@ public class MyGraphBuilder {
             MyNode n = new MyNode(node);
             MySequentialGraphVars.g.addVertex(n);
             MySequentialGraphVars.g.vRefs.put(node, n);
+        }
+    }
+
+    public void setClusteringCoefficient() {
+        Map<MyNode, Double> cc = Metrics.clusteringCoefficients(MySequentialGraphVars.g);
+        for (MyNode n : cc.keySet()) {
+            n.clusteringCoefficient = (float) (double) cc.get(n);
         }
     }
 

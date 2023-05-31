@@ -2,19 +2,16 @@ package medousa.sequential.utils;
 
 import medousa.MyProgressBar;
 import medousa.message.MyMessageUtil;
-import medousa.sequential.graph.MyComboBoxTooltipRenderer;
+import medousa.sequential.graph.*;
 import medousa.sequential.graph.stats.*;
 import medousa.sequential.graph.stats.barchart.MyGraphLevelEdgeValueBarChart;
 import medousa.sequential.graph.stats.barchart.MyGraphLevelNodeValueBarChart;
 import medousa.sequential.graph.stats.barchart.MySingleNodeEdgeValueBarChart;
 import medousa.sequential.graph.stats.barchart.MySingleNodeNeighborNodeValueBarChart;
-import medousa.sequential.graph.MyEdge;
-import medousa.sequential.graph.MyNode;
 import medousa.sequential.graph.stats.barchart.MyDepthLevelNeighborNodeValueBarChart;
 import medousa.sequential.graph.stats.barchart.MyDepthLevelNodeValueBarChart;
 import medousa.sequential.graph.stats.barchart.MyMultiLevelEdgeValueBarChart;
 import medousa.sequential.graph.stats.barchart.MyMultiLevelNeighborNodeValueBarChart;
-import medousa.sequential.graph.MyAperiodicityChecker;
 import org.apache.commons.collections15.Transformer;
 
 import javax.swing.table.DefaultTableModel;
@@ -584,10 +581,66 @@ public class MyViewerComponentControllerUtil {
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"NO. OF GRAPHS", MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.numberOfGraphs)});
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"IRREDUCIBLE", "" + isIrreducible()});
         ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"APERIODIC", "" + isAperiodic()});
+        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"C. C.", "" + computeGlobalClusteringCoefficient()});
+        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"MAX. C. C.", "" + computeMaxGlobalClusteringCoefficient()});
+        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"MIN. C. C.", "" + computeMinGlobalClusteringCoefficient()});
+        ((DefaultTableModel) MySequentialGraphVars.getSequentialGraphViewer().vc.statTable.getModel()).addRow(new String[]{"STD. C. C.", "" + computeStdClusteringCoefficient()});
 
         dm.fireTableDataChanged();
         MySequentialGraphVars.getSequentialGraphViewer().revalidate();
         MySequentialGraphVars.getSequentialGraphViewer().repaint();
+    }
+
+    public static String computeStdClusteringCoefficient() {
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        float sum = 0f;
+        int numNodes = 0;
+        for (MyNode n : nodes) {
+            if (n.clusteringCoefficient == 0) continue;
+            numNodes++;
+            sum += n.clusteringCoefficient;
+        }
+        if (numNodes == 0) return "0.00";
+        float mean = sum/numNodes;
+        float std = 0f;
+        for(MyNode n : nodes) {
+            std += Math.pow(n.clusteringCoefficient-mean, 2);
+        }
+        return MyMathUtil.twoDecimalFormat(std/numNodes);
+    }
+
+    private static String computeMinGlobalClusteringCoefficient() {
+        float min = 1000000000000000f;
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        for (MyNode n : nodes) {
+            if (n.clusteringCoefficient > 0 && min > n.clusteringCoefficient) {
+                min = n.clusteringCoefficient;
+            }
+        }
+        return MyMathUtil.twoDecimalFormat(min);
+    }
+
+    private static String computeMaxGlobalClusteringCoefficient() {
+        float max = 0f;
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        for (MyNode n : nodes) {
+            if (max < n.clusteringCoefficient) {
+                max = n.clusteringCoefficient;
+            }
+        }
+        return MyMathUtil.twoDecimalFormat(max);
+    }
+
+    private static String computeGlobalClusteringCoefficient() {
+        float totalCC = 0f;
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        int count = 0;
+        for (MyNode n : nodes) {
+            if (n.clusteringCoefficient == 0) continue;
+            count++;
+            totalCC += n.clusteringCoefficient;
+        }
+        return MyMathUtil.twoDecimalFormat(totalCC/count) + "[" + MyMathUtil.getCommaSeperatedNumber(count) + "]";
     }
 
     private static String isIrreducible() {
@@ -648,11 +701,6 @@ public class MyViewerComponentControllerUtil {
             }}});
         MySequentialGraphVars.getSequentialGraphViewer().revalidate();
         MySequentialGraphVars.getSequentialGraphViewer().repaint();
-    }
-
-    public static void showNodeValue() {
-        new Thread(new Runnable() {@Override public void run() {
-            MyNodeValue nodeValueRankFrame = new MyNodeValue();}}).start();
     }
 
     public static void setSharedNodeLevelNodeValueBarChart() {

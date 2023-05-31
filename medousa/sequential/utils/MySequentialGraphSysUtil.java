@@ -152,8 +152,6 @@ public class MySequentialGraphSysUtil {
     }
 
 
-
-
     public static String encodeVariableItemSet(String itemset) {
         String encodedVariableItemset = "";
         String[] items = itemset.split(MySequentialGraphVars.commaDelimeter);
