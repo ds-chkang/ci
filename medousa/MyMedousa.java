@@ -12,6 +12,7 @@ import medousa.sequential.broker.MySequentialGraphMessageBroker;
 import medousa.sequential.graph.MySequentialGraphDashBoard;
 import medousa.sequential.utils.MyNodeUtil;
 import medousa.sequential.utils.MySequentialGraphVars;
+import medousa.test.MyUserComputerChecker;
 
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.*;
@@ -150,16 +151,15 @@ extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
                 try {
-                    MyDateMonitor.checkDate();
-                    MyMultipleInstanceRunMonitor.monitorInstances();
+                    MyUserComputerChecker.run(); // Is the user using medousa on an unlicensed computer?
+                    MyDateMonitor.checkDate(); // Has the trial period been passed?
+                    MyMultipleInstanceRunMonitor.monitorInstances(); // Are there more than an instance of medousa running on the current computer?
                     MyMedousa.setUI();
                     MyMedousa medousa = new MyMedousa();
                     medousa.decorate();
-                    medousa.setAlwaysOnTop(true);
-                    medousa.setVisible(true);
-                    medousa.setAlwaysOnTop(false);
                     medousa.revalidate();
                     medousa.repaint();
+                    medousa.setVisible(true);
                 } catch (Exception ex) {}
             }
         });
