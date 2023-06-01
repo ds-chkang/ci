@@ -59,11 +59,11 @@ public class MyUserComputerChecker {
 
 
     public static void run() {
-        String jarPath = "c:\\temp\\medousa.jar";
-        String filePath = "c:\\temp\\id.txt";
+        //String jarPath = "c:\\temp\\medousa.jar";
+        //String filePath = "c:\\temp\\id.txt";
 
-        //String jarPath = MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "medousa.jar";
-        //String filePath = MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "id.txt";
+        String jarPath = MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "medousa.jar";
+        String filePath = MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "id.txt";
         String entryName = "id.txt";
 
         try {
@@ -79,53 +79,60 @@ public class MyUserComputerChecker {
                 bw.close();
 
                 // Add id file to jar.
-                File tempJar = File.createTempFile("temp", ".jar");
+                File tempJar = new File("c:\\temp\\temp.jar");
                 tempJar.deleteOnExit();
 
                 JarOutputStream jarOutput = new JarOutputStream(new FileOutputStream(tempJar));
                 JarFile jarFile = new JarFile(jarPath);
 
-                Enumeration<JarEntry> entries = jarFile.entries();
-                while (entries.hasMoreElements()) {
-                    JarEntry entry = entries.nextElement();
-                    jarOutput.putNextEntry(entry);
+                try {
+                    Enumeration<JarEntry> entries = jarFile.entries();
+                    while (entries.hasMoreElements()) {
+                        JarEntry entry = entries.nextElement();
+                        jarOutput.putNextEntry(entry);
 
-                    InputStream entryInput = jarFile.getInputStream(entry);
+                        InputStream entryInput = jarFile.getInputStream(entry);
+                        byte[] buffer = new byte[1024];
+                        int bytesRead;
+                        while ((bytesRead = entryInput.read(buffer)) != -1) {
+                            jarOutput.write(buffer, 0, bytesRead);
+                        }
+
+                        jarOutput.closeEntry();
+                        entryInput.close();
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
+                try {
+                    File file = new File(filePath);
+                    JarEntry newEntry = new JarEntry(entryName);
+                    jarOutput.putNextEntry(newEntry);
+
+                    FileInputStream fileInput = new FileInputStream(file);
                     byte[] buffer = new byte[1024];
                     int bytesRead;
-                    while ((bytesRead = entryInput.read(buffer)) != -1) {
+                    while ((bytesRead = fileInput.read(buffer)) != -1) {
                         jarOutput.write(buffer, 0, bytesRead);
                     }
 
                     jarOutput.closeEntry();
-                    entryInput.close();
+                    fileInput.close();
+
+                    jarOutput.close();
+                    jarFile.close();
+
+                    File originalJar = new File(jarPath);
+                    originalJar.delete();
+
+                    tempJar.renameTo(originalJar);
+
+                    // Remove ID File.
+                    idFile.delete();
+                } catch(Exception ex) {
+                    ex.printStackTrace();
                 }
-
-                File file = new File(filePath);
-                JarEntry newEntry = new JarEntry(entryName);
-                jarOutput.putNextEntry(newEntry);
-
-                FileInputStream fileInput = new FileInputStream(file);
-                byte[] buffer = new byte[1024];
-                int bytesRead;
-                while ((bytesRead = fileInput.read(buffer)) != -1) {
-                    jarOutput.write(buffer, 0, bytesRead);
-                }
-
-                jarOutput.closeEntry();
-                fileInput.close();
-
-                jarOutput.close();
-
-                jarFile.close();
-
-                File originalJar = new File(jarPath);
-                originalJar.delete();
-
-                tempJar.renameTo(originalJar);
-
-                // Remove ID File.
-                idFile.delete();
             } else {
                 // Verify whether the user has switched to a different computer from the one previously in use..
                 String ipAddrAndMacAddr = getIpAddress() + "*" + getMacAddress();
@@ -133,8 +140,6 @@ public class MyUserComputerChecker {
                 if (!ipAddrAndMacAddr.equals(exIDContent)) {
                     MyMessageUtil.showErrorMsg(MySequentialGraphVars.app, "<html><body>medousa can only run on a licensed computer.<br> medousa will terminate.");
                     System.exit(0);
-                } else {
-                    //System.out.println("The application has not been bleached.");
                 }
             }
         } catch (IOException e) {

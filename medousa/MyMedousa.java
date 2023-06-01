@@ -151,7 +151,7 @@ extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
                 try {
-                    MyUserComputerChecker.run(); // Is the user using medousa on an unlicensed computer?
+                    //MyUserComputerChecker.run(); // Is the user using medousa on an unlicensed computer?
                     MyDateMonitor.checkDate(); // Has the trial period been passed?
                     MyMultipleInstanceRunMonitor.monitorInstances(); // Are there more than an instance of medousa running on the current computer?
                     MyMedousa.setUI();
