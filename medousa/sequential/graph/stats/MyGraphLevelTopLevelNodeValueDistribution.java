@@ -248,7 +248,7 @@ implements ActionListener {
 
             DefaultCategoryDataset dataset = new DefaultCategoryDataset();
             for (Float nodeValue : valueMap.keySet()) {
-                dataset.addValue(valueMap.get(nodeValue), "", MyMathUtil.oneDecimalFormat(nodeValue));
+                dataset.addValue(valueMap.get(nodeValue), "", MyMathUtil.twoDecimalFormat(nodeValue));
             }
 
             this.avgValue = totalValue/nodeCount;

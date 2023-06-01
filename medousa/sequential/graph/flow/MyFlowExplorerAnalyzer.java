@@ -499,6 +499,8 @@ implements ActionListener {
         }
     }
 
+    public MyFlowExplorerViewerMouseListener flowExplorerViewerMouseListener;
+
     private void setViewer() {
         this.graphViewer.getRenderContext().setLabelOffset(25);
         Cursor handCursor = new Cursor(HAND_CURSOR);
@@ -511,9 +513,11 @@ implements ActionListener {
         graphMouse.setMode(DefaultModalGraphMouse.Mode.PICKING);
         this.graphViewer.setGraphMouse(graphMouse);
         if (isNotDataFlow) {
-            this.graphViewer.addMouseListener(new MyFlowExplorerViewerMouseListener(this, isNotDataFlow));
+            flowExplorerViewerMouseListener = new MyFlowExplorerViewerMouseListener(this, isNotDataFlow);
+            this.graphViewer.addMouseListener(flowExplorerViewerMouseListener);
         } else {
-            this.graphViewer.addMouseListener(new MyFlowExplorerViewerMouseListener(this));
+            flowExplorerViewerMouseListener = new MyFlowExplorerViewerMouseListener(this);
+            this.graphViewer.addMouseListener(flowExplorerViewerMouseListener);
         }
         this.graphViewer.getRenderContext().setVertexFillPaintTransformer(this.nodeColorer);
         this.graphViewer.setBackground(Color.WHITE);
@@ -549,18 +553,18 @@ implements ActionListener {
             @Override public Font transform(MyDepthNode n) {
                 if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
                     if (n.getName().split("-")[0].equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
-                        return new Font("Noto Sans", Font.BOLD, 26);
+                        return new Font("Noto Sans", Font.BOLD, 30);
                     } else {
-                        return new Font("Noto Sans", Font.BOLD, 20);
+                        return new Font("Noto Sans", Font.BOLD, 24);
                     }
                 } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null && MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size() > 0) {
                     if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes.contains(MySequentialGraphVars.g.vRefs.get(n.getName().split("-")[0]))) {
-                        return new Font("Noto Sans", Font.BOLD, 26);
+                        return new Font("Noto Sans", Font.BOLD, 30);
                     } else {
-                        return new Font("Noto Sans", Font.BOLD, 20);
+                        return new Font("Noto Sans", Font.BOLD, 24);
                     }
                 } else {
-                    return new Font("Noto Sans", Font.BOLD, 20);
+                    return new Font("Noto Sans", Font.BOLD, 24);
                 }
             }
         });
@@ -580,8 +584,9 @@ implements ActionListener {
         this.graphViewer.getRenderContext().setVertexLabelTransformer(new Transformer<MyDepthNode, String>() {
             @Override public String transform(MyDepthNode n) {
                 return  "<html><body>" +
-                        MySequentialGraphSysUtil.getNodeName(n.getName().split("-")[0])
-                                + "</body></html>";
+                        MySequentialGraphSysUtil.getNodeName(n.getName().split("-")[0]) +
+                        "<br>" + MyMathUtil.getCommaSeperatedNumber(n.getContribution()) +
+                        "</body></html>";
             }
         });
 
@@ -613,25 +618,37 @@ implements ActionListener {
                 int depth = (Integer.parseInt(nodeListTable.getValueAt(nodeListTable.getSelectedRow(), 1).toString()) - 1);
                 String targetNodeName = MySequentialGraphVars.nodeNameMap.get(nodeListTable.getValueAt(nodeListTable.getSelectedRow(), 2).toString());
                 String targetFullNodeName = MySequentialGraphVars.nodeNameMap.get(nodeListTable.getValueAt(nodeListTable.getSelectedRow(), 2).toString()) + "-" + depth;
-                if (allDepth.isSelected()) {
+                if (flowExplorerViewerMouseListener.selectedNode != null) {
+                    if (((MyDepthNode)e.getSource()).isSelectedNodePath && ((MyDepthNode)e.getDest()).isSelectedNodePath) {
+                        return new Color(1f, 0f, 0f, 0.15f);
+                    } else {
+                        return new Color(0f, 0f, 0f, 0.025f);
+                    }
+                } else if (allDepth.isSelected()) {
                     if (e.getSource().getName().split("-")[0].equals(targetNodeName)) {
-                        return new Color(1f, 0f, 0f, 0.12f);
+                        return new Color(1f, 0f, 0f, 0.15f);
                     } else if (e.getDest().getName().split("-")[0].equals(targetNodeName)) {
-                        return new Color(1f, 0f, 0f, 0.12f);
+                        return new Color(1f, 0f, 0f, 0.15f);
                     } else {
                         return new Color(0f, 0f, 0f, 0.025f);
                     }
                 } else {
                     if (e.getSource().getName().equals(targetFullNodeName)) {
-                        return new Color(1f, 0f, 0f, 0.2f);
+                        return new Color(1f, 0f, 0f, 0.15f);
                     } else if (e.getDest().getName().equals(targetFullNodeName)) {
-                        return new Color(1f, 0f, 0f, 0.2f);
+                        return new Color(1f, 0f, 0f, 0.15f);
                     } else {
                         return new Color(0f, 0f, 0f, 0.025f);
                     }
                 }
+            } else if (flowExplorerViewerMouseListener.selectedNode != null) {
+                if (((MyDepthNode)e.getSource()).isSelectedNodePath && ((MyDepthNode)e.getDest()).isSelectedNodePath) {
+                    return new Color(1f, 0f, 0f, 0.15f);
+                } else {
+                    return new Color(0f, 0f, 0f, 0.15f);
+                }
             } else {
-                return new Color(0f, 0f, 0f, 0.1f);
+                return new Color(0f, 0f, 0f, 0.15f);
             }
         }
     };
@@ -1363,21 +1380,13 @@ implements ActionListener {
 
     public void showMultiNodeFromPathFlows() {
         try {
-            MyProgressBar pb = new MyProgressBar(false);
             this.createMultiNodeFromPathGraph();
-            pb.updateValue(20, 100);
             this.setMaxNodeValue();
-            pb.updateValue(30, 100);
             this.setMaxEdgeValue();
-            pb.updateValue(40, 100);
             this.setNodeSizes();
-            pb.updateValue(50, 100);
             this.setNodeLocations();
-            pb.updateValue(70, 100);
             this.setViewer();
-            pb.updateValue(80, 100);
             this.setNodeTable();
-            pb.updateValue(90, 100);
 
             Border blackline = BorderFactory.createLineBorder(Color.black);
             TitledBorder titledBorder = BorderFactory.createTitledBorder(blackline, "");
@@ -1414,29 +1423,27 @@ implements ActionListener {
             splitPaneWithNodeListTableAndGraph.setLeftComponent(this.tablePanel);
             splitPaneWithNodeListTableAndGraph.setRightComponent(chartGraphSplitPane);
 
-            JFrame fr = new JFrame("PATH FLOW ANALYZER");
-            fr.setBackground(Color.WHITE);
-            fr.setPreferredSize(new Dimension(750, 600));
-            fr.setLayout(new BorderLayout(3,3));
-            fr.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            fr.getContentPane().add(splitPaneWithNodeListTableAndGraph, BorderLayout.CENTER);
-            fr.addComponentListener(new ComponentAdapter() {
+            JFrame f = new JFrame("PATH FLOW ANALYZER");
+            f.setBackground(Color.WHITE);
+            f.setPreferredSize(new Dimension(750, 600));
+            f.setLayout(new BorderLayout(3,3));
+            f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            f.getContentPane().add(splitPaneWithNodeListTableAndGraph, BorderLayout.CENTER);
+            f.addComponentListener(new ComponentAdapter() {
                 public void componentResized(ComponentEvent evt) {
                     splitPaneWithNodeListTableAndGraph.setDividerSize(5);
-                    splitPaneWithNodeListTableAndGraph.setDividerLocation((int)(fr.getWidth()*0.13));
+                    splitPaneWithNodeListTableAndGraph.setDividerLocation((int)(f.getWidth()*0.13));
 
                     chartGraphSplitPane.setDividerSize(5);
-                    chartGraphSplitPane.setDividerLocation((int)(fr.getHeight()*0.80));
+                    chartGraphSplitPane.setDividerLocation((int)(f.getHeight()*0.80));
 
                     MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                     MySequentialGraphVars.getSequentialGraphViewer().repaint();
                 }
             });
 
-            fr.pack();
-            fr.setVisible(true);
-            pb.updateValue(100, 100);
-            pb.dispose();
+            f.pack();
+            f.setVisible(true);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -1444,21 +1451,13 @@ implements ActionListener {
 
     public void showNodeFromPathFlows() {
         try {
-            MyProgressBar pb = new MyProgressBar(false);
             this.createSelectedNodeFromPathGraph();
-            pb.updateValue(20, 100);
             this.setMaxNodeValue();
-            pb.updateValue(30, 100);
             this.setMaxEdgeValue();
-            pb.updateValue(40, 100);
             this.setNodeSizes();
-            pb.updateValue(50, 100);
             this.setNodeLocations();
-            pb.updateValue(70, 100);
             this.setViewer();
-            pb.updateValue(80, 100);
             this.setNodeTable();
-            pb.updateValue(90, 100);
 
             Border blackline = BorderFactory.createLineBorder(Color.black);
             TitledBorder titledBorder = BorderFactory.createTitledBorder(blackline, "");
@@ -1495,29 +1494,27 @@ implements ActionListener {
             splitPaneWithNodeListTableAndGraph.setLeftComponent(this.tablePanel);
             splitPaneWithNodeListTableAndGraph.setRightComponent(chartGraphSplitPane);
 
-            JFrame fr = new JFrame("PATH FLOW EXPLORER");
-            fr.setBackground(Color.WHITE);
-            fr.setPreferredSize(new Dimension(750, 600));
-            fr.setLayout(new BorderLayout(3,3));
-            fr.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            fr.getContentPane().add(splitPaneWithNodeListTableAndGraph, BorderLayout.CENTER);
-            fr.addComponentListener(new ComponentAdapter() {
+            JFrame f = new JFrame("PATH FLOW EXPLORER");
+            f.setBackground(Color.WHITE);
+            f.setPreferredSize(new Dimension(750, 600));
+            f.setLayout(new BorderLayout(3,3));
+            f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            f.getContentPane().add(splitPaneWithNodeListTableAndGraph, BorderLayout.CENTER);
+            f.addComponentListener(new ComponentAdapter() {
                 public void componentResized(ComponentEvent evt) {
                     splitPaneWithNodeListTableAndGraph.setDividerSize(5);
-                    splitPaneWithNodeListTableAndGraph.setDividerLocation((int)(fr.getWidth()*0.13));
+                    splitPaneWithNodeListTableAndGraph.setDividerLocation((int)(f.getWidth()*0.13));
 
                     chartGraphSplitPane.setDividerSize(5);
-                    chartGraphSplitPane.setDividerLocation((int)(fr.getHeight()*0.80));
+                    chartGraphSplitPane.setDividerLocation((int)(f.getHeight()*0.80));
 
                     MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                     MySequentialGraphVars.getSequentialGraphViewer().repaint();
                 }
             });
 
-            fr.pack();
-            fr.setVisible(true);
-            pb.updateValue(100, 100);
-            pb.dispose();
+            f.pack();
+            f.setVisible(true);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -1525,21 +1522,13 @@ implements ActionListener {
 
     public void showNodeToPathFlows() {
         try {
-            MyProgressBar pb = new MyProgressBar(false);
             this.createSelectedNodeToPathGraph();
-            pb.updateValue(20, 100);
             this.setMaxNodeValue();
-            pb.updateValue(30, 100);
             this.setMaxEdgeValue();
-            pb.updateValue(40, 100);
             this.setNodeSizes();
-            pb.updateValue(50, 100);
             this.setNodeLocations();
-            pb.updateValue(70, 100);
             this.setViewer();
-            pb.updateValue(80, 100);
             this.setNodeTable();
-            pb.updateValue(90, 100);
 
             Border blackline = BorderFactory.createLineBorder(Color.black);
             TitledBorder titledBorder = BorderFactory.createTitledBorder(blackline, "");
@@ -1576,29 +1565,27 @@ implements ActionListener {
             splitPaneWithNodeListTableAndGraph.setLeftComponent(this.tablePanel);
             splitPaneWithNodeListTableAndGraph.setRightComponent(chartGraphSplitPane);
 
-            JFrame fr = new JFrame("PATH FLOW EXPLORER");
-            fr.setBackground(Color.WHITE);
-            fr.setPreferredSize(new Dimension(750, 600));
-            fr.setLayout(new BorderLayout(3,3));
-            fr.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            fr.getContentPane().add(splitPaneWithNodeListTableAndGraph, BorderLayout.CENTER);
-            fr.addComponentListener(new ComponentAdapter() {
+            JFrame f = new JFrame("PATH FLOW EXPLORER");
+            f.setBackground(Color.WHITE);
+            f.setPreferredSize(new Dimension(750, 600));
+            f.setLayout(new BorderLayout(3,3));
+            f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            f.getContentPane().add(splitPaneWithNodeListTableAndGraph, BorderLayout.CENTER);
+            f.addComponentListener(new ComponentAdapter() {
                 public void componentResized(ComponentEvent evt) {
                     splitPaneWithNodeListTableAndGraph.setDividerSize(5);
-                    splitPaneWithNodeListTableAndGraph.setDividerLocation((int)(fr.getWidth()*0.13));
+                    splitPaneWithNodeListTableAndGraph.setDividerLocation((int)(f.getWidth()*0.13));
 
                     chartGraphSplitPane.setDividerSize(5);
-                    chartGraphSplitPane.setDividerLocation((int)(fr.getHeight()*0.80));
+                    chartGraphSplitPane.setDividerLocation((int)(f.getHeight()*0.80));
 
                     MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                     MySequentialGraphVars.getSequentialGraphViewer().repaint();
                 }
             });
 
-            fr.pack();
-            fr.setVisible(true);
-            pb.updateValue(100, 100);
-            pb.dispose();
+            f.pack();
+            f.setVisible(true);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -1606,22 +1593,14 @@ implements ActionListener {
 
     public void showBetweenPathFlows(int mxDepth) {
         try {
-            MyProgressBar pb = new MyProgressBar(false);
             this.mxDepth = mxDepth;
             this.createBetweenPathGraph();
-            pb.updateValue(20, 100);
             this.setMaxNodeValue();
-            pb.updateValue(30, 100);
             this.setMaxEdgeValue();
-            pb.updateValue(40, 100);
             this.setNodeSizes();
-            pb.updateValue(50, 100);
             this.setNodeLocations();
-            pb.updateValue(70, 100);
             this.setViewer();
-            pb.updateValue(80, 100);
             this.setNodeTable();
-            pb.updateValue(90, 100);
 
             Border blackline = BorderFactory.createLineBorder(Color.black);
             TitledBorder titledBorder = BorderFactory.createTitledBorder(blackline, "");
@@ -1657,29 +1636,27 @@ implements ActionListener {
             splitPaneWithNodeListTableAndGraph.setLeftComponent(this.tablePanel);
             splitPaneWithNodeListTableAndGraph.setRightComponent(chartGraphSplitPane);
 
-            JFrame fr = new JFrame("PATH FLOW EXPLORER");
-            fr.setBackground(Color.WHITE);
-            fr.setPreferredSize(new Dimension(750, 600));
-            fr.setLayout(new BorderLayout(3,3));
-            fr.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            fr.getContentPane().add(splitPaneWithNodeListTableAndGraph, BorderLayout.CENTER);
-            fr.addComponentListener(new ComponentAdapter() {
+            JFrame f = new JFrame("PATH FLOW EXPLORER");
+            f.setBackground(Color.WHITE);
+            f.setPreferredSize(new Dimension(750, 600));
+            f.setLayout(new BorderLayout(3,3));
+            f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            f.getContentPane().add(splitPaneWithNodeListTableAndGraph, BorderLayout.CENTER);
+            f.addComponentListener(new ComponentAdapter() {
                 public void componentResized(ComponentEvent evt) {
                     splitPaneWithNodeListTableAndGraph.setDividerSize(5);
-                    splitPaneWithNodeListTableAndGraph.setDividerLocation((int)(fr.getWidth()*0.13));
+                    splitPaneWithNodeListTableAndGraph.setDividerLocation((int)(f.getWidth()*0.13));
 
                     chartGraphSplitPane.setDividerSize(5);
-                    chartGraphSplitPane.setDividerLocation((int)(fr.getHeight()*0.80));
+                    chartGraphSplitPane.setDividerLocation((int)(f.getHeight()*0.80));
 
                     MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                     MySequentialGraphVars.getSequentialGraphViewer().repaint();
                 }
             });
 
-            fr.pack();
-            fr.setVisible(true);
-            pb.updateValue(100, 100);
-            pb.dispose();
+            f.pack();
+            f.setVisible(true);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -1687,22 +1664,14 @@ implements ActionListener {
 
     public void showDataFlows() {
         try {
-            MyProgressBar pb = new MyProgressBar(false);
             this.createFlowGraph();
             isNotDataFlow = false;
-            pb.updateValue(20, 100);
             this.setMaxNodeValue();
-            pb.updateValue(30, 100);
             this.setMaxEdgeValue();
-            pb.updateValue(40, 100);
             this.setNodeSizes();
-            pb.updateValue(50, 100);
             this.setNodeLocations();
-            pb.updateValue(70, 100);
             this.setViewer();
-            pb.updateValue(80, 100);
             this.setNodeTable();
-            pb.updateValue(90, 100);
 
             Border blackline = BorderFactory.createLineBorder(Color.black);
             TitledBorder titledBorder = BorderFactory.createTitledBorder(blackline, "");
@@ -1743,30 +1712,27 @@ implements ActionListener {
             splitPaneWithNodeListTableAndGraph.setLeftComponent(this.tablePanel);
             splitPaneWithNodeListTableAndGraph.setRightComponent(chartGraphSplitPane);
 
-            JFrame fr = new JFrame("PATH FLOW EXPLORER");
-            fr.setBackground(Color.WHITE);
-            fr.setPreferredSize(new Dimension(750, 600));
-            fr.setLayout(new BorderLayout(3,3));
-            fr.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            fr.getContentPane().add(splitPaneWithNodeListTableAndGraph, BorderLayout.CENTER);
-            fr.addComponentListener(new ComponentAdapter() {
+            JFrame f = new JFrame("PATH FLOW EXPLORER");
+            f.setBackground(Color.WHITE);
+            f.setPreferredSize(new Dimension(750, 600));
+            f.setLayout(new BorderLayout(3,3));
+            f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            f.getContentPane().add(splitPaneWithNodeListTableAndGraph, BorderLayout.CENTER);
+            f.addComponentListener(new ComponentAdapter() {
                 public void componentResized(ComponentEvent evt) {
                     splitPaneWithNodeListTableAndGraph.setDividerSize(5);
-                    splitPaneWithNodeListTableAndGraph.setDividerLocation((int)(fr.getWidth()*0.13));
+                    splitPaneWithNodeListTableAndGraph.setDividerLocation((int)(f.getWidth()*0.13));
 
                     chartGraphSplitPane.setDividerSize(5);
-                    chartGraphSplitPane.setDividerLocation((int)(fr.getHeight()*0.80));
+                    chartGraphSplitPane.setDividerLocation((int)(f.getHeight()*0.80));
 
                     MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                     MySequentialGraphVars.getSequentialGraphViewer().repaint();
                 }
             });
 
-            fr.pack();
-            fr.setVisible(true);
-
-            pb.updateValue(100, 100);
-            pb.dispose();
+            f.pack();
+            f.setVisible(true);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

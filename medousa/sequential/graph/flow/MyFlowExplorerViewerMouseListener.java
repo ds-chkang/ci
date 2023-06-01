@@ -1,16 +1,20 @@
 package medousa.sequential.graph.flow;
 
+import medousa.sequential.graph.MyDepthNode;
 import medousa.sequential.utils.MySequentialGraphVars;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Collection;
 
 public class MyFlowExplorerViewerMouseListener
 implements MouseListener {
 
     private MyFlowExplorerAnalyzer pathAnalyzer;
     private boolean isNotDataFlow;
+    public MyDepthNode selectedNode;
 
     public MyFlowExplorerViewerMouseListener(MyFlowExplorerAnalyzer pathAnalyzer) {
         this.pathAnalyzer = pathAnalyzer;
@@ -28,7 +32,7 @@ implements MouseListener {
                     @Override public void run() {
                         if (isNotDataFlow) {
                             if (SwingUtilities.isLeftMouseButton(e) &&
-                                    pathAnalyzer.graphViewer.getPickedVertexState().getPicked().size() == 0) {
+                                pathAnalyzer.graphViewer.getPickedVertexState().getPicked().size() == 0) {
                                 pathAnalyzer.nodeListTable.clearSelection();
                                 pathAnalyzer.allDepth.setSelected(false);
                                 pathAnalyzer.weightedEdge.setSelected(false);
@@ -39,7 +43,7 @@ implements MouseListener {
                             }
                         } else {
                             if (SwingUtilities.isLeftMouseButton(e) &&
-                                    MySequentialGraphVars.getSequentialGraphViewer().getPickedVertexState().getPicked().size() == 0) {
+                                MySequentialGraphVars.getSequentialGraphViewer().getPickedVertexState().getPicked().size() == 0) {
                                 pathAnalyzer.nodeListTable.clearSelection();
                                 pathAnalyzer.allDepth.setSelected(false);
                                 pathAnalyzer.weightedEdge.setSelected(false);
@@ -51,9 +55,48 @@ implements MouseListener {
         });
     }
 
-    @Override
-    public void mousePressed(MouseEvent e) {
+    @Override public void mousePressed(MouseEvent e) {
+        new Thread(new Runnable() {
+            @Override public void run() {
+                Point point = e.getPoint();
+                if (pathAnalyzer.graphViewer.getPickSupport().getVertex(pathAnalyzer.graphViewer.getGraphLayout(), e.getX(), e.getY()) != null) {
+                    selectedNode = pathAnalyzer.graphViewer.getPickSupport().getVertex(pathAnalyzer.graphViewer.getGraphLayout(), point.x, point.y);
+                    selectedNode.isSelectedNodePath = true;
+                    Collection<MyDepthNode> nodes = pathAnalyzer.graphViewer.getGraphLayout().getGraph().getSuccessors(selectedNode);
+                    System.out.println(nodes.size());
+                    for (MyDepthNode successor : nodes) {
+                        setNodeInPathFlagToTrue(successor);
+                    }
+                } else if (selectedNode != null) {
+                    selectedNode.isSelectedNodePath = false;
+                    Collection<MyDepthNode> nodes = pathAnalyzer.graphViewer.getGraphLayout().getGraph().getSuccessors(selectedNode);
+                    for (MyDepthNode successor : nodes) {
+                        setNodeInPathFlagToFalse(successor);
+                    }
+                    selectedNode = null;
+                } else {
 
+                }
+                pathAnalyzer.graphViewer.revalidate();
+                pathAnalyzer.graphViewer.repaint();
+            }
+        }).start();
+    }
+
+    private void setNodeInPathFlagToTrue(MyDepthNode n) {
+        n.isSelectedNodePath = true;
+        Collection<MyDepthNode> nodes = pathAnalyzer.graphViewer.getGraphLayout().getGraph().getSuccessors(n);
+        for (MyDepthNode successor : nodes) {
+            setNodeInPathFlagToTrue(successor);
+        }
+    }
+
+    private void setNodeInPathFlagToFalse(MyDepthNode n) {
+        n.isSelectedNodePath = false;
+        Collection<MyDepthNode> nodes = pathAnalyzer.graphViewer.getGraphLayout().getGraph().getSuccessors(n);
+        for (MyDepthNode successor : nodes) {
+            setNodeInPathFlagToFalse(successor);
+        }
     }
 
     @Override

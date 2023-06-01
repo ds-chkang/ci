@@ -1,5 +1,6 @@
 package medousa.sequential.graph.menu;
 
+import medousa.MyProgressBar;
 import medousa.sequential.graph.flow.MyFlowExplorerAnalyzer;
 import medousa.sequential.graph.MyNode;
 import medousa.sequential.graph.stats.*;
@@ -7,6 +8,7 @@ import medousa.sequential.utils.MyFontChooser;
 import medousa.sequential.utils.MySequentialGraphVars;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
@@ -46,11 +48,15 @@ implements ActionListener {
         this.setMenuItem(null, this.download, "DOWNLOAD");
         this.setMenuItem(this.download, this.downloadUsers, "DOWNLOAD USERS");
         this.add(new JSeparator());
-        this.setMenuItem(null, this.fromPathFlow, "FROM PATH FLOW");
-        this.add(new JSeparator());
-        this.setMenuItem(null, this.toPathFlow, "TO PATH FLOW");
-        if (MySequentialGraphVars.isTimeOn) {
+        if (MySequentialGraphVars.g.getSuccessorCount(MySequentialGraphVars.getSequentialGraphViewer().singleNode) > 0) {
+            this.setMenuItem(null, this.fromPathFlow, "FROM PATH FLOW");
             this.add(new JSeparator());
+        }
+        if (MySequentialGraphVars.g.getPredecessorCount(MySequentialGraphVars.getSequentialGraphViewer().singleNode) > 0) {
+            this.setMenuItem(null, this.toPathFlow, "TO PATH FLOW");
+            this.add(new JSeparator());
+        }
+        if (MySequentialGraphVars.isTimeOn) {
             this.setMenuItem(null, this.betweenTimeDistribution, "TIME DISTRIBUTION");
         }
         this.add(new JSeparator());
@@ -67,6 +73,7 @@ implements ActionListener {
         } else {
             root.add(menuItem);
         }
+        menuItem.setPreferredSize(new Dimension(285, 26));
     }
 
     @Override public void actionPerformed(ActionEvent e) {
@@ -110,21 +117,60 @@ implements ActionListener {
                     MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                     MySequentialGraphVars.getSequentialGraphViewer().repaint();
                 } else if (e.getSource() == fromPathFlow) {
-                    MyFlowExplorerAnalyzer pathFlowAnalyzer = new MyFlowExplorerAnalyzer();
-                    pathFlowAnalyzer.showNodeFromPathFlows();
+                    MyProgressBar pb = new MyProgressBar(false);
+                    try {
+                        MyFlowExplorerAnalyzer pathFlowAnalyzer = new MyFlowExplorerAnalyzer();
+                        pathFlowAnalyzer.showNodeFromPathFlows();
+                        pb.updateValue(100, 100);
+                        pb.dispose();
+                    } catch (Exception ex) {
+                        MyFlowExplorerAnalyzer pathFlowAnalyzer = new MyFlowExplorerAnalyzer();
+                        pathFlowAnalyzer.showNodeFromPathFlows();
+                        pb.updateValue(100, 100);
+                        pb.dispose();
+                    }
                 } else if (e.getSource() == toPathFlow) {
-                    MyFlowExplorerAnalyzer pathFlowAnalyzer = new MyFlowExplorerAnalyzer();
-                    pathFlowAnalyzer.showNodeToPathFlows();
+                    MyProgressBar pb = new MyProgressBar(false);
+                    try {
+                        MyFlowExplorerAnalyzer pathFlowAnalyzer = new MyFlowExplorerAnalyzer();
+                        pathFlowAnalyzer.showNodeToPathFlows();
+                        pb.updateValue(100, 100);
+                        pb.dispose();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        MyFlowExplorerAnalyzer pathFlowAnalyzer = new MyFlowExplorerAnalyzer();
+                        pathFlowAnalyzer.showNodeToPathFlows();
+                        pb.updateValue(100, 100);
+                        pb.dispose();
+                    }
                 } else if (e.getSource() == nodeFont) {
-
-                            MyFontChooser fd = new MyFontChooser(new JFrame("NODE FONT CHOOSER"));
-                            fd.setVisible(true);
-
+                    MyProgressBar pb = new MyProgressBar(false);
+                    try {
+                        MyFontChooser fd = new MyFontChooser(new JFrame("NODE FONT CHOOSER"));
+                        fd.setVisible(true);
+                        pb.updateValue(100, 100);
+                        pb.dispose();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        MyFontChooser fd = new MyFontChooser(new JFrame("NODE FONT CHOOSER"));
+                        fd.setVisible(true);
+                        pb.updateValue(100, 100);
+                        pb.dispose();
+                    }
                 } else if (e.getSource() == edgeFont) {
-
-                            MyFontChooser fd = new MyFontChooser(new JFrame("EDGE FONT CHOOSER"));
-                            fd.setVisible(true);
-
+                    MyProgressBar pb = new MyProgressBar(false);
+                    try {
+                        MyFontChooser fd = new MyFontChooser(new JFrame("EDGE FONT CHOOSER"));
+                        fd.setVisible(true);
+                        pb.updateValue(100, 100);
+                        pb.dispose();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        MyFontChooser fd = new MyFontChooser(new JFrame("EDGE FONT CHOOSER"));
+                        fd.setVisible(true);
+                        pb.updateValue(100, 100);
+                        pb.dispose();
+                    }
                 }
             }
         }).start();
