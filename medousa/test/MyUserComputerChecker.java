@@ -7,151 +7,105 @@ import medousa.sequential.utils.MySequentialGraphVars;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.util.Enumeration;
 import java.util.jar.*;
 
 public class MyUserComputerChecker {
 
     public MyUserComputerChecker() {}
 
-    private static void createIDFile(String filePath) {
+    private static boolean isSecurityJarExists(String jarFilePath) {
         try {
-            File idFile = new File(filePath);
-            if (idFile.exists()) idFile.delete();
-            idFile.createNewFile();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    private static boolean isIDFileExistsInJar(String exJarPath, String targetFileInJar) {
-        try {
-            JarFile jarFile = new JarFile(exJarPath);
-            JarEntry entry = jarFile.getJarEntry(targetFileInJar);
-            if (entry != null) {
+            File f = new File(jarFilePath);
+            if (f.exists()) {
                 return true;
-            } else {
-                return false;
             }
+            return false;
         } catch (Exception ex) {
-            ex.printStackTrace();
+
         }
         return false;
     }
 
-    private static String readIDContent(String exJarPath, String targetFileInJar) {
+    private static void addSecurityFileToJar(String jarFilePath) {
         try {
-            JarFile jarFile = new JarFile(exJarPath);
-            JarEntry entry = jarFile.getJarEntry(targetFileInJar);
-            if (entry != null) {
-                InputStream inputStream = jarFile.getInputStream(entry);
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-                String line = reader.readLine();
-                reader.close();
-                jarFile.close();
-                return line;
+            JarOutputStream jos = new JarOutputStream(new FileOutputStream(jarFilePath));
+            File file = new File(MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "id.txt");
+            if (file.exists()) {
+                file.delete();
             }
+            file.createNewFile();
+
+            BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+            bw.write(getMacAddress() + "\n");
+            bw.close();
+
+            String entryName = file.getName();
+            jos.putNextEntry(new JarEntry(entryName));
+
+            FileInputStream fis = new FileInputStream(file);
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                jos.write(buffer, 0, bytesRead);
+            }
+
+            jos.closeEntry();
+            jos.close();
+            file.delete();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    private static boolean isSecurityEntryExists(String jarFilePath, String entryName) {
+        try {
+            JarFile jarFile = new JarFile(jarFilePath);
+            JarEntry entry = jarFile.getJarEntry(entryName);
+            if (entry == null) {
+                return false;
+            }
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    private static String readIDContent(String jarFilePath, String targetFileInJar) {
+        try {
+            JarFile jarFile = new JarFile(jarFilePath);
+            JarEntry entry = jarFile.getJarEntry(targetFileInJar);
+
+            if (entry != null) {
+                InputStream inputStream = jarFile.getInputStream(entry);
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                String macAddr = reader.readLine();
+                reader.close();
+                jarFile.close();
+                return macAddr;
+            }
+        } catch (Exception ex) {}
         return "";
     }
 
-
     public static void run() {
-        String jarPath = "c:\\temp\\medousa.jar";
-        String filePath = "c:\\temp\\id.txt";
-
-        //String jarPath = MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "medousa.jar";
-        //String filePath = MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "id.txt";
-        String entryName = "id.txt";
-
+        String jarPath = MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "sec.jar";
         try {
-            if (!isIDFileExistsInJar(jarPath, entryName)) {
-                // Create ID File.
-                File idFile = new File(filePath);
-                if (idFile.exists()) idFile.delete();
-                idFile.createNewFile();
-
-                String ipAndMacAddr = getIpAddress() + "*" + getMacAddress();
-                BufferedWriter bw = new BufferedWriter(new FileWriter(new File(filePath)));
-                bw.write(ipAndMacAddr + "\n");
-                bw.close();
-
-                // Add id file to jar.
-                File tempJar = File.createTempFile("temp", ".jar");
-                tempJar.deleteOnExit();
-
-                JarOutputStream jarOutput = new JarOutputStream(new FileOutputStream(tempJar));
-                JarFile jarFile = new JarFile(jarPath);
-
-                Enumeration<JarEntry> entries = jarFile.entries();
-                while (entries.hasMoreElements()) {
-                    JarEntry entry = entries.nextElement();
-                    jarOutput.putNextEntry(entry);
-
-                    InputStream entryInput = jarFile.getInputStream(entry);
-                    byte[] buffer = new byte[1024];
-                    int bytesRead;
-                    while ((bytesRead = entryInput.read(buffer)) != -1) {
-                        jarOutput.write(buffer, 0, bytesRead);
-                    }
-
-                    jarOutput.closeEntry();
-                    entryInput.close();
-                }
-
-                File file = new File(filePath);
-                JarEntry newEntry = new JarEntry(entryName);
-                jarOutput.putNextEntry(newEntry);
-
-                FileInputStream fileInput = new FileInputStream(file);
-                byte[] buffer = new byte[1024];
-                int bytesRead;
-                while ((bytesRead = fileInput.read(buffer)) != -1) {
-                    jarOutput.write(buffer, 0, bytesRead);
-                }
-
-                jarOutput.closeEntry();
-                fileInput.close();
-
-                jarOutput.close();
-
-                jarFile.close();
-
-                File originalJar = new File(jarPath);
-                originalJar.delete();
-
-                tempJar.renameTo(originalJar);
-
-                // Remove ID File.
-                idFile.delete();
+            if (!isSecurityJarExists(jarPath)) {
+                MyMessageUtil.showErrorMsg(MySequentialGraphVars.app, "Place the security jar file in the same directory.");
+                System.exit(0);
+            } else if (!isSecurityEntryExists(jarPath, "id.txt")) {
+                addSecurityFileToJar(jarPath);
             } else {
-                // Verify whether the user has switched to a different computer from the one previously in use..
-                String ipAddrAndMacAddr = getIpAddress() + "*" + getMacAddress();
+                String ipAddrAndMacAddr = getMacAddress();
                 String exIDContent = readIDContent(jarPath, "id.txt");
                 if (!ipAddrAndMacAddr.equals(exIDContent)) {
                     MyMessageUtil.showErrorMsg(MySequentialGraphVars.app, "<html><body>medousa can only run on a licensed computer.<br> medousa will terminate.");
                     System.exit(0);
-                } else {
-                    //System.out.println("The application has not been bleached.");
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static String getIpAddress() {
-        InetAddress ip;
-        try {
-            ip = InetAddress.getLocalHost();
-            String ipAddr =  ip.getHostAddress();
-            return ipAddr;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "";
     }
 
     private static String getMacAddress() {

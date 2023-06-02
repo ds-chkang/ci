@@ -697,9 +697,13 @@ implements ActionListener {
         @Override public Stroke transform(MyDepthEdge e) {
             if (weightedEdge.isSelected()) {
                 float edgeStrokeWeight = e.getContribution() / MAX_EDGE_VALUE;
-                return new BasicStroke(edgeStrokeWeight * MAX_EDGE_STROKE);
+                if ((edgeStrokeWeight * MAX_EDGE_STROKE) < 2) {
+                    return new BasicStroke(2f);
+                } else {
+                    return new BasicStroke(edgeStrokeWeight * MAX_EDGE_STROKE);
+                }
             } else {
-                return new BasicStroke(1f);
+                return new BasicStroke(2f);
             }
         }
     };
