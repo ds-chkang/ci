@@ -85,7 +85,8 @@ extends JPanel {
                     enlargeBtn.setBackground(Color.WHITE);
                     enlargeBtn.addActionListener(new ActionListener() {
                         @Override public void actionPerformed(ActionEvent e) {
-                        new Thread(new Runnable() {@Override public void run() {
+                        new Thread(new Runnable() {
+                            @Override public void run() {
                             enlarge();
                         }}).start();}
                     });
