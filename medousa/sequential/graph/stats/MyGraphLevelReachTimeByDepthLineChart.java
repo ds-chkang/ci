@@ -231,9 +231,9 @@ implements ActionListener {
                     timeMenu.setBackground(Color.WHITE);
                     timeMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
                     timeMenu.setFocusable(false);
-                    timeMenu.addItem("SECOND");
-                    timeMenu.addItem("MINUTE");
-                    timeMenu.addItem("HOUR");
+                    timeMenu.addItem("SEC.");
+                    timeMenu.addItem("MIN.");
+                    timeMenu.addItem("HR.");
                     timeMenu.setSelectedIndex(selectedTime);
                     timeMenu.addActionListener(new ActionListener() {
                         @Override public void actionPerformed(ActionEvent e) {
@@ -265,8 +265,8 @@ implements ActionListener {
                     northPanel.setBackground(Color.WHITE);
                     northPanel.add(titlePanel, BorderLayout.WEST);
                     northPanel.add(btnPanel, BorderLayout.CENTER);
-                    add(northPanel, BorderLayout.NORTH);
 
+                    add(northPanel, BorderLayout.NORTH);
                     add(chartPanel, BorderLayout.CENTER);
                     renderer.setBaseLegendTextFont(MySequentialGraphVars.tahomaPlainFont11);
                     chart.removeLegend();

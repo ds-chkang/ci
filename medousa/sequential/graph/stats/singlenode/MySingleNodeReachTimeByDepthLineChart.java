@@ -200,7 +200,7 @@ extends JPanel {
 
                     JLabel titleLabel = new JLabel(" R. T.");
                     titleLabel.setToolTipText("REACH TIME BY DEPTH");
-                    titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
+                    titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
                     titleLabel.setBackground(Color.WHITE);
                     titleLabel.setForeground(Color.DARK_GRAY);
 
@@ -238,11 +238,11 @@ extends JPanel {
                     });
 
                     JComboBox timeMenu = new JComboBox();
-                    timeMenu.addItem("SECOND");
-                    timeMenu.addItem("MINUTE");
-                    timeMenu.addItem("HOUR");
+                    timeMenu.addItem("SEC.");
+                    timeMenu.addItem("MIN.");
+                    timeMenu.addItem("HR.");
                     timeMenu.setSelectedIndex(selectedTime);
-                    timeMenu.setFont(MySequentialGraphVars.tahomaPlainFont12);
+                    timeMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
                     timeMenu.setFocusable(false);
                     timeMenu.setBackground(Color.WHITE);
                     timeMenu.addActionListener(new ActionListener() {

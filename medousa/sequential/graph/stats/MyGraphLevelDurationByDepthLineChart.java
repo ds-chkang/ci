@@ -193,7 +193,7 @@ implements ActionListener {
 
                     JLabel titleLabel = new JLabel(" DUR.");
                     titleLabel.setToolTipText("DURATION BY DEPTH");
-                    titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
+                    titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
                     titleLabel.setBackground(Color.WHITE);
                     titleLabel.setForeground(Color.DARK_GRAY);
 
@@ -235,9 +235,9 @@ implements ActionListener {
                     timeMenu.setBackground(Color.WHITE);
                     timeMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
                     timeMenu.setFocusable(false);
-                    timeMenu.addItem("SECOND");
-                    timeMenu.addItem("MINUTE");
-                    timeMenu.addItem("HOUR");
+                    timeMenu.addItem("SEC.");
+                    timeMenu.addItem("MIN.");
+                    timeMenu.addItem("HR.");
                     timeMenu.setSelectedIndex(selectedTime);
                     timeMenu.addActionListener(new ActionListener() {
                         @Override public void actionPerformed(ActionEvent e) {
@@ -269,8 +269,8 @@ implements ActionListener {
                     menuPanel.setBackground(Color.WHITE);
                     menuPanel.add(titlePanel, BorderLayout.WEST);
                     menuPanel.add(btnPanel, BorderLayout.CENTER);
-                    add(menuPanel, BorderLayout.NORTH);
 
+                    add(menuPanel, BorderLayout.NORTH);
                     add(chartPanel, BorderLayout.CENTER);
                     renderer.setBaseLegendTextFont(MySequentialGraphVars.tahomaPlainFont11);
                     chart.removeLegend();

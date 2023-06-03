@@ -55,7 +55,7 @@ implements ActionListener {
                     }
 
                     graphOptionComboBox = new JComboBox();
-                    graphOptionComboBox.setFont(MySequentialGraphVars.tahomaPlainFont12);
+                    graphOptionComboBox.setFont(MySequentialGraphVars.tahomaPlainFont11);
                     graphOptionComboBox.setBackground(Color.WHITE);
                     graphOptionComboBox.setFocusable(false);
                     graphOptionComboBox.addItem("SELECT");

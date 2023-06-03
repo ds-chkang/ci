@@ -40,7 +40,7 @@ implements ActionListener {
     private float avgValue = 0;
     private float stdValue = 0;
     private Set<MyNode> nodes = null;
-    private float toTime = 0f;
+    private float toTime = 1f;
     private int selectedMenu = 0;
     private JTable nodeTable;
 
@@ -70,32 +70,32 @@ implements ActionListener {
         barRenderer.setBarPainter(new StandardBarPainter());
         barRenderer.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont11);
 
-        JComboBox timeConvertMenu = new JComboBox();
-        timeConvertMenu.addItem("SECOND");
-        timeConvertMenu.addItem("MINUTE");
-        timeConvertMenu.addItem("HOUR");
-        timeConvertMenu.setSelectedIndex(selectedMenu);
-        timeConvertMenu.setFont(MySequentialGraphVars.tahomaPlainFont12);
-        timeConvertMenu.setFocusable(false);
-        timeConvertMenu.setBackground(Color.WHITE);
-        timeConvertMenu.addActionListener(new ActionListener() {
+        JComboBox timeMenu = new JComboBox();
+        timeMenu.addItem("SEC.");
+        timeMenu.addItem("MIN.");
+        timeMenu.addItem("HR.");
+        timeMenu.setSelectedIndex(selectedMenu);
+        timeMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        timeMenu.setFocusable(false);
+        timeMenu.setBackground(Color.WHITE);
+        timeMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new Thread(new Runnable() {
                     @Override public void run() {
-                        if (timeConvertMenu.getSelectedIndex() == 0) {
+                        if (timeMenu.getSelectedIndex() == 0) {
                             maxValue = 0;
-                            toTime = 0;
+                            toTime = 1;
                             selectedMenu = 0;
                             decorate();
                             updateNodeTable();
-                        } else if (timeConvertMenu.getSelectedIndex() == 1) {
+                        } else if (timeMenu.getSelectedIndex() == 1) {
                             maxValue = 0;
                             selectedMenu = 1;
                             toTime = 60;
                             decorate();
                             updateNodeTable();
-                        } else if (timeConvertMenu.getSelectedIndex() == 2) {
+                        } else if (timeMenu.getSelectedIndex() == 2) {
                             maxValue = 0;
                             toTime = 3600;
                             selectedMenu = 2;
@@ -107,15 +107,15 @@ implements ActionListener {
             }
         });
 
-        JPanel timeConvertMenuPanel = new JPanel();
-        timeConvertMenuPanel.setBackground(Color.WHITE);
-        timeConvertMenuPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 3, 3));
-        timeConvertMenuPanel.add(timeConvertMenu);
+        JPanel timeMenuPanel = new JPanel();
+        timeMenuPanel.setBackground(Color.WHITE);
+        timeMenuPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 3, 3));
+        timeMenuPanel.add(timeMenu);
 
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BorderLayout(3, 3));
         topPanel.setBackground(Color.WHITE);
-        topPanel.add(timeConvertMenuPanel, BorderLayout.EAST);
+        topPanel.add(timeMenuPanel, BorderLayout.EAST);
 
         add(topPanel, BorderLayout.NORTH);
         add(chartPanel, BorderLayout.CENTER);

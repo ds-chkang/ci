@@ -72,7 +72,7 @@ extends JPanel {
 
                     JLabel titleLabel = new JLabel(" NO. OF A.");
                     titleLabel.setToolTipText("NO. OF APPEARANCES OF THE SELECTED NDOE BY DEPTH");
-                    titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
+                    titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
                     titleLabel.setBackground(Color.WHITE);
                     titleLabel.setForeground(Color.DARK_GRAY);
 

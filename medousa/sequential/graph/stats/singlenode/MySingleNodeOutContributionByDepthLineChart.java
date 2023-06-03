@@ -87,9 +87,9 @@ extends JPanel {
 
             ChartPanel chartPanel = new ChartPanel( chart );
 
-            JLabel titleLabel = new JLabel("OUT-CONTRIBUTION");
+            JLabel titleLabel = new JLabel("OUT-CONT.");
             titleLabel.setToolTipText("OUT-CONTRIBUTION BY DEPTH FOR THE SELECTED NODE");
-            titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
+            titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
             titleLabel.setBackground(Color.WHITE);
             titleLabel.setForeground(Color.DARK_GRAY);
 
@@ -99,7 +99,7 @@ extends JPanel {
             titlePanel.add(titleLabel);
 
             JButton enlargeBtn = new JButton("+");
-            enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont10);
+            enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
             enlargeBtn.setFocusable(false);
             enlargeBtn.setBackground(Color.WHITE);
             enlargeBtn.addActionListener(new ActionListener() {

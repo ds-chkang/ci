@@ -89,7 +89,7 @@ public class MySingleNodePredecessorValueDistributionLineChart extends JPanel {
 
             JLabel titleLabel = new JLabel(" P. V.");
             titleLabel.setToolTipText("PREDECESSOR VALUE DISTRIBUTION FOR THE SELECTED NODE");
-            titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
+            titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
             titleLabel.setBackground(Color.WHITE);
             titleLabel.setForeground(Color.DARK_GRAY);
 

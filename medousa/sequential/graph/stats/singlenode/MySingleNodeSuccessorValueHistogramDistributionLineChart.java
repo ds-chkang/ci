@@ -93,7 +93,7 @@ implements ActionListener {
 
                     JLabel titleLabel = new JLabel(" S. V.");
                     titleLabel.setToolTipText("SUCCESSOR VALUE DISTRIBUTION");
-                    titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
+                    titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
                     titleLabel.setBackground(Color.WHITE);
                     titleLabel.setForeground(Color.DARK_GRAY);
 

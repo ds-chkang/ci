@@ -129,7 +129,7 @@ extends JPanel {
                     ChartPanel chartPanel = new ChartPanel( chart );
                     chartPanel.setPreferredSize( new Dimension( 350 , 367 ) );
 
-                    JLabel titleLabel = new JLabel(" CONTRIBUTION");
+                    JLabel titleLabel = new JLabel(" CONT.");
                     titleLabel.setToolTipText("CONTRIBUTION BY DEPTH FOR THE SELECTED NODE");
                     titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
                     titleLabel.setBackground(Color.WHITE);

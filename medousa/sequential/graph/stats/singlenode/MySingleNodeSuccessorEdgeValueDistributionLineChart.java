@@ -48,7 +48,7 @@ extends JPanel {
                     if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() < 2) {
                         JLabel titleLabel = new JLabel(" S. E. V.");
                         titleLabel.setToolTipText("SUCCESSOR EDGE VALUE DISTRIBUTION FOR THE SELECTED NODE");
-                        titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
+                        titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
                         titleLabel.setBackground(Color.WHITE);
                         titleLabel.setForeground(Color.DARK_GRAY);
 
@@ -124,7 +124,7 @@ extends JPanel {
 
                         JLabel titleLabel = new JLabel(" S. E. V.");
                         titleLabel.setToolTipText("SUCCESSOR EDGE VALUE DISTRIBUTION FOR THE SELECTED NODE");
-                        titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
+                        titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
                         titleLabel.setBackground(Color.WHITE);
                         titleLabel.setForeground(Color.DARK_GRAY);
 

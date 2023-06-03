@@ -111,7 +111,7 @@ extends JPanel{
             ChartPanel chartPanel = new ChartPanel(chart);
             chartPanel.setPreferredSize(new Dimension(560, 367));
 
-            JLabel titleLabel = new JLabel(" UNIQUE NODES");
+            JLabel titleLabel = new JLabel(" U. N.");
             titleLabel.setToolTipText("UNIQUE NODE DISTRIBUTION BY DEPTH");
             titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
             titleLabel.setBackground(Color.WHITE);
@@ -236,7 +236,7 @@ extends JPanel{
             ChartPanel chartPanel = new ChartPanel(chart);
             chartPanel.setPreferredSize(new Dimension(560, 367));
 
-            JLabel titleLabel = new JLabel(" UNIQUE NODES");
+            JLabel titleLabel = new JLabel(" U. N.");
             titleLabel.setToolTipText("UNIQUE NODE RATIO BY DEPTH");
             titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
             titleLabel.setBackground(Color.WHITE);
@@ -375,7 +375,7 @@ extends JPanel{
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new Dimension(350, 367));
 
-        JLabel titleLabel = new JLabel(" UNIQUE NODES");
+        JLabel titleLabel = new JLabel(" U. N.");
         titleLabel.setToolTipText("UNIQUE NODE DISTRIBUTION BY DEPTH");
         titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
         titleLabel.setBackground(Color.WHITE);

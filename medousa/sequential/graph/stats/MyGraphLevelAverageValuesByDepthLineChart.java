@@ -501,7 +501,7 @@ implements ActionListener {
 
                     JLabel titleLabel = new JLabel(" AVGS.");
                     titleLabel.setToolTipText("AVERAGE VALUES BY DEPTH");
-                    titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
+                    titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
                     titleLabel.setBackground(Color.WHITE);
                     titleLabel.setForeground(Color.DARK_GRAY);
 

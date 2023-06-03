@@ -82,7 +82,7 @@ extends JPanel {
                 MySequentialGraphVars.app.getSequentialGraphViewerPanel().setBorder(networkTitledBorder);
 
                 JSplitPane graphAndGraphChartSplitPane = new JSplitPane();
-                graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
+                graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.15));
                 graphAndGraphChartSplitPane.setDividerSize(4);
                 graphAndGraphChartSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
                 graphAndGraphChartSplitPane.setLeftComponent(tabbedPane);
@@ -93,7 +93,7 @@ extends JPanel {
                 MySequentialGraphVars.app.addComponentListener(new ComponentAdapter() {
                     public void componentResized(ComponentEvent evt) {
                         graphAndGraphChartSplitPane.setDividerSize(4);
-                        graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
+                        graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.15));
                     }
                 });
 
@@ -140,7 +140,7 @@ extends JPanel {
                     MySequentialGraphVars.app.getSequentialGraphViewerPanel().setBorder(networkTitledBorder);
 
                     JSplitPane graphAndGraphChartSplitPane = new JSplitPane();
-                    graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
+                    graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.15));
                     graphAndGraphChartSplitPane.setDividerSize(4);
                     graphAndGraphChartSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
                     graphAndGraphChartSplitPane.setLeftComponent(tabbedPane);
@@ -151,7 +151,7 @@ extends JPanel {
                     MySequentialGraphVars.app.addComponentListener(new ComponentAdapter() {
                         public void componentResized(ComponentEvent evt) {
                         graphAndGraphChartSplitPane.setDividerSize(4);
-                        graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
+                        graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.15));
                         }
                     });
                 } else {
@@ -177,7 +177,7 @@ extends JPanel {
                     MySequentialGraphVars.app.getSequentialGraphViewerPanel().setBorder(networkTitledBorder);
 
                     JSplitPane graphAndGraphChartSplitPane = new JSplitPane();
-                    graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
+                    graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.15));
                     graphAndGraphChartSplitPane.setDividerSize(4);
                     graphAndGraphChartSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
                     graphAndGraphChartSplitPane.setLeftComponent(tabbedPane);
@@ -187,7 +187,7 @@ extends JPanel {
                     MySequentialGraphVars.app.addComponentListener(new ComponentAdapter() {
                         public void componentResized(ComponentEvent evt) {
                         graphAndGraphChartSplitPane.setDividerSize(4);
-                        graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
+                        graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.15));
                         }
                     });
                 }
@@ -230,7 +230,7 @@ extends JPanel {
                     MySequentialGraphVars.app.getSequentialGraphViewerPanel().setBorder(networkTitledBorder);
 
                     JSplitPane graphAndGraphChartSplitPane = new JSplitPane();
-                    graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
+                    graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.15));
                     graphAndGraphChartSplitPane.setDividerSize(4);
                     graphAndGraphChartSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
                     graphAndGraphChartSplitPane.setLeftComponent(dataProfilePanel);
@@ -240,7 +240,7 @@ extends JPanel {
                     MySequentialGraphVars.app.addComponentListener(new ComponentAdapter() {
                         public void componentResized(ComponentEvent evt) {
                             graphAndGraphChartSplitPane.setDividerSize(4);
-                            graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
+                            graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.15));
                         }
                     });
                 } else {
@@ -264,7 +264,7 @@ extends JPanel {
                     MySequentialGraphVars.app.getSequentialGraphViewerPanel().setBorder(networkTitledBorder);
 
                     JSplitPane graphAndGraphChartSplitPane = new JSplitPane();
-                    graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
+                    graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.15));
                     graphAndGraphChartSplitPane.setDividerSize(4);
                     graphAndGraphChartSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
                     graphAndGraphChartSplitPane.setLeftComponent(dataProfilePanel);
@@ -274,7 +274,7 @@ extends JPanel {
                     MySequentialGraphVars.app.addComponentListener(new ComponentAdapter() {
                         public void componentResized(ComponentEvent evt) {
                             graphAndGraphChartSplitPane.setDividerSize(4);
-                            graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
+                            graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.15));
                         }
                     });
                 }
@@ -333,7 +333,7 @@ extends JPanel {
                 MySequentialGraphVars.app.getSequentialGraphViewerPanel().setBorder(networkTitledBorder);
 
                 JSplitPane graphAndGraphChartSplitPane = new JSplitPane();
-                graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
+                graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.15));
                 graphAndGraphChartSplitPane.setDividerSize(4);
                 graphAndGraphChartSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
                 graphAndGraphChartSplitPane.setLeftComponent(tabbedPane);
@@ -343,7 +343,7 @@ extends JPanel {
                 MySequentialGraphVars.app.addComponentListener(new ComponentAdapter() {
                     public void componentResized(ComponentEvent evt) {
                     graphAndGraphChartSplitPane.setDividerSize(4);
-                    graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
+                    graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.15));
                     }
                 });
                 revalidate();
@@ -401,7 +401,7 @@ extends JPanel {
                     MySequentialGraphVars.app.getSequentialGraphViewerPanel().setBorder(networkTitledBorder);
 
                     JSplitPane graphAndGraphChartSplitPane = new JSplitPane();
-                    graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
+                    graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.15));
                     graphAndGraphChartSplitPane.setDividerSize(4);
                     graphAndGraphChartSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
                     graphAndGraphChartSplitPane.setLeftComponent(tabbedPane);
@@ -411,7 +411,7 @@ extends JPanel {
                     MySequentialGraphVars.app.addComponentListener(new ComponentAdapter() {
                         public void componentResized(ComponentEvent evt) {
                         graphAndGraphChartSplitPane.setDividerSize(4);
-                        graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
+                        graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.15));
                         }
                     });
                 } else {
@@ -437,7 +437,7 @@ extends JPanel {
                     MySequentialGraphVars.app.getSequentialGraphViewerPanel().setBorder(networkTitledBorder);
 
                     JSplitPane graphAndGraphChartSplitPane = new JSplitPane();
-                    graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
+                    graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.15));
                     graphAndGraphChartSplitPane.setDividerSize(4);
                     graphAndGraphChartSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
                     graphAndGraphChartSplitPane.setLeftComponent(tabbedPane);
@@ -447,7 +447,7 @@ extends JPanel {
                     MySequentialGraphVars.app.addComponentListener(new ComponentAdapter() {
                         public void componentResized(ComponentEvent evt) {
                             graphAndGraphChartSplitPane.setDividerSize(4);
-                            graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.145));
+                            graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.15));
                         }
                     });
                 }

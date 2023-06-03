@@ -100,7 +100,7 @@ extends JPanel {
 
                 JLabel titleLabel = new JLabel(" N. H.");
                 titleLabel.setToolTipText("NODE HOP COUNT DISTRIBUTION");
-                titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
+                titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
                 titleLabel.setBackground(Color.WHITE);
                 titleLabel.setForeground(Color.DARK_GRAY);
 
