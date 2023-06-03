@@ -1,7 +1,6 @@
 package medousa.sequential.graph.stats;
 
 import medousa.MyProgressBar;
-import medousa.sequential.graph.MyComboBoxTooltipRenderer;
 import medousa.sequential.graph.MyNode;
 import medousa.sequential.utils.MySequentialGraphVars;
 import org.jfree.chart.ChartFactory;
@@ -26,10 +25,9 @@ extends JPanel
 implements ActionListener {
 
     public static int instances = 0;
-    private int selectedGraph;
+    private int selectedGraph = 0;
+    private int selectedTime;
     private float toTime = 1f;
-    private int selectedTime = 0;
-
     XYSeries totalDurationByDepthSeries;
     XYSeries maxDurationByDepthSeries;
     XYSeries minDurationByDepthSeries;
@@ -43,56 +41,42 @@ implements ActionListener {
     }
 
     private void setData() {
-        this.totalDurationByDepthMap = new HashMap<>();
-        this.maxDurationByDepthMap = new HashMap<>();
-        this.minDurationByDepthMap = new HashMap<>();
-
-        this.totalDurationByDepthSeries = new XYSeries("TOTAL");
-        this.maxDurationByDepthSeries = new XYSeries("MAX.");
-        this.minDurationByDepthSeries = new XYSeries("MIN.");
-
-        for (int i = 1; i <= MySequentialGraphVars.mxDepth; i++) {
-            minDurationByDepthMap.put(i, 10000000000000000L);
-        }
-
-        this.totalDurationByDepthSeries = new XYSeries("TOTAL");
-        this.totalDurationByDepthMap = new HashMap<>();
-        this.minDurationByDepthSeries = new XYSeries("MIN.");
-        this.minDurationByDepthMap = new HashMap<>();
-        this.maxDurationByDepthSeries = new XYSeries("MAX.");
-        this.maxDurationByDepthMap = new HashMap<>();
+        totalDurationByDepthSeries = new XYSeries("TOTAL");
+        maxDurationByDepthSeries = new XYSeries("MAX.");
+        minDurationByDepthSeries = new XYSeries("MIN.");
+        totalDurationByDepthMap = new HashMap<>();
+        maxDurationByDepthMap = new HashMap<>();
+        minDurationByDepthMap = new HashMap<>();
 
         for (int i = 1; i <= MySequentialGraphVars.mxDepth; i++) {
             minDurationByDepthMap.put(i, 10000000000000000L);
         }
 
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
-        for (int i=1; i <= MySequentialGraphVars.mxDepth; i++) {
+        for (int i = 1; i <= MySequentialGraphVars.mxDepth; i++) {
             for (MyNode n : nodes) {
                 if (n.getNodeDepthInfoMap().containsKey(i)) {
-                    long time = (long) (n.getNodeDepthInfo(i).getDuration()/toTime);
+                    long duration = n.getNodeDepthInfoMap().get(i).getDuration();
 
                     if (totalDurationByDepthMap.containsKey(i)) {
-                        totalDurationByDepthMap.put(i, totalDurationByDepthMap.get(i) + time);
+                        totalDurationByDepthMap.put(i, totalDurationByDepthMap.get(i) + duration);
                     } else {
-                        totalDurationByDepthMap.put(i, time);
+                        totalDurationByDepthMap.put(i, duration);
                     }
 
                     if (maxDurationByDepthMap.containsKey(i)) {
-                        if (time > maxDurationByDepthMap.get(i)) {
-                            maxDurationByDepthMap.put(i, time);
+                        if (duration > maxDurationByDepthMap.get(i)) {
+                            maxDurationByDepthMap.put(i, duration);
                         }
                     } else {
-                        maxDurationByDepthMap.put(i, time);
+                        maxDurationByDepthMap.put(i, duration);
                     }
 
-                    if (time > 0) {
+                    if (duration > 0) {
                         if (minDurationByDepthMap.containsKey(i)) {
-                            if (time < minDurationByDepthMap.get(i)) {
-                                minDurationByDepthMap.put(i, time);
+                            if (duration < minDurationByDepthMap.get(i)) {
+                                minDurationByDepthMap.put(i, duration);
                             }
-                        } else {
-                            minDurationByDepthMap.put(i, time);
                         }
                     }
                 }
@@ -101,83 +85,60 @@ implements ActionListener {
 
         if (MySequentialGraphVars.currentGraphDepth == 0) {
             for (int i = 1; i <= MySequentialGraphVars.mxDepth; i++) {
-                if (totalDurationByDepthMap.containsKey(i)) {
-                    totalDurationByDepthSeries.add(i, totalDurationByDepthMap.get(i));
+                if (this.totalDurationByDepthMap.containsKey(i)) {
+                    totalDurationByDepthSeries.add(i, this.totalDurationByDepthMap.get(i));
                 } else {
-                    totalDurationByDepthSeries.add(i, 0);
+                    this.totalDurationByDepthSeries.add(i, 0);
                 }
-            }
-        } else {
-            for (int i = 1; i <= MySequentialGraphVars.mxDepth; i++) {
-                if (MySequentialGraphVars.currentGraphDepth == i) {
-                    if (totalDurationByDepthMap.containsKey(i)) {
-                        totalDurationByDepthSeries.add(i, totalDurationByDepthMap.get(i));
-                    } else {
-                        totalDurationByDepthSeries.add(i,0);
-                    }
-                } else {
-                    totalDurationByDepthSeries.add(i,0);
-                }
-            }
-        }
 
-        if (MySequentialGraphVars.currentGraphDepth == 0) {
-            for (int i = 1; i <= MySequentialGraphVars.mxDepth; i++) {
-                if (maxDurationByDepthMap.containsKey(i)) {
-                    maxDurationByDepthSeries.add(i, maxDurationByDepthMap.get(i));
+                if (this.maxDurationByDepthMap.containsKey(i)) {
+                    this.maxDurationByDepthSeries.add(i, this.maxDurationByDepthMap.get(i));
                 } else {
-                    maxDurationByDepthSeries.add(i, 0);
+                    this.maxDurationByDepthSeries.add(i, 0);
                 }
-            }
-        } else {
-            for (int i = 1; i <= MySequentialGraphVars.mxDepth; i++) {
-                if (MySequentialGraphVars.currentGraphDepth == i) {
-                    if (maxDurationByDepthMap.containsKey(i)) {
-                        maxDurationByDepthSeries.add(i, maxDurationByDepthMap.get(i));
-                    } else {
-                        maxDurationByDepthSeries.add(i, 0);
-                    }
-                } else {
-                    maxDurationByDepthSeries.add(i, 0);
-                }
-            }
-        }
 
-        if (MySequentialGraphVars.currentGraphDepth == 0) {
-            for (int i = 1; i <= MySequentialGraphVars.mxDepth; i++) {
-                if (minDurationByDepthMap.get(i) == 10000000000000000L) {
-                    minDurationByDepthSeries.add(i, 0L);
+                if (this.minDurationByDepthMap.get(i) == 10000000000000000L) {
+                    this.minDurationByDepthSeries.add(i, 0L);
                 } else {
-                    minDurationByDepthSeries.add(i, minDurationByDepthMap.get(i));
+                    this.minDurationByDepthSeries.add(i, this.minDurationByDepthMap.get(i));
                 }
             }
         } else {
             for (int i = 1; i <= MySequentialGraphVars.mxDepth; i++) {
                 if (MySequentialGraphVars.currentGraphDepth == i) {
-                    if (minDurationByDepthMap.containsKey(i)) {
-                        if (minDurationByDepthMap.get(i) == 10000000000000000L) {
-                            minDurationByDepthSeries.add(i, 0L);
+                    if (this.totalDurationByDepthMap.containsKey(i)) {
+                        this.totalDurationByDepthSeries.add(i, this.totalDurationByDepthMap.get(i));
+                        this.maxDurationByDepthSeries.add(i, this.maxDurationByDepthMap.get(i));
+
+                        if (this.minDurationByDepthMap.get(i) == 10000000000000000L) {
+                            this.minDurationByDepthSeries.add(i, 0L);
                         } else {
-                            minDurationByDepthSeries.add(i, minDurationByDepthMap.get(i));
+                            this.minDurationByDepthSeries.add(i, this.minDurationByDepthMap.get(i));
                         }
                     } else {
-                        minDurationByDepthSeries.add(i, 0);
+                        this.totalDurationByDepthSeries.add(i, 0);
+                        this.maxDurationByDepthSeries.add(i, 0);
                     }
                 } else {
-                    minDurationByDepthSeries.add(i, 0);
+                    this.totalDurationByDepthSeries.add(i, 0);
+                    this.maxDurationByDepthSeries.add(i, 0);
+                    this.minDurationByDepthSeries.add(i, 0L);
                 }
             }
         }
+
     }
 
     public void decorate() {
         try {
+            final MyGraphLevelDurationByDepthLineChart graphLevelDurationByDepthLineChart = this;
             SwingUtilities.invokeLater(new Runnable() {
                 @Override public void run() {
                     removeAll();
                     setLayout(new BorderLayout(5, 5));
                     setBackground(Color.WHITE);
                     setData();
+
 
                     XYSeriesCollection dataset = new XYSeriesCollection();
                     if (selectedGraph == 0) {
@@ -203,6 +164,7 @@ implements ActionListener {
                     chart.getXYPlot().getRangeAxis().setLabelFont(new Font("Arial", Font.PLAIN, 0));
                     chart.getXYPlot().getRangeAxis().setTickLabelFont(MySequentialGraphVars.tahomaPlainFont11);
                     chart.getXYPlot().getDomainAxis().setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+                    //chart.getXYPlot().getDomainAxis().setVerticalTickLabels(true);
                     chart.setBackgroundPaint(Color.WHITE);
 
                     XYPlot plot = (XYPlot) chart.getPlot();
@@ -213,7 +175,7 @@ implements ActionListener {
                     renderer.setSeriesShape(0, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
                     renderer.setSeriesFillPaint(0, Color.WHITE);
 
-                    renderer.setSeriesPaint(1, Color.BLUE);
+                    renderer.setSeriesPaint(1, Color.RED);
                     renderer.setSeriesStroke(1, new BasicStroke(1.5f));
                     renderer.setSeriesShapesVisible(1, true);
                     renderer.setSeriesShape(1, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
@@ -227,6 +189,7 @@ implements ActionListener {
                     renderer.setUseFillPaint(true);
 
                     ChartPanel chartPanel = new ChartPanel(chart);
+                    //chartPanel.setPreferredSize( new java.awt.Dimension( 560 , 367 ) );
 
                     JLabel titleLabel = new JLabel(" DUR.");
                     titleLabel.setToolTipText("DURATION BY DEPTH");
@@ -246,20 +209,21 @@ implements ActionListener {
                     enlargeBtn.addActionListener(new ActionListener() {
                         @Override public void actionPerformed(ActionEvent e) {
                             new Thread(new Runnable() {
-                                @Override public void run() {enlarge();}
+                                @Override public void run() {
+                                    enlarge();
+                                }
                             }).start();
                         }
                     });
 
                     JComboBox graphMenu = new JComboBox();
+                    graphMenu.setBackground(Color.WHITE);
+                    graphMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
+                    graphMenu.setFocusable(false);
                     graphMenu.addItem("SELECT");
                     graphMenu.addItem("TOTAL");
                     graphMenu.addItem("MAX.");
                     graphMenu.addItem("MIN.");
-                    graphMenu.setBackground(Color.WHITE);
-                    graphMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
-                    graphMenu.setFocusable(false);
-                    graphMenu.setSelectedIndex(selectedGraph);
                     graphMenu.addActionListener(new ActionListener() {
                         @Override public void actionPerformed(ActionEvent e) {
                             selectedGraph = graphMenu.getSelectedIndex();
@@ -267,33 +231,29 @@ implements ActionListener {
                         }
                     });
 
-                    JComboBox timeConvertMenu = new JComboBox();
-                    timeConvertMenu.addItem("SECOND");
-                    timeConvertMenu.addItem("MINUTE");
-                    timeConvertMenu.addItem("HOUR");
-                    timeConvertMenu.setSelectedIndex(selectedTime);
-                    timeConvertMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
-                    timeConvertMenu.setFocusable(false);
-                    timeConvertMenu.setBackground(Color.WHITE);
-                    timeConvertMenu.addActionListener(new ActionListener() {
+                    JComboBox timeMenu = new JComboBox();
+                    timeMenu.setBackground(Color.WHITE);
+                    timeMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
+                    timeMenu.setFocusable(false);
+                    timeMenu.addItem("SECOND");
+                    timeMenu.addItem("MINUTE");
+                    timeMenu.addItem("HOUR");
+                    timeMenu.setSelectedIndex(selectedTime);
+                    timeMenu.addActionListener(new ActionListener() {
                         @Override public void actionPerformed(ActionEvent e) {
-                            new Thread(new Runnable() {
-                                @Override public void run() {
-                                    if (timeConvertMenu.getSelectedIndex() == 0) {
-                                        toTime = 1;
-                                        selectedTime = 0;
-                                        decorate();
-                                    } else if (timeConvertMenu.getSelectedIndex() == 1) {
-                                        toTime = 60;
-                                        selectedTime = 1;
-                                        decorate();
-                                    } else if (timeConvertMenu.getSelectedIndex() == 2) {
-                                        toTime = 3600;
-                                        selectedTime = 2;
-                                        decorate();
-                                    }
-                                }
-                            }).start();
+                            if (timeMenu.getSelectedIndex() == 0) {
+                                selectedTime = timeMenu.getSelectedIndex();
+                                toTime = 1;
+                                decorate();
+                            } else if (timeMenu.getSelectedIndex() == 1) {
+                                selectedTime = timeMenu.getSelectedIndex();
+                                toTime = 60;
+                                decorate();
+                            } else if (timeMenu.getSelectedIndex() == 2) {
+                                selectedTime = timeMenu.getSelectedIndex();
+                                toTime = 3600;
+                                decorate();
+                            }
                         }
                     });
 
@@ -301,7 +261,7 @@ implements ActionListener {
                     btnPanel.setBackground(Color.WHITE);
                     btnPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
                     btnPanel.add(graphMenu);
-                    btnPanel.add(timeConvertMenu);
+                    btnPanel.add(timeMenu);
                     btnPanel.add(enlargeBtn);
 
                     JPanel menuPanel = new JPanel();
@@ -335,9 +295,11 @@ implements ActionListener {
             f.pack();
             f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             f.setCursor(Cursor.HAND_CURSOR);
+            f.setAlwaysOnTop(true);
             pb.updateValue(100, 100);
             pb.dispose();
             f.setVisible(true);
+            f.setAlwaysOnTop(false);
         } catch (Exception ex) {
             pb.updateValue(100, 100);
             pb.dispose();
@@ -346,6 +308,5 @@ implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
     }
 }

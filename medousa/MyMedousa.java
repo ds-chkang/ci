@@ -10,9 +10,7 @@ import medousa.security.MyDateMonitor;
 
 import medousa.sequential.broker.MySequentialGraphMessageBroker;
 import medousa.sequential.graph.MySequentialGraphDashBoard;
-import medousa.sequential.utils.MyMathUtil;
 import medousa.sequential.utils.MyNodeUtil;
-import medousa.sequential.utils.MySequentialGraphSysUtil;
 import medousa.sequential.utils.MySequentialGraphVars;
 import medousa.test.MyUserComputerChecker;
 
@@ -20,7 +18,6 @@ import javax.swing.plaf.ColorUIResource;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
 
 public class MyMedousa
 extends JFrame {
@@ -154,8 +151,7 @@ extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
                 try {
-                    MyMedousa.createSecurityJarFile();
-                    MyUserComputerChecker.run(); // Is the user using medousa on an unlicensed computer?
+                    //MyUserComputerChecker.run(); // Is the user using medousa on an unlicensed computer?
                     MyDateMonitor.checkDate(); // Has the trial period been passed?
                     MyMultipleInstanceRunMonitor.monitorInstances(); // Are there more than an instance of medousa running on the current computer?
                     MyMedousa.setUI();
@@ -167,18 +163,7 @@ extends JFrame {
                 } catch (Exception ex) {}
             }
         });
-    }
 
-    private static void createSecurityJarFile() {
-        try {
-            File f = new File(MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "sec.jar");
-            if (f.exists()) {
-                f.delete();
-            }
-            f.createNewFile();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
     }
 
     public void setDirectGraph(JPanel graphContainer) {

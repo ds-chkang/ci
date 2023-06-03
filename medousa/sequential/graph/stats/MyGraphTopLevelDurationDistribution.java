@@ -31,8 +31,9 @@ implements ActionListener {
     private float minValue = 1000000000;
     private float avgValue = 0;
     private float stdValue = 0;
-    private float toTime = 0f;
-    private int selectedMenu = 0;
+    private float toTime = 1f;
+    private int selectedTime = 0;
+    private int selectedGraph = 0;
     public MyGraphTopLevelDurationDistribution() {}
 
     public void decorate() {
@@ -64,7 +65,7 @@ implements ActionListener {
         timeConvertMenu.addItem("SECOND");
         timeConvertMenu.addItem("MINUTE");
         timeConvertMenu.addItem("HOUR");
-        timeConvertMenu.setSelectedIndex(selectedMenu);
+        timeConvertMenu.setSelectedIndex(selectedTime);
         timeConvertMenu.setFont(MySequentialGraphVars.tahomaPlainFont12);
         timeConvertMenu.setFocusable(false);
         timeConvertMenu.setBackground(Color.WHITE);
@@ -74,17 +75,16 @@ implements ActionListener {
                 new Thread(new Runnable() {
                     @Override public void run() {
                         if (timeConvertMenu.getSelectedIndex() == 0) {
-
-                            toTime = 0;
-                            selectedMenu = 0;
+                            toTime = 1;
+                            selectedTime = 0;
                             decorate();
                         } else if (timeConvertMenu.getSelectedIndex() == 1) {
-                            selectedMenu = 1;
+                            selectedTime = 1;
                             toTime = 60;
                             decorate();
                         } else if (timeConvertMenu.getSelectedIndex() == 2) {
                             toTime = 3600;
-                            selectedMenu = 2;
+                            selectedTime = 2;
                             decorate();
                         }
                     }
@@ -112,7 +112,6 @@ implements ActionListener {
             MyProgressBar pb = new MyProgressBar(false);
             try {
                 this.decorate();
-
                 JFrame f = new JFrame(" DURATION DISTRIBUTION");
                 f.setBackground(Color.WHITE);
                 f.setPreferredSize(new Dimension(550, 450));

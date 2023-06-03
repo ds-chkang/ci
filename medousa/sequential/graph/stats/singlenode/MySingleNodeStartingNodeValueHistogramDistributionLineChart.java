@@ -1,5 +1,8 @@
 package medousa.sequential.graph.stats.singlenode;
 
+import medousa.sequential.utils.MyMathUtil;
+import medousa.table.MyTableToolTipper;
+import medousa.table.MyTableUtil;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -12,6 +15,7 @@ import medousa.sequential.utils.MySequentialGraphSysUtil;
 import medousa.sequential.utils.MySequentialGraphVars;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -23,6 +27,7 @@ extends JPanel
 implements ActionListener {
 
     private static boolean MAXIMIZED;
+    private int selelctedGraph;
     public static int instances = 0;
     private ArrayList<Color> colors;
     private Random rand = new Random();
@@ -46,8 +51,13 @@ implements ActionListener {
                         for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
                             String n = MySequentialGraphVars.seqs[s][i].split(":")[0];
                             if (n.equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
-                                String startingNode = MySequentialGraphVars.seqs[s][0].split(":")[0];
-                                startingNode = (startingNode.contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(startingNode) : MySequentialGraphSysUtil.getDecodedNodeName(startingNode));
+                                String startingNode = null;
+                                if (selelctedGraph == 0) {
+                                   startingNode = MySequentialGraphVars.seqs[s][0].split(":")[0];
+                                } else {
+                                    startingNode = MySequentialGraphVars.seqs[s][1].split(":")[0];
+                                }
+                                startingNode = MySequentialGraphSysUtil.getNodeName(startingNode);
                                 if (nodeValueMap.containsKey(startingNode)) {
                                     nodeValueMap.put(startingNode, nodeValueMap.get(startingNode) + 1);
                                 } else {
@@ -64,7 +74,7 @@ implements ActionListener {
                         }
                         if (count == 6 && !MAXIMIZED) {
                             break;
-                        } else if (count == 50 && MAXIMIZED) {
+                        } else if (count == 100 && MAXIMIZED) {
                             break;
                         }
                     }
@@ -119,17 +129,35 @@ implements ActionListener {
                         }
                     });
 
+                    JComboBox variableAndItemMenu = new JComboBox();
+                    variableAndItemMenu.addItem("VAR.");
+                    variableAndItemMenu.addItem("ITEM");
+                    variableAndItemMenu.setFocusable(false);
+                    variableAndItemMenu.setSelectedIndex(selelctedGraph);
+                    variableAndItemMenu.setBackground(Color.WHITE);
+                    variableAndItemMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
+                    variableAndItemMenu.addActionListener(new ActionListener() {
+                        @Override public void actionPerformed(ActionEvent e) {
+                            selelctedGraph = variableAndItemMenu.getSelectedIndex();
+                            decorate();
+                        }
+                    });
+
                     JPanel buttonPanel = new JPanel();
                     buttonPanel.setBackground(Color.WHITE);
                     buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 3, 3));
+                    if (MySequentialGraphVars.isSupplementaryOn) {
+                        buttonPanel.add(variableAndItemMenu);
+                    }
                     buttonPanel.add(enlargeBtn);
 
-                    JPanel topPanel = new JPanel();
-                    topPanel.setLayout(new BorderLayout(3, 3));
-                    topPanel.setBackground(Color.WHITE);
-                    topPanel.add(titlePanel, BorderLayout.WEST);
-                    topPanel.add(buttonPanel, BorderLayout.EAST);
-                    add(topPanel, BorderLayout.NORTH);
+                    JPanel northPanel = new JPanel();
+                    northPanel.setLayout(new BorderLayout(3, 3));
+                    northPanel.setBackground(Color.WHITE);
+                    northPanel.add(titlePanel, BorderLayout.WEST);
+                    northPanel.add(buttonPanel, BorderLayout.EAST);
+
+                    add(northPanel, BorderLayout.NORTH);
                     add(chartPanel, BorderLayout.CENTER);
 
                     revalidate();
@@ -144,31 +172,99 @@ implements ActionListener {
     public void enlarge() {
         MyProgressBar pb = new MyProgressBar(false);
         try {
+            MySingleNodeStartingNodeValueHistogramDistributionLineChart singleNodeStartingNodeValueHistogramDistributionLineChart = new MySingleNodeStartingNodeValueHistogramDistributionLineChart();
+
+            String [] columns = {"NO.", "NODE", "CNT."};
+            String [][] data= {};
+
+            DefaultTableModel model = new DefaultTableModel(data, columns);
+
+            JTable nodeTable = new JTable(model);
+            nodeTable.setBackground(Color.WHITE);
+            nodeTable.setRowHeight(25);
+            nodeTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont11);
+            nodeTable.getTableHeader().setOpaque(false);
+            nodeTable.getTableHeader().setBackground(new Color(0,0,0,0));
+            String [] toolTips = {"NO..", "NODE NAME", "COUNT FOR THE APPEARANCES AT STATING POSITION"};
+            MyTableToolTipper tooltipHeader = new MyTableToolTipper(nodeTable.getColumnModel());
+            tooltipHeader.setToolTipStrings(toolTips);
+            nodeTable.setTableHeader(tooltipHeader);
+
+            JButton btn = new JButton();
+            JPanel nodeSearchPanel = MyTableUtil.searchTablePanel(this, new JTextField(), btn, model, nodeTable);
+            nodeSearchPanel.remove(btn);
+
+            LinkedHashMap<String, Long> nodeValueMap = new LinkedHashMap<>();
+            for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
+                for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
+                    String n = MySequentialGraphVars.seqs[s][i].split(":")[0];
+                    if (n.equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
+                        if (MySequentialGraphVars.isSupplementaryOn) {
+                            String variableNode = MySequentialGraphVars.seqs[s][0].split(":")[0];
+                            variableNode = MySequentialGraphSysUtil.getNodeName(variableNode);
+                            if (nodeValueMap.containsKey(variableNode)) {
+                                nodeValueMap.put(variableNode, nodeValueMap.get(variableNode) + 1);
+                            } else {
+                                nodeValueMap.put(variableNode, 1L);
+                            }
+
+                            String itemNode = MySequentialGraphVars.seqs[s][1].split(":")[0];
+                            itemNode = MySequentialGraphSysUtil.getNodeName(itemNode);
+                            if (nodeValueMap.containsKey(itemNode)) {
+                                nodeValueMap.put(itemNode, nodeValueMap.get(itemNode) + 1);
+                            } else {
+                                nodeValueMap.put(itemNode, 1L);
+                            }
+                        } else {
+                            String startingNode = MySequentialGraphVars.seqs[s][0].split(":")[0];
+                            startingNode = MySequentialGraphSysUtil.getNodeName(startingNode);
+                            if (nodeValueMap.containsKey(startingNode)) {
+                                nodeValueMap.put(startingNode, nodeValueMap.get(startingNode) + 1);
+                            } else {
+                                nodeValueMap.put(startingNode, 1L);
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+            nodeValueMap = MySequentialGraphSysUtil.sortMapByLongValue(nodeValueMap);
+
+            int count = 0;
+            for (String n : nodeValueMap.keySet()) {
+                model.addRow(new String[]{"" + (count++),
+                        n,
+                        MyMathUtil.getCommaSeperatedNumber(nodeValueMap.get(n))
+                });
+            }
+
+            JPanel tablePanel = new JPanel();
+            tablePanel.setLayout(new BorderLayout(3,3));
+            tablePanel.setBackground(Color.WHITE);
+            tablePanel.add(new JScrollPane(nodeTable), BorderLayout.CENTER);
+            tablePanel.add(nodeSearchPanel, BorderLayout.SOUTH);
+
             MAXIMIZED = true;
             JFrame f = new JFrame(" STARTING NODE VALUE DISTRIBUTION");
             f.setLayout(new BorderLayout(3, 3));
-            f.getContentPane().add(new MySingleNodeStartingNodeValueHistogramDistributionLineChart(), BorderLayout.CENTER);
+
+            JSplitPane graphTableSplitPane = new JSplitPane();
+            graphTableSplitPane.setDividerLocation(0.8f);
+            graphTableSplitPane.setDividerSize(6);
+            graphTableSplitPane.setLeftComponent(singleNodeStartingNodeValueHistogramDistributionLineChart);
+            graphTableSplitPane.setRightComponent(tablePanel);
+            graphTableSplitPane.addComponentListener(new ComponentAdapter() {
+                @Override public void componentResized(ComponentEvent e) {
+                    super.componentResized(e);
+                    graphTableSplitPane.setDividerLocation(0.8f);
+                }
+            });
+
+            f.getContentPane().add(graphTableSplitPane, BorderLayout.CENTER);
             f.setPreferredSize(new Dimension(450, 350));
             f.pack();
             f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             f.setCursor(Cursor.HAND_CURSOR);
-            f.setAlwaysOnTop(true);
-            f.addWindowListener(new WindowAdapter() {
-                @Override public void windowClosing(WindowEvent e) {
-                    super.windowClosing(e);
-                    MAXIMIZED = false;
-                }
-            });
-            f.addMouseListener(new MouseAdapter() {
-                @Override public void mouseEntered(MouseEvent e) {
-                    super.mouseEntered(e);
-                    f.setAlwaysOnTop(true);
-                }
-                @Override public void mouseExited(MouseEvent e) {
-                    super.mouseEntered(e);
-                    f.setAlwaysOnTop(false);
-                }
-            });
             pb.updateValue(100, 100);
             pb.dispose();
             f.setVisible(true);

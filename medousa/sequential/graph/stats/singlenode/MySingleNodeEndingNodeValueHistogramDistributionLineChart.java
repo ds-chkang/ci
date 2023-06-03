@@ -65,7 +65,7 @@ implements ActionListener {
 
                         if (!MAXIMIZED && colors.size() == 6) {
                             break;
-                        } else if (MAXIMIZED && colors.size() == 50) {
+                        } else if (MAXIMIZED && colors.size() == 100) {
                             break;
                         }
                     }
@@ -150,25 +150,8 @@ implements ActionListener {
             f.setLayout(new BorderLayout(3, 3));
             f.getContentPane().add(new MySingleNodeEndingNodeValueHistogramDistributionLineChart(), BorderLayout.CENTER);
             f.setPreferredSize(new Dimension(450, 350));
-            f.pack();
-            f.addMouseListener(new MouseAdapter() {
-                @Override public void mouseEntered(MouseEvent e) {
-                    super.mouseEntered(e);
-                    f.setAlwaysOnTop(true);
-                }
-
-                @Override public void mouseExited(MouseEvent e) {
-                    super.mouseEntered(e);
-                    f.setAlwaysOnTop(false);
-                }
-            });
             f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            f.addWindowListener(new WindowAdapter() {
-                @Override public void windowClosing(WindowEvent e) {
-                    super.windowClosing(e);
-                    MAXIMIZED = false;
-                }
-            });
+            f.pack();
             pb.updateValue(100, 100);
             pb.dispose();
             f.setVisible(true);

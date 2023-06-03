@@ -218,66 +218,51 @@ implements ActionListener {
     }
 
     private void createSelectedNodeFromPathGraph() {
-        for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
-            for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
+        for (int s=0; s < MySequentialGraphVars.seqs.length; s++) {
+            for (int i=1; i < MySequentialGraphVars.seqs[s].length; i++) {
                 String ps = MySequentialGraphVars.seqs[s][i-1].split(":")[0];
                 if (ps.equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
                     int depth = 1;
-                    for (int j = i; j < MySequentialGraphVars.seqs[s].length; j++) {
+                    for (int j=i; j < MySequentialGraphVars.seqs[s].length; j++) {
                         ps = MySequentialGraphVars.seqs[s][j-1].split(":")[0] + "-" + (depth-1);
                         String ss = MySequentialGraphVars.seqs[s][j].split(":")[0] + "-" + depth;
                         String edgeRef = ps + "-" + ss;
                         if (!this.edgeRefMap.containsKey(edgeRef)) {
+                            MyDepthNode pn = null;
+                            MyDepthNode sn = null;
+
                             if (!this.pathFlowGraph.vRefs.containsKey(ps)) {
-                                MyDepthNode pn = new MyDepthNode(ps, depth-1);
-                                if ((depth-1) != 0) {
-                                    pn.inContribution++;
-                                }
-                                pn.contribution++;
-                                pn.outContribution++;
-                                this.pathFlowGraph.addVertex(pn);
+                                pn = new MyDepthNode(ps, depth-1);
                                 this.pathFlowGraph.vRefs.put(ps, pn);
                             } else {
-                                if ((depth-1) != 0) {
-                                    this.pathFlowGraph.vRefs.get(ps).inContribution++;
-                                }
-                                this.pathFlowGraph.vRefs.get(ps).outContribution++;
-                                this.pathFlowGraph.vRefs.get(ps).contribution++;
+                                pn = (MyDepthNode) this.pathFlowGraph.vRefs.get(ps);
                             }
+
                             if (!this.pathFlowGraph.vRefs.containsKey(ss)) {
-                                MyDepthNode sn = new MyDepthNode(ss, depth);
-                                if ((depth+1) != MySequentialGraphVars.seqs[s].length) {
-                                    sn.outContribution++;
-                                }
-                                sn.inContribution++;
-                                sn.contribution++;
-                                this.pathFlowGraph.addVertex(sn);
+                                sn = new MyDepthNode(ss, depth);
                                 this.pathFlowGraph.vRefs.put(ss, sn);
                             } else {
-                                if ((depth+1) != MySequentialGraphVars.seqs[s].length) {
-                                    this.pathFlowGraph.vRefs.get(ss).outContribution++;
-                                }
-                                this.pathFlowGraph.vRefs.get(ss).inContribution++;
-                                this.pathFlowGraph.vRefs.get(ss).contribution++;
+                                sn = (MyDepthNode) this.pathFlowGraph.vRefs.get(ss);
                             }
-                            MyDepthNode pn = (MyDepthNode) this.pathFlowGraph.vRefs.get(ps);
-                            MyDepthNode sn = (MyDepthNode) this.pathFlowGraph.vRefs.get(ss);
+
+
+                            pn.contribution++;
+
+                            if ((j+1) == MySequentialGraphVars.seqs[s].length) {
+                                sn.contribution++;
+                            }
+
                             MyDepthEdge edge = new MyDepthEdge(pn, sn);
                             edge.contribution++;
                             this.pathFlowGraph.addEdge(edge, pn, sn);
                             this.edgeRefMap.put(edgeRef, edge);
                         } else {
-                            MyDepthNode sNode = (MyDepthNode) this.pathFlowGraph.vRefs.get(ss);
-                            MyDepthNode pNode = (MyDepthNode) this.pathFlowGraph.vRefs.get(ps);
-                            pNode.contribution++;
-                            pNode.outContribution++;
-                            sNode.contribution++;
-                            sNode.inContribution++;
-                            if ((depth+1) != MySequentialGraphVars.seqs[s].length) {
-                                sNode.outContribution++;
-                            }
-                            if ((depth-1) != 0) {
-                                pNode.inContribution++;
+                            MyDepthNode sn = (MyDepthNode) this.pathFlowGraph.vRefs.get(ss);
+                            MyDepthNode pn = (MyDepthNode) this.pathFlowGraph.vRefs.get(ps);
+                            pn.contribution++;
+
+                            if ((j+1) == MySequentialGraphVars.seqs[s].length) {
+                                sn.contribution++;
                             }
                             this.edgeRefMap.get(edgeRef).contribution++;
                         }
@@ -285,6 +270,7 @@ implements ActionListener {
                     }
                     break;
                 }
+                break;
             }
         }
     }
@@ -294,60 +280,44 @@ implements ActionListener {
             int itemset = isSelectedNodeExistsInSequence(s);
             if (itemset > 0) {
                 for (int i = 1; i <= itemset; i++) {
-                    String ps = MySequentialGraphVars.seqs[s][i-1].split(":")[0] + "-" + (i - 1);
+                    String ps = MySequentialGraphVars.seqs[s][i-1].split(":")[0] + "-" + (i-1);
                     String ss = MySequentialGraphVars.seqs[s][i].split(":")[0] + "-" + i;
                     String edgeRef = ps + "-" + ss;
                     if (!this.edgeRefMap.containsKey(edgeRef)) {
+                        MyDepthNode pn = null;
+                        MyDepthNode sn = null;
+
                         if (!this.pathFlowGraph.vRefs.containsKey(ps)) {
-                            MyDepthNode pn = new MyDepthNode(ps, i-1);
-                            if ((i - 1) != 0) {
-                                pn.inContribution++;
-                            }
-                            pn.contribution++;
-                            pn.outContribution++;
-                            this.pathFlowGraph.addVertex(pn);
+                            pn = new MyDepthNode(ps, i-1);
                             this.pathFlowGraph.vRefs.put(ps, pn);
                         } else {
-                            if ((i - 1) != 0) {
-                                this.pathFlowGraph.vRefs.get(ps).inContribution++;
-                            }
-                            this.pathFlowGraph.vRefs.get(ps).outContribution++;
-                            this.pathFlowGraph.vRefs.get(ps).contribution++;
+                            pn = (MyDepthNode) this.pathFlowGraph.vRefs.get(ps);
                         }
+
                         if (!this.pathFlowGraph.vRefs.containsKey(ss)) {
-                            MyDepthNode sn = new MyDepthNode(ss, i);
-                            if ((i + 1) != MySequentialGraphVars.seqs[s].length) {
-                                sn.outContribution++;
-                            }
-                            sn.inContribution++;
-                            sn.contribution++;
-                            this.pathFlowGraph.addVertex(sn);
+                            sn = new MyDepthNode(ss, i);
                             this.pathFlowGraph.vRefs.put(ss, sn);
                         } else {
-                            if ((i + 1) != MySequentialGraphVars.seqs[s].length) {
-                                this.pathFlowGraph.vRefs.get(ss).outContribution++;
-                            }
-                            this.pathFlowGraph.vRefs.get(ss).inContribution++;
-                            this.pathFlowGraph.vRefs.get(ss).contribution++;
+                            sn = (MyDepthNode) this.pathFlowGraph.vRefs.get(ss);
                         }
-                        MyDepthNode pn = (MyDepthNode) this.pathFlowGraph.vRefs.get(ps);
-                        MyDepthNode sn = (MyDepthNode) this.pathFlowGraph.vRefs.get(ss);
+
+                        pn.contribution++;
+
+                        if ((i+1) == MySequentialGraphVars.seqs[s].length) {
+                            sn.contribution++;
+                        }
+
                         MyDepthEdge edge = new MyDepthEdge(pn, sn);
                         edge.contribution++;
                         this.pathFlowGraph.addEdge(edge, pn, sn);
                         this.edgeRefMap.put(edgeRef, edge);
                     } else {
-                        MyDepthNode sNode = (MyDepthNode) this.pathFlowGraph.vRefs.get(ss);
-                        MyDepthNode pNode = (MyDepthNode) this.pathFlowGraph.vRefs.get(ps);
-                        pNode.contribution++;
-                        pNode.outContribution++;
-                        sNode.contribution++;
-                        sNode.inContribution++;
-                        if ((i + 1) != MySequentialGraphVars.seqs[s].length) {
-                            sNode.outContribution++;
-                        }
-                        if ((i - 1) != 0) {
-                            pNode.inContribution++;
+                        MyDepthNode sn = (MyDepthNode) this.pathFlowGraph.vRefs.get(ss);
+                        MyDepthNode pn = (MyDepthNode) this.pathFlowGraph.vRefs.get(ps);
+                        pn.contribution++;
+
+                        if ((i+1) == MySequentialGraphVars.seqs[s].length) {
+                            sn.contribution++;
                         }
                         this.edgeRefMap.get(edgeRef).contribution++;
                     }
@@ -378,56 +348,40 @@ implements ActionListener {
                         String ss = MySequentialGraphVars.seqs[s][j].split(":")[0] + "-" + depth;
                         String edgeRef = ps + "-" + ss;
                         if (!this.edgeRefMap.containsKey(edgeRef)) {
+                            MyDepthNode pn = null;
+                            MyDepthNode sn = null;
+
                             if (!this.pathFlowGraph.vRefs.containsKey(ps)) {
-                                MyDepthNode pn = new MyDepthNode(ps, depth-1);
-                                if ((depth-1) != 0) {
-                                    pn.inContribution++;
-                                }
-                                pn.contribution++;
-                                pn.outContribution++;
-                                this.pathFlowGraph.addVertex(pn);
+                                pn = new MyDepthNode(ps, depth-1);
                                 this.pathFlowGraph.vRefs.put(ps, pn);
                             } else {
-                                if ((depth-1) != 0) {
-                                    this.pathFlowGraph.vRefs.get(ps).inContribution++;
-                                }
-                                this.pathFlowGraph.vRefs.get(ps).outContribution++;
-                                this.pathFlowGraph.vRefs.get(ps).contribution++;
+                                pn = (MyDepthNode) this.pathFlowGraph.vRefs.get(ps);
                             }
+
                             if (!this.pathFlowGraph.vRefs.containsKey(ss)) {
-                                MyDepthNode sn = new MyDepthNode(ss, depth);
-                                if ((depth+1) != MySequentialGraphVars.seqs[s].length) {
-                                    sn.outContribution++;
-                                }
-                                sn.inContribution++;
-                                sn.contribution++;
-                                this.pathFlowGraph.addVertex(sn);
+                                sn = new MyDepthNode(ss, depth);
                                 this.pathFlowGraph.vRefs.put(ss, sn);
                             } else {
-                                if ((depth+1) != MySequentialGraphVars.seqs[s].length) {
-                                    this.pathFlowGraph.vRefs.get(ss).outContribution++;
-                                }
-                                this.pathFlowGraph.vRefs.get(ss).inContribution++;
-                                this.pathFlowGraph.vRefs.get(ss).contribution++;
+                                sn = (MyDepthNode) this.pathFlowGraph.vRefs.get(ss);
                             }
-                            MyDepthNode pn = (MyDepthNode) this.pathFlowGraph.vRefs.get(ps);
-                            MyDepthNode sn = (MyDepthNode) this.pathFlowGraph.vRefs.get(ss);
+
+                            pn.contribution++;
+
+                            if ((j+1) == MySequentialGraphVars.seqs[s].length) {
+                                sn.contribution++;
+                            }
+
                             MyDepthEdge edge = new MyDepthEdge(pn, sn);
                             edge.contribution++;
                             this.pathFlowGraph.addEdge(edge, pn, sn);
                             this.edgeRefMap.put(edgeRef, edge);
                         } else {
-                            MyDepthNode sNode = (MyDepthNode) this.pathFlowGraph.vRefs.get(ss);
-                            MyDepthNode pNode = (MyDepthNode) this.pathFlowGraph.vRefs.get(ps);
-                            pNode.contribution++;
-                            pNode.outContribution++;
-                            sNode.contribution++;
-                            sNode.inContribution++;
-                            if ((depth+1) != MySequentialGraphVars.seqs[s].length) {
-                                sNode.outContribution++;
-                            }
-                            if ((depth-1) != 0) {
-                                pNode.inContribution++;
+                            MyDepthNode sn = (MyDepthNode) this.pathFlowGraph.vRefs.get(ss);
+                            MyDepthNode pn = (MyDepthNode) this.pathFlowGraph.vRefs.get(ps);
+                            pn.contribution++;
+
+                            if ((depth+1) == MySequentialGraphVars.seqs[s].length) {
+                                sn.contribution++;
                             }
                             this.edgeRefMap.get(edgeRef).contribution++;
                         }
@@ -435,6 +389,7 @@ implements ActionListener {
                     }
                     break;
                 }
+                break;
             }
         }
     }
@@ -522,7 +477,6 @@ implements ActionListener {
         this.graphViewer.getRenderContext().setVertexFillPaintTransformer(this.nodeColorer);
         this.graphViewer.setBackground(Color.WHITE);
         this.graphViewer.setPreferredSize(new Dimension(10000, 10000));
-        this.graphViewer.getRenderContext().setVertexLabelTransformer(new ToStringLabeller<>());
         this.graphViewer.getRenderContext().setVertexShapeTransformer(new Transformer<MyDepthNode, Shape>() {
             @Override public Shape transform(MyDepthNode n) {return n.nodeSize;}});
         this.graphViewer.getRenderContext().setEdgeDrawPaintTransformer(edgeDrawPainter);
@@ -547,25 +501,35 @@ implements ActionListener {
                 }
                 return this;
         }};
+        this.graphViewer.getRenderContext().setEdgeLabelTransformer(new Transformer<MyDepthEdge, String>() {
+            @Override public String transform(MyDepthEdge e) {
+                return "";
+            }
+        });
         this.graphViewer.getRenderContext().setVertexLabelRenderer(vertexLabelRenderer);
-
         this.graphViewer.getRenderContext().setVertexFontTransformer(new Transformer<MyDepthNode, Font>() {
             @Override public Font transform(MyDepthNode n) {
                 if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
                     if (n.getName().split("-")[0].equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
                         return new Font("Noto Sans", Font.BOLD, 30);
                     } else {
-                        return new Font("Noto Sans", Font.BOLD, 24);
+                        return new Font("Noto Sans", Font.BOLD, 26);
                     }
                 } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null && MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size() > 0) {
                     if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes.contains(MySequentialGraphVars.g.vRefs.get(n.getName().split("-")[0]))) {
                         return new Font("Noto Sans", Font.BOLD, 30);
                     } else {
-                        return new Font("Noto Sans", Font.BOLD, 24);
+                        return new Font("Noto Sans", Font.BOLD, 26);
                     }
                 } else {
-                    return new Font("Noto Sans", Font.BOLD, 24);
+                    return new Font("Noto Sans", Font.BOLD, 26);
                 }
+            }
+        });
+
+        this.graphViewer.getRenderContext().setEdgeFontTransformer(new Transformer<MyDepthEdge, Font>() {
+            @Override public Font transform(MyDepthEdge e) {
+                return new Font("Noto Sans", Font.BOLD, 30);
             }
         });
 
@@ -585,7 +549,7 @@ implements ActionListener {
             @Override public String transform(MyDepthNode n) {
                 return  "<html><body>" +
                         MySequentialGraphSysUtil.getNodeName(n.getName().split("-")[0]) +
-                        "<br>" + MyMathUtil.getCommaSeperatedNumber(n.getContribution()) +
+                        "<br><center>" + MyMathUtil.getCommaSeperatedNumber(n.getContribution()) + "</center>" +
                         "</body></html>";
             }
         });
@@ -620,9 +584,9 @@ implements ActionListener {
                 String targetFullNodeName = MySequentialGraphVars.nodeNameMap.get(nodeListTable.getValueAt(nodeListTable.getSelectedRow(), 2).toString()) + "-" + depth;
                 if (flowExplorerViewerMouseListener.selectedNode != null) {
                     if (((MyDepthNode)e.getSource()).isSelectedNodePath && ((MyDepthNode)e.getDest()).isSelectedNodePath) {
-                        return new Color(1f, 0f, 0f, 0.15f);
+                        return new Color(1f, 0f, 0f, 0.20f);
                     } else {
-                        return new Color(0f, 0f, 0f, 0.025f);
+                        return new Color(0f, 0f, 0f, 0.015f);
                     }
                 } else if (allDepth.isSelected()) {
                     if (e.getSource().getName().split("-")[0].equals(targetNodeName)) {
@@ -630,7 +594,7 @@ implements ActionListener {
                     } else if (e.getDest().getName().split("-")[0].equals(targetNodeName)) {
                         return new Color(1f, 0f, 0f, 0.15f);
                     } else {
-                        return new Color(0f, 0f, 0f, 0.025f);
+                        return new Color(0f, 0f, 0f, 0.020f);
                     }
                 } else {
                     if (e.getSource().getName().equals(targetFullNodeName)) {
@@ -638,7 +602,7 @@ implements ActionListener {
                     } else if (e.getDest().getName().equals(targetFullNodeName)) {
                         return new Color(1f, 0f, 0f, 0.15f);
                     } else {
-                        return new Color(0f, 0f, 0f, 0.025f);
+                        return new Color(0f, 0f, 0f, 0.020f);
                     }
                 }
             } else if (flowExplorerViewerMouseListener.selectedNode != null) {
@@ -697,13 +661,13 @@ implements ActionListener {
         @Override public Stroke transform(MyDepthEdge e) {
             if (weightedEdge.isSelected()) {
                 float edgeStrokeWeight = e.getContribution() / MAX_EDGE_VALUE;
-                if ((edgeStrokeWeight * MAX_EDGE_STROKE) < 2) {
-                    return new BasicStroke(2f);
-                } else {
+                if (edgeStrokeWeight < 2) {
                     return new BasicStroke(edgeStrokeWeight * MAX_EDGE_STROKE);
+                } else {
+                    return new BasicStroke(3f);
                 }
             } else {
-                return new BasicStroke(2f);
+                return new BasicStroke(3f);
             }
         }
     };
@@ -713,61 +677,61 @@ implements ActionListener {
             float nodeSize = MIN_NODE_SIZE/2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
         } else if (nodeWeight > 0.05 && nodeWeight <= 0.1) {
-            float nodeSize = (MIN_NODE_SIZE+3)/2;
+            float nodeSize = (MIN_NODE_SIZE+5)/2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
         } else if (nodeWeight > 0.1 && nodeWeight <= 0.15) {
-            float nodeSize = (MIN_NODE_SIZE+6)/2;
+            float nodeSize = (MIN_NODE_SIZE+8)/2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
         } else if (nodeWeight > 0.15 && nodeWeight <= 0.2) {
-            float nodeSize = (MIN_NODE_SIZE+9)/2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
-        } else if (nodeWeight > 0.2 && nodeWeight <= 0.25) {
             float nodeSize = (MIN_NODE_SIZE+12)/2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
-        } else if (nodeWeight > 0.25 && nodeWeight <= 0.3) {
-            float nodeSize = (MIN_NODE_SIZE+15)/2;
+        } else if (nodeWeight > 0.2 && nodeWeight <= 0.25) {
+            float nodeSize = (MIN_NODE_SIZE+14)/2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
-        } else if (nodeWeight > 0.3 && nodeWeight <= 0.35) {
+        } else if (nodeWeight > 0.25 && nodeWeight <= 0.3) {
             float nodeSize = (MIN_NODE_SIZE+18)/2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
-        } else if (nodeWeight > 0.35 && nodeWeight <= 0.4) {
-            float nodeSize = (MIN_NODE_SIZE+21)/2;
+        } else if (nodeWeight > 0.3 && nodeWeight <= 0.35) {
+            float nodeSize = (MIN_NODE_SIZE+22)/2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
-        } else if (nodeWeight > 0.4 && nodeWeight <= 0.45) {
+        } else if (nodeWeight > 0.35 && nodeWeight <= 0.4) {
             float nodeSize = (MIN_NODE_SIZE+24)/2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
+        } else if (nodeWeight > 0.4 && nodeWeight <= 0.45) {
+            float nodeSize = (MIN_NODE_SIZE+26)/2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
         } else if (nodeWeight > 0.45 && nodeWeight <= 0.5) {
-            float nodeSize = (MIN_NODE_SIZE+27)/2;
+            float nodeSize = (MIN_NODE_SIZE+28)/2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
         } else if (nodeWeight > 0.5 && nodeWeight <= 0.55) {
             float nodeSize = (MIN_NODE_SIZE+30)/2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
         } else if (nodeWeight > 0.55 && nodeWeight <= 0.6) {
-            float nodeSize = (MIN_NODE_SIZE+33)/2;
+            float nodeSize = (MIN_NODE_SIZE+34)/2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
         } else if (nodeWeight > 0.6 && nodeWeight <= 0.65) {
-            float nodeSize = (MIN_NODE_SIZE+36)/2;
+            float nodeSize = (MIN_NODE_SIZE+28)/2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
         } else if (nodeWeight > 0.65 && nodeWeight <= 0.7) {
-            float nodeSize = (MIN_NODE_SIZE+39)/2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
-        } else if (nodeWeight > 0.7 && nodeWeight <= 0.75) {
             float nodeSize = (MIN_NODE_SIZE+42)/2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
+        } else if (nodeWeight > 0.7 && nodeWeight <= 0.75) {
+            float nodeSize = (MIN_NODE_SIZE+46)/2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
         } else if (nodeWeight > 0.75 && nodeWeight <= 0.8) {
-            float nodeSize = (MIN_NODE_SIZE+45)/2;
+            float nodeSize = (MIN_NODE_SIZE+50)/2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
         } else if (nodeWeight > 0.8 && nodeWeight <= 0.85) {
-            float nodeSize = (MIN_NODE_SIZE+48)/2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
-        } else if (nodeWeight > 0.85 && nodeWeight <= 0.9) {
-            float nodeSize = (MIN_NODE_SIZE+51)/2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
-        } else if (nodeWeight > 0.9 && nodeWeight <= 0.95) {
             float nodeSize = (MIN_NODE_SIZE+54)/2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
+        } else if (nodeWeight > 0.85 && nodeWeight <= 0.9) {
+            float nodeSize = (MIN_NODE_SIZE+58)/2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
+        } else if (nodeWeight > 0.9 && nodeWeight <= 0.95) {
+            float nodeSize = (MIN_NODE_SIZE+62)/2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
         } else {
-            float nodeSize = (MIN_NODE_SIZE+57)/2;
+            float nodeSize = (MIN_NODE_SIZE+66)/2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
         }
     }
@@ -928,6 +892,7 @@ implements ActionListener {
         dataset.addSeries(depthContAvgSeries);
 
         JFreeChart chart = ChartFactory.createXYLineChart("", "MAX. C.", "", dataset);
+        chart.setBackgroundPaint(Color.WHITE);
         chart.getTitle().setHorizontalAlignment(HorizontalAlignment.LEFT);
         chart.getXYPlot().setBackgroundPaint(Color.WHITE);
         chart.getXYPlot().setDomainGridlinePaint(Color.DARK_GRAY);
@@ -938,12 +903,11 @@ implements ActionListener {
         chart.getXYPlot().getRangeAxis().setLabelFont(new Font("Arial", Font.PLAIN, 0));
         chart.getXYPlot().getRangeAxis().setTickLabelFont(MySequentialGraphVars.tahomaPlainFont11);
         chart.getXYPlot().getDomainAxis().setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-        chart.setBackgroundPaint(Color.WHITE);
 
         XYPlot plot = (XYPlot) chart.getPlot();
         XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
         renderer.setSeriesPaint(0, Color.DARK_GRAY);
-        renderer.setSeriesStroke(0, new BasicStroke(1.6f));
+        renderer.setSeriesStroke(0, new BasicStroke(1.5f));
         renderer.setSeriesShapesVisible(0, true);
         renderer.setSeriesShape(0, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
         renderer.setSeriesFillPaint(0, Color.WHITE);
@@ -1520,7 +1484,7 @@ implements ActionListener {
             f.pack();
             f.setVisible(true);
         } catch (Exception ex) {
-            ex.printStackTrace();
+
         }
     }
 

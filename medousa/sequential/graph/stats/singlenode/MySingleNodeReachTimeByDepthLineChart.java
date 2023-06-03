@@ -27,64 +27,61 @@ public class MySingleNodeReachTimeByDepthLineChart
 extends JPanel {
 
     public static int instances = 0;
-    private int selectedGraph;
     private float toTime = 1f;
     private int selectedTime = 0;
-
-    private Map<Integer, Long> totalReachTimeByDepthMap;
-    private Map<Integer, Long> maxReachTimeByDepthMap;
-    private Map<Integer, Long> minReachTimeByDepthMap;
-
-    private XYSeries maxReachTimeByDepthSeries;
+    private int selectedGraph = 0;
     private XYSeries totalReachTimeByDepthSeries;
+    private Map<Integer, Long> totalReachTimeByDepthMap;
+    private XYSeries maxReachTimeByDepthSeries;
+    private Map<Integer, Long> maxReachTimeByDepthMap;
     private XYSeries minReachTimeByDepthSeries;
+    private Map<Integer, Long> minReachTimeByDepthMap = new HashMap<>();
 
     public MySingleNodeReachTimeByDepthLineChart() {
         this.decorate();
     }
 
     private void setData() {
-        MyNode selectedSingleNode = null;
-        if (MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodeNeighborNodeTypeSelector.isVisible()) {
-            selectedSingleNode = ((MyNode) MySequentialGraphVars.g.vRefs.get(MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeNameSet.iterator().next()));
-        } else {
-            selectedSingleNode = MySequentialGraphVars.getSequentialGraphViewer().singleNode;
-        }
-
         this.totalReachTimeByDepthSeries = new XYSeries("TOTAL");
         this.totalReachTimeByDepthMap = new HashMap<>();
+        this.maxReachTimeByDepthSeries = new XYSeries("MAX");
+        this.maxReachTimeByDepthMap = new HashMap<>();
         this.minReachTimeByDepthSeries = new XYSeries("MIN.");
         this.minReachTimeByDepthMap = new HashMap<>();
-        this.maxReachTimeByDepthSeries = new XYSeries("MAX.");
-        this.maxReachTimeByDepthMap = new HashMap<>();
+
+        MyNode selectedNode = null;
+        if (MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodeNeighborNodeTypeSelector.isVisible()) {
+            selectedNode = ((MyNode) MySequentialGraphVars.g.vRefs.get(MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeNameSet.iterator().next()));
+        } else {
+            selectedNode = MySequentialGraphVars.getSequentialGraphViewer().singleNode;
+        }
 
         for (int i = 1; i <= MySequentialGraphVars.mxDepth; i++) {
-            minReachTimeByDepthMap.put(i, 10000000000000000L);
+            this.minReachTimeByDepthMap.put(i, 10000000000000000L);
         }
 
         this.totalReachTimeByDepthMap.put(1, 0L);
-        for (int i = 1; i <= MySequentialGraphVars.mxDepth; i++) {
-            if (selectedSingleNode.getNodeDepthInfoMap().containsKey(i)) {
-                this.totalReachTimeByDepthMap.put(i, (long) (selectedSingleNode.getNodeDepthInfo(i).getReachTime()/toTime));
-            } else {
-                this.totalReachTimeByDepthMap.put(i, 0L);
-            }
-        }
-
         this.totalReachTimeByDepthSeries.add(1, 0);
-        for (int i = 2; i <= MySequentialGraphVars.mxDepth; i++) {
-            if (!this.totalReachTimeByDepthMap.containsKey(i)) {
-                this.totalReachTimeByDepthSeries.add(i, 0D);
+
+        this.maxReachTimeByDepthMap.put(1, 0L);
+        this.maxReachTimeByDepthSeries.add(1, 0);
+
+        this.minReachTimeByDepthMap.put(1, 0L);
+        this.minReachTimeByDepthSeries.add(1, 0);
+
+        for (int i = 1; i <= MySequentialGraphVars.mxDepth; i++) {
+            if (selectedNode.getNodeDepthInfoMap().containsKey(i)) {
+                totalReachTimeByDepthMap.put(i, (long) ((float)selectedNode.getNodeDepthInfo(i).getReachTime()/toTime));
             } else {
-                this.totalReachTimeByDepthSeries.add(i, this.totalReachTimeByDepthMap.get(i));
+                totalReachTimeByDepthMap.put(i, 0L);
             }
         }
 
         for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
-            for (int i = 0; i < MySequentialGraphVars.seqs[s].length; i++) {
+            for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
                 String n = MySequentialGraphVars.seqs[s][i].split(":")[0];
-                if (n.equals(selectedSingleNode.getName())) {
-                    long time = (long) (Long.parseLong(MySequentialGraphVars.seqs[s][i].split(":")[1])/toTime);
+                if (n.equals(selectedNode.getName())) {
+                    long time = (long) (Float.parseFloat(MySequentialGraphVars.seqs[s][i].split(":")[1])/toTime);
                     if (this.maxReachTimeByDepthMap.containsKey(i+1)) {
                         if (this.maxReachTimeByDepthMap.get(i+1) < time) {
                             this.maxReachTimeByDepthMap.put(i+1, time);
@@ -96,39 +93,47 @@ extends JPanel {
             }
         }
 
-        this.maxReachTimeByDepthSeries.add(1, 0);
-        for (int i = 2; i <= MySequentialGraphVars.mxDepth; i++) {
-            if (!this.maxReachTimeByDepthMap.containsKey(i)) {
-                this.maxReachTimeByDepthSeries.add(i, 0D);
-            } else {
-                this.maxReachTimeByDepthSeries.add(i, this.maxReachTimeByDepthMap.get(i));
-            }
-        }
-
         for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
-            for (int i = 0; i < MySequentialGraphVars.seqs[s].length - 1; i++) {
+            for (int i = 1; i < MySequentialGraphVars.seqs[s].length - 1; i++) {
                 String n = MySequentialGraphVars.seqs[s][i].split(":")[0];
-                if (n.equals(selectedSingleNode.getName())) {
-                    long time = (long) (Long.parseLong(MySequentialGraphVars.seqs[s][i + 1].split(":")[1])/toTime);
+                if (n.equals(selectedNode.getName())) {
+                    long time = (long) (Float.parseFloat(MySequentialGraphVars.seqs[s][i].split(":")[1])/toTime);
                     if (time > 0) {
                         if (this.minReachTimeByDepthMap.containsKey(i+1)) {
                             if (this.minReachTimeByDepthMap.get(i+1) > time) {
                                 this.minReachTimeByDepthMap.put(i+1, time);
                             }
                         } else {
-                            minReachTimeByDepthMap.put(i+1, time);
+                            this.minReachTimeByDepthMap.put(i+1, time);
                         }
                     }
                 }
             }
         }
 
-        this.minReachTimeByDepthSeries.add(1, 0);
+        for (int i = 2; i <= MySequentialGraphVars.mxDepth; i++) {
+            if (!this.maxReachTimeByDepthMap.containsKey(i)) {
+                this.maxReachTimeByDepthSeries.add(i, 0D);
+            } else {
+                this.maxReachTimeByDepthSeries.add(i, (this.maxReachTimeByDepthMap.get(i)));
+            }
+        }
+
+        for (int i = 1; i <= MySequentialGraphVars.mxDepth; i++) {
+            if (!this.totalReachTimeByDepthMap.containsKey(i)) {
+                this.totalReachTimeByDepthSeries.add(i, 0D);
+            } else {
+                this.totalReachTimeByDepthSeries.add(i, (this.totalReachTimeByDepthMap.get(i)));
+            }
+        }
+
         for (int i = 2; i <= MySequentialGraphVars.mxDepth; i++) {
             if (!this.minReachTimeByDepthMap.containsKey(i)) {
                 this.minReachTimeByDepthSeries.add(i, 0D);
+            } else if (this.minReachTimeByDepthMap.get(i) == 10000000000000000L) {
+                this.minReachTimeByDepthSeries.add(i, 0D);
             } else {
-                this.minReachTimeByDepthSeries.add(i, this.minReachTimeByDepthMap.get(i));
+                this.minReachTimeByDepthSeries.add(i, (this.minReachTimeByDepthMap.get(i)));
             }
         }
     }
@@ -138,7 +143,7 @@ extends JPanel {
             @Override public void run() {
                 try {
                     removeAll();
-                    setLayout(new BorderLayout(3,3));
+                    setLayout(new BorderLayout(2,2));
                     setBackground(Color.WHITE);
                     setData();
 
@@ -194,7 +199,7 @@ extends JPanel {
                     ChartPanel chartPanel = new ChartPanel( chart );
 
                     JLabel titleLabel = new JLabel(" R. T.");
-                    titleLabel.setToolTipText("REACH TIME BY DEPTH FOR SELECTED NODE");
+                    titleLabel.setToolTipText("REACH TIME BY DEPTH");
                     titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
                     titleLabel.setBackground(Color.WHITE);
                     titleLabel.setForeground(Color.DARK_GRAY);
@@ -208,52 +213,51 @@ extends JPanel {
                     enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
                     enlargeBtn.setFocusable(false);
                     enlargeBtn.setBackground(Color.WHITE);
-                    enlargeBtn.addActionListener(new ActionListener() {
-                        @Override public void actionPerformed(ActionEvent e) {
-                        new Thread(new Runnable() {
-                            @Override public void run() {
-                                enlarge();
+                    enlargeBtn.addActionListener(new ActionListener() {@Override
+                    public void actionPerformed(ActionEvent e) {
+                        new Thread(new Runnable() {@Override public void run() {
+                            enlarge();
                         }}).start();
                     }
                     });
 
                     JComboBox graphMenu = new JComboBox();
+                    graphMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
+                    graphMenu.setFocusable(false);
+                    graphMenu.setBackground(Color.WHITE);
                     graphMenu.addItem("SELECT");
                     graphMenu.addItem("TOTAL");
                     graphMenu.addItem("MAX.");
                     graphMenu.addItem("MIN.");
-                    graphMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
-                    graphMenu.setFocusable(false);
-                    graphMenu.setBackground(Color.WHITE);
                     graphMenu.setSelectedIndex(selectedGraph);
                     graphMenu.addActionListener(new ActionListener() {
                         @Override public void actionPerformed(ActionEvent e) {
                             selectedGraph = graphMenu.getSelectedIndex();
-                            setLineGraphRendering(renderer, selectedGraph);
+                            decorate();
                         }
                     });
 
-                    JComboBox timeConvertMenu = new JComboBox();
-                    timeConvertMenu.addItem("SECOND");
-                    timeConvertMenu.addItem("MINUTE");
-                    timeConvertMenu.addItem("HOUR");
-                    timeConvertMenu.setSelectedIndex(selectedTime);
-                    timeConvertMenu.setFont(MySequentialGraphVars.tahomaPlainFont12);
-                    timeConvertMenu.setFocusable(false);
-                    timeConvertMenu.setBackground(Color.WHITE);
-                    timeConvertMenu.addActionListener(new ActionListener() {
+                    JComboBox timeMenu = new JComboBox();
+                    timeMenu.addItem("SECOND");
+                    timeMenu.addItem("MINUTE");
+                    timeMenu.addItem("HOUR");
+                    timeMenu.setSelectedIndex(selectedTime);
+                    timeMenu.setFont(MySequentialGraphVars.tahomaPlainFont12);
+                    timeMenu.setFocusable(false);
+                    timeMenu.setBackground(Color.WHITE);
+                    timeMenu.addActionListener(new ActionListener() {
                         @Override public void actionPerformed(ActionEvent e) {
                             new Thread(new Runnable() {
                                 @Override public void run() {
-                                    if (timeConvertMenu.getSelectedIndex() == 0) {
+                                    if (timeMenu.getSelectedIndex() == 0) {
                                         toTime = 1;
                                         selectedTime = 0;
                                         decorate();
-                                    } else if (timeConvertMenu.getSelectedIndex() == 1) {
-                                        toTime = 60;
+                                    } else if (timeMenu.getSelectedIndex() == 1) {
                                         selectedTime = 1;
+                                        toTime = 60;
                                         decorate();
-                                    } else if (timeConvertMenu.getSelectedIndex() == 2) {
+                                    } else if (timeMenu.getSelectedIndex() == 2) {
                                         toTime = 3600;
                                         selectedTime = 2;
                                         decorate();
@@ -267,7 +271,7 @@ extends JPanel {
                     btnPanel.setBackground(Color.WHITE);
                     btnPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
                     btnPanel.add(graphMenu);
-                    btnPanel.add(timeConvertMenu);
+                    btnPanel.add(timeMenu);
                     btnPanel.add(enlargeBtn);
 
                     JPanel menuPanel = new JPanel();
@@ -282,49 +286,6 @@ extends JPanel {
                 } catch (Exception ex) {ex.printStackTrace();}
             }
         });
-    }
-
-    private void setLineGraphRendering(XYLineAndShapeRenderer renderer, int selected) {
-        Color colors [] = {Color.RED, Color.BLUE, Color.DARK_GRAY, Color.ORANGE};
-        if (selected == 0) {
-            renderer.setSeriesPaint(0, colors[0]);
-            renderer.setSeriesStroke(0, new BasicStroke(1.5f));
-            renderer.setSeriesLinesVisible(0, true);
-            renderer.setSeriesShape(0, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
-            renderer.setSeriesFillPaint(0, Color.WHITE);
-
-            renderer.setSeriesPaint(1, colors[1]);
-            renderer.setSeriesStroke(1, new BasicStroke(1.5f));
-            renderer.setSeriesLinesVisible(1, true);
-            renderer.setSeriesShape(1, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
-            renderer.setSeriesFillPaint(1, Color.WHITE);
-
-            renderer.setSeriesPaint(2, colors[2]);
-            renderer.setSeriesStroke(2, new BasicStroke(1.5f));
-            renderer.setSeriesLinesVisible(2, true);
-            renderer.setSeriesShape(2, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
-            renderer.setSeriesFillPaint(2, Color.WHITE);
-
-        } else {
-            for (int i = 0; i < 3; i++) {
-                if (i == (selected-1)) {
-                    renderer.setSeriesPaint(i, colors[i]);
-                    renderer.setSeriesStroke(i, new BasicStroke(1.5f));
-                    renderer.setSeriesLinesVisible(i, true);
-                    renderer.setSeriesFillPaint(i, Color.WHITE);
-                    renderer.setSeriesShape(i, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
-                } else {
-                    renderer.setSeriesPaint(i, new Color(0f, 0f, 0f, 0f));
-                    renderer.setSeriesStroke(i, new BasicStroke(0f));
-                    renderer.setSeriesLinesVisible(i, false);
-                    renderer.setSeriesFillPaint(i, new Color(0f, 0f, 0f, 0f));
-                    renderer.setSeriesShape(i, new Ellipse2D.Double(0f, 0f, 0f, 0f));
-                }
-            }
-        }
-
-        revalidate();
-        repaint();
     }
 
     public void enlarge() {

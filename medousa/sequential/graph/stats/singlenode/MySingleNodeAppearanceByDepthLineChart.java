@@ -26,6 +26,7 @@ extends JPanel {
     public MySingleNodeAppearanceByDepthLineChart() {
         this.decorate();
     }
+
     public void decorate() {
         try {
             SwingUtilities.invokeLater(new Runnable() {
@@ -40,6 +41,7 @@ extends JPanel {
                             series.add(i, 0);
                         }
                     }
+
                     XYSeriesCollection dataset = new XYSeriesCollection();
                     dataset.addSeries(series);
                     JFreeChart chart = ChartFactory.createXYLineChart("", "NO. OF APPEARANCES BY DEPTH", "", dataset);
@@ -85,8 +87,9 @@ extends JPanel {
                     enlargeBtn.setBackground(Color.WHITE);
                     enlargeBtn.addActionListener(new ActionListener() {
                         @Override public void actionPerformed(ActionEvent e) {
-                        new Thread(new Runnable() {@Override public void run() {
-                            enlarge();
+                        new Thread(new Runnable() {
+                            @Override public void run() {
+                                enlarge();
                         }}).start();}
                     });
                     JPanel btnPanel = new JPanel();
@@ -115,16 +118,14 @@ extends JPanel {
 
     public void enlarge() {
         MyProgressBar pb = new MyProgressBar(false);
-        JFrame frame = new JFrame("NO. OF APPEARANCES OF THE SELECTED NODE BY DEPTH");
-        frame.setLayout(new BorderLayout());
-        frame.setBackground(Color.WHITE);
-        frame.setPreferredSize(new Dimension(400, 450));
-        pb.updateValue(20, 100);
+        JFrame f = new JFrame("NO. OF APPEARANCES OF THE SELECTED NODE BY DEPTH");
+        f.setLayout(new BorderLayout());
+        f.setBackground(Color.WHITE);
+        f.setPreferredSize(new Dimension(400, 450));
 
         MySingleNodeAppearanceByDepthLineChart reachTimeByDepthLineChart = new MySingleNodeAppearanceByDepthLineChart();
-        frame.getContentPane().add(reachTimeByDepthLineChart, BorderLayout.CENTER);
-        frame.pack();
-        pb.updateValue(60, 100);
+        f.getContentPane().add(reachTimeByDepthLineChart, BorderLayout.CENTER);
+        f.pack();
 
         Border blackline = BorderFactory.createLineBorder(Color.black);
         TitledBorder titledBorder = BorderFactory.createTitledBorder(blackline, "");
@@ -135,10 +136,8 @@ extends JPanel {
         pb.updateValue(100,100);
         pb.dispose();
 
-        frame.setCursor(Cursor.HAND_CURSOR);
-        frame.setVisible(true);
-        frame.setAlwaysOnTop(true);
-        frame.setAlwaysOnTop(false);
+        f.setCursor(Cursor.HAND_CURSOR);
+        f.setVisible(true);
     }
 
 }

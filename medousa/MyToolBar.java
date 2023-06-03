@@ -42,7 +42,7 @@ implements ActionListener {
 
 
     protected   JComboBox projectMenuComboBox;
-    private final String [] projectMenuItems = {"", "DIRECT NETWORK", "SEQUENTIAL NETWORK"};
+    private final String [] projectMenuItems = {"", "DIRECT NETWORK", "COMPLEX NETWORK"};
 
     public MyToolBar() {
         this.decorate();
