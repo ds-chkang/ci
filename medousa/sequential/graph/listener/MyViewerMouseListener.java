@@ -29,95 +29,76 @@ implements MouseListener {
     }
 
     @Override public void mouseClicked(MouseEvent e) {
-        try {
-            if (SwingUtilities.isLeftMouseButton(e) &&
-                MySequentialGraphVars.getSequentialGraphViewer().getPickedVertexState().getPicked().size() == 0 &&
-                MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.getSelectedIndex() == 0) {
-                if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null ||
-                    MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null ||
-                    MySequentialGraphVars.getSequentialGraphViewer().vc.tableTabbedPane.getSelectedIndex() == 2 ||
-                    MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() > 0 ||
-                    MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() != 1 ||
-                    MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelSelecter.getSelectedIndex() != 1 ||
-                    MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelSelecter.getSelectedIndex() > 0 ||
-                    MySequentialGraphVars.getSequentialGraphViewer().hoveredNode != null ||
-                    MySequentialGraphVars.getSequentialGraphViewer().excluded) {
+        new Thread(new Runnable() {
+            @Override public void run() {
+                try {
+                    if (SwingUtilities.isLeftMouseButton(e) &&
+                            MySequentialGraphVars.getSequentialGraphViewer().getPickedVertexState().getPicked().size() == 0 &&
+                            MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.getSelectedIndex() == 0) {
+                        if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null ||
+                                MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null ||
+                                MySequentialGraphVars.getSequentialGraphViewer().vc.tableTabbedPane.getSelectedIndex() == 2 ||
+                                MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueSelecter.getSelectedIndex() > 0 ||
+                                MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() != 1 ||
+                                MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelSelecter.getSelectedIndex() != 1 ||
+                                MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelSelecter.getSelectedIndex() > 0 ||
+                                MySequentialGraphVars.getSequentialGraphViewer().hoveredNode != null ||
+                                MySequentialGraphVars.getSequentialGraphViewer().excluded) {
+                                    MyViewerComponentControllerUtil.setDefaultViewerLook();
+                        }
+                    } else if (SwingUtilities.isLeftMouseButton(e) &&
+                            MySequentialGraphVars.getSequentialGraphViewer().getPickedVertexState().getPicked().size() == 0 &&
+                            MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.getSelectedIndex() > 0) {
+                        if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthNeighborNodeTypeSelector.isShowing()) {
 
-                    new Thread(new Runnable() {
-                        @Override public void run() {
+                                    if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthNeighborNodeTypeSelector.getSelectedIndex() > 0) {
+                                        MySequentialGraphVars.getSequentialGraphViewer().singleNode = null;
+                                        MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors = null;
+                                        MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors = null;
+                                        MySequentialGraphVars.getSequentialGraphViewer().vc.depthNeighborNodeTypeSelector.setSelectedIndex(0);
+                                    }
+
+                        } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodeNeighborNodeTypeSelector.isShowing()) {
+                                    if (MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodeNeighborNodeTypeSelector.getSelectedIndex() > 0) {
+                                        MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors = null;
+                                        MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors = null;
+                                        MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodeNeighborNodeTypeSelector.setSelectedIndex(0);
+                                    }
+
+                        } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.getSelectedIndex() == 0 && (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null || MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null || MySequentialGraphVars.getSequentialGraphViewer().excluded)) {
                             MyViewerComponentControllerUtil.setDefaultViewerLook();
                         }
-                    }).start();
+                    } else if (SwingUtilities.isRightMouseButton(e) &&
+                            MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null &&
+                            MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.getSelectedIndex() == 0) {
+                                MyMultiNodeMenu multiNodeMenu = new MyMultiNodeMenu();
+                                multiNodeMenu.show(MySequentialGraphVars.getSequentialGraphViewer(), e.getX(), e.getY());
+
+                    } else if (SwingUtilities.isRightMouseButton(e) &&
+                            MySequentialGraphVars.getSequentialGraphViewer().getPickedVertexState().getPicked().size() == 0 &&
+                            MySequentialGraphVars.getSequentialGraphViewer().multiNodes == null &&
+                            MySequentialGraphVars.getSequentialGraphViewer().singleNode == null &&
+                            MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.getSelectedIndex() == 0) {
+                                MyViewerMenu graphViewerMenu = new MyViewerMenu();
+                                graphViewerMenu.show(MySequentialGraphVars.getSequentialGraphViewer(), e.getX(), e.getY());
+                    } else if (SwingUtilities.isRightMouseButton(e) &&
+                            MySequentialGraphVars.getSequentialGraphViewer().getPickedVertexState().getPicked().size() == 0 &&
+                            MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.getSelectedIndex() > 0) {
+                                MyDepthNodeMenu graphViewerDepthMenu = new MyDepthNodeMenu();
+                                graphViewerDepthMenu.show(MySequentialGraphVars.getSequentialGraphViewer(), e.getX(), e.getY());
+                    } else if (SwingUtilities.isRightMouseButton(e) &&
+                            MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
+
+                                MySingleNodeMenu singleNodeMenu = new MySingleNodeMenu();
+                                singleNodeMenu.show(MySequentialGraphVars.getSequentialGraphViewer(), e.getX(), e.getY());
+
+                    }
+                } catch (Exception ex) {
+                    MySequentialGraphVars.getSequentialGraphViewer().revalidate();
+                    MySequentialGraphVars.getSequentialGraphViewer().repaint();
                 }
-            } else if (SwingUtilities.isLeftMouseButton(e) &&
-                MySequentialGraphVars.getSequentialGraphViewer().getPickedVertexState().getPicked().size() == 0 &&
-                MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.getSelectedIndex() > 0) {
-                if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthNeighborNodeTypeSelector.isShowing()) {
-                    new Thread(new Runnable() {
-                        @Override public void run() {
-                            if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthNeighborNodeTypeSelector.getSelectedIndex() > 0) {
-                                MySequentialGraphVars.getSequentialGraphViewer().singleNode = null;
-                                MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors = null;
-                                MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors = null;
-                                MySequentialGraphVars.getSequentialGraphViewer().vc.depthNeighborNodeTypeSelector.setSelectedIndex(0);
-                            }
-                        }
-                    }).start();
-                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodeNeighborNodeTypeSelector.isShowing()) {
-                    new Thread(new Runnable() {
-                        @Override public void run() {
-                            if (MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodeNeighborNodeTypeSelector.getSelectedIndex() > 0) {
-                                MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors = null;
-                                MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors = null;
-                                MySequentialGraphVars.getSequentialGraphViewer().vc.selectedNodeNeighborNodeTypeSelector.setSelectedIndex(0);
-                            }
-                        }
-                    }).start();
-                } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.getSelectedIndex() == 0 && (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null || MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null || MySequentialGraphVars.getSequentialGraphViewer().excluded)) {
-                    MyViewerComponentControllerUtil.setDefaultViewerLook();
-                }
-            } else if (SwingUtilities.isRightMouseButton(e) &&
-                MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null &&
-                MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.getSelectedIndex() == 0) {
-                new Thread(new Runnable() {
-                    @Override public void run() {
-                        MyMultiNodeMenu multiNodeMenu = new MyMultiNodeMenu();
-                        multiNodeMenu.show(MySequentialGraphVars.getSequentialGraphViewer(), e.getX(), e.getY());
-                    }
-                }).start();
-            } else if (SwingUtilities.isRightMouseButton(e) &&
-                MySequentialGraphVars.getSequentialGraphViewer().getPickedVertexState().getPicked().size() == 0 &&
-                MySequentialGraphVars.getSequentialGraphViewer().multiNodes == null &&
-                MySequentialGraphVars.getSequentialGraphViewer().singleNode == null &&
-                MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.getSelectedIndex() == 0) {
-                new Thread(new Runnable() {
-                    @Override public void run() {
-                        MyViewerMenu graphViewerMenu = new MyViewerMenu();
-                        graphViewerMenu.show(MySequentialGraphVars.getSequentialGraphViewer(), e.getX(), e.getY());
-                    }
-                }).start();
-            } else if (SwingUtilities.isRightMouseButton(e) &&
-                MySequentialGraphVars.getSequentialGraphViewer().getPickedVertexState().getPicked().size() == 0 &&
-                MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.getSelectedIndex() > 0) {
-                new Thread(new Runnable() {
-                    @Override public void run() {
-                        MyDepthNodeMenu graphViewerDepthMenu = new MyDepthNodeMenu();
-                        graphViewerDepthMenu.show(MySequentialGraphVars.getSequentialGraphViewer(), e.getX(), e.getY());
-                    }
-                }).start();
-            } else if (SwingUtilities.isRightMouseButton(e) &&
-                MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
-                new Thread(new Runnable() {
-                    @Override public void run() {
-                        MySingleNodeMenu singleNodeMenu = new MySingleNodeMenu();
-                        singleNodeMenu.show(MySequentialGraphVars.getSequentialGraphViewer(), e.getX(), e.getY());
-                    }
-                }).start();
             }
-        } catch (Exception ex) {
-            MySequentialGraphVars.getSequentialGraphViewer().revalidate();
-            MySequentialGraphVars.getSequentialGraphViewer().repaint();
-        }
+        }).start();
     }
 
     @Override public void mousePressed(MouseEvent e) {

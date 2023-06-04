@@ -2062,9 +2062,14 @@ implements ActionListener {
         LinkedHashMap<String, Float> sortedEdges = new LinkedHashMap<>();
         for (MyEdge e : edges) {
             String ename = e.getSource().getName() + "-" + e.getDest().getName();
-            sortedEdges.put(ename, (float)e.getContribution());
+            if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() <= 1) {
+                sortedEdges.put(ename, 0.00f);
+            } else {
+                sortedEdges.put(ename, (float)e.getContribution());
+            }
         }
         sortedEdges = MySequentialGraphSysUtil.sortMapByFloatValue(sortedEdges);
+
         for (String e : sortedEdges.keySet()) {
             String source = MySequentialGraphSysUtil.getDecodedNodeName(e.split("-")[0]);
             String dest = MySequentialGraphSysUtil.getDecodedNodeName(e.split("-")[1]);
@@ -2861,71 +2866,92 @@ implements ActionListener {
         if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
             if (MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly ||
                 MySequentialGraphVars.getSequentialGraphViewer().successorsOnly) {
-                LinkedHashMap<String, Long> edgeValueMap = new LinkedHashMap<>();
+                LinkedHashMap<String, Float> edgeValueMap = new LinkedHashMap<>();
                 Collection<MyEdge> edges = MySequentialGraphVars.g.getIncidentEdges(MySequentialGraphVars.getSequentialGraphViewer().singleNode);
                 for (MyEdge e : edges) {
                     if (MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly && e.getDest().getName().equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
-                        edgeValueMap.put(e.getSource() + "-" + e.getDest(), (long) e.getContribution());
+                        if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() <= 1) {
+                            edgeValueMap.put(e.getSource() + "-" + e.getDest(), 0.00f);
+                        } else {
+                            edgeValueMap.put(e.getSource() + "-" + e.getDest(), e.getCurrentValue());
+                        }
                     } else if (MySequentialGraphVars.getSequentialGraphViewer().successorsOnly && e.getSource().getName().equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
-                        edgeValueMap.put(e.getSource() + "-" + e.getDest(), (long) e.getContribution());
+                        if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() <= 1) {
+                            edgeValueMap.put(e.getSource() + "-" + e.getDest(), 0.00f);
+                        } else {
+                            edgeValueMap.put(e.getSource() + "-" + e.getDest(), e.getCurrentValue());
+                        }
                     }
                 }
-                edgeValueMap = MySequentialGraphSysUtil.sortMapByLongValue(edgeValueMap);
+                edgeValueMap = MySequentialGraphSysUtil.sortMapByFloatValue(edgeValueMap);
 
                 for (String edgeName : edgeValueMap.keySet()) {
                     String [] pairNames = edgeName.split("-");
                     ((DefaultTableModel) edgeListTable.getModel()).addRow(new String[]{
                         MySequentialGraphSysUtil.getNodeName(pairNames[0]),
                         MySequentialGraphSysUtil.getNodeName(pairNames[1]),
-                        MyMathUtil.getCommaSeperatedNumber(edgeValueMap.get(edgeName))});
+                        MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(edgeValueMap.get(edgeName)))});
                 }
             } else {
-                LinkedHashMap<String, Long> edgeValueMap = new LinkedHashMap<>();
+                LinkedHashMap<String, Float> edgeValueMap = new LinkedHashMap<>();
                 Collection<MyEdge> edges = MySequentialGraphVars.g.getIncidentEdges(MySequentialGraphVars.getSequentialGraphViewer().singleNode);
                 for (MyEdge e : edges) {
-                    edgeValueMap.put(e.getSource() + "-" + e.getDest(), (long) e.getContribution());
+                    if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() <= 1) {
+                        edgeValueMap.put(e.getSource() + "-" + e.getDest(), 0.00f);
+                    } else {
+                        edgeValueMap.put(e.getSource() + "-" + e.getDest(), e.getCurrentValue());
+                    }
                 }
-                edgeValueMap = MySequentialGraphSysUtil.sortMapByLongValue(edgeValueMap);
+                edgeValueMap = MySequentialGraphSysUtil.sortMapByFloatValue(edgeValueMap);
 
                 for (String edgeName : edgeValueMap.keySet()) {
                     String [] pairNames = edgeName.split("-");
                     ((DefaultTableModel) edgeListTable.getModel()).addRow(new String[]{
                         MySequentialGraphSysUtil.getNodeName(pairNames[0]),
                         MySequentialGraphSysUtil.getNodeName(pairNames[1]),
-                        MyMathUtil.getCommaSeperatedNumber(edgeValueMap.get(edgeName))});
+                        MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(edgeValueMap.get(edgeName)))});
                 }
             }
         } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null) {
-            LinkedHashMap<String, Long> edgeMap = new LinkedHashMap<>();
+            LinkedHashMap<String, Float> edgeValueMap = new LinkedHashMap<>();
             for (MyNode selectedNode : MySequentialGraphVars.getSequentialGraphViewer().multiNodes) {
                 Collection<MyEdge> edges = MySequentialGraphVars.g.getIncidentEdges(selectedNode);
                 for (MyEdge e : edges) {
-                    edgeMap.put(e.getSource() + "-" + e.getDest(), (long) e.getContribution());
+                    if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() <= 1) {
+                        edgeValueMap.put(e.getSource() + "-" + e.getDest(), 0.00f);
+                    } else {
+                        edgeValueMap.put(e.getSource() + "-" + e.getDest(), e.getCurrentValue());
+                    }
                 }
             }
-            edgeMap = MySequentialGraphSysUtil.sortMapByLongValue(edgeMap);
-            for (String edgeName : edgeMap.keySet()) {
+            edgeValueMap = MySequentialGraphSysUtil.sortMapByFloatValue(edgeValueMap);
+            for (String edgeName : edgeValueMap.keySet()) {
                 String[] pairNames = edgeName.split("-");
                 ((DefaultTableModel) edgeListTable.getModel()).addRow(
                     new String[]{
                         MySequentialGraphSysUtil.getNodeName(pairNames[0]),
                         MySequentialGraphSysUtil.getNodeName(pairNames[1]),
-                        MyMathUtil.getCommaSeperatedNumber(edgeMap.get(edgeName))});
+                        MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(edgeValueMap.get(edgeName)))});
             }
         } else {
-            LinkedHashMap<String, Float> edgeMap = new LinkedHashMap<>();
+            LinkedHashMap<String, Float> edgeValueMap = new LinkedHashMap<>();
             Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
             for (MyEdge e : edges) {
-                edgeMap.put(e.getSource() + "-" + e.getDest(), e.getCurrentValue());
+                if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() <= 1) {
+                    edgeValueMap.put(e.getSource() + "-" + e.getDest(), 0.00f);
+                } else {
+                    edgeValueMap.put(e.getSource() + "-" + e.getDest(), e.getCurrentValue());
+                }
             }
-            edgeMap = MySequentialGraphSysUtil.sortMapByFloatValue(edgeMap);
-            for (String edgeName : edgeMap.keySet()) {
+            edgeValueMap = MySequentialGraphSysUtil.sortMapByFloatValue(edgeValueMap);
+
+            for (String edgeName : edgeValueMap.keySet()) {
                 String [] pairNames = edgeName.split("-");
                 ((DefaultTableModel) edgeListTable.getModel()).addRow(
                         new String[]{
                             MySequentialGraphSysUtil.getNodeName(pairNames[0]),
                             MySequentialGraphSysUtil.getNodeName(pairNames[1]),
-                            MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(edgeMap.get(edgeName)))});
+                            MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(edgeValueMap.get(edgeName)))});
             }
         }
         edgeListTable.revalidate();
