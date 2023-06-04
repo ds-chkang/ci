@@ -766,9 +766,9 @@ implements Serializable {
             }
         } else if (hoveredNode != null) {
             if (e.getSource() == hoveredNode) {
-                return new Color(0, 0, 1, 0.3f);
+                return new Color(0, 0, 1, 0.45f);
             } else if (e.getDest() == hoveredNode) {
-                return new Color(1, 0, 0, 0.55f);
+                return new Color(1, 0, 0, 0.6f);
             } else {
                 return Color.decode("#d8d8d8");
             }

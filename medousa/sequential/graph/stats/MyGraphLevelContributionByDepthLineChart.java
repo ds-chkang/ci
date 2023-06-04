@@ -551,15 +551,16 @@ extends JPanel {
                     titlePanel.add(titleLabel);
 
                     JComboBox graphMenu = new JComboBox();
-                    graphMenu.setToolTipText("SELECT A CHART FOR A DEPTH DISTRIBUTION.");
-                    String[] tooltips = {"SELECT A CHART FOR A DEPTH DISTRIBUTION.",
-                            "IN-CONTRIBUTION DISTRIBUTION BY DEPTH.",
-                            "OUT-CONTRIBUTION DISTRIBUTION BY DEPTH",
-                            "MAX. IN-CONTRIBUTION DISTRIBUTION BY DEPTH.",
-                            "MIN. IN-CONTRIBUTION DISTRIBUTION BY DEPTH",
-                            "MAX. OUT-CONTRIBUTION DISTRIBUTION BY DEPTH",
-                            "MIN. IN-CONTRIBUTION DISTRIBUTION BY DEPTH,",
-                            "CONTRIBUTION DIFFERENCE DISTRIBUTION BY DEPTH."};
+                    graphMenu.setToolTipText("SELECT A CHART FOR A DEPTH DISTRIBUTION");
+                    String[] tooltips = {
+                        "SELECT A CHART FOR A DEPTH DISTRIBUTION",
+                        "IN-CONTRIBUTION DISTRIBUTION BY DEPTH",
+                        "OUT-CONTRIBUTION DISTRIBUTION BY DEPTH",
+                        "MAX. IN-CONTRIBUTION DISTRIBUTION BY DEPTH.",
+                        "MIN. IN-CONTRIBUTION DISTRIBUTION BY DEPTH",
+                        "MAX. OUT-CONTRIBUTION DISTRIBUTION BY DEPTH",
+                        "MIN. IN-CONTRIBUTION DISTRIBUTION BY DEPTH",
+                        "CONTRIBUTION DIFFERENCE DISTRIBUTION BY DEPTH"};
                     graphMenu.setRenderer(new MyComboBoxTooltipRenderer(tooltips));
                     graphMenu.addItem("SELECT");
                     graphMenu.addItem("IN");

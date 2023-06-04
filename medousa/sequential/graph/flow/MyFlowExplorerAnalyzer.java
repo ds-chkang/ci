@@ -218,64 +218,60 @@ implements ActionListener {
     }
 
     private void createSelectedNodeFromPathGraph() {
-        try {
-            for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
-                for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
-                    String ps = MySequentialGraphVars.seqs[s][i-1].split(":")[0];
-                    if (ps.equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
-                        int depth = 1;
-                        for (int j = i; j < MySequentialGraphVars.seqs[s].length; j++) {
-                            ps = MySequentialGraphVars.seqs[s][j-1].split(":")[0] + "-" + (depth-1);
-                            String ss = MySequentialGraphVars.seqs[s][j].split(":")[0] + "-" + depth;
-                            String edgeRef = ps + "-" + ss;
-                            if (!this.edgeRefMap.containsKey(edgeRef)) {
+        for (int s=0; s < MySequentialGraphVars.seqs.length; s++) {
+            for (int i=1; i < MySequentialGraphVars.seqs[s].length; i++) {
+                String ps = MySequentialGraphVars.seqs[s][i-1].split(":")[0];
+                if (ps.equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
+                    int depth = 1;
+                    for (int j=i; j < MySequentialGraphVars.seqs[s].length; j++) {
+                        ps = MySequentialGraphVars.seqs[s][j-1].split(":")[0] + "-" + (depth-1);
+                        String ss = MySequentialGraphVars.seqs[s][j].split(":")[0] + "-" + depth;
+                        String edgeRef = ps + "-" + ss;
+                        if (!this.edgeRefMap.containsKey(edgeRef)) {
+                            MyDepthNode pn = null;
+                            MyDepthNode sn = null;
 
-                                MyDepthNode pn = null;
-                                MyDepthNode sn = null;
-
-                                if (!this.pathFlowGraph.vRefs.containsKey(ps)) {
-                                    pn = new MyDepthNode(ps, depth - 1);
-                                    this.pathFlowGraph.vRefs.put(ps, pn);
-                                } else {
-                                    pn = (MyDepthNode) this.pathFlowGraph.vRefs.get(ps);
-                                }
-
-                                if (!this.pathFlowGraph.vRefs.containsKey(ss)) {
-                                    sn = new MyDepthNode(ss, depth);
-                                    this.pathFlowGraph.vRefs.put(ss, sn);
-                                } else {
-                                    sn = (MyDepthNode) this.pathFlowGraph.vRefs.get(ss);
-                                }
-
-                                pn.contribution++;
-
-                                if ((j + 1) == MySequentialGraphVars.seqs[s].length) {sn.contribution++;}
-
-                                MyDepthEdge edge = new MyDepthEdge(pn, sn);
-                                edge.contribution++;
-                                this.pathFlowGraph.addEdge(edge, pn, sn);
-                                this.edgeRefMap.put(edgeRef, edge);
-
+                            if (!this.pathFlowGraph.vRefs.containsKey(ps)) {
+                                pn = new MyDepthNode(ps, depth-1);
+                                this.pathFlowGraph.vRefs.put(ps, pn);
                             } else {
-
-                                MyDepthNode sn = (MyDepthNode) this.pathFlowGraph.vRefs.get(ss);
-                                MyDepthNode pn = (MyDepthNode) this.pathFlowGraph.vRefs.get(ps);
-                                pn.contribution++;
-
-                                if ((j + 1) == MySequentialGraphVars.seqs[s].length) {
-                                    sn.contribution++;
-                                }
-
-                                this.edgeRefMap.get(edgeRef).contribution++;
+                                pn = (MyDepthNode) this.pathFlowGraph.vRefs.get(ps);
                             }
-                            depth++;
+
+                            if (!this.pathFlowGraph.vRefs.containsKey(ss)) {
+                                sn = new MyDepthNode(ss, depth);
+                                this.pathFlowGraph.vRefs.put(ss, sn);
+                            } else {
+                                sn = (MyDepthNode) this.pathFlowGraph.vRefs.get(ss);
+                            }
+
+
+                            pn.contribution++;
+
+                            if ((j+1) == MySequentialGraphVars.seqs[s].length) {
+                                sn.contribution++;
+                            }
+
+                            MyDepthEdge edge = new MyDepthEdge(pn, sn);
+                            edge.contribution++;
+                            this.pathFlowGraph.addEdge(edge, pn, sn);
+                            this.edgeRefMap.put(edgeRef, edge);
+                        } else {
+                            MyDepthNode sn = (MyDepthNode) this.pathFlowGraph.vRefs.get(ss);
+                            MyDepthNode pn = (MyDepthNode) this.pathFlowGraph.vRefs.get(ps);
+                            pn.contribution++;
+
+                            if ((j+1) == MySequentialGraphVars.seqs[s].length) {
+                                sn.contribution++;
+                            }
+                            this.edgeRefMap.get(edgeRef).contribution++;
                         }
-                        break;
+                        depth++;
                     }
+                    break;
                 }
+                break;
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
         }
     }
 
@@ -393,6 +389,7 @@ implements ActionListener {
                     }
                     break;
                 }
+                break;
             }
         }
     }

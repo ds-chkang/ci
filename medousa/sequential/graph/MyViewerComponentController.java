@@ -2062,14 +2062,13 @@ implements ActionListener {
         LinkedHashMap<String, Float> sortedEdges = new LinkedHashMap<>();
         for (MyEdge e : edges) {
             String ename = e.getSource().getName() + "-" + e.getDest().getName();
-            if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() <= 1) {
+            if (edgeValueSelecter.getSelectedIndex() <= 1) {
                 sortedEdges.put(ename, 0.00f);
             } else {
-                sortedEdges.put(ename, (float)e.getContribution());
+                sortedEdges.put(ename, e.getCurrentValue());
             }
         }
         sortedEdges = MySequentialGraphSysUtil.sortMapByFloatValue(sortedEdges);
-
         for (String e : sortedEdges.keySet()) {
             String source = MySequentialGraphSysUtil.getDecodedNodeName(e.split("-")[0]);
             String dest = MySequentialGraphSysUtil.getDecodedNodeName(e.split("-")[1]);
@@ -2869,17 +2868,20 @@ implements ActionListener {
                 LinkedHashMap<String, Float> edgeValueMap = new LinkedHashMap<>();
                 Collection<MyEdge> edges = MySequentialGraphVars.g.getIncidentEdges(MySequentialGraphVars.getSequentialGraphViewer().singleNode);
                 for (MyEdge e : edges) {
-                    if (MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly && e.getDest().getName().equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
-                        if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() <= 1) {
-                            edgeValueMap.put(e.getSource() + "-" + e.getDest(), 0.00f);
+                    if (MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly &&
+                        e.getDest().getName().equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
+                        String ename = e.getSource().getName() + "-" + e.getDest().getName();
+                        if (edgeValueSelecter.getSelectedIndex() <= 1) {
+                            edgeValueMap.put(ename, 0.00f);
                         } else {
-                            edgeValueMap.put(e.getSource() + "-" + e.getDest(), e.getCurrentValue());
+                            edgeValueMap.put(ename, e.getCurrentValue());
                         }
                     } else if (MySequentialGraphVars.getSequentialGraphViewer().successorsOnly && e.getSource().getName().equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
-                        if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() <= 1) {
-                            edgeValueMap.put(e.getSource() + "-" + e.getDest(), 0.00f);
+                        String ename = e.getSource().getName() + "-" + e.getDest().getName();
+                        if (edgeValueSelecter.getSelectedIndex() <= 1) {
+                            edgeValueMap.put(ename, 0.00f);
                         } else {
-                            edgeValueMap.put(e.getSource() + "-" + e.getDest(), e.getCurrentValue());
+                            edgeValueMap.put(ename, e.getCurrentValue());
                         }
                     }
                 }
@@ -2896,10 +2898,11 @@ implements ActionListener {
                 LinkedHashMap<String, Float> edgeValueMap = new LinkedHashMap<>();
                 Collection<MyEdge> edges = MySequentialGraphVars.g.getIncidentEdges(MySequentialGraphVars.getSequentialGraphViewer().singleNode);
                 for (MyEdge e : edges) {
-                    if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() <= 1) {
-                        edgeValueMap.put(e.getSource() + "-" + e.getDest(), 0.00f);
+                    String ename = e.getSource().getName() + "-" + e.getDest().getName();
+                    if (edgeValueSelecter.getSelectedIndex() <= 1) {
+                        edgeValueMap.put(ename, 0.00f);
                     } else {
-                        edgeValueMap.put(e.getSource() + "-" + e.getDest(), e.getCurrentValue());
+                        edgeValueMap.put(ename, e.getCurrentValue());
                     }
                 }
                 edgeValueMap = MySequentialGraphSysUtil.sortMapByFloatValue(edgeValueMap);
@@ -2917,10 +2920,11 @@ implements ActionListener {
             for (MyNode selectedNode : MySequentialGraphVars.getSequentialGraphViewer().multiNodes) {
                 Collection<MyEdge> edges = MySequentialGraphVars.g.getIncidentEdges(selectedNode);
                 for (MyEdge e : edges) {
-                    if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() <= 1) {
-                        edgeValueMap.put(e.getSource() + "-" + e.getDest(), 0.00f);
+                    String ename = e.getSource().getName() + "-" + e.getDest().getName();
+                    if (edgeValueSelecter.getSelectedIndex() <= 1) {
+                        edgeValueMap.put(ename, 0.00f);
                     } else {
-                        edgeValueMap.put(e.getSource() + "-" + e.getDest(), e.getCurrentValue());
+                        edgeValueMap.put(ename, e.getCurrentValue());
                     }
                 }
             }
@@ -2937,14 +2941,14 @@ implements ActionListener {
             LinkedHashMap<String, Float> edgeValueMap = new LinkedHashMap<>();
             Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
             for (MyEdge e : edges) {
-                if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() <= 1) {
-                    edgeValueMap.put(e.getSource() + "-" + e.getDest(), 0.00f);
+                String ename = e.getSource().getName() + "-" + e.getDest().getName();
+                if (edgeValueSelecter.getSelectedIndex() <= 1) {
+                    edgeValueMap.put(ename, 0.00f);
                 } else {
-                    edgeValueMap.put(e.getSource() + "-" + e.getDest(), e.getCurrentValue());
+                    edgeValueMap.put(ename, e.getCurrentValue());
                 }
             }
             edgeValueMap = MySequentialGraphSysUtil.sortMapByFloatValue(edgeValueMap);
-
             for (String edgeName : edgeValueMap.keySet()) {
                 String [] pairNames = edgeName.split("-");
                 ((DefaultTableModel) edgeListTable.getModel()).addRow(

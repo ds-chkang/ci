@@ -20,7 +20,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Random;
 
 public class MySingleNodeStartingNodeValueHistogramDistributionLineChart
@@ -37,44 +36,6 @@ implements ActionListener {
         this.decorate();
     }
 
-    private LinkedHashMap<String, Long> setData() {
-        int count = 0;
-        colors = new ArrayList<>();
-        LinkedHashMap<String, Long> nodeValueMap = new LinkedHashMap<>();
-        for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
-            for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
-                String n = MySequentialGraphVars.seqs[s][i].split(":")[0];
-                if (n.equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
-                    String startingNode = null;
-                    if (selelctedGraph == 0) {
-                        startingNode = MySequentialGraphVars.seqs[s][0].split(":")[0];
-                    } else {
-                        startingNode = MySequentialGraphVars.seqs[s][1].split(":")[0];
-                    }
-                    startingNode = MySequentialGraphSysUtil.getNodeName(startingNode);
-                    if (nodeValueMap.containsKey(startingNode)) {
-                        nodeValueMap.put(startingNode, nodeValueMap.get(startingNode) + 1);
-                    } else {
-                        nodeValueMap.put(startingNode, 1L);
-                    }
-                    final float hue = rand.nextFloat();
-                    final float saturation = 0.9f;
-                    final float luminance = 1.0f;
-                    Color randomColor = Color.getHSBColor(hue, saturation, luminance);
-                    colors.add(randomColor);
-                    count++;
-                    break;
-                }
-            }
-            if (count == 6 && !MAXIMIZED) {
-                break;
-            } else if (count == 100 && MAXIMIZED) {
-                break;
-            }
-        }
-        return MySequentialGraphSysUtil.sortMapByLongValue(nodeValueMap);
-    }
-
     public void decorate() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
@@ -82,7 +43,42 @@ implements ActionListener {
                     removeAll();
                     setLayout(new BorderLayout(3, 3));
                     setBackground(Color.WHITE);
-                    LinkedHashMap<String, Long> nodeValueMap = setData();
+
+                    int count = 0;
+                    colors = new ArrayList<>();
+                    LinkedHashMap<String, Long> nodeValueMap = new LinkedHashMap<>();
+                    for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
+                        for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
+                            String n = MySequentialGraphVars.seqs[s][i].split(":")[0];
+                            if (n.equals(MySequentialGraphVars.getSequentialGraphViewer().singleNode.getName())) {
+                                String startingNode = null;
+                                if (selelctedGraph == 0) {
+                                   startingNode = MySequentialGraphVars.seqs[s][0].split(":")[0];
+                                } else {
+                                    startingNode = MySequentialGraphVars.seqs[s][1].split(":")[0];
+                                }
+                                startingNode = MySequentialGraphSysUtil.getNodeName(startingNode);
+                                if (nodeValueMap.containsKey(startingNode)) {
+                                    nodeValueMap.put(startingNode, nodeValueMap.get(startingNode) + 1);
+                                } else {
+                                    nodeValueMap.put(startingNode, 1L);
+                                }
+                                final float hue = rand.nextFloat();
+                                final float saturation = 0.9f;
+                                final float luminance = 1.0f;
+                                Color randomColor = Color.getHSBColor(hue, saturation, luminance);
+                                colors.add(randomColor);
+                                count++;
+                                break;
+                            }
+                        }
+                        if (count == 6 && !MAXIMIZED) {
+                            break;
+                        } else if (count == 100 && MAXIMIZED) {
+                            break;
+                        }
+                    }
+                    nodeValueMap = MySequentialGraphSysUtil.sortMapByLongValue(nodeValueMap);
 
                     CategoryDataset dataset = new DefaultCategoryDataset();
                     for (String label : nodeValueMap.keySet()) {

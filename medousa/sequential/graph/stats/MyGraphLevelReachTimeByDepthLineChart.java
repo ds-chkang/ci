@@ -165,7 +165,7 @@ implements ActionListener {
 
                     XYPlot plot = (XYPlot) chart.getPlot();
                     XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
-                    renderer.setSeriesPaint(0, Color.BLUE);
+                    renderer.setSeriesPaint(0, Color.RED);
                     renderer.setSeriesStroke(0, new BasicStroke(1.5f));
                     renderer.setSeriesShapesVisible(0, true);
                     renderer.setSeriesShape(0, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
