@@ -74,6 +74,8 @@ implements MouseListener {
                     for (MyDepthNode predecessor : predecessors) {
                         setPredecessorsToTrue(predecessor);
                     }
+                    pathAnalyzer.graphViewer.revalidate();
+                    pathAnalyzer.graphViewer.repaint();
                 } else if (selectedNode != null) {
                     selectedNode.isSelectedNodePath = false;
                     Collection<MyDepthNode> nodes = pathAnalyzer.graphViewer.getGraphLayout().getGraph().getSuccessors(selectedNode);
@@ -86,11 +88,11 @@ implements MouseListener {
                         setPredecessorsToFalse(predecessor);
                     }
                     selectedNode = null;
+                    pathAnalyzer.graphViewer.revalidate();
+                    pathAnalyzer.graphViewer.repaint();
                 } else {
 
                 }
-                pathAnalyzer.graphViewer.revalidate();
-                pathAnalyzer.graphViewer.repaint();
 
             }
         }).start();

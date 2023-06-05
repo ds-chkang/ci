@@ -60,7 +60,7 @@ implements Serializable {
     public Set<MyNode> sharedPredecessors;
     public Set<MyNode> sharedSuccessors;
     public boolean isClustered;
-    public Font nodeFont = new Font("Noto Sans", Font.PLAIN, 50);
+    public Font nodeFont = new Font("Noto Sans", Font.PLAIN, 54);
     public Font edgeFont = new Font("Noto Sans", Font.PLAIN, 50);
     public MyGraphLevelNodeValueBarChart graphLevelNodeValueBarChart;
     public MyGraphLevelNodeLabelBarChart graphLevelNodeLabelBarChart;
@@ -155,13 +155,6 @@ implements Serializable {
 
             this.getRenderContext().setEdgeShapeTransformer(new EdgeShape.QuadCurve<MyNode, MyEdge>());
             this.vc = new MyViewerComponentController();
-
-            Border blackline = BorderFactory.createLineBorder(Color.black);
-            TitledBorder titledBorder = BorderFactory.createTitledBorder(blackline, "NETWORK");
-            titledBorder.setTitleJustification(TitledBorder.LEFT);
-            titledBorder.setTitleFont(MySequentialGraphVars.tahomaBoldFont12);
-            titledBorder.setTitleColor(Color.DARK_GRAY);
-            //this.vc.setBorder(titledBorder);
 
             this.addComponentListener(new ComponentAdapter() {
                 @Override public void componentResized(ComponentEvent e) {
@@ -647,7 +640,7 @@ implements Serializable {
     private void scale() {
         this.viewScaler = new CrossoverScalingControl();
         double amount = -1.0;
-        viewScaler.scale(this, amount > 0 ? 2.0f : 1 / 11.5f, new Point2D.Double(360, 150));
+        viewScaler.scale(this, amount > 0 ? 2.0f : 1 / 6f, new Point2D.Double(290, 30));
     }
 
     @Override public void paintComponent(Graphics g) {
@@ -878,7 +871,7 @@ implements Serializable {
     }
 
     private Paint setWeightedNodeColor(MyNode n) {
-        float nodeColorWeight = n.getCurrentValue()/ MySequentialGraphVars.g.MX_N_VAL;
+        float nodeColorWeight = n.getCurrentValue() / MySequentialGraphVars.g.MX_N_VAL;
         if (nodeColorWeight <= 0.05) {
             if (MySequentialGraphVars.g.getSuccessorCount(n) > 0 && MySequentialGraphVars.g.getPredecessorCount(n) > 0) {
                 return new Color(0f, 0f, 1f, 0.05f);
