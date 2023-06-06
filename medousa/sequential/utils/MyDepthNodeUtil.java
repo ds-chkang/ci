@@ -281,22 +281,22 @@ public class MyDepthNodeUtil {
 
     private synchronized static void setDepthNodePredecessors() {
         MySequentialGraphVars.getSequentialGraphViewer().vc.depthNeighborSet = new HashSet<>();
-        Map<String, Map<String, Integer>> predecessorMaps = new HashMap<>();
+        Map<String, Map<String, Long>> predecessorMaps = new HashMap<>();
         for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
             if (MySequentialGraphVars.seqs[s].length < MySequentialGraphVars.currentGraphDepth) continue;
             String depthNode = MySequentialGraphVars.seqs[s][MySequentialGraphVars.currentGraphDepth-1].split(":")[0];
             if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeNameSet.contains(depthNode)) {
                 String predecessor = MySequentialGraphVars.seqs[s][MySequentialGraphVars.currentGraphDepth-2].split(":")[0];
                 if (predecessorMaps.containsKey(depthNode)) {
-                    Map<String, Integer> predecessorMap = predecessorMaps.get(depthNode);
+                    Map<String, Long> predecessorMap = predecessorMaps.get(depthNode);
                     if (predecessorMap.containsKey(predecessor)) {
                         predecessorMap.put(predecessor, predecessorMap.get(predecessor)+1);
                     } else {
-                        predecessorMap.put(predecessor, 1);
+                        predecessorMap.put(predecessor, 1L);
                     }
                 } else {
-                    Map<String, Integer> predecessorMap = new HashMap<>();
-                    predecessorMap.put(predecessor, 1);
+                    Map<String, Long> predecessorMap = new HashMap<>();
+                    predecessorMap.put(predecessor, 1L);
                     predecessorMaps.put(depthNode, predecessorMap);
                 }
                 MySequentialGraphVars.getSequentialGraphViewer().vc.depthNeighborSet.add(predecessor);
@@ -327,7 +327,7 @@ public class MyDepthNodeUtil {
 
     private synchronized static void setDepthNodeSuccessors() {
         MySequentialGraphVars.getSequentialGraphViewer().vc.depthNeighborSet = new HashSet<>();
-        Map<String, Map<String, Integer>> successorMaps = new HashMap<>();
+        Map<String, Map<String, Long>> successorMaps = new HashMap<>();
         for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
             if ((MySequentialGraphVars.seqs[s].length) <= MySequentialGraphVars.currentGraphDepth) continue;
             String depthNode = MySequentialGraphVars.seqs[s][MySequentialGraphVars.currentGraphDepth-1].split(":")[0];
@@ -335,15 +335,15 @@ public class MyDepthNodeUtil {
                 for (int i = MySequentialGraphVars.currentGraphDepth; i < MySequentialGraphVars.seqs[s].length; i++) {
                     String successor = MySequentialGraphVars.seqs[s][i].split(":")[0];
                     if (successorMaps.containsKey(depthNode)) {
-                        Map<String, Integer> successorMap = successorMaps.get(depthNode);
+                        Map<String, Long> successorMap = successorMaps.get(depthNode);
                         if (successorMap.containsKey(successor)) {
                             successorMap.put(successor, successorMap.get(successor)+1);
                         } else {
-                            successorMap.put(successor, 1);
+                            successorMap.put(successor, 1L);
                         }
                     } else {
-                        Map<String, Integer> successorMap = new HashMap<>();
-                        successorMap.put(successor, 1);
+                        Map<String, Long> successorMap = new HashMap<>();
+                        successorMap.put(successor, 1L);
                         successorMaps.put(depthNode, successorMap);
                     }
                     MySequentialGraphVars.getSequentialGraphViewer().vc.depthNeighborSet.add(successor);
@@ -351,15 +351,15 @@ public class MyDepthNodeUtil {
             } else {
                 String successor = MySequentialGraphVars.seqs[s][MySequentialGraphVars.currentGraphDepth].split(":")[0];
                 if (successorMaps.containsKey(depthNode)) {
-                    Map<String, Integer> successorMap = successorMaps.get(depthNode);
+                    Map<String, Long> successorMap = successorMaps.get(depthNode);
                     if (successorMap.containsKey(successor)) {
                         successorMap.put(successor, successorMap.get(successor)+1);
                     } else {
-                        successorMap.put(successor, 1);
+                        successorMap.put(successor, 1L);
                     }
                 } else {
-                    Map<String, Integer> successorMap = new HashMap<>();
-                    successorMap.put(successor, 1);
+                    Map<String, Long> successorMap = new HashMap<>();
+                    successorMap.put(successor, 1L);
                     successorMaps.put(depthNode, successorMap);
                 }
                 MySequentialGraphVars.getSequentialGraphViewer().vc.depthNeighborSet.add(successor);
@@ -390,7 +390,7 @@ public class MyDepthNodeUtil {
     }
 
     public static void setSelectedSingleDepthNodeSuccessors() {
-        Map<String, Map<String, Integer>> successorMaps = new HashMap<>();
+        Map<String, Map<String, Long>> successorMaps = new HashMap<>();
         for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
             if ((MySequentialGraphVars.seqs[s].length) <= MySequentialGraphVars.currentGraphDepth) continue;
             String depthNode = MySequentialGraphVars.seqs[s][MySequentialGraphVars.currentGraphDepth-1].split(":")[0];
@@ -399,30 +399,30 @@ public class MyDepthNodeUtil {
                     for (int i = MySequentialGraphVars.currentGraphDepth; i < MySequentialGraphVars.seqs[s].length; i++) {
                         String successor = MySequentialGraphVars.seqs[s][i].split(":")[0];
                         if (successorMaps.containsKey(depthNode)) {
-                            Map<String, Integer> successorMap = successorMaps.get(depthNode);
+                            Map<String, Long> successorMap = successorMaps.get(depthNode);
                             if (successorMap.containsKey(successor)) {
                                 successorMap.put(successor, successorMap.get(successor) + 1);
                             } else {
-                                successorMap.put(successor, 1);
+                                successorMap.put(successor, 1L);
                             }
                         } else {
-                            Map<String, Integer> successorMap = new HashMap<>();
-                            successorMap.put(successor, 1);
+                            Map<String, Long> successorMap = new HashMap<>();
+                            successorMap.put(successor, 1L);
                             successorMaps.put(depthNode, successorMap);
                         }
                     }
                 } else {
                     String successor = MySequentialGraphVars.seqs[s][MySequentialGraphVars.currentGraphDepth].split(":")[0];
                     if (successorMaps.containsKey(depthNode)) {
-                        Map<String, Integer> successorMap = successorMaps.get(depthNode);
+                        Map<String, Long> successorMap = successorMaps.get(depthNode);
                         if (successorMap.containsKey(successor)) {
                             successorMap.put(successor, successorMap.get(successor) + 1);
                         } else {
-                            successorMap.put(successor, 1);
+                            successorMap.put(successor, 1L);
                         }
                     } else {
-                        Map<String, Integer> successorMap = new HashMap<>();
-                        successorMap.put(successor, 1);
+                        Map<String, Long> successorMap = new HashMap<>();
+                        successorMap.put(successor, 1L);
                         successorMaps.put(depthNode, successorMap);
                     }
                 }
@@ -454,22 +454,22 @@ public class MyDepthNodeUtil {
 
     // fix this function.
     public static void setSelectedSingleDepthNodePredecessors() {
-        Map<String, Map<String, Integer>> predecessorMaps = new HashMap<>();
+        Map<String, Map<String, Long>> predecessorMaps = new HashMap<>();
         for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
             if ((MySequentialGraphVars.seqs[s].length) < MySequentialGraphVars.currentGraphDepth) continue;
             String depthNode = MySequentialGraphVars.seqs[s][MySequentialGraphVars.currentGraphDepth-1].split(":")[0];
             if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeNameSet.contains(depthNode)) {
                 String predecessor = MySequentialGraphVars.seqs[s][MySequentialGraphVars.currentGraphDepth-2].split(":")[0];
                 if (predecessorMaps.containsKey(depthNode)) {
-                    Map<String, Integer> predecessorMap = predecessorMaps.get(depthNode);
+                    Map<String, Long> predecessorMap = predecessorMaps.get(depthNode);
                     if (predecessorMap.containsKey(predecessor)) {
                         predecessorMap.put(predecessor, predecessorMap.get(predecessor)+1);
                     } else {
-                        predecessorMap.put(predecessor, 1);
+                        predecessorMap.put(predecessor, 1L);
                     }
                 } else {
-                    Map<String, Integer> predecessorMap = new HashMap<>();
-                    predecessorMap.put(predecessor, 1);
+                    Map<String, Long> predecessorMap = new HashMap<>();
+                    predecessorMap.put(predecessor, 1L);
                     predecessorMaps.put(depthNode, predecessorMap);
                 }
             }

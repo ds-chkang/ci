@@ -1,8 +1,6 @@
 package medousa.sequential.graph.stats;
 
 import medousa.MyProgressBar;
-import medousa.direct.graph.MyDirectGraphNodeSelecter;
-import medousa.direct.graph.MyDirectNode;
 import medousa.direct.utils.MyDirectGraphVars;
 import medousa.sequential.graph.MyNode;
 import medousa.sequential.utils.MySequentialGraphSysUtil;
@@ -13,8 +11,6 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.CategoryLabelPositions;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.StandardBarPainter;
@@ -29,12 +25,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeMap;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.*;
 
-public class MyBetweenReachTimeDistributionLineChart
+public class MyBetweenContributionDistributionLineChart
 extends JPanel
 implements ActionListener {
 
@@ -47,9 +42,7 @@ implements ActionListener {
     private JPanel tablePanel = new JPanel();
     private JPanel destTablePanel;
 
-
-
-    public MyBetweenReachTimeDistributionLineChart() {}
+    public MyBetweenContributionDistributionLineChart() {}
 
     public void enlarge() {
         this.pb = new MyProgressBar(false);
@@ -197,14 +190,11 @@ implements ActionListener {
 
         Set<String> successors = new HashSet<>();
         for (int s=0; s < MySequentialGraphVars.seqs.length; s++) {
-            for (int i = 0; i < MySequentialGraphVars.seqs[s].length; i++) {
-                String sourceItemset = MySequentialGraphVars.seqs[s][i].split(":")[0];
+            for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
+                String sourceItemset = MySequentialGraphVars.seqs[s][i-1].split(":")[0];
                 if (sourceItemset.equals(source)) {
-                    for (++i; i < MySequentialGraphVars.seqs[s].length; i++) {
-                        String destItemset = MySequentialGraphVars.seqs[s][i].split(":")[0];
-                        successors.add(destItemset);
-                    }
-                    break;
+                    String destItemset = MySequentialGraphVars.seqs[s][i].split(":")[0];
+                    successors.add(destItemset);
                 }
             }
         }
@@ -314,8 +304,8 @@ implements ActionListener {
                 new Thread(new Runnable() {
                     @Override public void run() {
                         if (timeMenu.getSelectedIndex() == 0) {
-                            toTime = 1;
                             selectedTime = 0;
+                            toTime = 1;
                             setGraph();
                         } else if (timeMenu.getSelectedIndex() == 1) {
                             selectedTime = 1;
@@ -337,56 +327,67 @@ implements ActionListener {
         graphPanel.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
         graphPanel.add(timeMenu, BorderLayout.NORTH);
         graphPanel.add(chartPanel, BorderLayout.CENTER);
-
         return graphPanel;
     }
 
     private JFreeChart setChart() {
-        if (dest == null) {
+        try {
+            if (dest == null) {
+                String plotTitle = "";
+                String xaxis = "TIME DISTRIBUTION BETWEEN TWO NODES";
+                String yaxis = "";
+                PlotOrientation orientation = PlotOrientation.VERTICAL;
+                boolean show = false;
+                boolean toolTips = true;
+                boolean urls = false;
+                return ChartFactory.createBarChart(plotTitle, xaxis, yaxis, new DefaultCategoryDataset(), orientation, show, toolTips, urls);
+            }
+            TreeMap<String, Integer> betweenContributionMap = new TreeMap<>();
+            BufferedReader br = new BufferedReader(new FileReader(MySequentialGraphVars.sequenceWithObjectIDFileName));
+            String line = "";
+            for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
+                for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
+                    String sourceItemset = MySequentialGraphVars.seqs[s][i - 1].split(":")[0];
+                    if (sourceItemset.equals(source)) {
+                        String destItemset = MySequentialGraphVars.seqs[s][i].split(":")[0];
+                        if (destItemset.equals(dest)) {
+                            String objectID = MySequentialGraphVars.seqs[s][0].split(":")[0];
+                            if (betweenContributionMap.containsKey(objectID)) {
+                                betweenContributionMap.put(objectID, betweenContributionMap.get(objectID) + 1);
+                            } else {
+                                betweenContributionMap.put(objectID, 1);
+                            }
+                        }
+                    }
+                }
+            }
+
+            LinkedHashMap<Long, Long> contributionCountMap = new LinkedHashMap<>();
+            for (long betweenContributionByObjectID : betweenContributionMap.values()) {
+                if (contributionCountMap.containsKey(betweenContributionByObjectID)) {
+                    contributionCountMap.put(betweenContributionByObjectID, contributionCountMap.get(betweenContributionByObjectID) + 1);
+                } else {
+                    contributionCountMap.put(betweenContributionByObjectID, 1L);
+                }
+            }
+
+            DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+            for (Long contributionCount : contributionCountMap.keySet()) {
+                dataset.addValue(contributionCountMap.get(contributionCount), "CONTRIBUTION", contributionCount);
+            }
+
             String plotTitle = "";
-            String xaxis = "TIME DISTRIBUTION BETWEEN TWO NODES";
+            String xaxis = "CONTRIBUTION DISTRIBUTION BETWEEN TWO NODES";
             String yaxis = "";
             PlotOrientation orientation = PlotOrientation.VERTICAL;
             boolean show = false;
             boolean toolTips = true;
             boolean urls = false;
-            return ChartFactory.createBarChart(plotTitle, xaxis, yaxis, new DefaultCategoryDataset(), orientation, show, toolTips, urls);
+            return ChartFactory.createBarChart(plotTitle, xaxis, yaxis, dataset, orientation, show, toolTips, urls);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-        TreeMap<Long, Integer> betweenTimeMap = new TreeMap<>();
-        for (int s=0; s < MySequentialGraphVars.seqs.length; s++) {
-            for (int i=0; i < MySequentialGraphVars.seqs[s].length; i++) {
-                String sourceItemset = MySequentialGraphVars.seqs[s][i].split(":")[0];
-                if (sourceItemset.equals(source)) {
-                    long sequenceTotalTime = 0L;
-                    for (++i; i < MySequentialGraphVars.seqs[s].length; i++) {
-                        String[] destItemsetAndTime = MySequentialGraphVars.seqs[s][i].split(":");
-                        sequenceTotalTime += (long) ((float) Long.parseLong(destItemsetAndTime[1]) / toTime);
-                        if (destItemsetAndTime[0].equals(dest)) {
-                            if (betweenTimeMap.containsKey(sequenceTotalTime)) {
-                                betweenTimeMap.put(sequenceTotalTime, betweenTimeMap.get(sequenceTotalTime) + 1);
-                            } else {
-                                betweenTimeMap.put(sequenceTotalTime, 1);
-                            }
-                        }
-                    }
-                    break;
-                }
-            }
-        }
-
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        for (Long betweenTime : betweenTimeMap.keySet()) {
-            dataset.addValue(betweenTimeMap.get(betweenTime), "BTW. TIME", betweenTime);
-        }
-
-        String plotTitle = "";
-        String xaxis = "TIME DISTRIBUTION BETWEEN TWO NODES";
-        String yaxis = "";
-        PlotOrientation orientation = PlotOrientation.VERTICAL;
-        boolean show = false;
-        boolean toolTips = true;
-        boolean urls = false;
-        return ChartFactory.createBarChart(plotTitle, xaxis, yaxis, dataset, orientation, show, toolTips, urls);
+        return null;
     }
 
 

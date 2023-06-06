@@ -1,7 +1,6 @@
 package medousa.sequential.graph;
 
 import medousa.MyProgressBar;
-import medousa.direct.utils.MyDirectGraphSysUtil;
 import medousa.message.MyMessageUtil;
 import medousa.sequential.graph.listener.MyEdgeLabelSelecterListener;
 import medousa.sequential.graph.listener.MyNodeLabelSelecterListener;
@@ -151,10 +150,10 @@ implements ActionListener {
     public JCheckBox edgeValueBarChart = new JCheckBox("E. V. B.");
     public JCheckBox edgeLabelBarChart = new JCheckBox("E. L. B.");
     public JCheckBox endingNodeBarChart = new JCheckBox("E. N. B.");
-    public Map<String, Integer> selectedNodeSuccessorDepthNodeMap;
-    public Map<String, Integer> selectedNodePredecessorDepthNodeMap;
-    public Map<String, Map<String, Integer>> depthNodeSuccessorMaps;
-    public Map<String, Map<String, Integer>> depthNodePredecessorMaps;
+    public Map<String, Long> selectedNodeSuccessorDepthNodeMap;
+    public Map<String, Long> selectedNodePredecessorDepthNodeMap;
+    public Map<String, Map<String, Long>> depthNodeSuccessorMaps;
+    public Map<String, Map<String, Long>> depthNodePredecessorMaps;
     public Set<String> depthNodeNameSet;
     public Set<String> depthNeighborSet;
     public JLabel nodeValueSelecterLabel = new JLabel("  N. V.");
@@ -179,6 +178,7 @@ implements ActionListener {
     public JButton edgeValueDistributionBtn = new JButton("E. V.");
     public JButton nodeValueDistributionBtn = new JButton("N. V.");
     public int previousTableTabbedPane;
+    public JComboBox distributionSelecter = new JComboBox();
 
     public MyViewerComponentController() {}
 
@@ -617,7 +617,7 @@ implements ActionListener {
                                         valueMap.put(n.getName(), (long) n.getCurrentValue());
                                     }
                                 }
-                                valueMap = MyDirectGraphSysUtil.sortMapByLongValue(valueMap);
+                                valueMap = MySequentialGraphSysUtil.sortMapByLongValue(valueMap);
                                 pb.updateValue(80, 100);
 
                                 int i = 0;
@@ -973,6 +973,18 @@ implements ActionListener {
         this.setBackground(Color.WHITE);
         this.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
+        this.distributionSelecter.addItem("DISTRIBUTIONS");
+        this.distributionSelecter.addItem("BTW. CONT. CNT. DIST. BY OBJ.");
+        this.distributionSelecter.addItem("BTW TIME DIST. BY OBJ.");
+        this.distributionSelecter.addItem("REACH TIME DIST.");
+        this.distributionSelecter.addItem("DURATION DIST.");
+        this.distributionSelecter.addItem("AVG. HOP CNT. DIST.");
+        this.distributionSelecter.addItem("SEQ. LEGNTH DIST.");
+        this.distributionSelecter.setFocusable(false);
+        this.distributionSelecter.setFocusable(false);
+        this.distributionSelecter.setBackground(Color.WHITE);
+        this.distributionSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
+
         this.nodeValueBarChart.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.nodeLabelBarChart.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.edgeValueBarChart.setFont(MySequentialGraphVars.tahomaPlainFont12);
@@ -982,15 +994,14 @@ implements ActionListener {
 
         this.selectedNodeNeighborNodeTypeSelector.setBackground(Color.WHITE);
         this.depthNeighborNodeTypeSelector.setToolTipText("SELECT A NEIGHBOR NODE TYPE FOR SELECTED NODES");
-        this.selectedNodeNeighborNodeTypeSelector.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.selectedNodeNeighborNodeTypeSelector.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.selectedNodeNeighborNodeTypeSelector.setFocusable(false);
         this.selectedNodeNeighborNodeTypeSelector.addActionListener(this);
         this.selectedNodeNeighborNodeTypeSelector.setVisible(false);
 
-
         this.depthNeighborNodeTypeSelector.setBackground(Color.WHITE);
         this.depthNeighborNodeTypeSelector.setToolTipText("SELECT A NEIGHBOR NODE TYPE FOR SELECTED NODES");
-        this.depthNeighborNodeTypeSelector.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.depthNeighborNodeTypeSelector.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.depthNeighborNodeTypeSelector.setFocusable(false);
         this.depthNeighborNodeTypeSelector.addActionListener(this);
         this.depthNeighborNodeTypeSelector.setVisible(false);
@@ -998,7 +1009,7 @@ implements ActionListener {
         this.depthSelecter.setBackground(Color.WHITE);
         this.depthSelecter.setFocusable(false);
         this.depthSelecter.setToolTipText("SELECT A DEPTH");
-        this.depthSelecter.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.depthSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.depthSelecter.addActionListener(this);
         MyViewerComponentControllerUtil.setDepthValueSelecterMenu();
 
@@ -1025,9 +1036,9 @@ implements ActionListener {
 
         this.nodeValueSelecterLabel.setToolTipText("NODE VALUE");
         this.nodeValueSelecterLabel.setBackground(Color.WHITE);
-        this.nodeValueSelecterLabel.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.nodeValueSelecterLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.nodeValueSelecter.setBackground(Color.WHITE);
-        this.nodeValueSelecter.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.nodeValueSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.nodeValueSelecter.setFocusable(false);
         if (MySequentialGraphVars.isTimeOn) {
             String[] nodeValueTooltips = new String[36];
@@ -1102,16 +1113,16 @@ implements ActionListener {
 
         this.edgeValueLabel.setToolTipText("EDGE VALUE");
         this.edgeValueLabel.setBackground(Color.WHITE);
-        this.edgeValueLabel.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.edgeValueLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
 
         this.edgeLabelLabel.setToolTipText("EDGE LABEL");
         this.edgeLabelLabel.setBackground(Color.WHITE);
-        this.edgeLabelLabel.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.edgeLabelLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
 
         this.edgeValueSelecter.setBackground(Color.WHITE);
         this.edgeValueSelecter.setToolTipText("SELECT AN EDGE VALUE");
         this.edgeValueSelecter.setFocusable(false);
-        this.edgeValueSelecter.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.edgeValueSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
         if (MySequentialGraphVars.isTimeOn) {
             String[] edgeValueTooltips = new String[12];
             edgeValueTooltips[0] = "NONE";
@@ -1143,7 +1154,7 @@ implements ActionListener {
 
         this.edgeLabelSelecter.setFocusable(false);
         this.edgeLabelSelecter.setToolTipText("SELECT AN EDGE LABEL");
-        this.edgeLabelSelecter.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.edgeLabelSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.edgeLabelSelecter.setBackground(Color.WHITE);
         this.edgeLabelSelecter.addItem("NONE");
         for (String edgeLabel : MySequentialGraphVars.userDefinedEdgeLabelSet) {
@@ -1151,12 +1162,12 @@ implements ActionListener {
         }
         this.edgeLabelSelecter.addActionListener(this);
 
-        nodeLabelLabel.setToolTipText("NODE LABEL");
-        nodeLabelLabel.setBackground(Color.WHITE);
-        nodeLabelLabel.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.nodeLabelLabel.setToolTipText("NODE LABEL");
+        this.nodeLabelLabel.setBackground(Color.WHITE);
+        this.nodeLabelLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.nodeLabelSelecter.setFocusable(false);
         this.nodeLabelSelecter.setToolTipText("SELECT A NODE LABEL");
-        this.nodeLabelSelecter.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.nodeLabelSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.nodeLabelSelecter.setBackground(Color.WHITE);
         this.nodeLabelSelecter.addItem("NONE");
         this.nodeLabelSelecter.addItem("NAME");
@@ -1320,11 +1331,11 @@ implements ActionListener {
 
         this.clusteringSectorLabel.setBackground(Color.WHITE);
         this.clusteringSectorLabel.setToolTipText("FIND CLUSTERS");
-        this.clusteringSectorLabel.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.clusteringSectorLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
 
         this.clusteringSelector.setBackground(Color.WHITE);
         this.clusteringSelector.setToolTipText("FIND CLUSTERS");
-        this.clusteringSelector.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.clusteringSelector.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.clusteringSelector.setFocusable(false);
         this.clusteringSelector.addItem("");
         this.clusteringSelector.addItem("BTW.");
@@ -1343,14 +1354,63 @@ implements ActionListener {
         this.weightedNodeColor.setFocusable(false);
         this.weightedNodeColor.setToolTipText("WEIGHTED NODE COLORS");
         this.weightedNodeColor.setBackground(Color.WHITE);
-        this.weightedNodeColor.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.weightedNodeColor.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.weightedNodeColor.addActionListener(this);
+
+        edgeValueDistributionBtn.setBackground(Color.WHITE);
+        edgeValueDistributionBtn.setToolTipText("CURRENT EDGE VALUE DISTRIBUTION");
+        edgeValueDistributionBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        edgeValueDistributionBtn.setPreferredSize(new Dimension(55, 24));
+        edgeValueDistributionBtn.setFocusable(false);
+        edgeValueDistributionBtn.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                new Thread(new Runnable() {
+                    @Override public void run() {
+                        if (edgeValueSelecter.getSelectedIndex() > 1) {
+                            MyGraphLevelTopLevelEdgeValueDistribution graphLevelTopLevelEdgeValueDistribution = new MyGraphLevelTopLevelEdgeValueDistribution();
+                            graphLevelTopLevelEdgeValueDistribution.enlarge();
+                        } else {
+                            MyMessageUtil.showInfoMsg(MySequentialGraphVars.app, "Select an edge value.");
+                        }
+                    }
+                }).start();
+            }
+        });
+
+        nodeValueDistributionBtn.setBackground(Color.WHITE);
+        nodeValueDistributionBtn.setToolTipText("CURRENT NODE VALUE DISTRIBUTION");
+        nodeValueDistributionBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        nodeValueDistributionBtn.setPreferredSize(new Dimension(55, 24));
+        nodeValueDistributionBtn.setFocusable(false);
+        nodeValueDistributionBtn.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                new Thread(new Runnable() {
+                    @Override public void run() {
+                        if (MySequentialGraphVars.getSequentialGraphViewer().nodeValueName.contains("TIME") ||
+                                MySequentialGraphVars.getSequentialGraphViewer().nodeValueName.contains("DURATION")) {
+                            MyGraphLevelTopLevelNodeTimeValueDistribution graphLevelTopLevelNodeTimeValueDistribution = new MyGraphLevelTopLevelNodeTimeValueDistribution();
+                            graphLevelTopLevelNodeTimeValueDistribution.enlarge();
+                        } else {
+                            MyGraphLevelTopLevelNodeValueDistribution graphLevelTopLevelNodeValueDistribution = new MyGraphLevelTopLevelNodeValueDistribution();
+                            graphLevelTopLevelNodeValueDistribution.enlarge();
+                        }
+                    }
+                }).start();
+            }
+        });
+
+        JLabel emptyIndentLabel = new JLabel("   ");
+        emptyIndentLabel.setBackground(Color.WHITE);
+        emptyIndentLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
 
         this.bottomLeftControlPanel.add(this.weightedNodeColor);
         this.bottomLeftControlPanel.add(this.nodeValueBarChart);
         this.bottomLeftControlPanel.add(this.nodeLabelBarChart);
         this.bottomLeftControlPanel.add(this.edgeValueBarChart);
         this.bottomLeftControlPanel.add(this.edgeLabelBarChart);
+        this.bottomLeftControlPanel.add(emptyIndentLabel);
+        this.bottomLeftControlPanel.add(this.nodeValueDistributionBtn);
+        this.bottomLeftControlPanel.add(this.edgeValueDistributionBtn);
 
         this.bottomRightControlPanel.setBackground(Color.WHITE);
         this.bottomRightControlPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0,0));
@@ -1372,61 +1432,20 @@ implements ActionListener {
         this.bottomPanel.add(this.bottomRightControlPanel, BorderLayout.CENTER);
 
 
-        edgeValueDistributionBtn.setBackground(Color.WHITE);
-        edgeValueDistributionBtn.setToolTipText("CURRENT EDGE VALUE DISTRIBUTION");
-        edgeValueDistributionBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
-        edgeValueDistributionBtn.setPreferredSize(new Dimension(50, 22));
-        edgeValueDistributionBtn.setFocusable(false);
-        edgeValueDistributionBtn.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent e) {
-                new Thread(new Runnable() {
-                    @Override public void run() {
-                        if (edgeValueSelecter.getSelectedIndex() > 1) {
-                            MyGraphLevelTopLevelEdgeValueDistribution graphLevelTopLevelEdgeValueDistribution = new MyGraphLevelTopLevelEdgeValueDistribution();
-                            graphLevelTopLevelEdgeValueDistribution.enlarge();
-                        } else {
-                            MyMessageUtil.showInfoMsg(MySequentialGraphVars.app, "Select an edge value.");
-                        }
-                    }
-                }).start();
-            }
-        });
-
-        nodeValueDistributionBtn.setBackground(Color.WHITE);
-        nodeValueDistributionBtn.setToolTipText("CURRENT NODE VALUE DISTRIBUTION");
-        nodeValueDistributionBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
-        nodeValueDistributionBtn.setPreferredSize(new Dimension(52, 22));
-        nodeValueDistributionBtn.setFocusable(false);
-        nodeValueDistributionBtn.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent e) {
-                new Thread(new Runnable() {
-                    @Override public void run() {
-                        if (MySequentialGraphVars.getSequentialGraphViewer().nodeValueName.contains("TIME") ||
-                            MySequentialGraphVars.getSequentialGraphViewer().nodeValueName.contains("DURATION")) {
-                            MyGraphLevelTopLevelNodeTimeValueDistribution graphLevelTopLevelNodeTimeValueDistribution = new MyGraphLevelTopLevelNodeTimeValueDistribution();
-                            graphLevelTopLevelNodeTimeValueDistribution.enlarge();
-                        } else {
-                            MyGraphLevelTopLevelNodeValueDistribution graphLevelTopLevelNodeValueDistribution = new MyGraphLevelTopLevelNodeValueDistribution();
-                            graphLevelTopLevelNodeValueDistribution.enlarge();
-                        }
-                    }
-                }).start();
-            }
-        });
-
         JPanel topRightPanel = new JPanel();
         topRightPanel.setBackground(Color.WHITE);
         topRightPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 
         JLabel graphGroupNodeNumberPercentLabel = new JLabel();
         graphGroupNodeNumberPercentLabel.setBackground(Color.WHITE);
-        graphGroupNodeNumberPercentLabel.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        graphGroupNodeNumberPercentLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
         graphGroupNodeNumberPercentLabel.setText("");
         topRightPanel.add(graphGroupNodeNumberPercentLabel);
-        topRightPanel.add(this.clusteringSectorLabel);
-        topRightPanel.add(this.clusteringSelector);
-        topRightPanel.add(nodeValueDistributionBtn);
-        topRightPanel.add(edgeValueDistributionBtn);
+        //topRightPanel.add(this.clusteringSectorLabel);
+        //topRightPanel.add(this.clusteringSelector);
+        topRightPanel.add(this.distributionSelecter);
+        //topRightPanel.add(this.nodeValueDistributionBtn);
+        //topRightPanel.add(this.edgeValueDistributionBtn);
 
         topPanel.add(topRightPanel, BorderLayout.EAST);
         topPanel.add(this.topLeftPanel, BorderLayout.WEST);
@@ -1435,7 +1454,7 @@ implements ActionListener {
         this.tableTabbedPane.setOpaque(false);
         this.tableTabbedPane.setBackground(new Color(0,0,0,0));
         this.tableTabbedPane.setPreferredSize(new Dimension(200, 1000));
-        this.tableTabbedPane.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        this.tableTabbedPane.setFont(MySequentialGraphVars.tahomaPlainFont12);
 
         this.tableTabbedPane.addTab("N.", null, setNodeTable(), "NODES");
         this.tableTabbedPane.addTab("E.", null, setEdgeTable(), "EDGES");
@@ -2182,7 +2201,7 @@ implements ActionListener {
             nodeListTableModel.addRow(
                 new String[]{
                     String.valueOf(++i),
-                    MySequentialGraphSysUtil.getDecodedNodeName(n),
+                    MySequentialGraphSysUtil.getNodeName(n),
                     MyMathUtil.getCommaSeperatedNumber((long)(float) valueMap.get(n))
             });
         }
@@ -2349,8 +2368,8 @@ implements ActionListener {
 
         currentNodeListTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         currentNodeListTable.setSelectionBackground(Color.LIGHT_GRAY);
-        currentNodeListTable.setForeground(Color.BLACK);
         currentNodeListTable.setSelectionForeground(Color.BLACK);
+        currentNodeListTable.setForeground(Color.BLACK);
         currentNodeListTable.setFocusable(false);
         currentNodeListTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         currentNodeListTable.setRowSorter(MyTableUtil.setJTableRowSorterWithTextField(topTableModel, topTableNodeSearchTxt));
@@ -2469,7 +2488,9 @@ implements ActionListener {
             row = this.nodeListTable.getRowCount();
         }
 
-        if (depthSelecter.getSelectedIndex() > 0 && depthNeighborNodeTypeSelector.getSelectedIndex() > 0 && depthNeighborNodeTypeSelector.getSelectedItem().toString().equals("P.")) {
+        if (depthSelecter.getSelectedIndex() > 0 &&
+            depthNeighborNodeTypeSelector.getSelectedIndex() > 0 &&
+            depthNeighborNodeTypeSelector.getSelectedItem().toString().equals("P.")) {
             if (depthNodeNameSet != null && depthNodeNameSet.size() == 1) {
                 int tableRowCount = 0;
                 LinkedHashMap<String, Long> predecessorMap = new LinkedHashMap<>();
@@ -2498,18 +2519,19 @@ implements ActionListener {
                     );
                 }
             } else {
-                Map<String, Integer> uniquePredecessorMap = new HashMap<>();
+                Map<String, Long> uniquePredecessorMap = new HashMap<>();
                 Set<String> depthNodeSet = depthNodePredecessorMaps.keySet();
                 for (String depthNode : depthNodeSet) {
-                    Map<String, Integer> predecessorMap = depthNodePredecessorMaps.get(depthNode);
+                    Map<String, Long> predecessorMap = depthNodePredecessorMaps.get(depthNode);
                     for (String predecessor : predecessorMap.keySet()) {
                         if (uniquePredecessorMap.containsKey(predecessor)) {
                             uniquePredecessorMap.put(predecessor, uniquePredecessorMap.get(predecessor) + 1);
                         } else {
-                            uniquePredecessorMap.put(predecessor, 1);
+                            uniquePredecessorMap.put(predecessor, 1L);
                         }
                     }
                 }
+                uniquePredecessorMap = MySequentialGraphSysUtil.sortMapByLongValue(uniquePredecessorMap);
 
                 int tableRowCount = 0;
                 for (String predecessor : uniquePredecessorMap.keySet()) {
@@ -2531,13 +2553,14 @@ implements ActionListener {
                     );
                 }
             }
-        } else if (depthSelecter.getSelectedIndex() > 0 && depthNeighborNodeTypeSelector.getSelectedIndex() > 0 && depthNeighborNodeTypeSelector.getSelectedItem().toString().equals("S.")) {
+        } else if (depthSelecter.getSelectedIndex() > 0 &&
+            depthNeighborNodeTypeSelector.getSelectedIndex() > 0 &&
+            depthNeighborNodeTypeSelector.getSelectedItem().toString().equals("S.")) {
             if (depthNodeNameSet != null && depthNodeNameSet.size() == 1) {
                 MyDepthNodeUtil.setSelectedSingleDepthNodeSuccessors();
                 int tableRowCount = 0;
                 String selectedSingleNode = depthNodeNameSet.iterator().next();
-                Map<String, Integer> successorMap = depthNodeSuccessorMaps.get(selectedSingleNode);
-                System.out.println(successorMap);
+                Map<String, Long> successorMap = depthNodeSuccessorMaps.get(selectedSingleNode);
                 for (String successor : successorMap.keySet()) {
                     ((DefaultTableModel) currentNodeListTable.getModel()).addRow(
                         new String [] {"" + MyMathUtil.getCommaSeperatedNumber(++tableRowCount),
@@ -2546,21 +2569,23 @@ implements ActionListener {
                         }
                     );
                 }
+                successorMap = MySequentialGraphSysUtil.sortMapByLongValue(successorMap);
                 MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                 MySequentialGraphVars.getSequentialGraphViewer().repaint();
             } else {
-                Map<String, Integer> uniqueSuccessorMap = new HashMap<>();
+                Map<String, Long> uniqueSuccessorMap = new HashMap<>();
                 Set<String> depthNodeSet = depthNodeSuccessorMaps.keySet();
                 for (String depthNode : depthNodeSet) {
-                    Map<String, Integer> successorMap = depthNodeSuccessorMaps.get(depthNode);
+                    Map<String, Long> successorMap = depthNodeSuccessorMaps.get(depthNode);
                     for (String successor : successorMap.keySet()) {
                         if (uniqueSuccessorMap.containsKey(successor)) {
                             uniqueSuccessorMap.put(successor, uniqueSuccessorMap.get(successor) + 1);
                         } else {
-                            uniqueSuccessorMap.put(successor, 1);
+                            uniqueSuccessorMap.put(successor, 1L);
                         }
                     }
                 }
+                uniqueSuccessorMap = MySequentialGraphSysUtil.sortMapByLongValue(uniqueSuccessorMap);
 
                 int tableRowCount = 0;
                 for (String successor : uniqueSuccessorMap.keySet()) {
@@ -2586,7 +2611,7 @@ implements ActionListener {
                 MyDepthNodeUtil.setSelectedSingleDepthNodeSuccessors();
                 int tableRowCount = 0;
                 String selectedSingleNode = depthNodeNameSet.iterator().next();
-                Map<String, Integer> successorMap = depthNodeSuccessorMaps.get(selectedSingleNode);
+                Map<String, Long> successorMap = depthNodeSuccessorMaps.get(selectedSingleNode);
                 for (String successor : successorMap.keySet()) {
                     ((DefaultTableModel) currentNodeListTable.getModel()).addRow(
                             new String [] {"" + MyMathUtil.getCommaSeperatedNumber(++tableRowCount),
@@ -2595,6 +2620,7 @@ implements ActionListener {
                             }
                     );
                 }
+                successorMap = MySequentialGraphSysUtil.sortMapByLongValue(successorMap);
 
                 MyNode n = (MyNode) MySequentialGraphVars.g.vRefs.get(selectedSingleNode);
                 ((DefaultTableModel) nodeListTable.getModel()).addRow(
@@ -2606,18 +2632,19 @@ implements ActionListener {
                 MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                 MySequentialGraphVars.getSequentialGraphViewer().repaint();
             } else {
-                Map<String, Integer> uniqueSuccessorMap = new HashMap<>();
+                Map<String, Long> uniqueSuccessorMap = new HashMap<>();
                 Set<String> depthNodeSet = depthNodeSuccessorMaps.keySet();
                 for (String depthNode : depthNodeSet) {
-                    Map<String, Integer> successorMap = depthNodeSuccessorMaps.get(depthNode);
+                    Map<String, Long> successorMap = depthNodeSuccessorMaps.get(depthNode);
                     for (String successor : successorMap.keySet()) {
                         if (uniqueSuccessorMap.containsKey(successor)) {
                             uniqueSuccessorMap.put(successor, uniqueSuccessorMap.get(successor) + 1);
                         } else {
-                            uniqueSuccessorMap.put(successor, 1);
+                            uniqueSuccessorMap.put(successor, 1L);
                         }
                     }
                 }
+                uniqueSuccessorMap = MySequentialGraphSysUtil.sortMapByLongValue(uniqueSuccessorMap);
 
                 int tableRowCount = 0;
                 for (String successor : uniqueSuccessorMap.keySet()) {

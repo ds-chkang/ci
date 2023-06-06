@@ -56,7 +56,7 @@ implements ActionListener {
         for (int i = 1; i <= MySequentialGraphVars.mxDepth; i++) {
             for (MyNode n : nodes) {
                 if (n.getNodeDepthInfoMap().containsKey(i)) {
-                    long duration = n.getNodeDepthInfoMap().get(i).getDuration();
+                    long duration = (long) (n.getNodeDepthInfoMap().get(i).getDuration()/toTime);
 
                     if (totalDurationByDepthMap.containsKey(i)) {
                         totalDurationByDepthMap.put(i, totalDurationByDepthMap.get(i) + duration);
@@ -131,7 +131,6 @@ implements ActionListener {
 
     public void decorate() {
         try {
-            final MyGraphLevelDurationByDepthLineChart graphLevelDurationByDepthLineChart = this;
             SwingUtilities.invokeLater(new Runnable() {
                 @Override public void run() {
                     removeAll();

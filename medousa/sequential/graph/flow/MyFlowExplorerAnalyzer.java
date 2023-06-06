@@ -270,6 +270,7 @@ implements ActionListener {
                     }
                     break;
                 }
+                break;
             }
         }
     }
@@ -388,6 +389,7 @@ implements ActionListener {
                     }
                     break;
                 }
+                break;
             }
         }
     }
@@ -607,7 +609,7 @@ implements ActionListener {
                 if (((MyDepthNode)e.getSource()).isSelectedNodePath && ((MyDepthNode)e.getDest()).isSelectedNodePath) {
                     return new Color(1f, 0f, 0f, 0.15f);
                 } else {
-                    return new Color(0f, 0f, 0f, 0f);
+                    return new Color(0f, 0f, 0f, 0.15f);
                 }
             } else {
                 return new Color(0f, 0f, 0f, 0.15f);

@@ -32,7 +32,7 @@ implements ActionListener {
     private float minValue = 1000000000;
     private float avgValue = 0;
     private float stdValue = 0;
-    private float toTime = 0f;
+    private float toTime = 1f;
     private int selectedTime = 0;
 
     public MyGraphTopLevelReachTimeDistribution() {}
@@ -63,20 +63,19 @@ implements ActionListener {
         barRenderer.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont11);
 
         JComboBox timeMenu = new JComboBox();
-        timeMenu.addItem("SECOND");
-        timeMenu.addItem("MINUTE");
-        timeMenu.addItem("HOUR");
+        timeMenu.addItem("SEC.");
+        timeMenu.addItem("MIN.");
+        timeMenu.addItem("HR.");
         timeMenu.setSelectedIndex(selectedTime);
         timeMenu.setFont(MySequentialGraphVars.tahomaPlainFont12);
         timeMenu.setFocusable(false);
         timeMenu.setBackground(Color.WHITE);
         timeMenu.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+            @Override public void actionPerformed(ActionEvent e) {
                 new Thread(new Runnable() {
                     @Override public void run() {
                         if (timeMenu.getSelectedIndex() == 0) {
-                            toTime = 0;
+                            toTime = 1;
                             selectedTime = 0;
                             decorate();
                         } else if (timeMenu.getSelectedIndex() == 1) {
@@ -164,25 +163,29 @@ implements ActionListener {
 
         for (MyNode n : this.nodes) {
             if (n.getCurrentValue() == 0) continue;
-            for (Map<Long, Integer> reachTimeMap : n.reachTimeMapByObjectID.values()) {
-                for (long reachTime : reachTimeMap.keySet()) {
-                    if (reachTime == 0) continue;
-                    long value = (this.toTime > 0 ? (long) (reachTime/this.toTime) : reachTime);
-                    totalValue += value;
-                    nodeCount++;
+            for (int s=0; s < MySequentialGraphVars.seqs.length; s++) {
+                for (int i=1; i < MySequentialGraphVars.seqs[s].length; i++) {
+                    String itemset  = MySequentialGraphVars.seqs[s][i-1].split(":")[0];
+                    if (itemset.equals(n.getName())) {
+                        long time = (long) ((float) Long.parseLong(MySequentialGraphVars.seqs[s][i].split(":")[1])/toTime);
+                        if (time == 0) continue;
 
-                    if (value > this.maxValue) {
-                        this.maxValue = value;
-                    }
+                        totalValue += time;
+                        nodeCount++;
 
-                    if (value > 0 && value < this.minValue) {
-                        this.minValue = value;
-                    }
+                        if (time > this.maxValue) {
+                            this.maxValue = time;
+                        }
 
-                    if (valueMap.containsKey(value)) {
-                        valueMap.put(value, valueMap.get(value) + 1);
-                    } else {
-                        valueMap.put(value, 1);
+                        if (time > 0 && time < this.minValue) {
+                            this.minValue = time;
+                        }
+
+                        if (valueMap.containsKey(time)) {
+                            valueMap.put(time, valueMap.get(time) + 1);
+                        } else {
+                            valueMap.put(time, 1);
+                        }
                     }
                 }
             }

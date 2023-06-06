@@ -42,6 +42,8 @@ public class MySequentialGraphVars {
     public static MyGraph g;
     public static String [][] seqs;
     public static MyMedousa app = null;
+    public static String sequencesWithObjectIDs = MySequentialGraphSysUtil.getWorkingDir() +
+             MySequentialGraphSysUtil.getDirectorySlash() + "sequencesWithObjectIDs.txt";
     public static HashMap<String, String> itemToIdMap = null;
     public static int mxDepth = 0;
     public static int diameter = 0;

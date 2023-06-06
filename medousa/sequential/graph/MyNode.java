@@ -15,11 +15,8 @@ implements Serializable, Cloneable, Comparable<MyNode> {
     protected float value;
     public Color clusteringColor;
     public int unreachableNodeCount;
-
     public Ellipse2D.Double ellipse2D = null;
-
     public String name;
-
     public int inContribution;
     public int outContribution;
     public long uniqueContribution;

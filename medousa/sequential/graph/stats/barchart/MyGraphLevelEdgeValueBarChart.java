@@ -31,11 +31,11 @@ extends JPanel {
         Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
         float edgeMaxValue = 0f;
         if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthNeighborNodeTypeSelector.getSelectedItem().toString().contains("S.")) {
-            Map<String, Map<String, Integer>> depthNodeSuccessorMaps = MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeSuccessorMaps;
+            Map<String, Map<String, Long>> depthNodeSuccessorMaps = MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeSuccessorMaps;
             for (MyEdge e : edges) {
                 if (depthNodeSuccessorMaps.keySet().contains(e.getSource().getName())) {
                     for (String depthNode : depthNodeSuccessorMaps.keySet()) {
-                        Map<String, Integer> successorSet = depthNodeSuccessorMaps.get(depthNode);
+                        Map<String, Long> successorSet = depthNodeSuccessorMaps.get(depthNode);
                         if (successorSet.containsKey(e.getDest().getName())) {
                             String predecessor = MySequentialGraphSysUtil.getNodeName(e.getSource().getName());
                             String successor = MySequentialGraphSysUtil.getNodeName(e.getDest().getName());
@@ -55,11 +55,11 @@ extends JPanel {
                 }
             }
         } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthNeighborNodeTypeSelector.getSelectedItem().toString().contains("P.")) {
-            Map<String, Map<String, Integer>> depthNodePredecessorSetMap = MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodePredecessorMaps;
+            Map<String, Map<String, Long>> depthNodePredecessorSetMap = MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodePredecessorMaps;
             for (MyEdge e : edges) {
                 if (depthNodePredecessorSetMap.keySet().contains(e.getDest().getName())) {
                     for (String depthNode : depthNodePredecessorSetMap.keySet()) {
-                        Map<String, Integer> predecessorMap = depthNodePredecessorSetMap.get(depthNode);
+                        Map<String, Long> predecessorMap = depthNodePredecessorSetMap.get(depthNode);
                         if (predecessorMap.containsKey(e.getSource().getName())) {
                             String predecessor = MySequentialGraphSysUtil.getNodeName(e.getSource().getName());
                             String successor = MySequentialGraphSysUtil.getNodeName(e.getDest().getName());

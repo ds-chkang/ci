@@ -33,11 +33,11 @@ implements ActionListener {
     private float stdValue = 0;
     private float toTime = 1f;
     private int selectedTime = 0;
-    private int selectedGraph = 0;
+    private MyProgressBar pb;
     public MyGraphTopLevelDurationDistribution() {}
 
     public void decorate() {
-        MyProgressBar pb = new MyProgressBar(false);
+        this.pb = new MyProgressBar(false);
         removeAll();
         setLayout(new BorderLayout(3, 3));
         setBackground(Color.WHITE);
@@ -70,8 +70,7 @@ implements ActionListener {
         timeConvertMenu.setFocusable(false);
         timeConvertMenu.setBackground(Color.WHITE);
         timeConvertMenu.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+            @Override public void actionPerformed(ActionEvent e) {
                 new Thread(new Runnable() {
                     @Override public void run() {
                         if (timeConvertMenu.getSelectedIndex() == 0) {
@@ -104,12 +103,10 @@ implements ActionListener {
         add(topPanel, BorderLayout.NORTH);
         add(chartPanel, BorderLayout.CENTER);
 
-        pb.updateValue(100, 100);
-        pb.dispose();
+        this.pb.updateValue(100, 100);
     }
 
     public void enlarge() {
-            MyProgressBar pb = new MyProgressBar(false);
             try {
                 this.decorate();
                 JFrame f = new JFrame(" DURATION DISTRIBUTION");
@@ -119,12 +116,12 @@ implements ActionListener {
                 f.setLayout(new BorderLayout(3, 3));
                 f.getContentPane().add(this, BorderLayout.CENTER);
                 f.pack();
-                pb.updateValue(100, 100);
-                pb.dispose();
+                this.pb.updateValue(100, 100);
+                this.pb.dispose();
                 f.setVisible(true);
             } catch (Exception ex) {
-                pb.updateValue(100, 100);
-                pb.dispose();
+                this.pb.updateValue(100, 100);
+                this.pb.dispose();
             }
 
     }
