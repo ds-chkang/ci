@@ -7,6 +7,7 @@ import medousa.message.MyMessageUtil;
 import medousa.direct.utils.MyDirectGraphSysUtil;
 import medousa.direct.utils.MyDirectGraphVars;
 import medousa.sequential.config.MySequentialGraphConfigPanel;
+import medousa.sequential.graph.clustering.MyClusteringConfig;
 import medousa.sequential.graph.funnel.MyAnalysisGraphApp;
 import medousa.sequential.graph.layout.MyFRLayout;
 import medousa.sequential.utils.MySequentialGraphSysUtil;
@@ -31,7 +32,7 @@ implements ActionListener {
     public  JButton runBtn = new JButton();
     public  JButton funnelBtn = new JButton();
     private  JButton searchSequentialPatternBtn = new JButton();
-    private  JButton clusteringBtn = new JButton();
+    public  JButton clusteringBtn = new JButton();
     public JButton networkBtn = new JButton();
     private final ImageIcon run_img_icon = new ImageIcon(getClass().getResource(MyDirectGraphVars.imgDir +"run.png"));
     private final ImageIcon header_img_icon = new ImageIcon(getClass().getResource(MyDirectGraphVars.imgDir +"header.png"));
@@ -352,7 +353,7 @@ implements ActionListener {
                                             inputBtn.setVisible(false);
                                             runBtn.setVisible(false);
 
-                                            MyFRLayout layout = new MyFRLayout<>(MySequentialGraphVars.app.getSequentialGraphMsgBroker().createGraph(pb), new Dimension(5500, 4500));
+                                            MyFRLayout layout = new MyFRLayout<>(MySequentialGraphVars.app.getSequentialGraphMsgBroker().createGraph(), new Dimension(5500, 4500));
                                             MySequentialGraphVars.app.setSequentialGrpahViewer(MySequentialGraphVars.app.getSequentialGraphMsgBroker().createSequentialGraphView(layout, new Dimension(5500, 4500)));
 
                                             pb.updateValue(60, 100);
@@ -410,16 +411,18 @@ implements ActionListener {
                         }
                     }).start();
                 } else if (evt.getSource() == funnelBtn) {
-                    SwingUtilities.invokeLater(new Runnable() {
+                    new Thread(new Runnable() {
                         @Override public void run() {
-                            new Thread(new Runnable() {
-                                @Override public void run() {
-                                    MyAnalysisGraphApp networkAnalyzer = new MyAnalysisGraphApp();
-                                    networkAnalyzer.setAlwaysOnTop(false);
-                                }
-                            }).start();
+                            MyAnalysisGraphApp networkAnalyzer = new MyAnalysisGraphApp();
+                            networkAnalyzer.setAlwaysOnTop(false);
                         }
-                    });
+                    }).start();
+                } else if (evt.getSource() == clusteringBtn) {
+                    new Thread(new Runnable() {
+                        @Override public void run() {
+                            MyClusteringConfig clusteringConfig = new MyClusteringConfig();
+                        }
+                    }).start();
                 }
             }
         }

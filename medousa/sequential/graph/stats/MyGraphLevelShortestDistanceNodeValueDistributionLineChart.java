@@ -1,7 +1,6 @@
 package medousa.sequential.graph.stats;
 
 import medousa.MyProgressBar;
-import medousa.sequential.graph.MyClusteringConfig;
 import medousa.sequential.graph.MyNode;
 import medousa.sequential.utils.MySequentialGraphVars;
 import org.jfree.chart.ChartFactory;

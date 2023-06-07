@@ -406,6 +406,7 @@ public class MyViewerComponentControllerUtil {
             MyViewerComponentControllerUtil.setDepthValueSelecterMenu();
             MyViewerComponentControllerUtil.setNodeValueComboBoxMenu();
             pb.updateValue(60, 100);
+            MySequentialGraphVars.app.getToolBar().clusteringBtn.setEnabled(true);
 
             MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelBarChart.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
             MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelBarChart.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);

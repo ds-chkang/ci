@@ -1,5 +1,6 @@
 package medousa.sequential.graph;
 
+import medousa.sequential.graph.clustering.MyClusteringConfig;
 import medousa.sequential.graph.layout.MyDirectedSparseMultigraph;
 import medousa.sequential.utils.MySequentialGraphVars;
 import edu.uci.ics.jung.graph.util.EdgeType;

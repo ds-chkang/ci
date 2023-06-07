@@ -56,9 +56,9 @@ implements ActionListener {
             this.setMenuItem(null, this.toPathFlow, "TO PATH FLOW");
             this.add(new JSeparator());
         }
-        if (MySequentialGraphVars.isTimeOn) {
-            this.setMenuItem(null, this.betweenTimeDistribution, "TIME DISTRIBUTION");
-        }
+       // if (MySequentialGraphVars.isTimeOn) {
+       //     this.setMenuItem(null, this.betweenTimeDistribution, "TIME DISTRIBUTION");
+       // }
         this.add(new JSeparator());
         this.setMenuItem(null, this.nodeFont, "NODE FONT SETUP DIALOG");
         this.setMenuItem(null, this.edgeFont, "EDGE FONT SETUP DIALOG");

@@ -1,7 +1,6 @@
 package medousa.sequential.graph.stats;
 
 import medousa.MyProgressBar;
-import medousa.sequential.graph.MyNode;
 import medousa.sequential.utils.MyMathUtil;
 import medousa.sequential.utils.MySequentialGraphSysUtil;
 import medousa.sequential.utils.MySequentialGraphVars;
@@ -17,16 +16,13 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Collection;
 import java.util.TreeMap;
 
-public class MyGraphLevelSequenceDistribution
+public class MyGraphLevelSequenceLengthDistribution
 extends JPanel {
 
 
-    public MyGraphLevelSequenceDistribution() {
+    public MyGraphLevelSequenceLengthDistribution() {
         this.decorate();
         JFrame f = new JFrame(" SEQUENCE DISTRIBUTION");
         f.setPreferredSize(new Dimension(350, 350));

@@ -154,6 +154,7 @@ implements MouseListener {
     public void setMultiNodes(Set<MyNode> selectedMultiNodes) {
         MyProgressBar pb = new MyProgressBar(false);
         try {
+            MySequentialGraphVars.app.getToolBar().clusteringBtn.setEnabled(false);
             MySequentialGraphVars.getSequentialGraphViewer().hoveredNode = null;
             Iterator itr = selectedMultiNodes.iterator();
             MyNode n = (MyNode) itr.next();
@@ -201,6 +202,7 @@ implements MouseListener {
     public void setMultiNodes(MyNode selectedNode) {
         MyProgressBar pb = new MyProgressBar(false);
         try {
+            MySequentialGraphVars.app.getToolBar().clusteringBtn.setEnabled(false);
             MySequentialGraphVars.getSequentialGraphViewer().hoveredNode = null;
             MySequentialGraphVars.getSequentialGraphViewer().multiNodes = new HashSet<>();
             MySequentialGraphVars.getSequentialGraphViewer().multiNodes.add(selectedNode);

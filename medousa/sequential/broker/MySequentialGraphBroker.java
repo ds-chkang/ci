@@ -16,7 +16,7 @@ extends MySequentialGraphEngineBroker {
         super();
     }
 
-    public Graph<MyNode, MyEdge> createGraph(MyProgressBar pb) {
+    public Graph<MyNode, MyEdge> createGraph() {
         try {
             if (!MySequentialGraphVars.isTimeOn) {
                 MyGraphBuilder graphBuilder = new MyGraphBuilder();

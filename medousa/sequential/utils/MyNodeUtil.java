@@ -1,7 +1,7 @@
 package medousa.sequential.utils;
 
 import medousa.sequential.graph.MyClusteringCoefficientCalculator;
-import medousa.sequential.graph.MyClusteringConfig;
+import medousa.sequential.graph.clustering.MyClusteringConfig;
 import medousa.sequential.graph.MyEdge;
 import medousa.sequential.graph.MyNode;
 

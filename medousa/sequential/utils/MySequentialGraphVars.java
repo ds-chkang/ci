@@ -16,14 +16,12 @@ public class MySequentialGraphVars {
     public static Font f_pln_11 = new Font( "Noto Sans", Font.PLAIN, 11);
     public static Font f_pln_12 = new Font( "Noto Sans", Font.PLAIN, 12);
     public static Font f_bold_16 = new Font("Noto Sans", Font.BOLD, 16);
-    public static Font f_bold_14 = new Font("Noto Sans", Font.BOLD, 14);
     public static Font f_bold_12 = new Font("Noto Sans", Font.BOLD, 12);
-    public static Font f_bold_11 = new Font("Noto Sans", Font.BOLD, 11);
     public static Font f_bold_10 = new Font("Noto Sans", Font.BOLD, 10);
     public static Font f_pln_6 = new Font("Noto Sans", Font.PLAIN, 6);
-    public static Font f_pln_13 = new Font("Noto Sans", Font.PLAIN, 13);
     public final static Font tahomaPlainFont12 = new Font("Tahoma", Font.PLAIN, 12);
     public final static Font tahomaPlainFont13 = new Font("Tahoma", Font.PLAIN, 13);
+    public final static Font tahomaPlainFont14 = new Font("Tahoma", Font.PLAIN, 14);
     public final static Font tahomaPlainFont11 = new Font("Tahoma", Font.PLAIN, 11);
     public final static Font tahomaPlainFont10 = new Font("Tahoma", Font.PLAIN, 10);
     public final static Font tahomaPlainFont7 = new Font("Tahoma", Font.PLAIN, 7);
@@ -32,10 +30,8 @@ public class MySequentialGraphVars {
     public final static Font tahomaBoldFont12 = new Font("Tahoma", Font.BOLD, 12);
     public final static Font tahomaBoldFont10 = new Font("Tahoma", Font.BOLD, 10);
     public final static Font tahomaBoldFont11 = new Font("Tahoma", Font.BOLD, 11);
-    public final static Font tahomaBoldFont16 = new Font("Tahoma", Font.BOLD, 16);
     public final static Font tahomaBoldFont28 = new Font("Tahoma", Font.BOLD, 28);
     public final static Font tahomaPlainFont18 = new Font("Tahoma", Font.PLAIN, 18);
-    public final static Font tahomaPlainFont16 = new Font("Tahoma", Font.PLAIN, 16);
 
     public static int numberOfGraphs;
     public static String outputDir = "";
@@ -59,8 +55,6 @@ public class MySequentialGraphVars {
     public static boolean isTimeOn = false;
     public static boolean isSupplementaryOn = false;
     public static int totalRecords;
-    public static int minSub;
-    public static String patternCountSymbol = "#";
     public static boolean isDirectMarkovRelation = false;
     public static int edgeOrderByComboBoxIdx = -1;
     public static int nodeOrderByComboBoxIdx = -1;
@@ -83,19 +77,12 @@ public class MySequentialGraphVars {
     public static String edgeLabelFileExt = ".edgelbl";
     public static String edgeValueFileExt = ".edgeVal";
     public static String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
-    public static final String stopAppMsg = "Would you like to close medousa?";
-    public static final String statusAppVerMsg = " MEDOUSA CONNECTED INTELLIGENCE VERSION 1.0 IS RUNNING.";
     public static String appFrameTitleMsg = "medousa 1.0";
-    public static String appTitleMsg = "medousa - Connected Intelligence";
-    public static String dateSecurityFileName = "thomas.sec";
-    public static String dateSecurityFormat = "MM/dd/yyyy";
     public static final String commaDelimeter = ",";
     public static final String contributionSymbol = "@";
     public static final String uniqueContributionSeparator = "!";
-    public static String sequenceWithObjectIDFileName = "";
     public static final String hyphenDelimeter = "-";
     public static final String timeSeparator = "a";
-    public static final String imgDir = "/images/";
     public static String durationSeparator = "#";
     public static String inputSequenceFile = "";
     public static String sequenceFileName = "";

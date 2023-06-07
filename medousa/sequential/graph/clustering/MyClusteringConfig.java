@@ -1,12 +1,17 @@
-package medousa.sequential.graph;
+package medousa.sequential.graph.clustering;
 
+import edu.uci.ics.jung.visualization.VisualizationViewer;
 import medousa.MyProgressBar;
+import medousa.direct.utils.MyDirectGraphVars;
 import medousa.message.MyMessageUtil;
+import medousa.sequential.graph.MyEdge;
+import medousa.sequential.graph.MyNode;
 import medousa.sequential.graph.common.MyEdgeBetweennessClusterer;
+import medousa.sequential.graph.layout.MyFRLayout;
 import medousa.sequential.utils.MyMathUtil;
-import medousa.sequential.utils.MyViewerComponentControllerUtil;
 import medousa.sequential.utils.MySequentialGraphSysUtil;
 import medousa.sequential.utils.MySequentialGraphVars;
+import medousa.sequential.utils.MyViewerComponentControllerUtil;
 import medousa.table.MyTableUtil;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -35,12 +40,16 @@ public class MyClusteringConfig
 extends JFrame
 implements ActionListener {
 
-    protected static int instances = 0;
-    private static JComboBox clusterMenu = new JComboBox();
-    private JPanel scatterChartPanel = new JPanel();
+    private JComboBox clusteringMenu;
     private Map<MyEdge, Float> scoresByRemovedEdge;
-    private ChartPanel clusterBarChartPanel;
     public static Paint selectedClusterColor;
+    private JSplitPane contentSplitPane = new JSplitPane();
+    private JPanel scatterChartPanel = new JPanel();
+    private JPanel clusteringPanel = new JPanel();
+    private ChartPanel clusterBarChartPanel;
+
+    private JToolBar toolbar;
+
     public MyClusteringConfig() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
@@ -49,16 +58,92 @@ implements ActionListener {
         });
     }
 
-    private JSplitPane contentSplitPane = new JSplitPane();
+    private void setClusteringMenu() {
+        this.clusteringMenu = new JComboBox();
+        this.clusteringMenu.addItem("");
+        this.clusteringMenu.addItem("BETWEENESS");
+        this.clusteringMenu.addItem("MODULARITY");
+        this.clusteringMenu.setFont(MyDirectGraphVars.tahomaPlainFont12);
+        this.clusteringMenu.setBackground(Color.WHITE);
+        this.clusteringMenu.setFocusable(false);
+        this.clusteringMenu.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                if (clusteringMenu.getSelectedIndex() == 1) {
+                    setBetweenessClusteringContol();
+                    revalidate();
+                    repaint();
+                } else if (clusteringMenu.getSelectedIndex() == 0) {
+                    remove(contentSplitPane);
+                    revalidate();
+                    repaint();
+                }
+            }
+        });
+
+        this.toolbar = new JToolBar();
+        this.toolbar.setLayout(new FlowLayout(FlowLayout.LEFT, 3,3));
+        this.toolbar.add(this.clusteringMenu);
+        this.toolbar.setBackground(Color.decode("#D6D9DF"));
+        this.toolbar.setPreferredSize(new Dimension(169, 32));
+        this.toolbar.setFloatable(false);
+    }
 
     private void decorate() {
-        final MyClusteringConfig clusteringConfig = this;
-        this.setBackground(Color.WHITE);
+        MyProgressBar pb = new MyProgressBar(false);
+        this.setClusteringMenu();
         this.setLayout(new BorderLayout(3, 3));
+        this.getContentPane().add(this.toolbar, BorderLayout.NORTH);
+        this.getContentPane().add(this.clusteringPanel);
+        this.setTitle("CLUSTER EXPLORER");
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.setPreferredSize(new Dimension(900, 600));
+        this.pack();
+        this.setAlwaysOnTop(true);
+        this.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setAlwaysOnTop(true);
+                    }
+                }).start();
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                super.mouseExited(e);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setAlwaysOnTop(false);
+                    }
+                }).start();
+            }
+        });
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                new Thread(new Runnable() {
+                    @Override public void run() {
+                        MyViewerComponentControllerUtil.setDefaultViewerLook();
+                    }
+                }).start();
+            }
+        });
+        pb.updateValue(100, 100);
+        pb.dispose();
+        this.setVisible(true);
+    }
+
+    private void setBetweenessClusteringContol() {
+        final MyClusteringConfig clusteringConfig = this;
 
         JLabel txtStat = new JLabel();
         txtStat.setBackground(Color.WHITE);
-        txtStat.setFont(MySequentialGraphVars.tahomaPlainFont13);
+        txtStat.setFont(MySequentialGraphVars.tahomaPlainFont14);
 
         JLabel numOfEdgesToRemoveLabel = new JLabel(" NO. OF EDGES: ");
         numOfEdgesToRemoveLabel.setFont(MySequentialGraphVars.tahomaBoldFont13);
@@ -112,15 +197,15 @@ implements ActionListener {
                         scoresByRemovedEdge = cluster.getRemovedEdgeMap();
                         pb.updateValue(70, 100);
 
-                        clusterMenu = new JComboBox();
-                        clusterMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
-                        clusterMenu.setBackground(Color.WHITE);
-                        clusterMenu.setFocusable(false);
-                        clusterMenu.addItem("");
+                        clusteringMenu = new JComboBox();
+                        clusteringMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
+                        clusteringMenu.setBackground(Color.WHITE);
+                        clusteringMenu.setFocusable(false);
+                        clusteringMenu.addItem("");
                         for (int i=0; i < clusterSets.size(); i++) {
-                            clusterMenu.addItem("" + (i+1));
+                            clusteringMenu.addItem("" + (i+1));
                         }
-                        clusterMenu.setSelectedIndex(0);
+                        clusteringMenu.setSelectedIndex(0);
 
                         JLabel clusterLabel = new JLabel("CLUSTER: ");
                         clusterLabel.setBackground(Color.WHITE);
@@ -128,7 +213,7 @@ implements ActionListener {
 
                         bottomRightPanel.removeAll();
                         bottomRightPanel.add(clusterLabel);
-                        bottomRightPanel.add(clusterMenu);
+                        bottomRightPanel.add(clusteringMenu);
                         bottomPanel.add(bottomRightPanel, BorderLayout.EAST);
 
                         long maxNode = 0;
@@ -176,23 +261,23 @@ implements ActionListener {
 
                         JSplitPane clusterChartAndTableSplitPane = new JSplitPane();
                         clusterChartAndTableSplitPane.setDividerSize(6);
-                        clusterChartAndTableSplitPane.setDividerLocation(150);
+                        clusterChartAndTableSplitPane.setDividerLocation((int) (getHeight() * 0.40));
                         clusterChartAndTableSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
                         clusterChartAndTableSplitPane.setTopComponent(clusterBarChartPanel);
                         clusterChartAndTableSplitPane.setBottomComponent(setRemovedEdgeScoreTable());
                         clusterChartAndTableSplitPane.addComponentListener(new ComponentAdapter() {
                             @Override public void componentResized(ComponentEvent e) {
-                                super.componentResized(e);
-                                clusterChartAndTableSplitPane.setDividerSize(6);
-                                clusterChartAndTableSplitPane.setDividerLocation((int) (getHeight() * 0.45));
+                            super.componentResized(e);
+                            clusterChartAndTableSplitPane.setDividerSize(6);
+                            clusterChartAndTableSplitPane.setDividerLocation((int) (getHeight() * 0.40));
                             }
                         });
 
                         chartPanel.setPreferredSize(new Dimension(550, 500));
                         chartPanel.add(clusterChartAndTableSplitPane, BorderLayout.CENTER);
-                        clusterMenu.addActionListener(new ActionListener() {
+                        clusteringMenu.addActionListener(new ActionListener() {
                             @Override public void actionPerformed(ActionEvent e) {
-                                if (clusterMenu.getSelectedIndex() == 0) {
+                                if (clusteringMenu.getSelectedIndex() == 0) {
                                     new Thread(new Runnable() {
                                         @Override public void run() {
                                             recoverClusteredNodeValue();
@@ -217,7 +302,7 @@ implements ActionListener {
                                 } else {
                                     new Thread(new Runnable() {
                                         @Override public void run() {
-                                            selectedClusterColor = clusterBarChartPanel.getChart().getCategoryPlot().getRenderer().getSeriesPaint(clusterMenu.getSelectedIndex()-1);
+                                            selectedClusterColor = clusterBarChartPanel.getChart().getCategoryPlot().getRenderer().getSeriesPaint(clusteringMenu.getSelectedIndex()-1);
                                             chartPanel.removeAll();
                                             clusterChartAndTableSplitPane.removeAll();
                                             setClusteredNodeValue();
@@ -262,7 +347,6 @@ implements ActionListener {
         JPanel contentPanel = new JPanel();
         contentPanel.setBackground(Color.WHITE);
         contentPanel.setLayout(new BorderLayout(3,3));
-        //contentPanel.add(topControlPanel, BorderLayout.NORTH);
         contentPanel.add(chartPanel, BorderLayout.CENTER);
 
         JPanel tablePanel = new JPanel();
@@ -277,58 +361,50 @@ implements ActionListener {
         scatterPlotAndEdgeTablePanel.add(setScatterPlotChart(null), BorderLayout.CENTER);
         scatterPlotAndEdgeTablePanel.add(setClusterNodeTable(), BorderLayout.SOUTH);
 
-        contentSplitPane.setDividerLocation(0.45);
-        contentSplitPane.setDividerSize(0);
-        contentSplitPane.setRightComponent(contentPanel);
-        contentSplitPane.setLeftComponent(scatterPlotAndEdgeTablePanel);
-        contentSplitPane.addComponentListener(new ComponentAdapter() {
+        //MyFRLayout layout = new MyFRLayout<>(MySequentialGraphVars.app.getSequentialGraphMsgBroker().createGraph(), new Dimension(5500, 4500));
+        //VisualizationViewer<MyNode, MyEdge> viewer = MySequentialGraphVars.app.getSequentialGraphMsgBroker().createSequentialGraphView(layout, new Dimension(5500, 4500));
+
+        /**JSplitPane splitPane = new JSplitPane();
+        splitPane.setDividerLocation(0.4);
+        splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+        //splitPane.setTopComponent(viewer);
+        splitPane.setBottomComponent(scatterPlotAndEdgeTablePanel);
+        splitPane.addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent evt) {
+                if (!MySequentialGraphVars.getSequentialGraphViewer().isClustered) {
+                    splitPane.setDividerSize(0);
+                    splitPane.setDividerLocation((int) (getHeight() * 0.40));
+                } else {
+                    splitPane.setDividerSize(6);
+                    splitPane.setDividerLocation((int) (getHeight() * 0.40));
+                }
+            }
+        });*/
+
+        this.contentSplitPane.setDividerLocation(0.5);
+        this.contentSplitPane.setDividerSize(0);
+        this.contentSplitPane.setRightComponent(contentPanel);
+        this.contentSplitPane.setLeftComponent(scatterPlotAndEdgeTablePanel);
+        this.contentSplitPane.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent evt) {
                 if (!MySequentialGraphVars.getSequentialGraphViewer().isClustered) {
                     contentSplitPane.setDividerSize(0);
-                    contentSplitPane.setDividerLocation((int) (getWidth() * 0.45));
+                    contentSplitPane.setDividerLocation((int) (getWidth() * 0.50));
                 } else {
                     contentSplitPane.setDividerSize(6);
-                    contentSplitPane.setDividerLocation((int) (getWidth() * 0.45));
+                    contentSplitPane.setDividerLocation((int) (getWidth() * 0.50));
                 }
             }
         });
 
-        contentSplitPane.setBorder(BorderFactory.createEtchedBorder());
-        add(topControlPanel, BorderLayout.NORTH);
-        add(contentSplitPane, BorderLayout.CENTER);
-        pack();
-        setTitle("CLUSTER EXPLORER");
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        addWindowListener(new WindowAdapter() {
-            @Override public void windowClosing(WindowEvent e) {
-                super.windowClosing(e);
-                new Thread(new Runnable() {
-                    @Override public void run() {
-                        MySequentialGraphVars.getSequentialGraphViewer().vc.depthSelecter.setVisible(true);
-                        recoverClusteredNodeValue();
-                        MyViewerComponentControllerUtil.setDefaultViewerLook();
-                        MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.setText("N. V. B.");
-                        MySequentialGraphVars.getSequentialGraphViewer().vc.clusteringSectorLabel.setEnabled(true);
-                        MySequentialGraphVars.getSequentialGraphViewer().vc.clusteringSelector.setEnabled(true);
-                        selectedClusterColor = null;
-                        instances = 0;
-                    }
-                }).start();
-            }
-        });
+        this.contentSplitPane.setBorder(BorderFactory.createEtchedBorder());
 
-        addMouseListener(new MouseListener() {
-            @Override public void mouseClicked(MouseEvent e) {}
-            @Override public void mousePressed(MouseEvent e) {}
-            @Override public void mouseReleased(MouseEvent e) {}
-            @Override public void mouseEntered(MouseEvent e) {setAlwaysOnTop(true);}
-            @Override public void mouseExited(MouseEvent e) {setAlwaysOnTop(false);}
-        });
-        setPreferredSize(new Dimension(900, 600));
-        MySequentialGraphVars.getSequentialGraphViewer().vc.clusteringSectorLabel.setEnabled(false);
-        MySequentialGraphVars.getSequentialGraphViewer().vc.clusteringSelector.setEnabled(false);
-        setAlwaysOnTop(true);
-        setVisible(true);
+        clusteringPanel.setBackground(Color.WHITE);
+        clusteringPanel.setLayout(new BorderLayout(2,2));
+        clusteringPanel.add(topControlPanel, BorderLayout.NORTH);
+        clusteringPanel.add(this.contentSplitPane, BorderLayout.CENTER);
+
+        this.add(clusteringPanel, BorderLayout.CENTER);
     }
 
     private JPanel setRemovedEdgeScoreTable() {
@@ -402,7 +478,7 @@ implements ActionListener {
     }
 
     private JPanel setClusterNodeTable() {
-        if (scoresByRemovedEdge == null || clusterMenu.getSelectedIndex() == 0) {
+        if (scoresByRemovedEdge == null || clusteringMenu.getSelectedIndex() == 0) {
             JPanel clusteNodeTablePanel = new JPanel();
             clusteNodeTablePanel.setBackground(Color.WHITE);
             return clusteNodeTablePanel;

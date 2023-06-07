@@ -974,16 +974,68 @@ implements ActionListener {
         this.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         this.distributionSelecter.addItem("DISTRIBUTIONS");
+        this.distributionSelecter.addItem("CONT. CNT. DIST. BY OBJ.");
         this.distributionSelecter.addItem("BTW. CONT. CNT. DIST. BY OBJ.");
-        this.distributionSelecter.addItem("BTW TIME DIST. BY OBJ.");
-        this.distributionSelecter.addItem("REACH TIME DIST.");
-        this.distributionSelecter.addItem("DURATION DIST.");
         this.distributionSelecter.addItem("AVG. HOP CNT. DIST.");
         this.distributionSelecter.addItem("SEQ. LEGNTH DIST.");
-        this.distributionSelecter.setFocusable(false);
+        this.distributionSelecter.addItem("INOUT CONT. DIFF. BY DEP.");
+
+        if (MySequentialGraphVars.isTimeOn) {
+            this.distributionSelecter.addItem("BTW TIME DIST.");
+            this.distributionSelecter.addItem("REACH TIME DIST.");
+            this.distributionSelecter.addItem("DURATION DIST.");
+        }
+
+        String[] distributionSelecterTooltips = new String[9];
+        distributionSelecterTooltips[0] = "SELECT A DISTRIBUTION";
+        distributionSelecterTooltips[1] = "CONTRIBUTION COUNT DISTRIBUTION BY OBJECT";
+        distributionSelecterTooltips[2] = "BETWEEN CONTRIBUTION COUNT DISTRIBUTION BY OBJECT";
+        distributionSelecterTooltips[3] = "AVERAGE HOP COUNT DISTRIBUTION";
+        distributionSelecterTooltips[4] = "INPUT SEQUENCE LENGTH DISTRIBUTION";
+        distributionSelecterTooltips[5] = "INOUT CONTRIBUTION DIFFERENCE BY DEPTH";
+
+        if (MySequentialGraphVars.isTimeOn) {
+            distributionSelecterTooltips[6] = "BETWEEN REACH TIME DISTRIBUTION";
+            distributionSelecterTooltips[7] = "REACH TIME DISTRIBUTION";
+            distributionSelecterTooltips[8] = "DURATION DISTRIBUTION";
+        }
+
+        this.distributionSelecter.setRenderer(new MyComboBoxTooltipRenderer(distributionSelecterTooltips));
         this.distributionSelecter.setFocusable(false);
         this.distributionSelecter.setBackground(Color.WHITE);
         this.distributionSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.distributionSelecter.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                new Thread(new Runnable() {
+                    @Override public void run() {
+                        if (distributionSelecter.getSelectedIndex() == 1) {
+                            MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution graphLevelContributionCountByObjectIDDistribution = new MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution();
+                            graphLevelContributionCountByObjectIDDistribution.enlarge();
+                        } else if (distributionSelecter.getSelectedIndex() == 2) {
+                            MyBetweenContributionDistributionByObjectLineChart betweenContributionDistributionByObject = new MyBetweenContributionDistributionByObjectLineChart();
+                            betweenContributionDistributionByObject.enlarge();
+                        } else if (distributionSelecter.getSelectedIndex() == 3) {
+                            MyGraphLevelNodeAverageHopCountDistributionLineChart hopCountDistribution = new MyGraphLevelNodeAverageHopCountDistributionLineChart();
+                            hopCountDistribution.enlarge();
+                        } else if (distributionSelecter.getSelectedIndex() == 4) {
+                            MyGraphLevelSequenceLengthDistribution sequenceLengthDistribution = new MyGraphLevelSequenceLengthDistribution();
+                        } else if (distributionSelecter.getSelectedIndex() == 5) {
+                            MyInOutValueDifferenceStatByDepthChart inOutDifferenceStatByDepthChart = new MyInOutValueDifferenceStatByDepthChart();
+                            inOutDifferenceStatByDepthChart.enlarge();
+                        } else if (distributionSelecter.getSelectedIndex() == 6) {
+                            MyBetweenReachTimeDistributionLineChart betweenReachTimeDistribution = new MyBetweenReachTimeDistributionLineChart();
+                            betweenReachTimeDistribution.enlarge();
+                        } else if (distributionSelecter.getSelectedIndex() == 7) {
+                            MyGraphTopLevelReachTimeDistribution timeDistribution = new MyGraphTopLevelReachTimeDistribution();
+                            timeDistribution.enlarge();
+                        } else if (distributionSelecter.getSelectedIndex() == 8) {
+                            MyGraphTopLevelDurationDistribution durationDistribution = new MyGraphTopLevelDurationDistribution();
+                            durationDistribution.enlarge();
+                        }
+                    }
+                }).start();
+            }
+        });
 
         this.nodeValueBarChart.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.nodeLabelBarChart.setFont(MySequentialGraphVars.tahomaPlainFont12);
@@ -1441,11 +1493,11 @@ implements ActionListener {
         graphGroupNodeNumberPercentLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
         graphGroupNodeNumberPercentLabel.setText("");
         topRightPanel.add(graphGroupNodeNumberPercentLabel);
-        //topRightPanel.add(this.clusteringSectorLabel);
-        //topRightPanel.add(this.clusteringSelector);
-        topRightPanel.add(this.distributionSelecter);
-        //topRightPanel.add(this.nodeValueDistributionBtn);
-        //topRightPanel.add(this.edgeValueDistributionBtn);
+        if (MySequentialGraphVars.getSequentialGraphViewer().singleNode == null &&
+            MySequentialGraphVars.getSequentialGraphViewer().multiNodes == null &&
+            depthSelecter.getSelectedIndex() == 0) {
+            topRightPanel.add(this.distributionSelecter);
+        }
 
         topPanel.add(topRightPanel, BorderLayout.EAST);
         topPanel.add(this.topLeftPanel, BorderLayout.WEST);
@@ -2992,7 +3044,6 @@ implements ActionListener {
     public MyViewerComponentController getGraphControllerPanel() {return this;}
 
     @Override public void actionPerformed(ActionEvent ae) {
-
         if (ae.getSource() == nodeValueBarChart) {
             new Thread(new Runnable() {
                 @Override public void run() {
@@ -3124,39 +3175,6 @@ implements ActionListener {
                     MyViewerComponentControllerUtil.showNodeLabel();
                 }
             }).start();
-        } else if (ae.getSource() == clusteringSelector) {
-            new Thread(new Runnable() {
-                @Override public void run() {
-                    if (clusteringSelector.getSelectedIndex() == 1) {
-                        if (MyClusteringConfig.instances++ == 0) {
-                            edgeValueBarChart.setText("C. E. V. B");
-                            nodeValueBarChart.setText("C. N. V. B");
-                            MyViewerComponentControllerUtil.setDefaultViewerLook();
-                            MyClusteringConfig clusteringConfig = new MyClusteringConfig();
-                            depthSelecter.setVisible(false);
-                        }
-                    } else if (clusteringSelector.getSelectedIndex() == 0) {
-                        if (MySequentialGraphVars.getSequentialGraphViewer().isClustered) {
-                            MyViewerComponentControllerUtil.setDefaultViewerLook();
-                            MySequentialGraphVars.getSequentialGraphViewer().isClustered = false;
-                        }
-                    } else if (clusteringSelector.getSelectedIndex() == 2) {
-                        MyMessageUtil.showInfoMsg(MySequentialGraphVars.app, "This feature is offered in Ver 1.1");
-                    }
-                }
-            }).start();
-        } else if (ae.getSource() == weightedNodeColor) {
-            new Thread(new Runnable() {
-                @Override public void run() {
-                    if (weightedNodeColor.isSelected()) {
-                        MySequentialGraphVars.getSequentialGraphViewer().getRenderContext().setVertexFillPaintTransformer(MySequentialGraphVars.getSequentialGraphViewer().weightedNodeColor);
-                    } else {
-                        MySequentialGraphVars.getSequentialGraphViewer().getRenderContext().setVertexFillPaintTransformer(MySequentialGraphVars.getSequentialGraphViewer().unWeightedNodeColor);
-                    }
-                    MySequentialGraphVars.getSequentialGraphViewer().revalidate();
-                    MySequentialGraphVars.getSequentialGraphViewer().repaint();
-                }
-            }).start();
         } else if (ae.getSource() == depthNeighborNodeTypeSelector) {
             new Thread(new Runnable() {
                 @Override public void run() {
@@ -3254,21 +3272,16 @@ implements ActionListener {
                 @Override public void run() {
                     if (depthSelecter.getSelectedIndex() == 0) {
                         MySequentialGraphVars.currentGraphDepth = 0;
-                        clusteringSectorLabel.setEnabled(true);
-                        clusteringSelector.setEnabled(true);
+                        MySequentialGraphVars.app.getToolBar().clusteringBtn.setEnabled(true);
                         tableTabbedPane.setEnabledAt(1, true);
                         tableTabbedPane.setEnabledAt(2, true);
 
                         MyViewerComponentControllerUtil.setDefaultViewerLook();
                         return;
                     }
-                    clusteringSelector.setVisible(false);
-                    clusteringSectorLabel.setVisible(false);
+                    MySequentialGraphVars.app.getToolBar().clusteringBtn.setEnabled(false);
                     MySequentialGraphVars.currentGraphDepth = Integer.parseInt(depthSelecter.getSelectedItem().toString().trim());
                     if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
-                        clusteringSectorLabel.setEnabled(false);
-                        clusteringSelector.setEnabled(false);
-
                         if (depthSelecter.getSelectedIndex() == 0) {
                             MyViewerComponentControllerUtil.setDefaultViewerLook();
                             tableTabbedPane.setEnabledAt(1, true);
@@ -3295,8 +3308,6 @@ implements ActionListener {
                         }
                     } else if (selectedNodeNeighborNodeTypeSelector.isShowing()) {
                         MySequentialGraphVars.currentGraphDepth = Integer.parseInt(depthSelecter.getSelectedItem().toString().trim());
-                        clusteringSectorLabel.setEnabled(false);
-                        clusteringSelector.setEnabled(false);
                         tableTabbedPane.setEnabledAt(1, false);
                         tableTabbedPane.setEnabledAt(2, false);
 
@@ -3315,8 +3326,6 @@ implements ActionListener {
                     } else {
                         MyProgressBar pb = new MyProgressBar(false);
                         MySequentialGraphVars.currentGraphDepth = Integer.parseInt(depthSelecter.getSelectedItem().toString().trim());
-                        clusteringSectorLabel.setEnabled(false);
-                        clusteringSelector.setEnabled(false);
                         tableTabbedPane.setEnabledAt(1, false);
                         tableTabbedPane.setEnabledAt(2, false);
                         nodeValueBarChart.setText("DEPTH N. V. B.");
@@ -3324,7 +3333,6 @@ implements ActionListener {
                         MyViewerComponentControllerUtil.setDepthNodeNeighborNodeTypeOption();
                         MyDepthNodeUtil.setDepthNodeValue();
                         MySequentialGraphVars.app.getSequentialGraphDashboard().setDepthNodeDashBoard();
-                        //vTxtStat.setTextStatistics();
                         updateNodeTable();
                         pb.updateValue(100, 100);
                         pb.dispose();

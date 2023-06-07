@@ -29,7 +29,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.*;
 
-public class MyBetweenContributionDistributionLineChart
+public class MyBetweenContributionDistributionByObjectLineChart
 extends JPanel
 implements ActionListener {
 
@@ -42,13 +42,13 @@ implements ActionListener {
     private JPanel tablePanel = new JPanel();
     private JPanel destTablePanel;
 
-    public MyBetweenContributionDistributionLineChart() {}
+    public MyBetweenContributionDistributionByObjectLineChart() {}
 
     public void enlarge() {
         this.pb = new MyProgressBar(false);
         try {
             decorate();
-            JFrame f = new JFrame(" TIME DISTRIBUTION BETWEEN TWO NODES");
+            JFrame f = new JFrame(" CONTRIBUTION BY OBJECT DISTRIBUTION BETWEEN TWO NODES");
             f.setLayout(new BorderLayout());
             f.setBackground(Color.WHITE);
             f.setPreferredSize(new Dimension(700, 500));
@@ -291,41 +291,10 @@ implements ActionListener {
         barRenderer.setBarPainter(new StandardBarPainter());
         barRenderer.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont11);
 
-        JComboBox timeMenu = new JComboBox();
-        timeMenu.addItem("SEC.");
-        timeMenu.addItem("MIN.");
-        timeMenu.addItem("HR.");
-        timeMenu.setSelectedIndex(selectedTime);
-        timeMenu.setFont(MySequentialGraphVars.tahomaPlainFont12);
-        timeMenu.setFocusable(false);
-        timeMenu.setBackground(Color.WHITE);
-        timeMenu.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent e) {
-                new Thread(new Runnable() {
-                    @Override public void run() {
-                        if (timeMenu.getSelectedIndex() == 0) {
-                            selectedTime = 0;
-                            toTime = 1;
-                            setGraph();
-                        } else if (timeMenu.getSelectedIndex() == 1) {
-                            selectedTime = 1;
-                            toTime = 60;
-                            setGraph();
-                        } else if (timeMenu.getSelectedIndex() == 2) {
-                            toTime = 3600;
-                            selectedTime = 2;
-                            setGraph();
-                        }
-                    }
-                }).start();
-            }
-        });
-
         graphPanel.removeAll();
         graphPanel.setBackground(Color.WHITE);
         graphPanel.setLayout(new BorderLayout(1,1));
         graphPanel.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
-        graphPanel.add(timeMenu, BorderLayout.NORTH);
         graphPanel.add(chartPanel, BorderLayout.CENTER);
         return graphPanel;
     }
@@ -334,7 +303,7 @@ implements ActionListener {
         try {
             if (dest == null) {
                 String plotTitle = "";
-                String xaxis = "TIME DISTRIBUTION BETWEEN TWO NODES";
+                String xaxis = "CONTRIBUTION BY OBJECT BETWEEN TWO NODES";
                 String yaxis = "";
                 PlotOrientation orientation = PlotOrientation.VERTICAL;
                 boolean show = false;
@@ -342,20 +311,42 @@ implements ActionListener {
                 boolean urls = false;
                 return ChartFactory.createBarChart(plotTitle, xaxis, yaxis, new DefaultCategoryDataset(), orientation, show, toolTips, urls);
             }
-            TreeMap<String, Integer> betweenContributionMap = new TreeMap<>();
-            BufferedReader br = new BufferedReader(new FileReader(MySequentialGraphVars.sequenceWithObjectIDFileName));
+
+            BufferedReader br = new BufferedReader(new FileReader(MySequentialGraphVars.sequencesWithObjectIDs));
             String line = "";
-            for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
-                for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
-                    String sourceItemset = MySequentialGraphVars.seqs[s][i - 1].split(":")[0];
+            TreeMap<String, Long> betweenContributionByObjectMap = new TreeMap<>();
+            if (source.endsWith("x")) {
+                while ((line = br.readLine()) != null) {
+                    String [] itemsets = line.split(MySequentialGraphVars.hyphenDelimeter);
+                    String sourceItemset = itemsets[1].split(":")[0];
                     if (sourceItemset.equals(source)) {
-                        String destItemset = MySequentialGraphVars.seqs[s][i].split(":")[0];
-                        if (destItemset.equals(dest)) {
-                            String objectID = MySequentialGraphVars.seqs[s][0].split(":")[0];
-                            if (betweenContributionMap.containsKey(objectID)) {
-                                betweenContributionMap.put(objectID, betweenContributionMap.get(objectID) + 1);
-                            } else {
-                                betweenContributionMap.put(objectID, 1);
+                        for (int i=2; i < itemsets.length; i++) {
+                            String destItemset = itemsets[i].split(":")[0];
+                            if (destItemset.equals(dest)) {
+                                String objectID = itemsets[0].split(":")[0];
+                                if (betweenContributionByObjectMap.containsKey(objectID)) {
+                                    betweenContributionByObjectMap.put(objectID, betweenContributionByObjectMap.get(objectID) + 1);
+                                } else {
+                                    betweenContributionByObjectMap.put(objectID, 1L);
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                while ((line = br.readLine()) != null) {
+                    String[] itemsets = line.split(MySequentialGraphVars.hyphenDelimeter);
+                    for (int i = 3; i < itemsets.length; i++) {
+                        String sourceItemset = itemsets[i-1].split(":")[0];
+                        if (sourceItemset.equals(source)) {
+                            String destItemset = itemsets[i].split(":")[0];
+                            if (destItemset.equals(dest)) {
+                                String objectID = itemsets[0].split(":")[0];
+                                if (betweenContributionByObjectMap.containsKey(objectID)) {
+                                    betweenContributionByObjectMap.put(objectID, betweenContributionByObjectMap.get(objectID) + 1);
+                                } else {
+                                    betweenContributionByObjectMap.put(objectID, 1L);
+                                }
                             }
                         }
                     }
@@ -363,7 +354,7 @@ implements ActionListener {
             }
 
             LinkedHashMap<Long, Long> contributionCountMap = new LinkedHashMap<>();
-            for (long betweenContributionByObjectID : betweenContributionMap.values()) {
+            for (long betweenContributionByObjectID : betweenContributionByObjectMap.values()) {
                 if (contributionCountMap.containsKey(betweenContributionByObjectID)) {
                     contributionCountMap.put(betweenContributionByObjectID, contributionCountMap.get(betweenContributionByObjectID) + 1);
                 } else {
@@ -373,11 +364,11 @@ implements ActionListener {
 
             DefaultCategoryDataset dataset = new DefaultCategoryDataset();
             for (Long contributionCount : contributionCountMap.keySet()) {
-                dataset.addValue(contributionCountMap.get(contributionCount), "CONTRIBUTION", contributionCount);
+                dataset.addValue(contributionCountMap.get(contributionCount), "CONTRIBUTION BY OBJECT", contributionCount);
             }
 
             String plotTitle = "";
-            String xaxis = "CONTRIBUTION DISTRIBUTION BETWEEN TWO NODES";
+            String xaxis = "CONTRIBUTION BY OBJECT BETWEEN TWO NODES";
             String yaxis = "";
             PlotOrientation orientation = PlotOrientation.VERTICAL;
             boolean show = false;

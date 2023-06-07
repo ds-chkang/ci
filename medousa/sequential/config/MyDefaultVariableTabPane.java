@@ -156,7 +156,7 @@ implements Serializable {
                     new Thread(new Runnable() {
                         @Override public void run() {
                             try {
-                                MyFRLayout layout = new MyFRLayout<>(MySequentialGraphVars.app.getSequentialGraphMsgBroker().createGraph(pb), new Dimension(5500, 4500));
+                                MyFRLayout layout = new MyFRLayout<>(MySequentialGraphVars.app.getSequentialGraphMsgBroker().createGraph(), new Dimension(5500, 4500));
                                 MySequentialGraphVars.app.setSequentialGrpahViewer(MySequentialGraphVars.app.getSequentialGraphMsgBroker().createSequentialGraphView(layout, new Dimension(5500, 4500)));
 
                                 pb.updateValue(60, 100);

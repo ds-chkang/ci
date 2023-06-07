@@ -1,6 +1,7 @@
 package medousa.sequential.graph.menu;
 
 import medousa.message.MyMessageUtil;
+import medousa.sequential.graph.clustering.MyClusteringConfig;
 import medousa.sequential.graph.flow.MyFlowExplorerAnalyzer;
 import medousa.sequential.utils.MyFontChooser;
 import medousa.sequential.utils.MyViewerComponentControllerUtil;
@@ -38,9 +39,7 @@ implements ActionListener {
     private JMenuItem showEndNodes = new JMenuItem("END NODES");
     private JMenuItem inOutDifferenceByDepthStatistics = new JMenuItem("INOUT CONT. DIFF. BY DEP.");
     private JMenuItem betweenContributionByObjectDistribution = new JMenuItem("BTW. CONT. CNT. DIST. BY OBJ.");
-
-    private JMenuItem betweenTimeDistribution = new JMenuItem("BTW TIME DIST. BY OBJ.");
-
+    private JMenuItem betweenReachTimeDistribution = new JMenuItem("BTW. TIME DIST.");
     private JMenuItem avgHopCountDistribution = new JMenuItem("AVG. HOP CNT. DIST.");
     private JMenuItem reachTimeDistribution = new JMenuItem("REACH TIME DIST.");
     private JMenuItem durationDistribution = new JMenuItem("DURATION DIST.");
@@ -51,7 +50,6 @@ implements ActionListener {
     private JMenuItem edgeFont = new JMenuItem("EDGE FONT");
     private JMenuItem nodeToolTipOnOff = new JMenuItem("NODE TOOLTIP-OFF");
     private JMenuItem weightedNodeColor = new JMenuItem("WEIGHT NODE COLORS");
-
 
     public MyViewerMenu( ) {
         this.decorate();
@@ -86,19 +84,19 @@ implements ActionListener {
             this.setMenuItem(this.weightedNodeColor, "SHOW UNWEIGHTED NODE COLROS");
         }
         this.add(new JSeparator());
-        this.setMenuItem(this.inOutDifferenceByDepthStatistics, "INPUT-DIFFERENCE BY DEPTH STATISTICS");
-        this.setMenuItem(this.sequenceLengthDistribution, "SEQUENCE LENGTH DISTRIBUTION");
-        this.setMenuItem(this.contributionCountByObjectDistribution, "CONTRIBUTION COUNT BY OBJECT DISTRIBUTION");
-        this.setMenuItem(this.betweenContributionByObjectDistribution, "CONTRIBUTION COUNT BY OBECT DISTRIBUTION BETWEEN TWO NODES");
-        if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() > 1) {
-            this.setMenuItem(this.showEdgeValueDistribution, "SHOW CURRENT EDGE VALUE DISTRIBUTION");
-        }
-        if (MySequentialGraphVars.isTimeOn) {
-            this.setMenuItem(this.betweenTimeDistribution, "SHOW BETWEEN TIME DISTRIBUTION BY OBJECT");
-            this.setMenuItem(this.reachTimeDistribution, "SHOW REACH TIME DISTRIBUTION");
-            this.setMenuItem(this.durationDistribution, "SHOW DURATION DISTRIBUTION");
-        }
-        this.add(new JSeparator());
+        //this.setMenuItem(this.inOutDifferenceByDepthStatistics, "INOUT-DIFFERENCE BY DEPTH STATISTICS");
+        //this.setMenuItem(this.sequenceLengthDistribution, "SEQUENCE LENGTH DISTRIBUTION");
+        //this.setMenuItem(this.contributionCountByObjectDistribution, "CONTRIBUTION COUNT BY OBJECT DISTRIBUTION");
+        //this.setMenuItem(this.betweenContributionByObjectDistribution, "CONTRIBUTION COUNT BY OBECT DISTRIBUTION BETWEEN TWO NODES");
+        //if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() > 1) {
+        //    this.setMenuItem(this.showEdgeValueDistribution, "SHOW CURRENT EDGE VALUE DISTRIBUTION");
+        //}
+        //if (MySequentialGraphVars.isTimeOn) {
+        //    this.setMenuItem(this.betweenReachTimeDistribution, "SHOW BETWEEN TIME DISTRIBUTION");
+        //    this.setMenuItem(this.reachTimeDistribution, "SHOW REACH TIME DISTRIBUTION");
+        //    this.setMenuItem(this.durationDistribution, "SHOW DURATION DISTRIBUTION");
+        //}
+        //this.add(new JSeparator());
         this.setMenuItem(this.dataFlowGraph, "SHOW DATA FLOW GRAPH");
         this.add(new JSeparator());
         this.setMenuItem(this.nodeFont, "SET NODE FONT");
@@ -150,8 +148,8 @@ implements ActionListener {
                         isNodeColorWeighted = false;
                     }
                 } else if (e.getSource() == betweenContributionByObjectDistribution) {
-                    MyBetweenContributionDistributionLineChart betweenTimeDistribution = new MyBetweenContributionDistributionLineChart();
-                    betweenTimeDistribution.enlarge();
+                    MyBetweenContributionDistributionByObjectLineChart betweenContributionDistributionByObject = new MyBetweenContributionDistributionByObjectLineChart();
+                    betweenContributionDistributionByObject.enlarge();
                 } else if (e.getSource() == picking) {
                     DefaultModalGraphMouse graphMouse = new DefaultModalGraphMouse();
                     graphMouse.setMode(DefaultModalGraphMouse.Mode.PICKING);
@@ -173,13 +171,13 @@ implements ActionListener {
                     MyGraphLevelNodeAverageHopCountDistributionLineChart hopCountDistribution = new MyGraphLevelNodeAverageHopCountDistributionLineChart();
                     hopCountDistribution.enlarge();
                 } else if (e.getSource() == sequenceLengthDistribution) {
-                    MyGraphLevelSequenceDistribution sequenceDistribution = new MyGraphLevelSequenceDistribution();
+                    MyGraphLevelSequenceLengthDistribution sequenceLengthDistribution = new MyGraphLevelSequenceLengthDistribution();
                 } else if (e.getSource() == reachTimeDistribution) {
                     MyGraphTopLevelReachTimeDistribution timeDistribution = new MyGraphTopLevelReachTimeDistribution();
                     timeDistribution.enlarge();
-                } else if (e.getSource() == betweenTimeDistribution) {
-                    MyBetweenReachTimeDistributionLineChart betweenTimeDistribution = new MyBetweenReachTimeDistributionLineChart();
-                    betweenTimeDistribution.enlarge();
+                } else if (e.getSource() == betweenReachTimeDistribution) {
+                    MyBetweenReachTimeDistributionLineChart betweenReachTimeDistribution = new MyBetweenReachTimeDistributionLineChart();
+                    betweenReachTimeDistribution.enlarge();
                 } else if (e.getSource() == durationDistribution) {
                     MyGraphTopLevelDurationDistribution durationDistribution = new MyGraphTopLevelDurationDistribution();
                     durationDistribution.enlarge();

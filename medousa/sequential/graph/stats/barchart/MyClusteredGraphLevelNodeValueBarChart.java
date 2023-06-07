@@ -1,6 +1,6 @@
 package medousa.sequential.graph.stats.barchart;
 
-import medousa.sequential.graph.MyClusteringConfig;
+import medousa.sequential.graph.clustering.MyClusteringConfig;
 import medousa.sequential.graph.MyNode;
 import medousa.sequential.utils.MyMathUtil;
 import medousa.sequential.utils.MySequentialGraphSysUtil;

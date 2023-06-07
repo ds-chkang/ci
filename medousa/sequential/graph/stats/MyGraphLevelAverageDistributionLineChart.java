@@ -1,6 +1,6 @@
 package medousa.sequential.graph.stats;
 
-import medousa.sequential.graph.MyClusteringConfig;
+import medousa.sequential.graph.clustering.MyClusteringConfig;
 import medousa.sequential.graph.MyComboBoxTooltipRenderer;
 import medousa.sequential.graph.MyEdge;
 import medousa.sequential.graph.MyNode;

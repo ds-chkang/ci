@@ -1,7 +1,7 @@
 package medousa.sequential.graph.stats;
 
 import medousa.message.MyMessageUtil;
-import medousa.sequential.graph.MyClusteringConfig;
+import medousa.sequential.graph.clustering.MyClusteringConfig;
 import medousa.sequential.graph.MyEdge;
 import medousa.MyProgressBar;
 import medousa.sequential.utils.MySequentialGraphSysUtil;

@@ -223,7 +223,7 @@ public class MySequentialGraphSysUtil {
         MySequentialGraphVars.totalRecords = 0;
         MySequentialGraphVars.totalOutputSize = 0;
         MySequentialGraphVars.sequeceFeatureCount = 0;
-        MySequentialGraphVars.sequenceWithObjectIDFileName = "";
+        MySequentialGraphVars.sequencesWithObjectIDs = "";
         MySequentialGraphVars.sequenceFileName = "";
         MySequentialGraphVars.isDirectMarkovRelation = false;
         MySequentialGraphVars.edgeOrderByComboBoxIdx = -1;

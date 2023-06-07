@@ -43,9 +43,9 @@ public class MyFeatureWriter {
     public MyFeatureWriter(String sequencesWithObjectIDFileName, String sequenceFileName) {
         try {
             MySequentialGraphVars.sequenceFileName = MySequentialGraphVars.outputDir + ".." + MySequentialGraphSysUtil.getDirectorySlash() + sequenceFileName;
-            MySequentialGraphVars.sequenceWithObjectIDFileName = MySequentialGraphVars.outputDir + ".." + MySequentialGraphSysUtil.getDirectorySlash() + sequencesWithObjectIDFileName;
+            MySequentialGraphVars.sequencesWithObjectIDs = MySequentialGraphVars.outputDir + ".." + MySequentialGraphSysUtil.getDirectorySlash() + sequencesWithObjectIDFileName;
             File sequenceFile = new File(MySequentialGraphVars.sequenceFileName);
-            File sequenceWithObjectIDFile = new File(MySequentialGraphVars.sequenceWithObjectIDFileName);
+            File sequenceWithObjectIDFile = new File(MySequentialGraphVars.sequencesWithObjectIDs);
             if (sequenceFile.exists()) {
                 sequenceFile.delete();
                 sequenceFile.createNewFile();

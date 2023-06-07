@@ -53,6 +53,7 @@ implements GraphMouseListener {
             }
 
             MySequentialGraphVars.getSequentialGraphViewer().vc.graphRemovalPanel.setVisible(false);
+            MySequentialGraphVars.app.getToolBar().clusteringBtn.setEnabled(false);
 
             MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.setText("P. & S. V. B.");
             MySequentialGraphVars.getSequentialGraphViewer().revalidate();
