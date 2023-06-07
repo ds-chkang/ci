@@ -977,11 +977,11 @@ implements ActionListener {
         this.distributionSelecter.addItem("CONT. CNT. DIST. BY OBJ.");
         this.distributionSelecter.addItem("BTW. CONT. CNT. DIST. BY OBJ.");
         this.distributionSelecter.addItem("AVG. HOP CNT. DIST.");
-        this.distributionSelecter.addItem("SEQ. LEGNTH DIST.");
-        this.distributionSelecter.addItem("INOUT CONT. DIFF. BY DEP.");
+        this.distributionSelecter.addItem("SEQ. LEG. DIST.");
+        this.distributionSelecter.addItem("INOUT VALUE DIFF. BY DEP.");
 
         if (MySequentialGraphVars.isTimeOn) {
-            this.distributionSelecter.addItem("BTW TIME DIST.");
+            this.distributionSelecter.addItem("BTW. TIME DIST.");
             this.distributionSelecter.addItem("REACH TIME DIST.");
             this.distributionSelecter.addItem("DURATION DIST.");
         }
@@ -992,7 +992,7 @@ implements ActionListener {
         distributionSelecterTooltips[2] = "BETWEEN CONTRIBUTION COUNT DISTRIBUTION BY OBJECT";
         distributionSelecterTooltips[3] = "AVERAGE HOP COUNT DISTRIBUTION";
         distributionSelecterTooltips[4] = "INPUT SEQUENCE LENGTH DISTRIBUTION";
-        distributionSelecterTooltips[5] = "INOUT CONTRIBUTION DIFFERENCE BY DEPTH";
+        distributionSelecterTooltips[5] = "INOUT VALUE DIFFERENCES BY DEPTH";
 
         if (MySequentialGraphVars.isTimeOn) {
             distributionSelecterTooltips[6] = "BETWEEN REACH TIME DISTRIBUTION";

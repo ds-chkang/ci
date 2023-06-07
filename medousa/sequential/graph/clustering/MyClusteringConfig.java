@@ -189,12 +189,12 @@ implements ActionListener {
                         MyProgressBar pb = new MyProgressBar(false);
                         int numberOfEdges = Integer.parseInt(numOfEdgesToRemoveTxt.getText().replaceAll(" ", ""));
                         Set<String> uniqueColors = new HashSet<>();
-                        MyEdgeBetweennessClusterer<MyNode, MyEdge> cluster = new MyEdgeBetweennessClusterer<>(numberOfEdges);
-                        Set<Set<MyNode>> clusterSets = cluster.transform(MySequentialGraphVars.g);
+                        MyEdgeBetweennessClusterer<MyNode, MyEdge> edgeBetweenessClustering = new MyEdgeBetweennessClusterer<>(numberOfEdges);
+                        Set<Set<MyNode>> clusterSets = edgeBetweenessClustering.transform(MySequentialGraphVars.g);
                         pb.updateValue(50, 100);
-                        Map<Integer, Integer> clustersByEdge = cluster.getClustersByEdge(MySequentialGraphVars.g);
+                        Map<Integer, Integer> clustersByEdge = edgeBetweenessClustering.getClustersByEdge(MySequentialGraphVars.g);
                         setScatterPlotChart(clustersByEdge);
-                        scoresByRemovedEdge = cluster.getRemovedEdgeMap();
+                        scoresByRemovedEdge = edgeBetweenessClustering.getRemovedEdgeMap();
                         pb.updateValue(70, 100);
 
                         clusteringMenu = new JComboBox();
@@ -550,6 +550,8 @@ implements ActionListener {
         plot.setBackgroundPaint(Color.WHITE);
         plot.setRangeGridlinePaint(Color.GRAY);
         plot.setDomainGridlinePaint(Color.GRAY);
+        NumberAxis yAxis = (NumberAxis) chart.getXYPlot().getRangeAxis();
+        yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
         ChartPanel panel = new ChartPanel(chart);
         scatterChartPanel.setPreferredSize(new Dimension(450, 500));
@@ -561,11 +563,15 @@ implements ActionListener {
 
     private XYDataset createScatterPlotDataset(Map<Integer, Integer> clustersByEdge) {
         XYSeriesCollection dataset = new XYSeriesCollection();
-        XYSeries series1 = new XYSeries("NO. OF EDGES REMOVED");
+        XYSeries series = new XYSeries("NO. OF EDGES REMOVED");
         for (Integer e : clustersByEdge.keySet()) {
-            series1.add(e, clustersByEdge.get(e));
+            if (clustersByEdge.get(e) == 0) {
+                series.add(e, new Integer(0));
+            } else {
+                series.add(e, clustersByEdge.get(e));
+            }
         }
-        dataset.addSeries(series1);
+        dataset.addSeries(series);
         return dataset;
     }
 
