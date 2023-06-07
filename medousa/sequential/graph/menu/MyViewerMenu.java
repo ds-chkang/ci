@@ -19,7 +19,8 @@ public class MyViewerMenu
 extends JPopupMenu
 implements ActionListener {
 
-    public static boolean isTooltipOff;
+    private static boolean isTooltipOff;
+    private static boolean isNodeColorWeighted;
 
     private JMenuItem contributionCountByObjectDistribution = new JMenuItem("CONT. CNT. BY OBJ. DIST.");
     private JMenuItem picking = new JMenuItem("PICKING");
@@ -49,6 +50,7 @@ implements ActionListener {
     private JMenuItem nodeFont = new JMenuItem("NODE FONT");
     private JMenuItem edgeFont = new JMenuItem("EDGE FONT");
     private JMenuItem nodeToolTipOnOff = new JMenuItem("NODE TOOLTIP-OFF");
+    private JMenuItem weightedNodeColor = new JMenuItem("WEIGHT NODE COLORS");
 
 
     public MyViewerMenu( ) {
@@ -75,6 +77,13 @@ implements ActionListener {
         }
         if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() > 1) {
             this.setMenuItem(this.showEdgeValue, "SHOW EDGE VALUE");
+        }
+        if (!isNodeColorWeighted) {
+            this.weightedNodeColor.setText("WEIGHT NODE COLORS");
+            this.setMenuItem(this.weightedNodeColor, "SHOW UNWEIGHTED NODE COLORS");
+        } else {
+            this.weightedNodeColor.setText("UNWEIGHT NODE COLORS");
+            this.setMenuItem(this.weightedNodeColor, "SHOW UNWEIGHTED NODE COLROS");
         }
         this.add(new JSeparator());
         this.setMenuItem(this.inOutDifferenceByDepthStatistics, "INPUT-DIFFERENCE BY DEPTH STATISTICS");
@@ -130,6 +139,16 @@ implements ActionListener {
                 } else if (e.getSource() == contributionCountByObjectDistribution) {
                     MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution graphLevelContributionCountByObjectIDDistribution = new MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution();
                     graphLevelContributionCountByObjectIDDistribution.enlarge();
+                } else if (e.getSource() == weightedNodeColor) {
+                    if (!isNodeColorWeighted) {
+                        weightedNodeColor.setText("UNWEIGHT NODE COLORS");
+                        MySequentialGraphVars.getSequentialGraphViewer().getRenderContext().setVertexFillPaintTransformer(MySequentialGraphVars.getSequentialGraphViewer().weightedNodeColor);
+                        isNodeColorWeighted = true;
+                    } else {
+                        weightedNodeColor.setText("WEIGHT NODE COLORS");
+                        MySequentialGraphVars.getSequentialGraphViewer().getRenderContext().setVertexFillPaintTransformer(MySequentialGraphVars.getSequentialGraphViewer().unWeightedNodeColor);
+                        isNodeColorWeighted = false;
+                    }
                 } else if (e.getSource() == betweenContributionByObjectDistribution) {
                     MyBetweenContributionDistributionLineChart betweenTimeDistribution = new MyBetweenContributionDistributionLineChart();
                     betweenTimeDistribution.enlarge();

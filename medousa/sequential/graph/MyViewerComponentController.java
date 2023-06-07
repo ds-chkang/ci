@@ -1403,7 +1403,7 @@ implements ActionListener {
         emptyIndentLabel.setBackground(Color.WHITE);
         emptyIndentLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
 
-        this.bottomLeftControlPanel.add(this.weightedNodeColor);
+        //this.bottomLeftControlPanel.add(this.weightedNodeColor);
         this.bottomLeftControlPanel.add(this.nodeValueBarChart);
         this.bottomLeftControlPanel.add(this.nodeLabelBarChart);
         this.bottomLeftControlPanel.add(this.edgeValueBarChart);

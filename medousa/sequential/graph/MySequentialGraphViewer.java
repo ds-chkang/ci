@@ -45,6 +45,7 @@ implements Serializable {
     public boolean sharedSuccessorsOnly;
     public boolean sharedNeighborsOnly;
     public boolean excluded;
+    public boolean isClustered;
     private ScalingControl viewScaler;
     public final float MX_E_STK = 32.0f;
     public final float MIN_NODE_SZ = 50.0f;
@@ -59,7 +60,6 @@ implements Serializable {
     public MyViewerComponentController vc;
     public Set<MyNode> sharedPredecessors;
     public Set<MyNode> sharedSuccessors;
-    public boolean isClustered;
     public Font nodeFont = new Font("Noto Sans", Font.PLAIN, 50);
     public Font edgeFont = new Font("Noto Sans", Font.PLAIN, 50);
     public MyGraphLevelNodeValueBarChart graphLevelNodeValueBarChart;

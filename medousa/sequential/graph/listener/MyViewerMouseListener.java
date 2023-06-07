@@ -42,7 +42,6 @@ implements MouseListener {
                     MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelSelecter.getSelectedIndex() > 0 ||
                     MySequentialGraphVars.getSequentialGraphViewer().hoveredNode != null ||
                     MySequentialGraphVars.getSequentialGraphViewer().excluded) {
-
                     new Thread(new Runnable() {
                         @Override public void run() {
                             MyViewerComponentControllerUtil.setDefaultViewerLook();

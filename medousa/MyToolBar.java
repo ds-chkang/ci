@@ -31,14 +31,14 @@ implements ActionListener {
     public  JButton runBtn = new JButton();
     public  JButton funnelBtn = new JButton();
     private  JButton searchSequentialPatternBtn = new JButton();
-    private  JButton nodeSummaryBtn = new JButton();
+    private  JButton clusteringBtn = new JButton();
     public JButton networkBtn = new JButton();
     private final ImageIcon run_img_icon = new ImageIcon(getClass().getResource(MyDirectGraphVars.imgDir +"run.png"));
     private final ImageIcon header_img_icon = new ImageIcon(getClass().getResource(MyDirectGraphVars.imgDir +"header.png"));
     private final ImageIcon input_img_icon = new ImageIcon(getClass().getResource(MyDirectGraphVars.imgDir +"input.png"));
     private final ImageIcon logo_img_icon = new ImageIcon(getClass().getResource(MyDirectGraphVars.imgDir +"medousa.jpg"));
     private final ImageIcon funnel_img_icon = new ImageIcon(getClass().getResource(MyDirectGraphVars.imgDir +"simulation.png"));
-    private final ImageIcon pathfinder_img_icon = new ImageIcon(getClass().getResource(MyDirectGraphVars.imgDir + "network.png"));
+    private final ImageIcon clustering_img_icon = new ImageIcon(getClass().getResource(MyDirectGraphVars.imgDir + "clustering.png"));
 
 
     protected   JComboBox projectMenuComboBox;
@@ -182,12 +182,14 @@ implements ActionListener {
                                 setButton(inputBtn, input_img_icon, "FUNNEL EXPLORER", false);
                                 setButton(runBtn, run_img_icon, "CREATE NETWORK", false);
                                 setButton(funnelBtn, funnel_img_icon, "Funnel Analyses", false);
+                                setButton(clusteringBtn, clustering_img_icon, "CLUSTERING", false);
 
                                 headerBtn.setEnabled(true);
                                 headerBtn.setVisible(true);
                                 inputBtn.setVisible(true);
                                 runBtn.setVisible(true);
 
+                                clusteringBtn.setVisible(false);
                                 funnelBtn.setVisible(false);
                             }
 
@@ -356,6 +358,8 @@ implements ActionListener {
                                             pb.updateValue(60, 100);
                                             funnelBtn.setEnabled(true);
                                             funnelBtn.setVisible(true);
+                                            clusteringBtn.setEnabled(true);
+                                            clusteringBtn.setVisible(true);
                                             MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
                                             MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.setSelectedIndex(1); // DEFAULT VALUE.
                                             MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
@@ -372,6 +376,7 @@ implements ActionListener {
                                                 pb.updateValue(100, 100);
                                                 pb.dispose();
                                                 funnelBtn.setVisible(false);
+                                                clusteringBtn.setVisible(false);
                                                 MyMessageUtil.showInfoMsg("<html><body>An exception has occurred while creating a network.<br>Please, check the information provided in the configuration panel.</body></html>");
                                             } else {
                                                 MyMessageUtil.showInfoMsg("Network has successfully been built!");
@@ -389,6 +394,7 @@ implements ActionListener {
                                             runBtn.setEnabled(false);
 
                                             funnelBtn.setVisible(false);
+                                            clusteringBtn.setVisible(false);
                                             MyMessageUtil.showInfoMsg("<html><body>An exception has occurred while creating a network.<br>Please, check the information provided in the configuration panel.</body></html>");
                                         } finally {
 
