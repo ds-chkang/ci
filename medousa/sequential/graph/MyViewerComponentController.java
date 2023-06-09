@@ -3271,14 +3271,11 @@ implements ActionListener {
                 @Override public void run() {
                     if (depthSelecter.getSelectedIndex() == 0) {
                         MySequentialGraphVars.currentGraphDepth = 0;
-                        MySequentialGraphVars.app.getToolBar().clusteringBtn.setEnabled(true);
                         tableTabbedPane.setEnabledAt(1, true);
                         tableTabbedPane.setEnabledAt(2, true);
-
                         MyViewerComponentControllerUtil.setDefaultViewerLook();
                         return;
                     }
-                    MySequentialGraphVars.app.getToolBar().clusteringBtn.setEnabled(false);
                     MySequentialGraphVars.currentGraphDepth = Integer.parseInt(depthSelecter.getSelectedItem().toString().trim());
                     if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
                         if (depthSelecter.getSelectedIndex() == 0) {

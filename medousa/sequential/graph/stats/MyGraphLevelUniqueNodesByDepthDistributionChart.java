@@ -10,12 +10,15 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.labels.CategoryItemLabelGenerator;
+import org.jfree.chart.labels.XYItemLabelGenerator;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.HorizontalAlignment;
@@ -25,6 +28,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
 
@@ -137,9 +141,8 @@ extends JPanel{
             chartMenu.setToolTipText("SELECT A DEPTH FOR DEPTH NODES");
             String [] tooltips = new String[MySequentialGraphVars.mxDepth+2];
             tooltips[0] = "SELECT A DEPTH FOR THE DEPTH NODES.";
-            tooltips[1] = "UNIQUE NODE RATIO BY DEPTH";
             for (int i = 1; i <= MySequentialGraphVars.mxDepth; i++) {
-                tooltips[i+1] = "DEPTH " + i + " FOR THE DEPTH NODES.";
+                tooltips[i] = "DEPTH " + i + " FOR THE DEPTH NODES.";
             }
             chartMenu.setRenderer(new MyComboBoxTooltipRenderer(tooltips));
 
@@ -147,7 +150,6 @@ extends JPanel{
             chartMenu.setBackground(Color.WHITE);
             chartMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
             chartMenu.addItem("SELECT");
-            chartMenu.addItem("N. R.");
             for (int i = 1; i <= MySequentialGraphVars.mxDepth; i++) {
                 chartMenu.addItem("" + i);
             }
@@ -157,10 +159,6 @@ extends JPanel{
                     if (chartMenu.getSelectedIndex() == 0) {
                         selectedChart = 0;
                         setUniqueNodesByDepthLineChart();
-                        removeNodeLevelStatistics();
-                    } else if (chartMenu.getSelectedIndex() == 1) {
-                        selectedChart = 1;
-                        setUniqueNodeRatioByDepthLineChart();
                         removeNodeLevelStatistics();
                     } else {
                         selectedChart = chartMenu.getSelectedIndex();
@@ -190,139 +188,6 @@ extends JPanel{
             revalidate();
             repaint();
         } catch (Exception ex) {ex.printStackTrace();}
-    }
-
-    public void setUniqueNodeRatioByDepthLineChart() {
-        try {
-            removeAll();
-            setLayout(new BorderLayout(5, 5));
-            setBackground(Color.WHITE);
-
-            XYSeries uniqueNodeSeries = new XYSeries("U. N.");
-            XYSeriesCollection dataset = new XYSeriesCollection();
-            Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
-            for (int i = 1; i <= MySequentialGraphVars.mxDepth; i++) {
-                int totalNode = 0;
-                for (MyNode n : nodes) {
-                    if (n.getNodeDepthInfoMap().containsKey(i)) {
-                        totalNode++;
-                    }
-                }
-                uniqueNodeSeries.add(i, Double.parseDouble(MyMathUtil.twoDecimalFormat((double)totalNode/ MySequentialGraphVars.g.getVertexCount())));
-            }
-            dataset.addSeries(uniqueNodeSeries);
-
-            JFreeChart chart = ChartFactory.createXYLineChart("", "DEPTH", "", dataset);
-            chart.getTitle().setHorizontalAlignment(HorizontalAlignment.LEFT);
-            chart.getXYPlot().setBackgroundPaint(Color.WHITE);
-            chart.getXYPlot().setDomainGridlinePaint(Color.DARK_GRAY);
-            chart.getXYPlot().setRangeGridlinePaint(Color.DARK_GRAY);
-            chart.getTitle().setFont(new Font("Arial", Font.PLAIN, 0));
-            chart.getXYPlot().getDomainAxis().setLabelFont(new Font("Arial", Font.PLAIN, 0));
-            chart.getXYPlot().getDomainAxis().setTickLabelFont(MySequentialGraphVars.tahomaPlainFont11);
-            chart.getXYPlot().getRangeAxis().setTickLabelFont(MySequentialGraphVars.tahomaPlainFont11);
-            chart.getXYPlot().getRangeAxis().setLabelFont(MySequentialGraphVars.tahomaPlainFont11);
-            chart.getXYPlot().getDomainAxis().setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-            chart.setBackgroundPaint(Color.WHITE);
-
-            XYPlot plot = (XYPlot) chart.getPlot();
-            XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
-            renderer.setSeriesPaint(0, Color.DARK_GRAY);
-            renderer.setSeriesStroke(0, new BasicStroke(1.5f));
-            renderer.setSeriesShapesVisible(0, true);
-            renderer.setSeriesShape(0, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
-            renderer.setSeriesFillPaint(0, Color.WHITE);
-
-            ChartPanel chartPanel = new ChartPanel(chart);
-            chartPanel.setPreferredSize(new Dimension(560, 367));
-
-            JLabel titleLabel = new JLabel(" U. N.");
-            titleLabel.setToolTipText("UNIQUE NODE RATIO BY DEPTH");
-            titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
-            titleLabel.setBackground(Color.WHITE);
-            titleLabel.setForeground(Color.DARK_GRAY);
-
-            JPanel titlePanel = new JPanel();
-            titlePanel.setBackground(Color.WHITE);
-            titlePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-            titlePanel.add(titleLabel);
-
-            JButton enlargeBtn = new JButton("+");
-            enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
-            enlargeBtn.setFocusable(false);
-            enlargeBtn.setBackground(Color.WHITE);
-            enlargeBtn.addActionListener(new ActionListener() {
-                @Override public void actionPerformed(ActionEvent e) {
-                    new Thread(new Runnable() {
-                        @Override public void run() {
-                            enlarge();
-                        }
-                    }).start();
-                }
-            });
-
-            JComboBox chartMenu = new JComboBox();
-            chartMenu.setToolTipText("SELECT A DEPTH FOR DEPTH NODES");
-            String [] tooltips = new String[MySequentialGraphVars.mxDepth+1];
-            tooltips[0] = "SELECT A DEPTH FOR THE DEPTH NODES.";
-            tooltips[1] = "UNIQUE NODE RATIO BY DEPTH";
-            for (int i = 1; i < MySequentialGraphVars.mxDepth; i++) {
-                tooltips[i+1] = "DEPTH " + i + " FOR THE DEPTH NODES.";
-            }
-            chartMenu.setRenderer(new MyComboBoxTooltipRenderer(tooltips));
-
-            chartMenu.setFocusable(false);
-            chartMenu.setBackground(Color.WHITE);
-            chartMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
-            chartMenu.addItem("SELECT");
-            chartMenu.addItem("N. R.");
-            for (int i = 1; i <= MySequentialGraphVars.mxDepth; i++) {
-                chartMenu.addItem("" + i);
-            }
-            chartMenu.setSelectedIndex(selectedChart);
-            chartMenu.addActionListener(new ActionListener() {
-                @Override public void actionPerformed(ActionEvent e) {
-                    new Thread(new Runnable() {
-                        @Override public void run() {
-                            if (chartMenu.getSelectedIndex() == 0) {
-                                selectedChart = 0;
-                                setUniqueNodesByDepthLineChart();
-                                removeNodeLevelStatistics();
-                            } else if (chartMenu.getSelectedIndex() == 1) {
-                                selectedChart = 1;
-                                setUniqueNodeRatioByDepthLineChart();
-                                removeNodeLevelStatistics();
-                            } else {
-                                selectedChart = chartMenu.getSelectedIndex();
-                                setUniqueNodeBarChartByDepth();
-                                updateNodeLevelTable();
-                            }
-                        }
-                    }).start();
-                }
-            });
-
-            JPanel menuPanel = new JPanel();
-            menuPanel.setBackground(Color.WHITE);
-            menuPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-
-            JPanel topPanel = new JPanel();
-            topPanel.setLayout(new BorderLayout(0, 0));
-            topPanel.setBackground(Color.WHITE);
-            topPanel.add(menuPanel, BorderLayout.CENTER);
-            menuPanel.add(chartMenu);
-            menuPanel.add(enlargeBtn);
-            topPanel.add(titlePanel, BorderLayout.WEST);
-
-            add(topPanel, BorderLayout.NORTH);
-            renderer.setBaseLegendTextFont(MySequentialGraphVars.tahomaPlainFont11);
-            add(chartPanel, BorderLayout.CENTER);
-            chart.removeLegend();
-
-            revalidate();
-            repaint();
-        } catch (Exception ex) {ex.printStackTrace();}
-
     }
 
     private void setUniqueNodeBarChartByDepth() {
@@ -412,7 +277,6 @@ extends JPanel{
         chartMenu.setBackground(Color.WHITE);
         chartMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
         chartMenu.addItem("SELECT");
-        chartMenu.addItem("N. R.");
         for (int i = 1; i <= MySequentialGraphVars.mxDepth; i++) {
             chartMenu.addItem("" + i);
         }
@@ -424,10 +288,6 @@ extends JPanel{
                         if (chartMenu.getSelectedIndex() == 0) {
                             selectedChart = 0;
                             setUniqueNodesByDepthLineChart();
-                            removeNodeLevelStatistics();
-                        } else if (chartMenu.getSelectedIndex() == 1) {
-                            selectedChart = 1;
-                            setUniqueNodeRatioByDepthLineChart();
                             removeNodeLevelStatistics();
                         } else {
                             selectedChart = chartMenu.getSelectedIndex();
@@ -468,18 +328,14 @@ extends JPanel{
 
 
     private void updateNodeLevelTable() {
-        int row = nodeLevelTable.getRowCount();
-        while (row > 0) {
-            ((DefaultTableModel) nodeLevelTable.getModel()).removeRow(row-1);
-            row = nodeLevelTable.getRowCount();
-        }
+        removeNodeLevelStatistics();
 
         long max = 0;
         LinkedHashMap<String, Long> nodeValueMap = new LinkedHashMap();
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
         for (MyNode n : nodes) {
-            if (n.getNodeDepthInfoMap().containsKey(selectedChart-1)) {
-                long value = (long) n.getNodeDepthInfoMap().get(selectedChart-1).getContribution();
+            if (n.getNodeDepthInfoMap().containsKey(selectedChart)) {
+                long value = (long) n.getNodeDepthInfoMap().get(selectedChart).getContribution();
                 nodeValueMap.put(n.getName(), value);
                 if (value > max) {
                     max = value;

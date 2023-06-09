@@ -12,6 +12,7 @@ import medousa.sequential.graph.funnel.MyAnalysisGraphApp;
 import medousa.sequential.graph.layout.MyFRLayout;
 import medousa.sequential.utils.MySequentialGraphSysUtil;
 import medousa.sequential.utils.MySequentialGraphVars;
+import medousa.sequential.utils.MyViewerComponentControllerUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -418,6 +419,12 @@ implements ActionListener {
                         }
                     }).start();
                 } else if (evt.getSource() == clusteringBtn) {
+                    new Thread(new Runnable() {
+                        @Override public void run() {
+                            MyViewerComponentControllerUtil.setDefaultViewerLook();
+                        }
+                    }).start();
+
                     new Thread(new Runnable() {
                         @Override public void run() {
                             MyClusteringConfig clusteringConfig = new MyClusteringConfig();

@@ -59,8 +59,8 @@ implements ActionListener {
     }
 
     private void setClusteringMenu() {
+        final MyClusteringConfig clusteringConfig = this;
         this.clusteringMenu = new JComboBox();
-        this.clusteringMenu.addItem("");
         this.clusteringMenu.addItem("BETWEENESS");
         this.clusteringMenu.addItem("MODULARITY");
         this.clusteringMenu.setFont(MyDirectGraphVars.tahomaPlainFont12);
@@ -68,17 +68,21 @@ implements ActionListener {
         this.clusteringMenu.setFocusable(false);
         this.clusteringMenu.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
-                if (clusteringMenu.getSelectedIndex() == 1) {
-                    setBetweenessClusteringContol();
-                    revalidate();
-                    repaint();
-                } else if (clusteringMenu.getSelectedIndex() == 0) {
-                    remove(contentSplitPane);
-                    revalidate();
-                    repaint();
-                }
+                new Thread(new Runnable() {
+                    @Override public void run() {
+                        if (clusteringMenu.getSelectedIndex() == 0) {
+                            setBetweenessClusteringContol();
+                            revalidate();
+                            repaint();
+                        } else {
+                            MyMessageUtil.showInfoMsg(clusteringConfig, "This is a feature offered in medousa Ver 1.1 - Smart Medousa");
+                            clusteringMenu.setSelectedIndex(0);
+                        }
+                    }
+                }).start();
             }
         });
+        this.clusteringMenu.setSelectedIndex(0);
 
         this.toolbar = new JToolBar();
         this.toolbar.setLayout(new FlowLayout(FlowLayout.LEFT, 3,3));
@@ -89,7 +93,6 @@ implements ActionListener {
     }
 
     private void decorate() {
-        MyProgressBar pb = new MyProgressBar(false);
         this.setClusteringMenu();
         this.setLayout(new BorderLayout(3, 3));
         this.getContentPane().add(this.toolbar, BorderLayout.NORTH);
@@ -133,8 +136,6 @@ implements ActionListener {
                 }).start();
             }
         });
-        pb.updateValue(100, 100);
-        pb.dispose();
         this.setVisible(true);
     }
 
@@ -198,7 +199,7 @@ implements ActionListener {
                         pb.updateValue(70, 100);
 
                         clusteringMenu = new JComboBox();
-                        clusteringMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
+                        clusteringMenu.setFont(MySequentialGraphVars.tahomaPlainFont12);
                         clusteringMenu.setBackground(Color.WHITE);
                         clusteringMenu.setFocusable(false);
                         clusteringMenu.addItem("");
