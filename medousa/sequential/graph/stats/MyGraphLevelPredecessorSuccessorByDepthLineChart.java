@@ -44,6 +44,7 @@ implements ActionListener {
     private XYSeries outUniqueNodeSeries;
     private XYSeries maxOutUniqueNodeSeries;
     private XYSeries minOutUniqueNodeSeries;
+    private static JTable nodeStatisticsTable;
 
     public MyGraphLevelPredecessorSuccessorByDepthLineChart() {
         SwingUtilities.invokeLater(new Runnable() {
@@ -80,7 +81,7 @@ implements ActionListener {
 
                     if (uniqueOutNodeCountByDepthMap.containsKey(i)) {
                         long uniqueOutNodeCount = n.getNodeDepthInfo(i).getSuccessorCount() + uniqueOutNodeCountByDepthMap.get(i);
-                        uniqueInNodeCountByDepthMap.put(i, uniqueOutNodeCount);
+                        uniqueOutNodeCountByDepthMap.put(i, uniqueOutNodeCount);
                     } else {
                         long uniqueOutNodeCount = n.getNodeDepthInfo(i).getSuccessorCount();
                         uniqueOutNodeCountByDepthMap.put(i, uniqueOutNodeCount);
@@ -107,15 +108,27 @@ implements ActionListener {
                     }
 
                     long uniqueInNodeCount = n.getNodeDepthInfo(i).getPredecessorCount();
-                    if (uniqueInNodeCount < minUniqueInNodeCountByDepthMap.get(i)) {
+                    if (uniqueInNodeCount > 0 && uniqueInNodeCount < minUniqueInNodeCountByDepthMap.get(i)) {
                         minUniqueInNodeCountByDepthMap.put(i, uniqueInNodeCount);
                     }
 
                     long uniqueOutNodeCount = n.getNodeDepthInfo(i).getSuccessorCount();
-                    if (uniqueOutNodeCount < minUniqueOutNodeCountByDepthMap.get(i)) {
+                    if (uniqueOutNodeCount > 0 && uniqueOutNodeCount < minUniqueOutNodeCountByDepthMap.get(i)) {
                         minUniqueOutNodeCountByDepthMap.put(i, uniqueOutNodeCount);
                     }
                 }
+            }
+        }
+
+        for (int depth : minUniqueInNodeCountByDepthMap.keySet()) {
+            if (minUniqueInNodeCountByDepthMap.get(depth) == 100000000000000L) {
+                minUniqueInNodeCountByDepthMap.put(depth, 0L);
+            }
+        }
+
+        for (int depth : minUniqueOutNodeCountByDepthMap.keySet()) {
+            if (minUniqueOutNodeCountByDepthMap.get(depth) == 100000000000000L) {
+                minUniqueOutNodeCountByDepthMap.put(depth, 0L);
             }
         }
 
@@ -242,7 +255,7 @@ implements ActionListener {
 
             JComboBox graphMenu = new JComboBox();
             String[] tooltips = {
-                "SELECT A DISTRIBUTION",
+                "SELECT A DISTRIBUTION CHART",
                 "NO. OF PREDECESSORS BY DEPTH DISTRIBUTION",
                 "MIN. NO. OF PREDECESSORS BY DEPTH DISTRIBUTION",
                 "MAX. NO. OF PREDECESSORS BY DEPTH DISTRIBUTION",
@@ -264,8 +277,25 @@ implements ActionListener {
             graphMenu.setSelectedIndex(selectedGraph);
             graphMenu.addActionListener(new ActionListener() {
                 @Override public void actionPerformed(ActionEvent e) {
-                    selectedGraph = graphMenu.getSelectedIndex();
-                    decorate();
+                    new Thread(new Runnable() {
+                        @Override public void run() {
+                            selectedGraph = graphMenu.getSelectedIndex();
+                            decorate();
+                            if (selectedGraph == 1) {
+                                updateNodeStatisticsTable(uniqueInNodeCountByDepthMap);
+                            } else if (selectedGraph == 2) {
+                                updateNodeStatisticsTable(minUniqueInNodeCountByDepthMap);
+                            } else if (selectedGraph == 3) {
+                                updateNodeStatisticsTable(maxUniqueInNodeCountByDepthMap);
+                            } else if (selectedGraph == 4) {
+                                updateNodeStatisticsTable(uniqueOutNodeCountByDepthMap);
+                            } else if (selectedGraph == 5) {
+                                updateNodeStatisticsTable(minUniqueOutNodeCountByDepthMap);
+                            } else if (selectedGraph == 6) {
+                                updateNodeStatisticsTable(maxUniqueOutNodeCountByDepthMap);
+                            }
+                        }
+                    }).start();
                 }
             });
 
@@ -306,16 +336,41 @@ implements ActionListener {
         }
     }
 
+    private void updateNodeStatisticsTable(Map<Integer, Long> nodeStatisticsMap) {
+        DefaultTableModel nodeTableModel = (DefaultTableModel) nodeStatisticsTable.getModel();
+        int row = nodeStatisticsTable.getRowCount();
+        while (row > 0) {
+            nodeTableModel.removeRow(row-1);
+            row = nodeStatisticsTable.getRowCount();
+        }
 
-    private static JTable nodeLevelTable;
+        long max = 0;
+        for (int depth : nodeStatisticsMap.keySet()) {
+            if (nodeStatisticsMap.get(depth) > max) {
+                max = nodeStatisticsMap.get(depth);
+            }
+        }
+
+        for (int depth : nodeStatisticsMap.keySet()) {
+            nodeTableModel.addRow(new String[] {
+                    "" + depth,
+                    MyMathUtil.getCommaSeperatedNumber(nodeStatisticsMap.get(depth)),
+                    MyMathUtil.twoDecimalFormat((float) nodeStatisticsMap.get(depth)/max)
+            });
+        }
+
+        nodeStatisticsTable.revalidate();
+        nodeStatisticsTable.repaint();
+    }
+
 
     public void enlarge() {
         MyProgressBar pb = new MyProgressBar(false);
         try {
             JFrame f = new JFrame("PREDECESSORS & SUCCESSORS BY DEPTH");
 
-            String [] depthLevelColumns = {"DEPTH", "NO. OF NODES", "RATIO"};
-            String [][] depthLevelData = {};
+            String[] depthLevelColumns = {"DEPTH", "NO. OF NODES", "RATIO"};
+            String[][] depthLevelData = {};
             DefaultTableModel model = new DefaultTableModel(depthLevelData, depthLevelColumns);
             JTable depthLevelTable = new JTable(model);
             depthLevelTable.setRowHeight(26);
@@ -324,56 +379,72 @@ implements ActionListener {
             depthLevelTable.getColumnModel().getColumn(2).setPreferredWidth(49);
             depthLevelTable.getColumnModel().getColumn(2).setMaxWidth(49);
             depthLevelTable.setBackground(Color.WHITE);
-            depthLevelTable.getTableHeader().setBackground(new Color(0,0,0,0));
+            depthLevelTable.getTableHeader().setBackground(new Color(0, 0, 0, 0));
             depthLevelTable.getTableHeader().setOpaque(false);
             depthLevelTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont12);
             depthLevelTable.setFont(MySequentialGraphVars.tahomaPlainFont12);
 
             LinkedHashMap<Integer, Set<String>> uniqueNodesByDepthMap = new LinkedHashMap<>();
             List<MyNode> nodes = new ArrayList<>(MySequentialGraphVars.g.getVertices());
-            for (int i=0; i <= MySequentialGraphVars.mxDepth; i++) {
+            for (int depth = 0; depth <= MySequentialGraphVars.mxDepth; depth++) {
                 for (MyNode n : nodes) {
-                    if (n.nodeDepthInfoMap.containsKey(i+1)) {
-                        if (uniqueNodesByDepthMap.containsKey(i+1)) {
-                            Set<String> depthNodes = uniqueNodesByDepthMap.get(i+1);
+                    if (n.nodeDepthInfoMap.containsKey(depth + 1)) {
+                        if (uniqueNodesByDepthMap.containsKey(depth + 1)) {
+                            Set<String> depthNodes = uniqueNodesByDepthMap.get(depth + 1);
                             depthNodes.add(n.getName());
-                            uniqueNodesByDepthMap.put((i+1), depthNodes);
+                            uniqueNodesByDepthMap.put((depth + 1), depthNodes);
                         } else {
                             Set<String> deptnNodes = new HashSet<>();
                             deptnNodes.add(n.getName());
-                            uniqueNodesByDepthMap.put((i+1), deptnNodes);
+                            uniqueNodesByDepthMap.put((depth + 1), deptnNodes);
                         }
                     }
                 }
             }
 
+            DefaultTableModel depthLevelTableModel = (DefaultTableModel) depthLevelTable.getModel();
             for (int i : uniqueNodesByDepthMap.keySet()) {
-                DefaultTableModel depthLevelTableModel = (DefaultTableModel) depthLevelTable.getModel();
                 depthLevelTableModel.addRow(new String[]{
                         "" + i,
                         MyMathUtil.getCommaSeperatedNumber(uniqueNodesByDepthMap.get(i).size()),
-                        MyMathUtil.twoDecimalFormat((float)uniqueNodesByDepthMap.get(i).size()/nodes.size())
+                        MyMathUtil.twoDecimalFormat((float) uniqueNodesByDepthMap.get(i).size() / nodes.size())
                 });
             }
 
-            String[] nodeLevelColumns = {"NO.", "NODE", "VALUE", "RATIO"};
+            String[] nodeLevelColumns = {"DEPTH", "VALUE", "RATIO"};
             String[][] nodeLevelData = {};
-            DefaultTableModel nodeLevelModel = new DefaultTableModel(nodeLevelData, nodeLevelColumns);
-            nodeLevelTable = new JTable(nodeLevelModel);
-            nodeLevelTable.setRowHeight(26);
-            nodeLevelTable.getColumnModel().getColumn(0).setPreferredWidth(45);
-            nodeLevelTable.getColumnModel().getColumn(2).setPreferredWidth(45);
-            nodeLevelTable.getColumnModel().getColumn(3).setPreferredWidth(45);
-            nodeLevelTable.setBackground(Color.WHITE);
-            nodeLevelTable.getTableHeader().setBackground(new Color(0, 0, 0, 0));
-            nodeLevelTable.getTableHeader().setOpaque(false);
-            nodeLevelTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont12);
-            nodeLevelTable.setFont(MySequentialGraphVars.tahomaPlainFont12);
+            DefaultTableModel predecessorTableModel = new DefaultTableModel(nodeLevelData, nodeLevelColumns);
+            nodeStatisticsTable = new JTable(predecessorTableModel);
+            nodeStatisticsTable.setRowHeight(26);
+            nodeStatisticsTable.getColumnModel().getColumn(0).setPreferredWidth(66);
+            nodeStatisticsTable.getColumnModel().getColumn(0).setMaxWidth(66);
+            nodeStatisticsTable.getColumnModel().getColumn(2).setPreferredWidth(49);
+            nodeStatisticsTable.getColumnModel().getColumn(2).setMaxWidth(49);
+            nodeStatisticsTable.setBackground(Color.WHITE);
+            nodeStatisticsTable.getTableHeader().setBackground(new Color(0, 0, 0, 0));
+            nodeStatisticsTable.getTableHeader().setOpaque(false);
+            nodeStatisticsTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont12);
+            nodeStatisticsTable.setFont(MySequentialGraphVars.tahomaPlainFont12);
+
+            long max = 0;
+            for (int depth : uniqueInNodeCountByDepthMap.keySet()) {
+                if (uniqueInNodeCountByDepthMap.get(depth) > max) {
+                    max = uniqueInNodeCountByDepthMap.get(depth);
+                }
+            }
+
+            for (int depth : uniqueInNodeCountByDepthMap.keySet()) {
+                predecessorTableModel.addRow(new String[] {
+                        "" + depth,
+                        MyMathUtil.getCommaSeperatedNumber(uniqueInNodeCountByDepthMap.get(depth)),
+                        MyMathUtil.twoDecimalFormat((float) uniqueInNodeCountByDepthMap.get(depth)/max)
+                });
+            }
 
             JSplitPane tableSplitPane = new JSplitPane();
             tableSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
             tableSplitPane.setTopComponent(new JScrollPane(depthLevelTable));
-            tableSplitPane.setBottomComponent(new JScrollPane(nodeLevelTable));
+            tableSplitPane.setBottomComponent(new JScrollPane(nodeStatisticsTable));
             tableSplitPane.addComponentListener(new ComponentAdapter() {
                 @Override public void componentResized(ComponentEvent e) {
                     super.componentResized(e);
@@ -399,11 +470,9 @@ implements ActionListener {
             f.getContentPane().add(chartAndTableSplitPane, BorderLayout.CENTER);
             f.pack();
             f.setCursor(Cursor.HAND_CURSOR);
-            f.setAlwaysOnTop(true);
             pb.updateValue(100, 100);
             pb.dispose();
             f.setVisible(true);
-            f.setAlwaysOnTop(false);
         } catch (Exception ex) {
             pb.updateValue(100, 100);
             pb.dispose();

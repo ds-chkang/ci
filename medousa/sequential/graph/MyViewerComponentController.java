@@ -1483,7 +1483,6 @@ implements ActionListener {
         this.bottomPanel.add(this.bottomLeftControlPanel, BorderLayout.WEST);
         this.bottomPanel.add(this.bottomRightControlPanel, BorderLayout.CENTER);
 
-
         JPanel topRightPanel = new JPanel();
         topRightPanel.setBackground(Color.WHITE);
         topRightPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
