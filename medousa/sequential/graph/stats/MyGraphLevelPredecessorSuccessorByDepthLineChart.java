@@ -3,6 +3,7 @@ package medousa.sequential.graph.stats;
 import medousa.sequential.graph.MyComboBoxTooltipRenderer;
 import medousa.sequential.graph.MyNode;
 import medousa.MyProgressBar;
+import medousa.sequential.utils.MyMathUtil;
 import medousa.sequential.utils.MySequentialGraphVars;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -15,241 +16,154 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.HorizontalAlignment;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.geom.Ellipse2D;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.List;
 
 public class MyGraphLevelPredecessorSuccessorByDepthLineChart
 extends JPanel
 implements ActionListener {
 
     public static int instances = 0;
-    private JComboBox graphSelection = new JComboBox();
+    private int selectedGraph;
+    private Map<Integer, Long> uniqueInNodeCountByDepthMap;
+    private Map<Integer, Long> uniqueOutNodeCountByDepthMap;
+    private Map<Integer, Long> maxUniqueInNodeCountByDepthMap;
+    private Map<Integer, Long> maxUniqueOutNodeCountByDepthMap;
+    private Map<Integer, Long> minUniqueInNodeCountByDepthMap;
+    private Map<Integer, Long> minUniqueOutNodeCountByDepthMap;
+    private XYSeries inUniqueNodeSeries;
+    private XYSeries maxInUniqueNodeSeries;
+    private XYSeries minInUniqueNodeSeries;
+    private XYSeries outUniqueNodeSeries;
+    private XYSeries maxOutUniqueNodeSeries;
+    private XYSeries minOutUniqueNodeSeries;
+
     public MyGraphLevelPredecessorSuccessorByDepthLineChart() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
-                setAllCharts();
+                decorate();
             }
         });
     }
 
-    public void setAllCharts() {
+    private void setData() {
+        this.uniqueInNodeCountByDepthMap = new HashMap<>();
+        this.uniqueOutNodeCountByDepthMap = new HashMap<>();
+        this.maxUniqueInNodeCountByDepthMap = new HashMap<>();
+        this.maxUniqueOutNodeCountByDepthMap = new HashMap<>();
+        this.minUniqueInNodeCountByDepthMap = new HashMap<>();
+        this.minUniqueOutNodeCountByDepthMap = new HashMap<>();
+
+        for (int i=1; i <= MySequentialGraphVars.mxDepth; i++) {
+            this.minUniqueInNodeCountByDepthMap.put(i,  100000000000000L);
+            this.minUniqueOutNodeCountByDepthMap.put(i, 100000000000000L);
+        }
+
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        for (int i=1; i <= MySequentialGraphVars.mxDepth; i++) {
+            for (MyNode n : nodes) {
+                if (n.nodeDepthInfoMap.containsKey(i)) {
+                    if (uniqueInNodeCountByDepthMap.containsKey(i)) {
+                        long uniqueInNodeCount = n.getNodeDepthInfo(i).getPredecessorCount() + uniqueInNodeCountByDepthMap.get(i);
+                        uniqueInNodeCountByDepthMap.put(i, uniqueInNodeCount);
+                    } else {
+                        long uniqueInNodeCount = n.getNodeDepthInfo(i).getPredecessorCount();
+                        uniqueInNodeCountByDepthMap.put(i, uniqueInNodeCount);
+                    }
+
+                    if (uniqueOutNodeCountByDepthMap.containsKey(i)) {
+                        long uniqueOutNodeCount = n.getNodeDepthInfo(i).getSuccessorCount() + uniqueOutNodeCountByDepthMap.get(i);
+                        uniqueInNodeCountByDepthMap.put(i, uniqueOutNodeCount);
+                    } else {
+                        long uniqueOutNodeCount = n.getNodeDepthInfo(i).getSuccessorCount();
+                        uniqueOutNodeCountByDepthMap.put(i, uniqueOutNodeCount);
+                    }
+
+                    if (maxUniqueInNodeCountByDepthMap.containsKey(i)) {
+                        long uniqueInNodeCount = n.getNodeDepthInfo(i).getPredecessorCount();
+                        if (uniqueInNodeCount > maxUniqueInNodeCountByDepthMap.get(i)) {
+                            maxUniqueInNodeCountByDepthMap.put(i, uniqueInNodeCount);
+                        }
+                    } else {
+                        long uniqueInNodeCount = n.getNodeDepthInfo(i).getPredecessorCount();
+                        maxUniqueInNodeCountByDepthMap.put(i, uniqueInNodeCount);
+                    }
+
+                    if (maxUniqueOutNodeCountByDepthMap.containsKey(i)) {
+                        long uniqueOutNodeCount = n.getNodeDepthInfo(i).getSuccessorCount();
+                        if (uniqueOutNodeCount > maxUniqueOutNodeCountByDepthMap.get(i)) {
+                            maxUniqueOutNodeCountByDepthMap.put(i, uniqueOutNodeCount);
+                        }
+                    } else {
+                        long uniqueOutNodeCount = n.getNodeDepthInfo(i).getSuccessorCount();
+                        maxUniqueOutNodeCountByDepthMap.put(i, uniqueOutNodeCount);
+                    }
+
+                    long uniqueInNodeCount = n.getNodeDepthInfo(i).getPredecessorCount();
+                    if (uniqueInNodeCount < minUniqueInNodeCountByDepthMap.get(i)) {
+                        minUniqueInNodeCountByDepthMap.put(i, uniqueInNodeCount);
+                    }
+
+                    long uniqueOutNodeCount = n.getNodeDepthInfo(i).getSuccessorCount();
+                    if (uniqueOutNodeCount < minUniqueOutNodeCountByDepthMap.get(i)) {
+                        minUniqueOutNodeCountByDepthMap.put(i, uniqueOutNodeCount);
+                    }
+                }
+            }
+        }
+
+        this.inUniqueNodeSeries = new XYSeries("P.");
+        this.outUniqueNodeSeries = new XYSeries("S.");
+        this.minInUniqueNodeSeries = new XYSeries("MIN. P.");
+        this.maxInUniqueNodeSeries = new XYSeries("MAX. P.");
+        this.minOutUniqueNodeSeries = new XYSeries("MIN. S.");
+        this.maxOutUniqueNodeSeries = new XYSeries("MAX. S.");
+
+        for (int i=1; i <= MySequentialGraphVars.mxDepth; i++) {
+            this.inUniqueNodeSeries.add(i, this.uniqueInNodeCountByDepthMap.get(i));
+            this.outUniqueNodeSeries.add(i, this.uniqueOutNodeCountByDepthMap.get(i));
+            this.minInUniqueNodeSeries.add(i, this.minUniqueInNodeCountByDepthMap.get(i));
+            this.maxInUniqueNodeSeries.add(i, this.maxUniqueInNodeCountByDepthMap.get(i));
+            this.minOutUniqueNodeSeries.add(i, this.minUniqueOutNodeCountByDepthMap.get(i));
+            this.maxOutUniqueNodeSeries.add(i, this.maxUniqueOutNodeCountByDepthMap.get(i));
+        }
+    }
+
+    public void decorate() {
         try {
             removeAll();
             setLayout(new BorderLayout(5, 5));
             setBackground(Color.WHITE);
-
-            Map<Integer, Set<String>> uniqueNodeCountByDepthMap = new HashMap<>();
-            Map<Integer, Set<String>> inUniqueNodeCountByDepthMap = new HashMap<>();
-            Map<Integer, Set<String>> outUniqueNodeCountByDepthMap = new HashMap<>();
-            Map<Integer, Map<String, Integer>> nodeInUniqueNodeCountByDepthMap = new HashMap<>();
-            Map<Integer, Map<String, Integer>> nodeOutUniqueNodeCountByDepthMap = new HashMap<>();
-
-            for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
-                for (int i = 0; i < MySequentialGraphVars.seqs[s].length; i++) {
-                    String n = MySequentialGraphVars.seqs[s][i].split(":")[0];
-                        if (uniqueNodeCountByDepthMap.containsKey(i+1)) {
-                            Set<String> uniqueNodes = uniqueNodeCountByDepthMap.get(i+1);
-                            if (!uniqueNodes.contains(n)) {
-                                uniqueNodes.add(n);
-                                uniqueNodeCountByDepthMap.put(i+1, uniqueNodes);
-                            }
-                        } else {
-                            Set<String> uniqueNodes = new HashSet<>();
-                            uniqueNodes.add(n);
-                            uniqueNodeCountByDepthMap.put(i+1, uniqueNodes);
-                        }
-
-                        if (i==0) {
-                            if (i+1 < MySequentialGraphVars.seqs[s].length) {
-                                String ss = MySequentialGraphVars.seqs[s][i + 1].split(":")[0];
-                                    if (outUniqueNodeCountByDepthMap.containsKey(i + 1)) {
-                                        Set<String> outUniqueNodeSet = outUniqueNodeCountByDepthMap.get(i + 1);
-                                        outUniqueNodeSet.add(ss);
-                                        outUniqueNodeCountByDepthMap.put(i + 1, outUniqueNodeSet);
-                                    } else {
-                                        Set<String> outUniqueNodeSet = new HashSet<>();
-                                        outUniqueNodeSet.add(ss);
-                                        outUniqueNodeCountByDepthMap.put(i + 1, outUniqueNodeSet);
-                                    }
-
-                                    if (nodeOutUniqueNodeCountByDepthMap.containsKey(i + 1)) {
-                                        Map<String, Integer> nodeOutUniqueNodeSet = nodeOutUniqueNodeCountByDepthMap.get(i + 1);
-                                        if (nodeOutUniqueNodeSet.containsKey(ss)) {
-                                            nodeOutUniqueNodeSet.put(ss, nodeOutUniqueNodeSet.get(ss) + 1);
-                                            nodeOutUniqueNodeCountByDepthMap.put(i + 1, nodeOutUniqueNodeSet);
-                                        } else {
-                                            nodeOutUniqueNodeSet.put(ss, 1);
-                                            nodeOutUniqueNodeCountByDepthMap.put(i + 1, nodeOutUniqueNodeSet);
-                                        }
-                                    } else {
-                                        Map<String, Integer> nodeOutUniqueNodeSet = new HashMap<>();
-                                        nodeOutUniqueNodeSet.put(ss, 1);
-                                        nodeOutUniqueNodeCountByDepthMap.put(i + 1, nodeOutUniqueNodeSet);
-                                    }
-
-
-                                if (inUniqueNodeCountByDepthMap.containsKey(i + 1)) {
-                                    inUniqueNodeCountByDepthMap.put(i + 1, inUniqueNodeCountByDepthMap.get(i + 1));
-                                } else {
-                                    inUniqueNodeCountByDepthMap.put(i + 1, new HashSet<>());
-                                }
-
-                                if (nodeInUniqueNodeCountByDepthMap.containsKey(i + 1)) {
-                                    nodeInUniqueNodeCountByDepthMap.put(i + 1, nodeInUniqueNodeCountByDepthMap.get(i + 1));
-                                } else {
-                                    nodeInUniqueNodeCountByDepthMap.put(i + 1, new HashMap<>());
-                                }
-                            }
-                        } else if ((i+1) == MySequentialGraphVars.seqs[s].length) {
-                            outUniqueNodeCountByDepthMap.put(i+1, new HashSet<>());
-                            nodeOutUniqueNodeCountByDepthMap.put(i+1, new HashMap<>());
-
-                            String p = MySequentialGraphVars.seqs[s][i-1].split(":")[0];
-                                if (inUniqueNodeCountByDepthMap.containsKey(i+1)) {
-                                    Set<String> inUniqueNodeSet = inUniqueNodeCountByDepthMap.get(i+1);
-                                    inUniqueNodeSet.add(p);
-                                    inUniqueNodeCountByDepthMap.put(i + 1, inUniqueNodeSet);
-                                } else {
-                                    Set<String> inUniqueNodeSet = new HashSet<>();
-                                    inUniqueNodeSet.add(p);
-                                    inUniqueNodeCountByDepthMap.put(i + 1, inUniqueNodeSet);
-                                }
-
-                                if (nodeInUniqueNodeCountByDepthMap.containsKey(i+1)) {
-                                    Map<String, Integer> nodeInUniqueNodeSet = nodeInUniqueNodeCountByDepthMap.get(i+1);
-                                    if (nodeInUniqueNodeSet.containsKey(p)) {
-                                        nodeInUniqueNodeSet.put(p, nodeInUniqueNodeSet.get(p)+1);
-                                        nodeInUniqueNodeCountByDepthMap.put(i+1, nodeInUniqueNodeSet);
-                                    } else {
-                                        nodeInUniqueNodeSet.put(p, 1);
-                                        nodeInUniqueNodeCountByDepthMap.put(i+1, nodeInUniqueNodeSet);
-                                    }
-                                } else {
-                                    Map<String, Integer> nodeInUniqueNodeSet = new HashMap<>();
-                                    nodeInUniqueNodeSet.put(p, 1);
-                                    nodeInUniqueNodeCountByDepthMap.put(i+1, nodeInUniqueNodeSet);
-                                }
-
-                        } else {
-                            String ss = MySequentialGraphVars.seqs[s][i+1].split(":")[0];
-                            String p = MySequentialGraphVars.seqs[s][i-1].split(":")[0];
-                                if (outUniqueNodeCountByDepthMap.containsKey(i+1)) {
-                                    Set<String> outUniqueNodeSet = outUniqueNodeCountByDepthMap.get(i+1);
-                                    outUniqueNodeSet.add(ss);
-                                    outUniqueNodeCountByDepthMap.put(i+1, outUniqueNodeSet);
-                                } else {
-                                    Set<String> outUniqueNodeSet = new HashSet<>();
-                                    outUniqueNodeSet.add(ss);
-                                    outUniqueNodeCountByDepthMap.put(i+1, outUniqueNodeSet);
-                                }
-
-                                if (nodeOutUniqueNodeCountByDepthMap.containsKey(i+1)) {
-                                    Map<String, Integer> nodeOutUniqueNodeSet = nodeOutUniqueNodeCountByDepthMap.get(i+1);
-                                    if (nodeOutUniqueNodeSet.containsKey(ss)) {
-                                        nodeOutUniqueNodeSet.put(ss, nodeOutUniqueNodeSet.get(ss) + 1);
-                                        nodeOutUniqueNodeCountByDepthMap.put(i + 1, nodeOutUniqueNodeSet);
-                                    } else {
-                                        nodeOutUniqueNodeSet.put(ss, 1);
-                                        nodeOutUniqueNodeCountByDepthMap.put(i+1, nodeOutUniqueNodeSet);
-                                    }
-                                } else {
-                                    Map<String, Integer> nodeOutUniqueNodeSet = new HashMap<>();
-                                    nodeOutUniqueNodeSet.put(ss, 1);
-                                    nodeOutUniqueNodeCountByDepthMap.put(i+1, nodeOutUniqueNodeSet);
-                                }
-
-
-                                if (inUniqueNodeCountByDepthMap.containsKey(i + 1)) {
-                                    Set<String> inUniqueNodeSet = inUniqueNodeCountByDepthMap.get(i + 1);
-                                    inUniqueNodeSet.add(p);
-                                    inUniqueNodeCountByDepthMap.put(i + 1, inUniqueNodeSet);
-                                } else {
-                                    Set<String> inUniqueNodeSet = new HashSet<>();
-                                    inUniqueNodeSet.add(p);
-                                    inUniqueNodeCountByDepthMap.put(i + 1, inUniqueNodeSet);
-                                }
-
-                                if (nodeInUniqueNodeCountByDepthMap.containsKey(i+1)) {
-                                    Map<String, Integer> nodeInUniqueNodeSet = nodeInUniqueNodeCountByDepthMap.get(i+1);
-                                    if (nodeInUniqueNodeSet.containsKey(p)) {
-                                        nodeInUniqueNodeSet.put(p, nodeInUniqueNodeSet.get(p)+1);
-                                        nodeInUniqueNodeCountByDepthMap.put(i+1, nodeInUniqueNodeSet);
-                                    } else {
-                                        nodeInUniqueNodeSet.put(p, 1);
-                                        nodeInUniqueNodeCountByDepthMap.put(i+1, nodeInUniqueNodeSet);
-                                    }
-                                } else {
-                                    Map<String, Integer> nodeInUniqueNodeSet = new HashMap<>();
-                                    nodeInUniqueNodeSet.put(p, 1);
-                                    nodeInUniqueNodeCountByDepthMap.put(i+1, nodeInUniqueNodeSet);
-                                }
-
-
-                    }
-                }
-            }
-
-            XYSeries uniqueNodeSeries = new XYSeries("UNIQ.");
-            XYSeries inUniqueNodeSeries = new XYSeries("IN");
-            XYSeries maxInUniqueNodeSeries = new XYSeries("MAX. IN");
-            XYSeries outUniqueNodeSeries = new XYSeries("OUT");
-            XYSeries maxOutUniqueNodeSeries = new XYSeries("MAX. OUT");
-
-                for (int i = 1; i <= MySequentialGraphVars.mxDepth; i++) {
-                    if (uniqueNodeCountByDepthMap.containsKey(i)) {
-                        uniqueNodeSeries.add(i, uniqueNodeCountByDepthMap.get(i).size());
-                    } else {
-                        uniqueNodeSeries.add(i, 0);
-                    }
-                    if (inUniqueNodeCountByDepthMap.containsKey(i)) {
-                        inUniqueNodeSeries.add(i, inUniqueNodeCountByDepthMap.get(i).size());
-                    } else {
-                        inUniqueNodeSeries.add(i, 0);
-                    }
-                    if (outUniqueNodeCountByDepthMap.containsKey(i)) {
-                        outUniqueNodeSeries.add(i, outUniqueNodeCountByDepthMap.get(i).size());
-                    } else {
-                        outUniqueNodeSeries.add(i, 0);
-                    }
-                    if (nodeOutUniqueNodeCountByDepthMap.containsKey(i)) {
-                        int max = 0;
-                        Map<String, Integer> nodeOutUniqueNodeSet = nodeOutUniqueNodeCountByDepthMap.get(i);
-                        for (String n : nodeOutUniqueNodeSet.keySet()) {
-                            if (nodeOutUniqueNodeSet.get(n) > max) {
-                                max = nodeOutUniqueNodeSet.get(n);
-                            }
-                        }
-                        maxOutUniqueNodeSeries.add(i, max);
-                    } else {
-                        maxOutUniqueNodeSeries.add(i, 0);
-                    }
-                    if (nodeInUniqueNodeCountByDepthMap.containsKey(i)) {
-                        int max = 0;
-                        Map<String, Integer> nodeInUniqueNodeSet = nodeInUniqueNodeCountByDepthMap.get(i);
-                        for (String n : nodeInUniqueNodeSet.keySet()) {
-                            if (nodeInUniqueNodeSet.get(n) > max) {
-                                max = nodeInUniqueNodeSet.get(n);
-                            }
-                        }
-                        maxInUniqueNodeSeries.add(i, max);
-                    } else {
-                        maxInUniqueNodeSeries.add(i, 0);
-                    }
-                }
-
-
+            setData();
 
             XYSeriesCollection dataset = new XYSeriesCollection();
-            dataset.addSeries(inUniqueNodeSeries);
-            dataset.addSeries(maxInUniqueNodeSeries);
-            dataset.addSeries(outUniqueNodeSeries);
-            dataset.addSeries(maxOutUniqueNodeSeries);
+            if (selectedGraph == 0) {
+                dataset.addSeries(this.inUniqueNodeSeries);
+                dataset.addSeries(this.minInUniqueNodeSeries);
+                dataset.addSeries(this.maxInUniqueNodeSeries);
+                dataset.addSeries(this.outUniqueNodeSeries);
+                dataset.addSeries(this.minOutUniqueNodeSeries);
+                dataset.addSeries(this.maxOutUniqueNodeSeries);
+            } else if (selectedGraph == 1) {
+                dataset.addSeries(this.inUniqueNodeSeries);
+            } else if (selectedGraph == 2) {
+                dataset.addSeries(this.minInUniqueNodeSeries);
+            } else if (selectedGraph == 3) {
+                dataset.addSeries(this.maxInUniqueNodeSeries);
+            } else if (selectedGraph == 4) {
+                dataset.addSeries(this.outUniqueNodeSeries);
+            } else if (selectedGraph == 5) {
+                dataset.addSeries(this.minOutUniqueNodeSeries);
+            } else if (selectedGraph == 6) {
+                dataset.addSeries(this.maxOutUniqueNodeSeries);
+            }
 
             JFreeChart chart = ChartFactory.createXYLineChart("", "DEPTH", "", dataset);
             chart.getTitle().setHorizontalAlignment(HorizontalAlignment.LEFT);
@@ -298,10 +212,24 @@ implements ActionListener {
             renderer.setSeriesFillPaint(4, Color.WHITE);
             renderer.setUseFillPaint(true);
 
+            renderer.setSeriesPaint(5, Color.PINK);
+            renderer.setSeriesStroke(5, new BasicStroke(1.5f));
+            renderer.setSeriesShapesVisible(5, true);
+            renderer.setSeriesShape(5, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
+            renderer.setSeriesFillPaint(5, Color.WHITE);
+            renderer.setUseFillPaint(true);
+
+            renderer.setSeriesPaint(6, Color.BLACK);
+            renderer.setSeriesStroke(6, new BasicStroke(1.5f));
+            renderer.setSeriesShapesVisible(6, true);
+            renderer.setSeriesShape(6, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
+            renderer.setSeriesFillPaint(6, Color.WHITE);
+            renderer.setUseFillPaint(true);
+
             ChartPanel chartPanel = new ChartPanel(chart);
             chartPanel.setPreferredSize(new Dimension(560, 367));
 
-            JLabel titleLabel = new JLabel(" PRED. & SUCC.");
+            JLabel titleLabel = new JLabel(" P. & S.");
             titleLabel.setToolTipText("PRDECESSORS & SUCCESSORS BY DEPTH");
             titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
             titleLabel.setBackground(Color.WHITE);
@@ -312,23 +240,34 @@ implements ActionListener {
             titlePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
             titlePanel.add(titleLabel);
 
-            graphSelection = new JComboBox();
-            String[] tooltips = {"SELECT A CHART FOR A DEPTH DISTRIBUTION.",
-                                 "PREDECESSOR DISTRIBUTION BY DEPTH.",
-                                 "MAX. PREDECESSOR DISTRIBUTION BY DEPTH.",
-                                 "SUCCESSOR DISTRIBUTION BY DEPTH.",
-                                 "MAX. SUCCESSOR DISTRIBUTION BY DEPTH."};
-            graphSelection.setRenderer(new MyComboBoxTooltipRenderer(tooltips));
-            graphSelection.setBackground(Color.WHITE);
-            graphSelection.setFocusable(false);
-            graphSelection.setFont(MySequentialGraphVars.tahomaPlainFont11);
-            graphSelection.addItem("SELECT");
-            graphSelection.addItem("IN");
-            graphSelection.addItem("MAX. IN");
-            graphSelection.addItem("OUT");
-            graphSelection.addItem("MAX. OUT");
-            graphSelection.setSelectedIndex(selected);
-            graphSelection.addActionListener(this);
+            JComboBox graphMenu = new JComboBox();
+            String[] tooltips = {
+                "SELECT A DISTRIBUTION",
+                "NO. OF PREDECESSORS BY DEPTH DISTRIBUTION",
+                "MIN. NO. OF PREDECESSORS BY DEPTH DISTRIBUTION",
+                "MAX. NO. OF PREDECESSORS BY DEPTH DISTRIBUTION",
+                "NO. OF SUCCESSORS BY DEPTH DISTRIBUTION",
+                "MIN. NO. OF SUCCESSORS BY DEPTH DISTRIBUTION",
+                "MAX. NO. OF SUCCESSORS BY DEPTH DISTRIBUTION"
+            };
+            graphMenu.setRenderer(new MyComboBoxTooltipRenderer(tooltips));
+            graphMenu.setBackground(Color.WHITE);
+            graphMenu.setFocusable(false);
+            graphMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
+            graphMenu.addItem("SELECT");
+            graphMenu.addItem("P.");
+            graphMenu.addItem("MIN. P.");
+            graphMenu.addItem("MAX. P.");
+            graphMenu.addItem("S.");
+            graphMenu.addItem("MIN. S.");
+            graphMenu.addItem("MAX. S.");
+            graphMenu.setSelectedIndex(selectedGraph);
+            graphMenu.addActionListener(new ActionListener() {
+                @Override public void actionPerformed(ActionEvent e) {
+                    selectedGraph = graphMenu.getSelectedIndex();
+                    decorate();
+                }
+            });
 
             JButton enlargeBtn = new JButton("+");
             enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
@@ -347,288 +286,12 @@ implements ActionListener {
             JPanel btnPanel = new JPanel();
             btnPanel.setBackground(Color.WHITE);
             btnPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-            btnPanel.add(graphSelection);
+            btnPanel.add(graphMenu);
 
             JPanel topPanel = new JPanel();
             topPanel.setLayout(new BorderLayout(0, 0));
             topPanel.setBackground(Color.WHITE);
             topPanel.add(btnPanel, BorderLayout.CENTER);
-            btnPanel.add(enlargeBtn);
-            topPanel.add(titlePanel, BorderLayout.WEST);
-
-            add(topPanel, BorderLayout.NORTH);
-            renderer.setBaseLegendTextFont(MySequentialGraphVars.tahomaPlainFont11);
-            add(chartPanel, BorderLayout.CENTER);
-            chart.removeLegend();
-
-            revalidate();
-            repaint();
-        } catch (Exception ex) {ex.printStackTrace();}
-    }
-
-    public void setInUniqueNodeChart() {
-        try {
-            removeAll();
-            setLayout(new BorderLayout(5, 5));
-            setBackground(Color.WHITE);
-
-            Map<Integer, Set<String>> inUniqueNodeCountByDepthMap = new HashMap<>();
-            inUniqueNodeCountByDepthMap.put(1, new HashSet<>());
-            for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
-                for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
-                    String p = MySequentialGraphVars.seqs[s][i-1].split(":")[0];
-                    String n = MySequentialGraphVars.seqs[s][i].split(":")[0];
-                        if (inUniqueNodeCountByDepthMap.containsKey(i+1)) {
-                            Set<String> exUniqueInNodes = inUniqueNodeCountByDepthMap.get(i+1);
-                            exUniqueInNodes.add(p);
-                            inUniqueNodeCountByDepthMap.put(i+1, exUniqueInNodes);
-                        } else {
-                            Set<String> uniqueInNodes = new HashSet<>();
-                            uniqueInNodes.add(p);
-                            inUniqueNodeCountByDepthMap.put(i+1, uniqueInNodes);
-                        }
-
-                }
-            }
-
-            XYSeries inUniqueNodeSeries = new XYSeries("IN");
-
-                for (int i = 1; i <= MySequentialGraphVars.mxDepth; i++) {
-                    if (inUniqueNodeCountByDepthMap.containsKey(i)) {
-                        inUniqueNodeSeries.add(i, inUniqueNodeCountByDepthMap.get(i).size());
-                    } else {
-                        inUniqueNodeSeries.add(i, 0);
-                    }
-                }
-
-
-            XYSeriesCollection dataset = new XYSeriesCollection();
-            dataset.addSeries(inUniqueNodeSeries);
-
-            JFreeChart chart = ChartFactory.createXYLineChart("", "IN-U. N.", "", dataset);
-            chart.getTitle().setHorizontalAlignment(HorizontalAlignment.LEFT);
-            chart.getXYPlot().setBackgroundPaint(Color.WHITE);
-            chart.getXYPlot().setDomainGridlinePaint(Color.DARK_GRAY);
-            chart.getXYPlot().setRangeGridlinePaint(Color.DARK_GRAY);
-            chart.getTitle().setFont(new Font("Arial", Font.PLAIN, 0));
-            chart.getXYPlot().getDomainAxis().setLabelFont(new Font("Arial", Font.PLAIN, 0));
-            chart.getXYPlot().getDomainAxis().setTickLabelFont(MySequentialGraphVars.tahomaPlainFont11);
-            chart.getXYPlot().getRangeAxis().setTickLabelFont(MySequentialGraphVars.tahomaPlainFont11);
-            chart.getXYPlot().getRangeAxis().setLabelFont(MySequentialGraphVars.tahomaPlainFont11);
-            chart.getXYPlot().getDomainAxis().setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-            chart.setBackgroundPaint(Color.WHITE);
-
-            XYPlot plot = (XYPlot) chart.getPlot();
-            XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
-            renderer.setSeriesPaint(0, Color.RED);
-            renderer.setSeriesStroke(0, new BasicStroke(1.5f));
-            renderer.setSeriesShapesVisible(0, true);
-            renderer.setSeriesShape(0, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
-            renderer.setSeriesFillPaint(0, Color.WHITE);
-
-            ChartPanel chartPanel = new ChartPanel(chart);
-            chartPanel.setPreferredSize(new Dimension(560, 367));
-
-            JLabel titleLabel = new JLabel(" PRED. & SUCC.");
-            titleLabel.setToolTipText("PRDECESSORS & SUCCESSORS BY DEPTH");
-            titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
-            titleLabel.setBackground(Color.WHITE);
-            titleLabel.setForeground(Color.DARK_GRAY);
-
-            JPanel titlePanel = new JPanel();
-            titlePanel.setBackground(Color.WHITE);
-            titlePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-            titlePanel.add(titleLabel);
-
-            graphSelection = new JComboBox();
-            graphSelection.setBackground(Color.WHITE);
-            graphSelection.setFocusable(false);
-            graphSelection.setFont(MySequentialGraphVars.tahomaPlainFont11);
-            graphSelection.addItem("SELECT");
-            graphSelection.addItem("IN");
-            graphSelection.addItem("MAX. IN");
-            graphSelection.addItem("OUT");
-            graphSelection.addItem("MAX. OUT");
-            graphSelection.setSelectedIndex(selected);
-            graphSelection.addActionListener(this);
-
-            String[] tooltips = {"SELECT A CHART FOR A DEPTH DISTRIBUTION.",
-                    "PREDECESSOR DISTRIBUTION BY DEPTH.",
-                    "MAX. PREDECESSOR DISTRIBUTION BY DEPTH.",
-                    "SUCCESSOR DISTRIBUTION BY DEPTH.",
-                    "MAX. SUCCESSOR DISTRIBUTION BY DEPTH."};
-            graphSelection.setRenderer(new MyComboBoxTooltipRenderer(tooltips));
-
-            JButton enlargeBtn = new JButton("+");
-            enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
-            enlargeBtn.setFocusable(false);
-            enlargeBtn.setBackground(Color.WHITE);
-            enlargeBtn.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            enlarge();
-                        }
-                    }).start();
-                }
-            });
-            JPanel btnPanel = new JPanel();
-            btnPanel.setBackground(Color.WHITE);
-            btnPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-            btnPanel.add(graphSelection);
-
-            JPanel topPanel = new JPanel();
-            topPanel.setLayout(new BorderLayout(0, 0));
-            topPanel.setBackground(Color.WHITE);
-            topPanel.add(btnPanel, BorderLayout.CENTER);
-
-            btnPanel.add(enlargeBtn);
-            topPanel.add(titlePanel, BorderLayout.WEST);
-
-            add(topPanel, BorderLayout.NORTH);
-            renderer.setBaseLegendTextFont(MySequentialGraphVars.tahomaPlainFont11);
-            add(chartPanel, BorderLayout.CENTER);
-            chart.removeLegend();
-
-            revalidate();
-            repaint();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    private void setOutUniqueNodeChart() {
-        try {
-            removeAll();
-            setLayout(new BorderLayout(5, 5));
-            setBackground(Color.WHITE);
-
-            Map<Integer, Set<String>> outUniqueNodeCountByDepthMap = new HashMap<>();
-            outUniqueNodeCountByDepthMap.put(MySequentialGraphVars.mxDepth, new HashSet<>());
-
-                for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
-                    for (int i = 0; i < MySequentialGraphVars.seqs[s].length-1; i++) {
-                        String n = MySequentialGraphVars.seqs[s][i].split(":")[0];
-                        String ss = MySequentialGraphVars.seqs[s][i+1].split(":")[0];
-                            if (outUniqueNodeCountByDepthMap.containsKey(i+1)) {
-                                Set<String> exUniqueOutNodes = outUniqueNodeCountByDepthMap.get(i+1);
-                                exUniqueOutNodes.add(ss);
-                                outUniqueNodeCountByDepthMap.put(i+1, exUniqueOutNodes);
-                            } else {
-                                Set<String> uniqueOutNodes = new HashSet<>();
-                                uniqueOutNodes.add(ss);
-                                outUniqueNodeCountByDepthMap.put(i+1, uniqueOutNodes);
-                            }
-                    }
-                }
-
-
-            XYSeries outUniqueNodeSeries = new XYSeries("OUT");
-            if (MySequentialGraphVars.currentGraphDepth > 0) {
-                for (int i = 1; i <= MySequentialGraphVars.mxDepth; i++) {
-                    if (MySequentialGraphVars.currentGraphDepth == i) {
-                        if (outUniqueNodeCountByDepthMap.containsKey(i)) {
-                            outUniqueNodeSeries.add(i, outUniqueNodeCountByDepthMap.get(i).size());
-                        } else {
-                            outUniqueNodeSeries.add(i, 0);
-                        }
-                    } else {
-                        outUniqueNodeSeries.add(i, 0);
-                    }
-                }
-            } else {
-                for (int i = 1; i <= MySequentialGraphVars.mxDepth; i++) {
-                    if (outUniqueNodeCountByDepthMap.containsKey(i)) {
-                        outUniqueNodeSeries.add(i, outUniqueNodeCountByDepthMap.get(i).size());
-                    } else {
-                        outUniqueNodeSeries.add(i, 0);
-                    }
-                }
-            }
-
-            XYSeriesCollection dataset = new XYSeriesCollection();
-            dataset.addSeries(outUniqueNodeSeries);
-
-            JFreeChart chart = ChartFactory.createXYLineChart("", "OUT-U. N.", "", dataset);
-            chart.getTitle().setHorizontalAlignment(HorizontalAlignment.LEFT);
-            chart.getXYPlot().setBackgroundPaint(Color.WHITE);
-            chart.getXYPlot().setDomainGridlinePaint(Color.DARK_GRAY);
-            chart.getXYPlot().setRangeGridlinePaint(Color.DARK_GRAY);
-            chart.getTitle().setFont(new Font("Arial", Font.PLAIN, 0));
-            chart.getXYPlot().getDomainAxis().setLabelFont(MySequentialGraphVars.tahomaPlainFont11);
-            chart.getXYPlot().getDomainAxis().setTickLabelFont(MySequentialGraphVars.tahomaPlainFont11);
-            chart.getXYPlot().getRangeAxis().setTickLabelFont(MySequentialGraphVars.tahomaPlainFont11);
-            chart.getXYPlot().getRangeAxis().setLabelFont(MySequentialGraphVars.tahomaPlainFont11);
-            chart.getXYPlot().getDomainAxis().setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-            chart.setBackgroundPaint(Color.WHITE);
-
-            XYPlot plot = (XYPlot) chart.getPlot();
-            XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
-            renderer.setSeriesPaint(0, Color.BLUE);
-            renderer.setSeriesStroke(0, new BasicStroke(1.5f));
-            renderer.setSeriesShapesVisible(0, true);
-            renderer.setSeriesShape(0, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
-            renderer.setSeriesFillPaint(0, Color.WHITE);
-
-            ChartPanel chartPanel = new ChartPanel(chart);
-            chartPanel.setPreferredSize(new Dimension(560, 367));
-
-            JLabel titleLabel = new JLabel(" PRED. & SUCC.");
-            titleLabel.setToolTipText("PRDECESSORS & SUCCESSORS BY DEPTH");
-            titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
-            titleLabel.setBackground(Color.WHITE);
-            titleLabel.setForeground(Color.DARK_GRAY);
-
-            JPanel titlePanel = new JPanel();
-            titlePanel.setBackground(Color.WHITE);
-            titlePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-            titlePanel.add(titleLabel);
-
-            graphSelection = new JComboBox();
-            graphSelection.setBackground(Color.WHITE);
-            graphSelection.setFocusable(false);
-            graphSelection.setFont(MySequentialGraphVars.tahomaPlainFont11);
-            graphSelection.addItem("SELECT");
-            graphSelection.addItem("IN");
-            graphSelection.addItem("MAX. IN");
-            graphSelection.addItem("OUT");
-            graphSelection.addItem("MAX. OUT");
-            graphSelection.setSelectedIndex(selected);
-            graphSelection.addActionListener(this);
-
-            String[] tooltips = {"SELECT A CHART FOR A DEPTH DISTRIBUTION.",
-                    "PREDECESSOR DISTRIBUTION BY DEPTH.",
-                    "MAX. PREDECESSOR DISTRIBUTION BY DEPTH.",
-                    "SUCCESSOR DISTRIBUTION BY DEPTH.",
-                    "MAX. SUCCESSOR DISTRIBUTION BY DEPTH."};
-            graphSelection.setRenderer(new MyComboBoxTooltipRenderer(tooltips));
-
-            JButton enlargeBtn = new JButton("+");
-            enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
-            enlargeBtn.setFocusable(false);
-            enlargeBtn.setBackground(Color.WHITE);
-            enlargeBtn.addActionListener(new ActionListener() {
-                @Override public void actionPerformed(ActionEvent e) {
-                    new Thread(new Runnable() {
-                        @Override public void run() {
-                            enlarge();
-                        }
-                    }).start();
-                }
-            });
-
-            JPanel btnPanel = new JPanel();
-            btnPanel.setBackground(Color.WHITE);
-            btnPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-            btnPanel.add(graphSelection);
-
-            JPanel topPanel = new JPanel();
-            topPanel.setLayout(new BorderLayout(0, 0));
-            topPanel.setBackground(Color.WHITE);
-            topPanel.add(btnPanel, BorderLayout.CENTER);
-
             btnPanel.add(enlargeBtn);
             topPanel.add(titlePanel, BorderLayout.WEST);
 
@@ -638,296 +301,102 @@ implements ActionListener {
 
             revalidate();
             repaint();
-        } catch (Exception ex) {ex.printStackTrace();}
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
-    private void setMaxOutUniqueNodeChart() {
-        try {
-            removeAll();
-            setLayout(new BorderLayout(5, 5));
-            setBackground(Color.WHITE);
 
-            Map<Integer, Map<String, Integer>> nodeOutUniqueNodeCountByDepthMap = new HashMap<>();
-            nodeOutUniqueNodeCountByDepthMap.put(MySequentialGraphVars.mxDepth, new HashMap<>());
-            for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
-                for (int i = 0; i < MySequentialGraphVars.seqs[s].length-1; i++) {
-                    String n = MySequentialGraphVars.seqs[s][i].split(":")[0];
-                    String ss = MySequentialGraphVars.seqs[s][i+1].split(":")[0];
-                        if (nodeOutUniqueNodeCountByDepthMap.containsKey(i+1)) {
-                            Map<String, Integer> nodeOutUniqueNodeSet = nodeOutUniqueNodeCountByDepthMap.get(i+1);
-                            if (nodeOutUniqueNodeSet.containsKey(ss)) {
-                                nodeOutUniqueNodeSet.put(ss, nodeOutUniqueNodeSet.get(ss)+1);
-                                nodeOutUniqueNodeCountByDepthMap.put(i+1, nodeOutUniqueNodeSet);
-                            } else {
-                                nodeOutUniqueNodeSet.put(ss, 1);
-                                nodeOutUniqueNodeCountByDepthMap.put(i+1, nodeOutUniqueNodeSet);
-                            }
-                        } else {
-                            Map<String, Integer> nodeOutUniqueNodeSet = new HashMap<>();
-                            nodeOutUniqueNodeSet.put(ss, 1);
-                            nodeOutUniqueNodeCountByDepthMap.put(i+1, nodeOutUniqueNodeSet);
-                        }
-                    }
-
-            }
-
-            XYSeries maxOutUniqueNodeSeries = new XYSeries("MAX. OUT");
-            for (int i = 0; i <= MySequentialGraphVars.mxDepth; i++) {
-                if (nodeOutUniqueNodeCountByDepthMap.containsKey(i)) {
-                    int max = 0;
-                    Map<String, Integer> nodeOutUniqueNodeSet = nodeOutUniqueNodeCountByDepthMap.get(i);
-                    for (String n : nodeOutUniqueNodeSet.keySet()) {
-                        if (nodeOutUniqueNodeSet.get(n) > max) {
-                            max = nodeOutUniqueNodeSet.get(n);
-                        }
-                    }
-                    maxOutUniqueNodeSeries.add(i, max);
-                } else {
-                    maxOutUniqueNodeSeries.add(i, 0);
-                }
-            }
-
-            XYSeriesCollection dataset = new XYSeriesCollection();
-            dataset.addSeries(maxOutUniqueNodeSeries);
-
-            JFreeChart chart = ChartFactory.createXYLineChart("", "MAX. OUT-U. N.", "", dataset);
-            chart.getTitle().setHorizontalAlignment(HorizontalAlignment.LEFT);
-            chart.getXYPlot().setBackgroundPaint(Color.WHITE);
-            chart.getXYPlot().setDomainGridlinePaint(Color.DARK_GRAY);
-            chart.getXYPlot().setRangeGridlinePaint(Color.DARK_GRAY);
-            chart.getTitle().setFont(new Font("Arial", Font.PLAIN, 0));
-            chart.getXYPlot().getDomainAxis().setLabelFont(new Font("Arial", Font.PLAIN, 0));
-            chart.getXYPlot().getDomainAxis().setTickLabelFont(MySequentialGraphVars.tahomaPlainFont11);
-            chart.getXYPlot().getRangeAxis().setTickLabelFont(MySequentialGraphVars.tahomaPlainFont11);
-            chart.getXYPlot().getRangeAxis().setLabelFont(new Font("Arial", Font.PLAIN, 0));
-            chart.getXYPlot().getDomainAxis().setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-            chart.setBackgroundPaint(Color.WHITE);
-
-            XYPlot plot = (XYPlot) chart.getPlot();
-            XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
-            renderer.setSeriesPaint(0, Color.ORANGE);
-            renderer.setSeriesStroke(0, new BasicStroke(1.5f));
-            renderer.setSeriesShapesVisible(0, true);
-            renderer.setSeriesShape(0, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
-            renderer.setSeriesFillPaint(0, Color.WHITE);
-
-            ChartPanel chartPanel = new ChartPanel(chart);
-            chartPanel.setPreferredSize(new Dimension(560, 367));
-
-            JLabel titleLabel = new JLabel(" PRED. & SUCC.");
-            titleLabel.setToolTipText("PRDECESSORS & SUCCESSORS BY DEPTH");
-            titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
-            titleLabel.setBackground(Color.WHITE);
-            titleLabel.setForeground(Color.DARK_GRAY);
-
-            JPanel titlePanel = new JPanel();
-            titlePanel.setBackground(Color.WHITE);
-            titlePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-            titlePanel.add(titleLabel);
-
-            graphSelection = new JComboBox();
-            graphSelection.setBackground(Color.WHITE);
-            graphSelection.setFocusable(false);
-            graphSelection.setFont(MySequentialGraphVars.tahomaPlainFont11);
-            graphSelection.addItem("SELECT");
-            graphSelection.addItem("IN");
-            graphSelection.addItem("MAX. IN");
-            graphSelection.addItem("OUT");
-            graphSelection.addItem("MAX. OUT");
-            graphSelection.setSelectedIndex(selected);
-            graphSelection.addActionListener(this);
-
-
-            String[] tooltips = {"SELECT A CHART FOR A DEPTH DISTRIBUTION.",
-                    "PREDECESSOR DISTRIBUTION BY DEPTH.",
-                    "MAX. PREDECESSOR DISTRIBUTION BY DEPTH.",
-                    "SUCCESSOR DISTRIBUTION BY DEPTH.",
-                    "MAX. SUCCESSOR DISTRIBUTION BY DEPTH."};
-            graphSelection.setRenderer(new MyComboBoxTooltipRenderer(tooltips));
-
-            JButton enlargeBtn = new JButton("+");
-            enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
-            enlargeBtn.setFocusable(false);
-            enlargeBtn.setBackground(Color.WHITE);
-            enlargeBtn.addActionListener(new ActionListener() {
-                @Override public void actionPerformed(ActionEvent e) {
-                    new Thread(new Runnable() {
-                        @Override public void run() {
-                            enlarge();
-                        }
-                    }).start();
-                }
-            });
-
-            JPanel btnPanel = new JPanel();
-            btnPanel.setBackground(Color.WHITE);
-            btnPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-            btnPanel.add(graphSelection);
-
-            JPanel topPanel = new JPanel();
-            topPanel.setLayout(new BorderLayout(0, 0));
-            topPanel.setBackground(Color.WHITE);
-            topPanel.add(btnPanel, BorderLayout.CENTER);
-
-            btnPanel.add(enlargeBtn);
-            topPanel.add(titlePanel, BorderLayout.WEST);
-
-            add(topPanel, BorderLayout.NORTH);
-            renderer.setBaseLegendTextFont(MySequentialGraphVars.tahomaPlainFont11);
-            add(chartPanel, BorderLayout.CENTER);
-        } catch (Exception ex) {ex.printStackTrace();}
-        revalidate();
-        repaint();
-    }
-
-    private void setMaxInUniqueNodeChart() {
-        try {
-            removeAll();
-            setLayout(new BorderLayout(5, 5));
-            setBackground(Color.WHITE);
-
-            Map<Integer, Map<String, Integer>> nodeInUniqueNodeCountByDepthMap = new HashMap<>();
-            nodeInUniqueNodeCountByDepthMap.put(1, new HashMap<>());
-            for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
-                for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
-                    String n = MySequentialGraphVars.seqs[s][i].split(":")[0];
-                    String p = MySequentialGraphVars.seqs[s][i-1].split(":")[0];
-                        if (nodeInUniqueNodeCountByDepthMap.containsKey(i + 1)) {
-                            Map<String, Integer> nodeInUniqueNodeSet = nodeInUniqueNodeCountByDepthMap.get(i + 1);
-                            if (nodeInUniqueNodeSet.containsKey(p)) {
-                                nodeInUniqueNodeSet.put(p, nodeInUniqueNodeSet.get(p) + 1);
-                                nodeInUniqueNodeCountByDepthMap.put(i + 1, nodeInUniqueNodeSet);
-                            } else {
-                                nodeInUniqueNodeSet.put(p, 1);
-                                nodeInUniqueNodeCountByDepthMap.put(i + 1, nodeInUniqueNodeSet);
-                            }
-                        } else {
-                            Map<String, Integer> nodeOutUniqueNodeSet = new HashMap<>();
-                            nodeOutUniqueNodeSet.put(p, 1);
-                            nodeInUniqueNodeCountByDepthMap.put(i + 1, nodeOutUniqueNodeSet);
-                        }
-
-                }
-            }
-
-            XYSeries maxInUniqueNodeSeries = new XYSeries("MAX. IN");
-            for (int i = 0; i <= MySequentialGraphVars.mxDepth; i++) {
-                if (nodeInUniqueNodeCountByDepthMap.containsKey(i)) {
-                    int max = 0;
-                    Map<String, Integer> nodeOutUniqueNodeSet = nodeInUniqueNodeCountByDepthMap.get(i);
-                    for (String n : nodeOutUniqueNodeSet.keySet()) {
-                        if (nodeOutUniqueNodeSet.get(n) > max) {
-                            max = nodeOutUniqueNodeSet.get(n);
-                        }
-                    }
-                    maxInUniqueNodeSeries.add(i, max);
-                } else {
-                    maxInUniqueNodeSeries.add(i, 0);
-                }
-            }
-
-            XYSeriesCollection dataset = new XYSeriesCollection();
-            dataset.addSeries(maxInUniqueNodeSeries);
-
-            JFreeChart chart = ChartFactory.createXYLineChart("", "MAX. IN-U. N.", "", dataset);
-            chart.getTitle().setHorizontalAlignment(HorizontalAlignment.LEFT);
-            chart.getXYPlot().setBackgroundPaint(Color.WHITE);
-            chart.getXYPlot().setDomainGridlinePaint(Color.DARK_GRAY);
-            chart.getXYPlot().setRangeGridlinePaint(Color.DARK_GRAY);
-            chart.getTitle().setFont(new Font("Arial", Font.PLAIN, 0));
-            chart.getXYPlot().getDomainAxis().setLabelFont(new Font("Arial", Font.PLAIN, 0));
-            chart.getXYPlot().getDomainAxis().setTickLabelFont(MySequentialGraphVars.tahomaPlainFont11);
-            chart.getXYPlot().getRangeAxis().setTickLabelFont(MySequentialGraphVars.tahomaPlainFont11);
-            chart.getXYPlot().getRangeAxis().setLabelFont(new Font("Arial", Font.PLAIN, 0));
-            chart.getXYPlot().getDomainAxis().setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-            chart.setBackgroundPaint(Color.WHITE);
-
-            XYPlot plot = (XYPlot) chart.getPlot();
-            XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
-            renderer.setSeriesPaint(0, Color.DARK_GRAY);
-            renderer.setSeriesStroke(0, new BasicStroke(1.5f));
-            renderer.setSeriesShapesVisible(0, true);
-            renderer.setSeriesShape(0, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
-            renderer.setSeriesFillPaint(0, Color.WHITE);
-
-            ChartPanel chartPanel = new ChartPanel(chart);
-            chartPanel.setPreferredSize(new Dimension(560, 367));
-
-            JLabel titleLabel = new JLabel(" PRED. & SUCC.");
-            titleLabel.setToolTipText("PRDECESSORS & SUCCESSORS BY DEPTH");
-            titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
-            titleLabel.setBackground(Color.WHITE);
-            titleLabel.setForeground(Color.DARK_GRAY);
-
-            JPanel titlePanel = new JPanel();
-            titlePanel.setBackground(Color.WHITE);
-            titlePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-            titlePanel.add(titleLabel);
-
-            graphSelection = new JComboBox();
-            graphSelection.setBackground(Color.WHITE);
-            graphSelection.setFocusable(false);
-            graphSelection.setFont(MySequentialGraphVars.tahomaPlainFont11);
-            graphSelection.addItem("SELECT");
-            graphSelection.addItem("IN");
-            graphSelection.addItem("MAX. IN");
-            graphSelection.addItem("OUT");
-            graphSelection.addItem("MAX. OUT");
-            graphSelection.setSelectedIndex(selected);
-            graphSelection.addActionListener(this);
-
-            String[] tooltips = {"SELECT A CHART FOR A DEPTH DISTRIBUTION.",
-                    "PREDECESSOR DISTRIBUTION BY DEPTH.",
-                    "MAX. PREDECESSOR DISTRIBUTION BY DEPTH.",
-                    "SUCCESSOR DISTRIBUTION BY DEPTH.",
-                    "MAX. SUCCESSOR DISTRIBUTION BY DEPTH."};
-            graphSelection.setRenderer(new MyComboBoxTooltipRenderer(tooltips));
-
-            JButton enlargeBtn = new JButton("+");
-            enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
-            enlargeBtn.setFocusable(false);
-            enlargeBtn.setBackground(Color.WHITE);
-            enlargeBtn.addActionListener(new ActionListener() {
-                @Override public void actionPerformed(ActionEvent e) {
-                    new Thread(new Runnable() {
-                        @Override public void run() {
-                            enlarge();
-                        }
-                    }).start();
-                }
-            });
-
-            JPanel btnPanel = new JPanel();
-            btnPanel.setBackground(Color.WHITE);
-            btnPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-            btnPanel.add(graphSelection);
-
-            JPanel topPanel = new JPanel();
-            topPanel.setLayout(new BorderLayout(0, 0));
-            topPanel.setBackground(Color.WHITE);
-            topPanel.add(btnPanel, BorderLayout.CENTER);
-
-            btnPanel.add(enlargeBtn);
-            topPanel.add(titlePanel, BorderLayout.WEST);
-
-            add(topPanel, BorderLayout.NORTH);
-            renderer.setBaseLegendTextFont(MySequentialGraphVars.tahomaPlainFont11);
-            add(chartPanel, BorderLayout.CENTER);
-        } catch (Exception ex) {ex.printStackTrace();}
-        revalidate();
-        repaint();
-    }
-
+    private static JTable nodeLevelTable;
 
     public void enlarge() {
         MyProgressBar pb = new MyProgressBar(false);
         try {
             JFrame f = new JFrame("PREDECESSORS & SUCCESSORS BY DEPTH");
+
+            String [] depthLevelColumns = {"DEPTH", "NO. OF NODES", "RATIO"};
+            String [][] depthLevelData = {};
+            DefaultTableModel model = new DefaultTableModel(depthLevelData, depthLevelColumns);
+            JTable depthLevelTable = new JTable(model);
+            depthLevelTable.setRowHeight(26);
+            depthLevelTable.getColumnModel().getColumn(0).setPreferredWidth(66);
+            depthLevelTable.getColumnModel().getColumn(0).setMaxWidth(66);
+            depthLevelTable.getColumnModel().getColumn(2).setPreferredWidth(49);
+            depthLevelTable.getColumnModel().getColumn(2).setMaxWidth(49);
+            depthLevelTable.setBackground(Color.WHITE);
+            depthLevelTable.getTableHeader().setBackground(new Color(0,0,0,0));
+            depthLevelTable.getTableHeader().setOpaque(false);
+            depthLevelTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont12);
+            depthLevelTable.setFont(MySequentialGraphVars.tahomaPlainFont12);
+
+            LinkedHashMap<Integer, Set<String>> uniqueNodesByDepthMap = new LinkedHashMap<>();
+            List<MyNode> nodes = new ArrayList<>(MySequentialGraphVars.g.getVertices());
+            for (int i=0; i <= MySequentialGraphVars.mxDepth; i++) {
+                for (MyNode n : nodes) {
+                    if (n.nodeDepthInfoMap.containsKey(i+1)) {
+                        if (uniqueNodesByDepthMap.containsKey(i+1)) {
+                            Set<String> depthNodes = uniqueNodesByDepthMap.get(i+1);
+                            depthNodes.add(n.getName());
+                            uniqueNodesByDepthMap.put((i+1), depthNodes);
+                        } else {
+                            Set<String> deptnNodes = new HashSet<>();
+                            deptnNodes.add(n.getName());
+                            uniqueNodesByDepthMap.put((i+1), deptnNodes);
+                        }
+                    }
+                }
+            }
+
+            for (int i : uniqueNodesByDepthMap.keySet()) {
+                DefaultTableModel depthLevelTableModel = (DefaultTableModel) depthLevelTable.getModel();
+                depthLevelTableModel.addRow(new String[]{
+                        "" + i,
+                        MyMathUtil.getCommaSeperatedNumber(uniqueNodesByDepthMap.get(i).size()),
+                        MyMathUtil.twoDecimalFormat((float)uniqueNodesByDepthMap.get(i).size()/nodes.size())
+                });
+            }
+
+            String[] nodeLevelColumns = {"NO.", "NODE", "VALUE", "RATIO"};
+            String[][] nodeLevelData = {};
+            DefaultTableModel nodeLevelModel = new DefaultTableModel(nodeLevelData, nodeLevelColumns);
+            nodeLevelTable = new JTable(nodeLevelModel);
+            nodeLevelTable.setRowHeight(26);
+            nodeLevelTable.getColumnModel().getColumn(0).setPreferredWidth(45);
+            nodeLevelTable.getColumnModel().getColumn(2).setPreferredWidth(45);
+            nodeLevelTable.getColumnModel().getColumn(3).setPreferredWidth(45);
+            nodeLevelTable.setBackground(Color.WHITE);
+            nodeLevelTable.getTableHeader().setBackground(new Color(0, 0, 0, 0));
+            nodeLevelTable.getTableHeader().setOpaque(false);
+            nodeLevelTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont12);
+            nodeLevelTable.setFont(MySequentialGraphVars.tahomaPlainFont12);
+
+            JSplitPane tableSplitPane = new JSplitPane();
+            tableSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+            tableSplitPane.setTopComponent(new JScrollPane(depthLevelTable));
+            tableSplitPane.setBottomComponent(new JScrollPane(nodeLevelTable));
+            tableSplitPane.addComponentListener(new ComponentAdapter() {
+                @Override public void componentResized(ComponentEvent e) {
+                    super.componentResized(e);
+                    tableSplitPane.setDividerLocation((int) (f.getHeight()*0.4));
+                }
+            });
+
+            JSplitPane chartAndTableSplitPane = new JSplitPane();
+            chartAndTableSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
+            chartAndTableSplitPane.setLeftComponent(new MyGraphLevelPredecessorSuccessorByDepthLineChart());
+            chartAndTableSplitPane.setRightComponent(tableSplitPane);
+            chartAndTableSplitPane.addComponentListener(new ComponentAdapter() {
+                @Override public void componentResized(ComponentEvent e) {
+                    super.componentResized(e);
+                    chartAndTableSplitPane.setDividerLocation((int) (f.getWidth()*0.8));
+                }
+            });
+
             f.setLayout(new BorderLayout());
             f.setBackground(Color.WHITE);
             f.setPreferredSize(new Dimension(450, 350));
             f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            f.getContentPane().add(new MyGraphLevelPredecessorSuccessorByDepthLineChart(), BorderLayout.CENTER);
+            f.getContentPane().add(chartAndTableSplitPane, BorderLayout.CENTER);
             f.pack();
             f.setCursor(Cursor.HAND_CURSOR);
             f.setAlwaysOnTop(true);
@@ -941,23 +410,9 @@ implements ActionListener {
         }
     }
 
-    int selected = 0;
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        selected = this.graphSelection.getSelectedIndex();
-        if (e.getSource() == this.graphSelection) {
-            if (this.graphSelection.getSelectedIndex() == 1) {
-                setInUniqueNodeChart();
-            } else if (this.graphSelection.getSelectedIndex() == 2) {
-                setMaxInUniqueNodeChart();
-            } else if (this.graphSelection.getSelectedIndex() == 3) {
-                setOutUniqueNodeChart();
-            } else if (this.graphSelection.getSelectedIndex() == 4) {
-                setMaxOutUniqueNodeChart();;
-            } else if (this.graphSelection.getSelectedIndex() == 0) {
-                setAllCharts();
-            }
-        }
+
     }
 }

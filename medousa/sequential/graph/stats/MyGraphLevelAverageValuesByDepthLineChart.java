@@ -546,7 +546,7 @@ implements ActionListener {
                     menuPanel.add(btnPanel, BorderLayout.CENTER);
                     add(menuPanel, BorderLayout.NORTH);
 
-                    chart.removeLegend();
+                    //chart.removeLegend();
                     add(chartPanel, BorderLayout.CENTER);
 
                     revalidate();

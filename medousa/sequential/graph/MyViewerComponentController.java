@@ -491,7 +491,7 @@ implements ActionListener {
         MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelAverageValuesByDepthLineChart.decorate();
         MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelUniqueNodesByDepthLineChart.setUniqueNodesByDepthLineChart();
         MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelContributionByDepthLineChart.decorate();
-        MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelPredecessorSuccessorByDepthLineChart.setAllCharts();
+        MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelPredecessorSuccessorByDepthLineChart.decorate();
         MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelDurationByDepthLineChart.decorate();
         MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelReachTimeByDepthLineChart.decorate();
     }

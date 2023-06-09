@@ -269,7 +269,7 @@ implements ActionListener {
                     add(northPanel, BorderLayout.NORTH);
                     add(chartPanel, BorderLayout.CENTER);
                     renderer.setBaseLegendTextFont(MySequentialGraphVars.tahomaPlainFont11);
-                    chart.removeLegend();
+                    //chart.removeLegend();
 
                     revalidate();
                     repaint();

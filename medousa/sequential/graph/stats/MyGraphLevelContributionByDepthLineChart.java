@@ -610,7 +610,7 @@ extends JPanel {
                     renderer.setBaseLegendTextFont(MySequentialGraphVars.tahomaPlainFont11);
                     add(menuPanel, BorderLayout.NORTH);
                     add(chartPanel, BorderLayout.CENTER);
-                    chart.removeLegend();
+                    //chart.removeLegend();
 
                     revalidate();
                     repaint();

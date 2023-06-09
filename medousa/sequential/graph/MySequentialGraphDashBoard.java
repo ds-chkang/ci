@@ -19,7 +19,7 @@ extends JPanel {
 
     public MyGraphLevelDistributionLineChart graphLevelNodeCountDistributionLineChart;
     public MyGraphLevelContributionByDepthLineChart graphLevelContributionByDepthLineChart;
-    public MyGraphLevelUniqueNodesByDepthLineBarChart graphLevelUniqueNodesByDepthLineChart;
+    public MyGraphLevelUniqueNodesByDepthDistributionChart graphLevelUniqueNodesByDepthLineChart;
     public MyGraphLevelReachTimeByDepthLineChart graphLevelReachTimeByDepthLineChart;
     public MyGraphLevelDurationByDepthLineChart graphLevelDurationByDepthLineChart;
     public MyGraphLevelPredecessorSuccessorByDepthLineChart graphLevelPredecessorSuccessorByDepthLineChart;
@@ -116,7 +116,7 @@ extends JPanel {
                 if (MySequentialGraphVars.isTimeOn) {
                     graphLevelAverageValuesByDepthLineChart = new MyGraphLevelAverageValuesByDepthLineChart();
                     graphLevelReachTimeByDepthLineChart = new MyGraphLevelReachTimeByDepthLineChart();
-                    graphLevelUniqueNodesByDepthLineChart = new MyGraphLevelUniqueNodesByDepthLineBarChart();
+                    graphLevelUniqueNodesByDepthLineChart = new MyGraphLevelUniqueNodesByDepthDistributionChart();
                     graphLevelContributionByDepthLineChart = new MyGraphLevelContributionByDepthLineChart();
                     graphLevelPredecessorSuccessorByDepthLineChart = new MyGraphLevelPredecessorSuccessorByDepthLineChart();
                     graphLevelDurationByDepthLineChart = new MyGraphLevelDurationByDepthLineChart();
@@ -156,7 +156,7 @@ extends JPanel {
                     });
                 } else {
                     graphLevelAverageValuesByDepthLineChart = new MyGraphLevelAverageValuesByDepthLineChart();
-                    graphLevelUniqueNodesByDepthLineChart = new MyGraphLevelUniqueNodesByDepthLineBarChart();
+                    graphLevelUniqueNodesByDepthLineChart = new MyGraphLevelUniqueNodesByDepthDistributionChart();
                     graphLevelContributionByDepthLineChart = new MyGraphLevelContributionByDepthLineChart();
                     graphLevelPredecessorSuccessorByDepthLineChart = new MyGraphLevelPredecessorSuccessorByDepthLineChart();
 
@@ -211,7 +211,7 @@ extends JPanel {
                     graphLevelAverageValuesByDepthLineChart = new MyGraphLevelAverageValuesByDepthLineChart();
                     graphLevelReachTimeByDepthLineChart = new MyGraphLevelReachTimeByDepthLineChart();
                     MyDepthLevelUniqueNodesByDepthLineChart graphLevelLevelUniqueNodesByDepthLineChart = new MyDepthLevelUniqueNodesByDepthLineChart();
-                    MyGraphLevelUniqueNodesByDepthLineBarChart depthLevelUniqueNodesByDepthLineChart = new MyGraphLevelUniqueNodesByDepthLineBarChart();
+                    MyGraphLevelUniqueNodesByDepthDistributionChart depthLevelUniqueNodesByDepthLineChart = new MyGraphLevelUniqueNodesByDepthDistributionChart();
                     depthLevelNodeHopCountDistribution = new MyDepthLevelHopCountDistribution();
                     graphLevelContributionByDepthLineChart = new MyGraphLevelContributionByDepthLineChart();
                     depthLevelNodeValueHistogramDistributionLineChart = new MyDepthLevelNodeValueHistogramDistributionLineChart();
@@ -245,11 +245,11 @@ extends JPanel {
                     });
                 } else {
                     graphLevelAverageValuesByDepthLineChart = new MyGraphLevelAverageValuesByDepthLineChart();
-                    graphLevelUniqueNodesByDepthLineChart = new MyGraphLevelUniqueNodesByDepthLineBarChart();
+                    graphLevelUniqueNodesByDepthLineChart = new MyGraphLevelUniqueNodesByDepthDistributionChart();
                     depthLevelNodeHopCountDistribution = new MyDepthLevelHopCountDistribution();
                     graphLevelContributionByDepthLineChart = new MyGraphLevelContributionByDepthLineChart();
                     graphLevelNodeCountDistributionLineChart = new MyGraphLevelDistributionLineChart();
-                    graphLevelUniqueNodesByDepthLineChart = new MyGraphLevelUniqueNodesByDepthLineBarChart();
+                    graphLevelUniqueNodesByDepthLineChart = new MyGraphLevelUniqueNodesByDepthDistributionChart();
 
                     JPanel dataProfilePanel = new JPanel();
                     dataProfilePanel.setBackground(Color.WHITE);
