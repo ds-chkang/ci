@@ -799,8 +799,8 @@ implements ActionListener {
 
             this.shortestDistanceSourceTable.setRowHeight(19);
             this.shortestDistanceSourceTable.setBackground(Color.WHITE);
-            this.shortestDistanceSourceTable.setFont(MySequentialGraphVars.f_pln_10);
-            this.shortestDistanceSourceTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont10);
+            this.shortestDistanceSourceTable.setFont(MySequentialGraphVars.f_pln_12);
+            this.shortestDistanceSourceTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont11);
             this.shortestDistanceSourceTable.getTableHeader().setOpaque(false);
             this.shortestDistanceSourceTable.getTableHeader().setBackground(new Color(0, 0, 0, 0f));
             this.shortestDistanceSourceTable.getColumnModel().getColumn(0).setPreferredWidth(40);
@@ -819,7 +819,7 @@ implements ActionListener {
             sourceNodeSelectBtn.removeActionListener(this);
             sourceNodeSelectBtn.removeActionListener(this);
             sourceNodeSearchAndSavePanel.remove(sourceNodeSelectBtn);
-            sourceNodeSearchTxt.setFont(MySequentialGraphVars.f_bold_10);
+            sourceNodeSearchTxt.setFont(MySequentialGraphVars.f_bold_12);
 
             add(sourceNodeSearchAndSavePanel, BorderLayout.SOUTH);
             this.shortestDistanceSourceTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -855,7 +855,7 @@ implements ActionListener {
             this.shortestDistanceDestTablePanel.setLayout(new BorderLayout(2, 2));
             this.shortestDistanceDestTablePanel.setBackground(Color.WHITE);
 
-            this.shortestDistanceMenu.setFont(MySequentialGraphVars.tahomaPlainFont10);
+            this.shortestDistanceMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
             this.shortestDistanceMenu.setFocusable(false);
             this.shortestDistanceMenu.addActionListener(new ActionListener() {
                 @Override public void actionPerformed(ActionEvent e) {
@@ -904,8 +904,8 @@ implements ActionListener {
 
             this.shortestDistanceDestTable.setRowHeight(19);
             this.shortestDistanceDestTable.setBackground(Color.WHITE);
-            this.shortestDistanceDestTable.setFont(MySequentialGraphVars.f_pln_10);
-            this.shortestDistanceDestTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont10);
+            this.shortestDistanceDestTable.setFont(MySequentialGraphVars.f_pln_12);
+            this.shortestDistanceDestTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont11);
             this.shortestDistanceDestTable.getTableHeader().setOpaque(false);
             this.shortestDistanceDestTable.getTableHeader().setBackground(new Color(0, 0, 0, 0f));
             this.shortestDistanceDestTable.getColumnModel().getColumn(0).setPreferredWidth(45);
@@ -935,7 +935,7 @@ implements ActionListener {
             runBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
 
             destNodeSearchTxt.setBackground(Color.WHITE);
-            destNodeSearchTxt.setFont(MySequentialGraphVars.f_bold_10);
+            destNodeSearchTxt.setFont(MySequentialGraphVars.f_bold_12);
             destNodeSearchTxt.setToolTipText("TYPE A NODE NAME TO SEARCH");
             destNodeSearchTxt.setBorder(BorderFactory.createLoweredSoftBevelBorder());
             JPanel destNodeSearchAndSavePanel = MyTableUtil.searchAndSaveDataPanelForJTable2(this, destNodeSearchTxt, runBtn, shortestDistanceDestTableModel, this.shortestDistanceDestTable);
@@ -1409,12 +1409,12 @@ implements ActionListener {
         this.weightedNodeColor.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.weightedNodeColor.addActionListener(this);
 
-        edgeValueDistributionBtn.setBackground(Color.WHITE);
-        edgeValueDistributionBtn.setToolTipText("CURRENT EDGE VALUE DISTRIBUTION");
-        edgeValueDistributionBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
-        edgeValueDistributionBtn.setPreferredSize(new Dimension(55, 24));
-        edgeValueDistributionBtn.setFocusable(false);
-        edgeValueDistributionBtn.addActionListener(new ActionListener() {
+        this.edgeValueDistributionBtn.setBackground(Color.WHITE);
+        this.edgeValueDistributionBtn.setToolTipText("CURRENT EDGE VALUE DISTRIBUTION");
+        this.edgeValueDistributionBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.edgeValueDistributionBtn.setPreferredSize(new Dimension(55, 24));
+        this.edgeValueDistributionBtn.setFocusable(false);
+        this.edgeValueDistributionBtn.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 new Thread(new Runnable() {
                     @Override public void run() {
@@ -1429,12 +1429,12 @@ implements ActionListener {
             }
         });
 
-        nodeValueDistributionBtn.setBackground(Color.WHITE);
-        nodeValueDistributionBtn.setToolTipText("CURRENT NODE VALUE DISTRIBUTION");
-        nodeValueDistributionBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
-        nodeValueDistributionBtn.setPreferredSize(new Dimension(55, 24));
-        nodeValueDistributionBtn.setFocusable(false);
-        nodeValueDistributionBtn.addActionListener(new ActionListener() {
+        this.nodeValueDistributionBtn.setBackground(Color.WHITE);
+        this.nodeValueDistributionBtn.setToolTipText("CURRENT NODE VALUE DISTRIBUTION");
+        this.nodeValueDistributionBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.nodeValueDistributionBtn.setPreferredSize(new Dimension(55, 24));
+        this.nodeValueDistributionBtn.setFocusable(false);
+        this.nodeValueDistributionBtn.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 new Thread(new Runnable() {
                     @Override public void run() {
@@ -1460,9 +1460,6 @@ implements ActionListener {
         this.bottomLeftControlPanel.add(this.nodeLabelBarChart);
         this.bottomLeftControlPanel.add(this.edgeValueBarChart);
         this.bottomLeftControlPanel.add(this.edgeLabelBarChart);
-        this.bottomLeftControlPanel.add(emptyIndentLabel);
-        this.bottomLeftControlPanel.add(this.nodeValueDistributionBtn);
-        this.bottomLeftControlPanel.add(this.edgeValueDistributionBtn);
 
         this.bottomRightControlPanel.setBackground(Color.WHITE);
         this.bottomRightControlPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0,0));
@@ -2152,8 +2149,8 @@ implements ActionListener {
 
         this.edgeListTable.setRowHeight(22);
         this.edgeListTable.setBackground(Color.WHITE);
-        this.edgeListTable.setFont(MySequentialGraphVars.f_pln_10);
-        this.edgeListTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont10);
+        this.edgeListTable.setFont(MySequentialGraphVars.f_pln_12);
+        this.edgeListTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont11);
         this.edgeListTable.getTableHeader().setOpaque(false);
         this.edgeListTable.getTableHeader().setBackground(new Color(0,0,0,0f));
         this.edgeListTable.getColumnModel().getColumn(0).setPreferredWidth(60);
@@ -2167,7 +2164,7 @@ implements ActionListener {
         edgeTableNodeTableNodeSearchTxt.setBackground(Color.WHITE);
         edgeTableNodeTableNodeSearchTxt.setBorder(BorderFactory.createLoweredSoftBevelBorder());
         JPanel bottomTableSearchAndSavePanel = MyTableUtil.searchAndSaveDataPanelForJTable2(this, edgeTableNodeTableNodeSearchTxt, edgeTableNodeSelectBtn, bottomTableModel, this.edgeListTable);
-        edgeTableNodeTableNodeSearchTxt.setFont(MySequentialGraphVars.f_bold_10);
+        edgeTableNodeTableNodeSearchTxt.setFont(MySequentialGraphVars.f_bold_12);
         edgeTableNodeTableNodeSearchTxt.setToolTipText("TYPE A NODE NAME TO SEARCH");
         edgeTableNodeTableNodeSearchTxt.setPreferredSize(new Dimension(90, 19));
         edgeTableNodeSelectBtn.setPreferredSize(new Dimension(50, 19));
@@ -2259,8 +2256,8 @@ implements ActionListener {
 
         this.nodeListTable.setRowHeight(21);
         this.nodeListTable.setBackground(Color.WHITE);
-        this.nodeListTable.setFont(MySequentialGraphVars.f_pln_10);
-        this.nodeListTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont10);
+        this.nodeListTable.setFont(MySequentialGraphVars.f_pln_12);
+        this.nodeListTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont11);
         this.nodeListTable.getTableHeader().setOpaque(false);
         this.nodeListTable.getTableHeader().setBackground(new Color(0,0,0,0f));
         this.nodeListTable.getColumnModel().getColumn(0).setPreferredWidth(35);
@@ -2274,7 +2271,7 @@ implements ActionListener {
         bottomTableNodeTableNodeSearchTxt.setBackground(Color.WHITE);
         bottomTableNodeTableNodeSearchTxt.setBorder(BorderFactory.createLoweredSoftBevelBorder());
         JPanel bottomTableSearchAndSavePanel = MyTableUtil.searchAndSaveDataPanelForJTable2(this, bottomTableNodeTableNodeSearchTxt, bottomTableNodeSelectBtn, nodeListTableModel, this.nodeListTable);
-        bottomTableNodeTableNodeSearchTxt.setFont(MySequentialGraphVars.f_bold_10);
+        bottomTableNodeTableNodeSearchTxt.setFont(MySequentialGraphVars.f_bold_12);
         bottomTableNodeTableNodeSearchTxt.setToolTipText("TYPE A NODE NAME TO SEARCH");
         bottomTableNodeTableNodeSearchTxt.setPreferredSize(new Dimension(100, 19));
         bottomTableNodeSelectBtn.setPreferredSize(new Dimension(50, 19));
@@ -2394,8 +2391,8 @@ implements ActionListener {
 
         this.currentNodeListTable.setRowHeight(21);
         this.currentNodeListTable.setBackground(Color.WHITE);
-        this.currentNodeListTable.setFont(MySequentialGraphVars.f_pln_10);
-        this.currentNodeListTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont10);
+        this.currentNodeListTable.setFont(MySequentialGraphVars.f_pln_12);
+        this.currentNodeListTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont11);
         this.currentNodeListTable.getTableHeader().setOpaque(false);
         this.currentNodeListTable.getTableHeader().setBackground(new Color(0,0,0,0f));
         this.currentNodeListTable.getColumnModel().getColumn(0).setPreferredWidth(35);
@@ -2404,12 +2401,12 @@ implements ActionListener {
 
         JTextField topTableNodeSearchTxt = new JTextField();
         JButton topTableNodeSelectBtn = new JButton("SEL.");
-        topTableNodeSelectBtn.setFont(MySequentialGraphVars.tahomaPlainFont10);
+        topTableNodeSelectBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
         topTableNodeSelectBtn.setFocusable(false);
         topTableNodeSearchTxt.setBackground(Color.WHITE);
         topTableNodeSearchTxt.setBorder(BorderFactory.createLoweredSoftBevelBorder());
         JPanel topTableSearchAndSavePanel = MyTableUtil.searchAndSaveDataPanelForJTable2(this, topTableNodeSearchTxt, topTableNodeSelectBtn, topTableModel, currentNodeListTable);
-        topTableNodeSearchTxt.setFont(MySequentialGraphVars.f_bold_10);
+        topTableNodeSearchTxt.setFont(MySequentialGraphVars.f_bold_12);
         topTableNodeSearchTxt.setToolTipText("TYPE A NODE NAME TO SEARCH");
         topTableNodeSearchTxt.setPreferredSize(new Dimension(90, 19));
         topTableNodeSelectBtn.setPreferredSize(new Dimension(50, 19));

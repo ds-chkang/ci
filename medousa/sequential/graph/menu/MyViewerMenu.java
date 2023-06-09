@@ -30,8 +30,8 @@ implements ActionListener {
     private JMenuItem showNodeValue = new JMenuItem("NODE VALUE");
     private JMenuItem showEdgeValue = new JMenuItem("EDGE VALUE");
     private JMenuItem showEdgeLabel = new JMenuItem("EDGE LABEL");
-    private JMenuItem showNodeValueDistribution = new JMenuItem("NODE VALUE DIST.");
-    private JMenuItem showEdgeValueDistribution = new JMenuItem("EDGE VALUE DIST.");
+    private JMenuItem currentNodeValueDistribution = new JMenuItem("CUR. NODE VALUE DIST.");
+    private JMenuItem currentEdgeValueDistribution = new JMenuItem("CUR. EDGE VALUE DIST.");
     private JMenuItem nodeStatistics = new JMenuItem("NODE STATISTICS");
     private JMenuItem edgeStatistics = new JMenuItem("EDGE STATISTICS");
     private JMenuItem sequenceLengthDistribution = new JMenuItem("SEQ. DIST.");
@@ -61,7 +61,6 @@ implements ActionListener {
         this.add(new JSeparator());
         this.setMenuItem(this.searchNode, "SEARCH NODE");
         this.add(new JSeparator());
-        this.setMenuItem(this.showNodeValue, "SHOW NODE VALUE");
         this.setMenuItem(this.nodeStatistics, "SHOW NODE STATISTICS");
         if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() > 1) {
             this.setMenuItem(this.edgeStatistics, "SHOW EDGE STATISTICS");
@@ -73,9 +72,12 @@ implements ActionListener {
         if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelSelecter.getSelectedIndex() > 0) {
             this.setMenuItem(this.showEdgeLabel, "SHOW EDGE LABEL");
         }
+        this.add(new JSeparator());
+        this.setMenuItem(this.currentNodeValueDistribution, "SHOW CURRENT NODE VALUE DISTRIBUTION");
         if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() > 1) {
-            this.setMenuItem(this.showEdgeValue, "SHOW EDGE VALUE");
+            this.setMenuItem(this.currentEdgeValueDistribution, "SHOW CURRENT EDGE VALUE DISTRIBUTION");
         }
+        this.add(new JSeparator());
         if (!isNodeColorWeighted) {
             this.weightedNodeColor.setText("WEIGHT NODE COLORS");
             this.setMenuItem(this.weightedNodeColor, "SHOW UNWEIGHTED NODE COLORS");
@@ -115,7 +117,7 @@ implements ActionListener {
         menuItem.setToolTipText(tooltip);
         menuItem.setFont(MySequentialGraphVars.tahomaPlainFont12);
         menuItem.addActionListener(this);
-        menuItem.setPreferredSize(new Dimension(220, 26));
+        menuItem.setPreferredSize(new Dimension(200, 26));
         this.add(menuItem);
     }
 
@@ -134,9 +136,6 @@ implements ActionListener {
                         nodeToolTipOnOff.setText("NODE TOOLTIP-OFF");
                         isTooltipOff = false;
                     }
-                } else if (e.getSource() == contributionCountByObjectDistribution) {
-                    MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution graphLevelContributionCountByObjectIDDistribution = new MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution();
-                    graphLevelContributionCountByObjectIDDistribution.enlarge();
                 } else if (e.getSource() == weightedNodeColor) {
                     if (!isNodeColorWeighted) {
                         weightedNodeColor.setText("UNWEIGHT NODE COLORS");
@@ -147,9 +146,6 @@ implements ActionListener {
                         MySequentialGraphVars.getSequentialGraphViewer().getRenderContext().setVertexFillPaintTransformer(MySequentialGraphVars.getSequentialGraphViewer().unWeightedNodeColor);
                         isNodeColorWeighted = false;
                     }
-                } else if (e.getSource() == betweenContributionByObjectDistribution) {
-                    MyBetweenContributionDistributionByObjectLineChart betweenContributionDistributionByObject = new MyBetweenContributionDistributionByObjectLineChart();
-                    betweenContributionDistributionByObject.enlarge();
                 } else if (e.getSource() == picking) {
                     DefaultModalGraphMouse graphMouse = new DefaultModalGraphMouse();
                     graphMouse.setMode(DefaultModalGraphMouse.Mode.PICKING);
@@ -162,25 +158,8 @@ implements ActionListener {
                     MyNodeDepthAppearnaceStatistics nodeDepthAppearnaceStatistics = new MyNodeDepthAppearnaceStatistics();
                 } else if (e.getSource() == nodeStatistics) {
                     MyNodeStatistics nodeStatistics = new MyNodeStatistics();
-                } else if (e.getSource() == inOutDifferenceByDepthStatistics) {
-                    MyInOutValueDifferenceStatByDepthChart inOutDifferenceStatByDepthChart = new MyInOutValueDifferenceStatByDepthChart();
-                    inOutDifferenceStatByDepthChart.enlarge();
                 } else if (e.getSource() == edgeStatistics) {
                     MyEdgeStatistics edgeStatistics = new MyEdgeStatistics();
-                } else if (e.getSource() == avgHopCountDistribution) {
-                    MyGraphLevelNodeAverageHopCountDistributionLineChart hopCountDistribution = new MyGraphLevelNodeAverageHopCountDistributionLineChart();
-                    hopCountDistribution.enlarge();
-                } else if (e.getSource() == sequenceLengthDistribution) {
-                    MyGraphLevelSequenceLengthDistribution sequenceLengthDistribution = new MyGraphLevelSequenceLengthDistribution();
-                } else if (e.getSource() == reachTimeDistribution) {
-                    MyGraphTopLevelReachTimeDistribution timeDistribution = new MyGraphTopLevelReachTimeDistribution();
-                    timeDistribution.enlarge();
-                } else if (e.getSource() == betweenReachTimeDistribution) {
-                    MyBetweenReachTimeDistributionLineChart betweenReachTimeDistribution = new MyBetweenReachTimeDistributionLineChart();
-                    betweenReachTimeDistribution.enlarge();
-                } else if (e.getSource() == durationDistribution) {
-                    MyGraphTopLevelDurationDistribution durationDistribution = new MyGraphTopLevelDurationDistribution();
-                    durationDistribution.enlarge();
                 } else if (e.getSource() == showNodeValue) {
                    MyNodeValue nodeValue = new MyNodeValue();
                 } else if (e.getSource() == showEdgeValue) {
@@ -191,21 +170,21 @@ implements ActionListener {
                     MyNodeLister nodeSearch = new MyNodeLister();
                 } else if (e.getSource() == showEndNodes) {
                     MyNodeLister nodeSearch = new MyNodeLister("SHOW ENDING NODES");
-                } else if (e.getSource() == showNodeValueDistribution) {
-                    MyValueDistributionChartGenerator nodeValueDistributionChart = new MyValueDistributionChartGenerator("NODE VALUE DISTRIBUTION", "NODE VALUE");
-                } else if (e.getSource() == showEdgeValueDistribution) {
-                    boolean isAllDefaultValues = true;
-                    Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
-                    for (MyEdge edge : edges) {
-                        if ((long) edge.getCurrentValue() != 4) {
-                            isAllDefaultValues = false;
-                            break;
-                        }
-                    }
-                    if (isAllDefaultValues) {
-                        MyMessageUtil.showErrorMsg("Set edge values, first.");
+                } else if (e.getSource() == currentNodeValueDistribution) {
+                    if (MySequentialGraphVars.getSequentialGraphViewer().nodeValueName.contains("TIME") ||
+                        MySequentialGraphVars.getSequentialGraphViewer().nodeValueName.contains("DURATION")) {
+                        MyGraphLevelTopLevelNodeTimeValueDistribution graphLevelTopLevelNodeTimeValueDistribution = new MyGraphLevelTopLevelNodeTimeValueDistribution();
+                        graphLevelTopLevelNodeTimeValueDistribution.enlarge();
                     } else {
-                        MyEdgeValueDistributionChart edgeValueDistributionChart = new MyEdgeValueDistributionChart("EDGE VALUE DISTRIBUTION", "EDGE VALUE");
+                        MyGraphLevelTopLevelNodeValueDistribution graphLevelTopLevelNodeValueDistribution = new MyGraphLevelTopLevelNodeValueDistribution();
+                        graphLevelTopLevelNodeValueDistribution.enlarge();
+                    }
+                } else if (e.getSource() == currentEdgeValueDistribution) {
+                    if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() > 1) {
+                        MyGraphLevelTopLevelEdgeValueDistribution graphLevelTopLevelEdgeValueDistribution = new MyGraphLevelTopLevelEdgeValueDistribution();
+                        graphLevelTopLevelEdgeValueDistribution.enlarge();
+                    } else {
+                        MyMessageUtil.showInfoMsg(MySequentialGraphVars.app, "Select an edge value.");
                     }
                 } else if (e.getSource() == dataFlowGraph) {
                     MyFlowExplorerAnalyzer dataFlowGrapher = new MyFlowExplorerAnalyzer();

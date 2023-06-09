@@ -172,6 +172,8 @@ implements ActionListener {
                                 }
                                 MyDirectGraphVars.app.getContentTabbedPane().addTab("      CONFIGURATION       ", scrollPane);
                                 MyDirectGraphVars.app.getContentTabbedPane().addTab("      DASHBOARD       ", MyDirectGraphVars.app.resetDirectGraphDashBoard());
+
+                                setButton(runBtn, run_img_icon, "CREATE NETWORK", false);
                             } else if (selectedTabIdx == 2) {
                                 MySequentialGraphSysUtil.initVariables();
                                 MySequentialGraphConfigPanel sequentialGraphConfigPanel = new MySequentialGraphConfigPanel();
@@ -462,6 +464,7 @@ implements ActionListener {
                                 pb.updateValue(80, 100);
                                 Thread.sleep(300);
                                 runBtn.setEnabled(false);
+                                runBtn.setVisible(false);
                                 pb.updateValue(100, 100);
                                 pb.dispose();
                             } catch (Exception ex) {
