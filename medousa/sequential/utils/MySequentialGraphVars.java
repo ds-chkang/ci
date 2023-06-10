@@ -18,6 +18,7 @@ public class MySequentialGraphVars {
     public static Font f_bold_16 = new Font("Noto Sans", Font.BOLD, 16);
     public static Font f_bold_12 = new Font("Noto Sans", Font.BOLD, 12);
     public static Font f_bold_10 = new Font("Noto Sans", Font.BOLD, 10);
+    public static Font f_bold_11 = new Font("Noto Sans", Font.BOLD, 11);
     public static Font f_pln_6 = new Font("Noto Sans", Font.PLAIN, 6);
     public final static Font tahomaPlainFont12 = new Font("Tahoma", Font.PLAIN, 12);
     public final static Font tahomaPlainFont13 = new Font("Tahoma", Font.PLAIN, 13);

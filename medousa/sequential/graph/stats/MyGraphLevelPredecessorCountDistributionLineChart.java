@@ -100,7 +100,7 @@ public class MyGraphLevelPredecessorCountDistributionLineChart extends JPanel {
 
         JLabel titleLabel = new JLabel(" P. C.");
         titleLabel.setToolTipText("PREDECESSOR COUNT DISTRIBUTION");
-        titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
+        titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
         titleLabel.setBackground(Color.WHITE);
         titleLabel.setForeground(Color.DARK_GRAY);
 
@@ -111,7 +111,7 @@ public class MyGraphLevelPredecessorCountDistributionLineChart extends JPanel {
 
         chartMenu = new JComboBox();
         chartMenu.setFocusable(false);
-        chartMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        chartMenu.setFont(MySequentialGraphVars.tahomaPlainFont12);
         chartMenu.setBackground(Color.WHITE);
         chartMenu.addItem("P. C. B.");
         chartMenu.addItem("P. C.");
@@ -225,7 +225,7 @@ public class MyGraphLevelPredecessorCountDistributionLineChart extends JPanel {
 
                     JLabel titleLabel = new JLabel(" P. C.");
                     titleLabel.setToolTipText("PREDECESSOR COUNT DISTRIBUTION");
-                    titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
+                    titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
                     titleLabel.setBackground(Color.WHITE);
                     titleLabel.setForeground(Color.DARK_GRAY);
 
@@ -235,7 +235,7 @@ public class MyGraphLevelPredecessorCountDistributionLineChart extends JPanel {
                     titlePanel.add(titleLabel);
 
                     JButton enlargeBtn = new JButton("+");
-                    enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
+                    enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
                     enlargeBtn.setFocusable(false);
                     enlargeBtn.setBackground(Color.WHITE);
                     enlargeBtn.addActionListener(new ActionListener() {@Override
@@ -331,11 +331,9 @@ public class MyGraphLevelPredecessorCountDistributionLineChart extends JPanel {
                     f.setAlwaysOnTop(false);
                 }
             });
-            f.setAlwaysOnTop(true);
             pb.updateValue(100, 100);
             pb.dispose();
             f.setVisible(true);
-            f.setAlwaysOnTop(false);
         } catch (Exception ex) {
             MAXIMIZED = false;
             pb.updateValue(100, 100);

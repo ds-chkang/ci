@@ -9,7 +9,6 @@ import medousa.sequential.graph.layout.MyDirectedSparseMultigraph;
 import medousa.sequential.graph.stats.MyPathFlowNodesByDepthLineBarChart;
 import medousa.sequential.graph.stats.multinode.MyMultiNodeAppearanceByDepthLineChart;
 import medousa.sequential.graph.stats.singlenode.MySingleNodeAppearanceByDepthLineChart;
-import medousa.MyProgressBar;
 import medousa.sequential.utils.MyMathUtil;
 import medousa.sequential.utils.MySequentialGraphSysUtil;
 import medousa.sequential.utils.MySequentialGraphVars;
@@ -19,7 +18,6 @@ import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
-import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
 import edu.uci.ics.jung.visualization.renderers.Renderer;
 import medousa.table.MyTableToolTipper;
 import medousa.table.MyTableUtil;
@@ -583,7 +581,7 @@ implements ActionListener {
                 String targetNodeName = MySequentialGraphVars.nodeNameMap.get(nodeListTable.getValueAt(nodeListTable.getSelectedRow(), 2).toString());
                 String targetFullNodeName = MySequentialGraphVars.nodeNameMap.get(nodeListTable.getValueAt(nodeListTable.getSelectedRow(), 2).toString()) + "-" + depth;
                 if (flowExplorerViewerMouseListener.selectedNode != null) {
-                    if (((MyDepthNode)e.getSource()).isSelectedNodePath && ((MyDepthNode)e.getDest()).isSelectedNodePath) {
+                    if (((MyDepthNode)e.getSource()).isNodeInPath && ((MyDepthNode)e.getDest()).isNodeInPath) {
                         return new Color(1f, 0f, 0f, 0.20f);
                     } else {
                         return new Color(0f, 0f, 0f, 0.015f);
@@ -606,7 +604,7 @@ implements ActionListener {
                     }
                 }
             } else if (flowExplorerViewerMouseListener.selectedNode != null) {
-                if (((MyDepthNode)e.getSource()).isSelectedNodePath && ((MyDepthNode)e.getDest()).isSelectedNodePath) {
+                if (((MyDepthNode)e.getSource()).isNodeInPath && ((MyDepthNode)e.getDest()).isNodeInPath) {
                     return new Color(1f, 0f, 0f, 0.15f);
                 } else {
                     return new Color(0f, 0f, 0f, 0.15f);

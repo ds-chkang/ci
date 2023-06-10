@@ -72,11 +72,7 @@ implements ActionListener {
         if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelSelecter.getSelectedIndex() > 0) {
             this.setMenuItem(this.showEdgeLabel, "SHOW EDGE LABEL");
         }
-        this.add(new JSeparator());
-        this.setMenuItem(this.currentNodeValueDistribution, "SHOW CURRENT NODE VALUE DISTRIBUTION");
-        if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() > 1) {
-            this.setMenuItem(this.currentEdgeValueDistribution, "SHOW CURRENT EDGE VALUE DISTRIBUTION");
-        }
+
         this.add(new JSeparator());
         if (!isNodeColorWeighted) {
             this.weightedNodeColor.setText("WEIGHT NODE COLORS");

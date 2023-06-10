@@ -44,10 +44,10 @@ extends JPanel {
     }
 
     TitledBorder dataProfileTitledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK),
-        "DISTRIBUTIONS", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
+        "DEPTH DISTRIBUTIONS", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
 
     TitledBorder shortestDistanceTitledBorder = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK),
-            "DISTRIBUTIONS", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
+            "DISTANCE DISTRIBUTIONS", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
 
     public void setShortestDistanceDashBoard() {
         SwingUtilities.invokeLater(new Runnable() {
@@ -82,7 +82,7 @@ extends JPanel {
                 MySequentialGraphVars.app.getSequentialGraphViewerPanel().setBorder(networkTitledBorder);
 
                 JSplitPane graphAndGraphChartSplitPane = new JSplitPane();
-                graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.14));
+                graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.144));
                 graphAndGraphChartSplitPane.setDividerSize(4);
                 graphAndGraphChartSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
                 graphAndGraphChartSplitPane.setLeftComponent(tabbedPane);
@@ -93,7 +93,7 @@ extends JPanel {
                 MySequentialGraphVars.app.addComponentListener(new ComponentAdapter() {
                     public void componentResized(ComponentEvent evt) {
                         graphAndGraphChartSplitPane.setDividerSize(4);
-                        graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.14));
+                        graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.144));
                     }
                 });
 
@@ -103,6 +103,11 @@ extends JPanel {
         });
     }
 
+    MyGraphLevelPredecessorCountDistributionLineChart graphLevelPredecessorCountDistributionLineChart;
+    MyGraphLevelSuccessorCountDistributionLineChart graphLevelSuccessorCountDistributionLineChart;
+    MyGraphLevelNodeValueDistributionLineChart graphLevelNodeValueDistributionLineChart;
+    MyGraphLevelEdgeValueDistributionLineChart graphLevelEdgeValueDistributionLineChart;
+    MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution graphLevelTopLevelNodeContributionCountByObjectIDDistribution;
 
     public void setGraphLevelDashBoard() {
         SwingUtilities.invokeLater(new Runnable() {
@@ -121,6 +126,22 @@ extends JPanel {
                     graphLevelPredecessorSuccessorByDepthLineChart = new MyGraphLevelPredecessorSuccessorByDepthLineChart();
                     graphLevelDurationByDepthLineChart = new MyGraphLevelDurationByDepthLineChart();
 
+                    graphLevelPredecessorCountDistributionLineChart = new MyGraphLevelPredecessorCountDistributionLineChart();
+                    graphLevelSuccessorCountDistributionLineChart = new MyGraphLevelSuccessorCountDistributionLineChart();
+                    graphLevelNodeValueDistributionLineChart = new MyGraphLevelNodeValueDistributionLineChart();
+                    graphLevelEdgeValueDistributionLineChart = new MyGraphLevelEdgeValueDistributionLineChart();
+                    graphLevelTopLevelNodeContributionCountByObjectIDDistribution = new MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution();
+                    graphLevelTopLevelNodeContributionCountByObjectIDDistribution.decorate();
+
+                    JPanel graphProfilePanel = new JPanel();
+                    graphProfilePanel.setBackground(Color.WHITE);
+                    graphProfilePanel.setLayout(new GridLayout(5,1));
+                    graphProfilePanel.add(graphLevelPredecessorCountDistributionLineChart);
+                    graphProfilePanel.add(graphLevelSuccessorCountDistributionLineChart);
+                    graphProfilePanel.add(graphLevelNodeValueDistributionLineChart);
+                    graphProfilePanel.add(graphLevelEdgeValueDistributionLineChart);
+                    graphProfilePanel.add(graphLevelTopLevelNodeContributionCountByObjectIDDistribution);
+
                     JPanel dataProfilePanel = new JPanel();
                     dataProfilePanel.setBackground(Color.WHITE);
                     dataProfilePanel.setLayout(new GridLayout(6, 1));
@@ -133,6 +154,7 @@ extends JPanel {
                     dataProfilePanel.setBorder(dataProfileTitledBorder);
 
                     JTabbedPane tabbedPane = new JTabbedPane();
+                    tabbedPane.addTab("G. P.", null, graphProfilePanel, "GRAPH PROFILE");
                     tabbedPane.addTab("D. P.", null, dataProfilePanel, "DATA PROFILE");
                     tabbedPane.addTab("G. S.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setStatTable(), "GRAPH TEXT STATISTICS");
                     tabbedPane.setFont(MySequentialGraphVars.tahomaBoldFont12);
@@ -140,7 +162,7 @@ extends JPanel {
                     MySequentialGraphVars.app.getSequentialGraphViewerPanel().setBorder(networkTitledBorder);
 
                     JSplitPane graphAndGraphChartSplitPane = new JSplitPane();
-                    graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.14));
+                    graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.144));
                     graphAndGraphChartSplitPane.setDividerSize(4);
                     graphAndGraphChartSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
                     graphAndGraphChartSplitPane.setLeftComponent(tabbedPane);
@@ -151,7 +173,7 @@ extends JPanel {
                     MySequentialGraphVars.app.addComponentListener(new ComponentAdapter() {
                         public void componentResized(ComponentEvent evt) {
                         graphAndGraphChartSplitPane.setDividerSize(4);
-                        graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.14));
+                        graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.144));
                         }
                     });
                 } else {
@@ -177,7 +199,7 @@ extends JPanel {
                     MySequentialGraphVars.app.getSequentialGraphViewerPanel().setBorder(networkTitledBorder);
 
                     JSplitPane graphAndGraphChartSplitPane = new JSplitPane();
-                    graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.14));
+                    graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.144));
                     graphAndGraphChartSplitPane.setDividerSize(4);
                     graphAndGraphChartSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
                     graphAndGraphChartSplitPane.setLeftComponent(tabbedPane);
@@ -187,7 +209,7 @@ extends JPanel {
                     MySequentialGraphVars.app.addComponentListener(new ComponentAdapter() {
                         public void componentResized(ComponentEvent evt) {
                         graphAndGraphChartSplitPane.setDividerSize(4);
-                        graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.14));
+                        graphAndGraphChartSplitPane.setDividerLocation((int)(MySequentialGraphSysUtil.getViewerWidth()*0.144));
                         }
                     });
                 }

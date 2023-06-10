@@ -67,7 +67,7 @@ implements ActionListener {
 
                 JLabel titleLabel = new JLabel(" N. V.");
                 titleLabel.setToolTipText("NODE VALUE DISTRIBUTION");
-                titleLabel.setFont(MyDirectGraphVars.tahomaBoldFont11);
+                titleLabel.setFont(MyDirectGraphVars.tahomaBoldFont12);
                 titleLabel.setBackground(Color.WHITE);
                 titleLabel.setForeground(Color.DARK_GRAY);
 

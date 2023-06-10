@@ -31,13 +31,11 @@ extends JPanel {
     private JComboBox chartMenu;
     private int selectedChartIdx;
     private String [] chartMenuTooltips = {
-            "GRAPH NODE COUNT DISTRIBUTION",
+            "NODE COUNT DISTRIBUTION BY GRAPH",
             "AVERAGE SHORTEST OUT-DISTANCE DISTRIBUTION",
             "AVERAGE SHORTEST IN-DISTANCE DISTRIBUTION",
             "REACHAED OUT-NODE COUNT DISTRIBUTION",
-            "UNREACHED  OUT-NODE COUNT DISTRIBUTION",
-            "REACHED IN-NODE COUNT DISTRIBUTION",
-            "UNREACHED IN-NODE COUNT DISTRIBUTION"};
+            "UNREACHED  OUT-NODE COUNT DISTRIBUTION"};
 
 
     public MyDirectGraphTopLevelDistributionChart() {
@@ -63,10 +61,6 @@ extends JPanel {
                         chartPanel = new ChartPanel(setReachedOutNodeCountChart());
                     } else if (selectedChartIdx == 4) {
                         chartPanel = new ChartPanel(setUnReachedOutNodeCountChart());
-                    } else if (selectedChartIdx == 5) {
-                        chartPanel = new ChartPanel(setReachedInNodeCountChart());
-                    } else if (selectedChartIdx == 6) {
-                        chartPanel = new ChartPanel(setUnReachedInNodeCountChart());
                     }
                     chartPanel.getChart().getCategoryPlot().setRangeGridlinePaint(Color.DARK_GRAY);
                     chartPanel.getChart().getCategoryPlot().setDomainGridlinePaint(Color.DARK_GRAY);
@@ -97,8 +91,6 @@ extends JPanel {
                     chartMenu.addItem("AVG. S. IN-D.");
                     chartMenu.addItem("R. OUT-N. C.");
                     chartMenu.addItem("UNR. OUT-N. C.");
-                    chartMenu.addItem("R. IN-N. C.");
-                    chartMenu.addItem("UNR. IN-N. C.");
                     chartMenu.setFocusable(false);
                     chartMenu.setBackground(Color.WHITE);
                     chartMenu.setToolTipText("SELECT A DISTRIBUTION");
@@ -129,7 +121,7 @@ extends JPanel {
 
                     JButton enlargeBtn = new JButton("+");
                     enlargeBtn.setToolTipText("ENLARGE");
-                    enlargeBtn.setFont(MyDirectGraphVars.tahomaPlainFont11);
+                    enlargeBtn.setFont(MyDirectGraphVars.tahomaPlainFont12);
                     enlargeBtn.setBackground(Color.WHITE);
                     enlargeBtn.setFocusable(false);
                     enlargeBtn.addActionListener(new ActionListener() {

@@ -349,7 +349,7 @@ implements ActionListener {
             shortestDistanceDestTablePanel.remove(shortestDistanceMenu);
             shortestDistanceMenu = new JComboBox();
             shortestDistanceMenu.setFocusable(false);
-            shortestDistanceMenu.setFont(MySequentialGraphVars.tahomaPlainFont10);
+            shortestDistanceMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
             shortestDistanceMenu.addItem("DISTANCE");
             for (float distance : distances) {
                 shortestDistanceMenu.addItem("" + (int) distance);
@@ -575,7 +575,7 @@ implements ActionListener {
             shortestDistanceDestTablePanel.remove(shortestDistanceMenu);
             shortestDistanceMenu = new JComboBox();
             shortestDistanceMenu.setFocusable(false);
-            shortestDistanceMenu.setFont(MySequentialGraphVars.tahomaPlainFont10);
+            shortestDistanceMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
             shortestDistanceMenu.addItem("DISTANCE");
             for (float distance : distances) {
                 shortestDistanceMenu.addItem("" + (int) distance);
@@ -716,7 +716,7 @@ implements ActionListener {
             this.shortestDistanceSourceTablePanel.setBackground(Color.WHITE);
 
             this.shortestDistanceOptionMenu = new JComboBox();
-            this.shortestDistanceOptionMenu.setFont(MySequentialGraphVars.tahomaPlainFont10);
+            this.shortestDistanceOptionMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
             this.shortestDistanceOptionMenu.setFocusable(false);
             this.shortestDistanceOptionMenu.addActionListener(new ActionListener() {
                 @Override public void actionPerformed(ActionEvent e) {
@@ -799,7 +799,7 @@ implements ActionListener {
 
             this.shortestDistanceSourceTable.setRowHeight(19);
             this.shortestDistanceSourceTable.setBackground(Color.WHITE);
-            this.shortestDistanceSourceTable.setFont(MySequentialGraphVars.f_pln_12);
+            this.shortestDistanceSourceTable.setFont(MySequentialGraphVars.f_pln_11);
             this.shortestDistanceSourceTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont11);
             this.shortestDistanceSourceTable.getTableHeader().setOpaque(false);
             this.shortestDistanceSourceTable.getTableHeader().setBackground(new Color(0, 0, 0, 0f));
@@ -819,7 +819,7 @@ implements ActionListener {
             sourceNodeSelectBtn.removeActionListener(this);
             sourceNodeSelectBtn.removeActionListener(this);
             sourceNodeSearchAndSavePanel.remove(sourceNodeSelectBtn);
-            sourceNodeSearchTxt.setFont(MySequentialGraphVars.f_bold_12);
+            sourceNodeSearchTxt.setFont(MySequentialGraphVars.f_pln_11);
 
             add(sourceNodeSearchAndSavePanel, BorderLayout.SOUTH);
             this.shortestDistanceSourceTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -904,7 +904,7 @@ implements ActionListener {
 
             this.shortestDistanceDestTable.setRowHeight(19);
             this.shortestDistanceDestTable.setBackground(Color.WHITE);
-            this.shortestDistanceDestTable.setFont(MySequentialGraphVars.f_pln_12);
+            this.shortestDistanceDestTable.setFont(MySequentialGraphVars.f_pln_11);
             this.shortestDistanceDestTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont11);
             this.shortestDistanceDestTable.getTableHeader().setOpaque(false);
             this.shortestDistanceDestTable.getTableHeader().setBackground(new Color(0, 0, 0, 0f));
@@ -935,7 +935,7 @@ implements ActionListener {
             runBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
 
             destNodeSearchTxt.setBackground(Color.WHITE);
-            destNodeSearchTxt.setFont(MySequentialGraphVars.f_bold_12);
+            destNodeSearchTxt.setFont(MySequentialGraphVars.f_pln_11);
             destNodeSearchTxt.setToolTipText("TYPE A NODE NAME TO SEARCH");
             destNodeSearchTxt.setBorder(BorderFactory.createLoweredSoftBevelBorder());
             JPanel destNodeSearchAndSavePanel = MyTableUtil.searchAndSaveDataPanelForJTable2(this, destNodeSearchTxt, runBtn, shortestDistanceDestTableModel, this.shortestDistanceDestTable);
@@ -974,19 +974,20 @@ implements ActionListener {
         this.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         this.distributionSelecter.addItem("DISTRIBUTIONS");
-        this.distributionSelecter.addItem("CONT. CNT. DIST. BY OBJ.");
-        this.distributionSelecter.addItem("BTW. CONT. CNT. DIST. BY OBJ.");
-        this.distributionSelecter.addItem("AVG. HOP CNT. DIST.");
-        this.distributionSelecter.addItem("SEQ. LEG. DIST.");
-        this.distributionSelecter.addItem("INOUT VALUE DIFF. BY DEP.");
+        this.distributionSelecter.addItem("CONT. CNT. D. BY OBJ.");
+        this.distributionSelecter.addItem("BTW. CONT. CNT. D. BY OBJ.");
+        this.distributionSelecter.addItem("AVG. HOP CNT. D.");
+        this.distributionSelecter.addItem("SEQ. LEG. D.");
+        this.distributionSelecter.addItem("INOUT VAL. DIFF. BY DEP.");
 
         if (MySequentialGraphVars.isTimeOn) {
-            this.distributionSelecter.addItem("BTW. TIME DIST.");
-            this.distributionSelecter.addItem("REACH TIME DIST.");
-            this.distributionSelecter.addItem("DURATION DIST.");
+            this.distributionSelecter.addItem("BTW. T. DIST.");
+            this.distributionSelecter.addItem("REACH TIME BY N. D.");
+            this.distributionSelecter.addItem("IND. REACH T. D.");
+            this.distributionSelecter.addItem("DURATION D.");
         }
 
-        String[] distributionSelecterTooltips = new String[9];
+        String[] distributionSelecterTooltips = new String[10];
         distributionSelecterTooltips[0] = "SELECT A DISTRIBUTION";
         distributionSelecterTooltips[1] = "CONTRIBUTION COUNT DISTRIBUTION BY OBJECT";
         distributionSelecterTooltips[2] = "BETWEEN CONTRIBUTION COUNT DISTRIBUTION BY OBJECT";
@@ -996,8 +997,9 @@ implements ActionListener {
 
         if (MySequentialGraphVars.isTimeOn) {
             distributionSelecterTooltips[6] = "BETWEEN REACH TIME DISTRIBUTION";
-            distributionSelecterTooltips[7] = "REACH TIME DISTRIBUTION";
-            distributionSelecterTooltips[8] = "DURATION DISTRIBUTION";
+            distributionSelecterTooltips[7] = "REACH TIME BY NODE DISTRIBUTION";
+            distributionSelecterTooltips[8] = "INDIVIDUAL REACH TIME DISTRIBUTION";
+            distributionSelecterTooltips[9] = "DURATION DISTRIBUTION";
         }
 
         this.distributionSelecter.setRenderer(new MyComboBoxTooltipRenderer(distributionSelecterTooltips));
@@ -1026,9 +1028,12 @@ implements ActionListener {
                             MyBetweenReachTimeDistributionLineChart betweenReachTimeDistribution = new MyBetweenReachTimeDistributionLineChart();
                             betweenReachTimeDistribution.enlarge();
                         } else if (distributionSelecter.getSelectedIndex() == 7) {
-                            MyGraphTopLevelReachTimeDistribution timeDistribution = new MyGraphTopLevelReachTimeDistribution();
-                            timeDistribution.enlarge();
+                            MyGraphLevelReachTimeByNodeDistribution reachTiimeByNodeDistribution = new MyGraphLevelReachTimeByNodeDistribution();
+                            reachTiimeByNodeDistribution.enlarge();
                         } else if (distributionSelecter.getSelectedIndex() == 8) {
+                            MyGraphLevelIndividualReachTimeDistribution individualReachTimeDistribution = new MyGraphLevelIndividualReachTimeDistribution();
+                            individualReachTimeDistribution.enlarge();
+                        } else if (distributionSelecter.getSelectedIndex() == 9) {
                             MyGraphTopLevelDurationDistribution durationDistribution = new MyGraphTopLevelDurationDistribution();
                             durationDistribution.enlarge();
                         }
@@ -1506,7 +1511,7 @@ implements ActionListener {
 
         this.tableTabbedPane.addTab("N.", null, setNodeTable(), "NODES");
         this.tableTabbedPane.addTab("E.", null, setEdgeTable(), "EDGES");
-        this.tableTabbedPane.addTab("S.", null, setPathFindTable(), "NODES BY SHORTEST DISTANCE");
+        this.tableTabbedPane.addTab("D.", null, setPathFindTable(), "NODES BY SHORTEST DISTANCE");
         this.tableTabbedPane.addChangeListener(new ChangeListener() {
             @Override public void stateChanged(ChangeEvent ae) {
                 new Thread(new Runnable() {
@@ -2149,7 +2154,7 @@ implements ActionListener {
 
         this.edgeListTable.setRowHeight(22);
         this.edgeListTable.setBackground(Color.WHITE);
-        this.edgeListTable.setFont(MySequentialGraphVars.f_pln_12);
+        this.edgeListTable.setFont(MySequentialGraphVars.f_pln_11);
         this.edgeListTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont11);
         this.edgeListTable.getTableHeader().setOpaque(false);
         this.edgeListTable.getTableHeader().setBackground(new Color(0,0,0,0f));
@@ -2164,7 +2169,7 @@ implements ActionListener {
         edgeTableNodeTableNodeSearchTxt.setBackground(Color.WHITE);
         edgeTableNodeTableNodeSearchTxt.setBorder(BorderFactory.createLoweredSoftBevelBorder());
         JPanel bottomTableSearchAndSavePanel = MyTableUtil.searchAndSaveDataPanelForJTable2(this, edgeTableNodeTableNodeSearchTxt, edgeTableNodeSelectBtn, bottomTableModel, this.edgeListTable);
-        edgeTableNodeTableNodeSearchTxt.setFont(MySequentialGraphVars.f_bold_12);
+        edgeTableNodeTableNodeSearchTxt.setFont(MySequentialGraphVars.f_pln_11);
         edgeTableNodeTableNodeSearchTxt.setToolTipText("TYPE A NODE NAME TO SEARCH");
         edgeTableNodeTableNodeSearchTxt.setPreferredSize(new Dimension(90, 19));
         edgeTableNodeSelectBtn.setPreferredSize(new Dimension(50, 19));
@@ -2225,6 +2230,15 @@ implements ActionListener {
                 int rowIndex = rowAtPoint(p);
                 int colIndex = columnAtPoint(p);
                 try {
+                    if (MySequentialGraphVars.getSequentialGraphViewer().singleNode == null &&
+                        MySequentialGraphVars.getSequentialGraphViewer().multiNodes == null &&
+                        depthSelecter.getSelectedIndex() == 0) {
+                        String node = getValueAt(rowIndex, 1).toString();
+                        node = MySequentialGraphVars.nodeNameMap.get(node);
+                        MySequentialGraphVars.getSequentialGraphViewer().hoveredNode = (MyNode) MySequentialGraphVars.g.vRefs.get(node);
+                        MySequentialGraphVars.app.revalidate();
+                        MySequentialGraphVars.app.repaint();
+                    }
                     tip = getValueAt(rowIndex, colIndex).toString();
                 } catch (RuntimeException e1) {}
                 return tip;
@@ -2250,13 +2264,13 @@ implements ActionListener {
                 new String[]{
                     String.valueOf(++i),
                     MySequentialGraphSysUtil.getNodeName(n),
-                    MyMathUtil.getCommaSeperatedNumber((long)(float) valueMap.get(n))
+                    MyMathUtil.twoDecimalFormat((long)(float) valueMap.get(n))
             });
         }
 
         this.nodeListTable.setRowHeight(21);
         this.nodeListTable.setBackground(Color.WHITE);
-        this.nodeListTable.setFont(MySequentialGraphVars.f_pln_12);
+        this.nodeListTable.setFont(MySequentialGraphVars.f_pln_11);
         this.nodeListTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont11);
         this.nodeListTable.getTableHeader().setOpaque(false);
         this.nodeListTable.getTableHeader().setBackground(new Color(0,0,0,0f));
@@ -2271,7 +2285,7 @@ implements ActionListener {
         bottomTableNodeTableNodeSearchTxt.setBackground(Color.WHITE);
         bottomTableNodeTableNodeSearchTxt.setBorder(BorderFactory.createLoweredSoftBevelBorder());
         JPanel bottomTableSearchAndSavePanel = MyTableUtil.searchAndSaveDataPanelForJTable2(this, bottomTableNodeTableNodeSearchTxt, bottomTableNodeSelectBtn, nodeListTableModel, this.nodeListTable);
-        bottomTableNodeTableNodeSearchTxt.setFont(MySequentialGraphVars.f_bold_12);
+        bottomTableNodeTableNodeSearchTxt.setFont(MySequentialGraphVars.f_pln_11);
         bottomTableNodeTableNodeSearchTxt.setToolTipText("TYPE A NODE NAME TO SEARCH");
         bottomTableNodeTableNodeSearchTxt.setPreferredSize(new Dimension(100, 19));
         bottomTableNodeSelectBtn.setPreferredSize(new Dimension(50, 19));
@@ -2356,8 +2370,8 @@ implements ActionListener {
                         String node = getValueAt(rowIndex, 1).toString();
                         node = MySequentialGraphVars.nodeNameMap.get(node);
                         MySequentialGraphVars.getSequentialGraphViewer().hoveredNode = (MyNode) MySequentialGraphVars.g.vRefs.get(node);
-                        MySequentialGraphVars.getSequentialGraphViewer().revalidate();
-                        MySequentialGraphVars.getSequentialGraphViewer().repaint();
+                        MySequentialGraphVars.app.revalidate();
+                        MySequentialGraphVars.app.repaint();
                     }
                     tip = getValueAt(rowIndex, colIndex).toString();
                 } catch (RuntimeException e1) {}
@@ -2379,7 +2393,7 @@ implements ActionListener {
                 ((DefaultTableModel) this.currentNodeListTable.getModel()).addRow(new String[]{
                     "" + (++i),
                     MySequentialGraphSysUtil.getDecodedNodeName(nn.getName()),
-                    MyMathUtil.getCommaSeperatedNumber((long) nn.getCurrentValue())}
+                    MyMathUtil.twoDecimalFormat((long) nn.getCurrentValue())}
                 );
             }
         }
@@ -2391,7 +2405,7 @@ implements ActionListener {
 
         this.currentNodeListTable.setRowHeight(21);
         this.currentNodeListTable.setBackground(Color.WHITE);
-        this.currentNodeListTable.setFont(MySequentialGraphVars.f_pln_12);
+        this.currentNodeListTable.setFont(MySequentialGraphVars.f_pln_11);
         this.currentNodeListTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont11);
         this.currentNodeListTable.getTableHeader().setOpaque(false);
         this.currentNodeListTable.getTableHeader().setBackground(new Color(0,0,0,0f));
@@ -2401,7 +2415,7 @@ implements ActionListener {
 
         JTextField topTableNodeSearchTxt = new JTextField();
         JButton topTableNodeSelectBtn = new JButton("SEL.");
-        topTableNodeSelectBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        topTableNodeSelectBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
         topTableNodeSelectBtn.setFocusable(false);
         topTableNodeSearchTxt.setBackground(Color.WHITE);
         topTableNodeSearchTxt.setBorder(BorderFactory.createLoweredSoftBevelBorder());
@@ -3257,6 +3271,7 @@ implements ActionListener {
                         edgeValueBarChart.addActionListener(getGraphControllerPanel());
                     }
 
+                    MySequentialGraphVars.app.getSequentialGraphDashboard().graphLevelEdgeValueDistributionLineChart.decorate();
                     MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                     MySequentialGraphVars.getSequentialGraphViewer().repaint();
                     pb.updateValue(100, 100);

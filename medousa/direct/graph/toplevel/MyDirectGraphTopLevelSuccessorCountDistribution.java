@@ -77,7 +77,7 @@ implements ActionListener {
                     enlargeBtn.setToolTipText("ENLARGE");
                     enlargeBtn.setBackground(Color.WHITE);
                     enlargeBtn.setFocusable(false);
-                    enlargeBtn.setFont(MyDirectGraphVars.tahomaPlainFont11);
+                    enlargeBtn.setFont(MyDirectGraphVars.tahomaPlainFont12);
                     enlargeBtn.addActionListener(new ActionListener() {
                         @Override public void actionPerformed(ActionEvent e) {
                             SwingUtilities.invokeLater(new Runnable() {

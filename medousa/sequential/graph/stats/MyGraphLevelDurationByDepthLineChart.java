@@ -192,7 +192,7 @@ implements ActionListener {
 
                     JLabel titleLabel = new JLabel(" DUR.");
                     titleLabel.setToolTipText("DURATION BY DEPTH");
-                    titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
+                    titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
                     titleLabel.setBackground(Color.WHITE);
                     titleLabel.setForeground(Color.DARK_GRAY);
 
@@ -202,7 +202,7 @@ implements ActionListener {
                     titlePanel.add(titleLabel);
 
                     JButton enlargeBtn = new JButton("+");
-                    enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
+                    enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
                     enlargeBtn.setFocusable(false);
                     enlargeBtn.setBackground(Color.WHITE);
                     enlargeBtn.addActionListener(new ActionListener() {

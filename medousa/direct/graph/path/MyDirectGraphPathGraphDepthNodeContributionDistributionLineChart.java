@@ -98,7 +98,7 @@ public class MyDirectGraphPathGraphDepthNodeContributionDistributionLineChart ex
             titlePanel.add(titleLabel);
 
             JButton enlargeBtn = new JButton("+");
-            enlargeBtn.setFont(MyDirectGraphVars.tahomaPlainFont11);
+            enlargeBtn.setFont(MyDirectGraphVars.tahomaPlainFont12);
             enlargeBtn.setFocusable(false);
             enlargeBtn.setBackground(Color.WHITE);
             enlargeBtn.addActionListener(new ActionListener() {@Override

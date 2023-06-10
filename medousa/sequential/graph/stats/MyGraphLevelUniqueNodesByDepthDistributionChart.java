@@ -124,7 +124,7 @@ extends JPanel{
             titlePanel.add(titleLabel);
 
             JButton enlargeBtn = new JButton("+");
-            enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
+            enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
             enlargeBtn.setFocusable(false);
             enlargeBtn.setBackground(Color.WHITE);
             enlargeBtn.addActionListener(new ActionListener() {
@@ -259,7 +259,7 @@ extends JPanel{
         titlePanel.add(titleLabel);
 
         JButton enlargeBtn = new JButton("+");
-        enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
         enlargeBtn.setBackground(Color.WHITE);
         enlargeBtn.setFocusable(false);
         enlargeBtn.addActionListener(new ActionListener() {

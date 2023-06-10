@@ -1,5 +1,6 @@
 package medousa.sequential.graph.listener;
 
+import medousa.message.MyMessageUtil;
 import medousa.sequential.graph.MyEdge;
 import medousa.sequential.graph.MyNode;
 import medousa.sequential.graph.MyViewerComponentController;
@@ -20,11 +21,9 @@ implements ActionListener {
         this.viewerController = viewerController;
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
+    @Override public void actionPerformed(ActionEvent e) {
         new Thread(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
 
                 if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueExcludeTxt.getText().length() > 0 && MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueExcludeTxt.getText().matches("[0-9]+")) {
                     doNodeValueExclusion();
@@ -36,6 +35,10 @@ implements ActionListener {
                 }
 
                 if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueExcludeTxt.getText().length() > 0 && MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueExcludeTxt.getText().matches("[0-9]+")) {
+                    if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() <= 1) {
+                        MyMessageUtil.showInfoMsg(MySequentialGraphVars.app, "Select an edge value.");
+                        return;
+                    }
                     doEdgeValueExclusion();
                 }
 
@@ -48,13 +51,23 @@ implements ActionListener {
                     MyDepthNodeExcluder.exludeDepthNodes(Integer.parseInt(MySequentialGraphVars.getSequentialGraphViewer().vc.depthExcludeSelecter.getSelectedItem().toString()));
                 }
 
-               // MyViewerComponentControllerUtil.setBottomCharts();
-                MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
-
+                updateBarCharts();
                 MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                 MySequentialGraphVars.getSequentialGraphViewer().repaint();
             }
         }).start();
+    }
+
+    private void updateBarCharts() {
+        if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.isSelected()) {
+            MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.setSelected(false);
+            MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.setSelected(true);
+        }
+
+        if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueBarChart.isSelected()) {
+            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueBarChart.setSelected(false);
+            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueBarChart.setSelected(true);
+        }
     }
 
     private void doEdgeValueExclusion() {
@@ -71,8 +84,6 @@ implements ActionListener {
                     if (e.getCurrentValue() > edgeExcludeValue1) {
                         e.setOriginalValue(e.getCurrentValue());
                         e.setCurrentValue(0.0f);
-                        e.getSource().setCurrentValue(0);
-                        e.getDest().setCurrentValue(0);
                         edgesRemoved++;
                     }
                 }
@@ -83,8 +94,6 @@ implements ActionListener {
                     if (e.getCurrentValue() >= edgeExcludeValue1) {
                         e.setOriginalValue(e.getCurrentValue());
                         e.setCurrentValue(0.0f);
-                        e.getSource().setCurrentValue(0);
-                        e.getDest().setCurrentValue(0);
                         edgesRemoved++;
                     }
                 }
@@ -95,8 +104,6 @@ implements ActionListener {
                     if (e.getCurrentValue() > edgeExcludeValue1) {
                         e.setOriginalValue(e.getCurrentValue());
                         e.setCurrentValue(0.0f);
-                        e.getSource().setCurrentValue(0);
-                        e.getDest().setCurrentValue(0);
                         edgesRemoved++;
                     }
                 }
@@ -107,8 +114,6 @@ implements ActionListener {
                     if (e.getCurrentValue() != edgeExcludeValue1) {
                         e.setOriginalValue(e.getCurrentValue());
                         e.setCurrentValue(0.0f);
-                        e.getSource().setCurrentValue(0);
-                        e.getDest().setCurrentValue(0);
                         edgesRemoved++;
                     }
                 }
@@ -119,8 +124,6 @@ implements ActionListener {
                     if (e.getCurrentValue() < edgeExcludeValue1) {
                         e.setOriginalValue(e.getCurrentValue());
                         e.setCurrentValue(0.0f);
-                        e.getSource().setCurrentValue(0);
-                        e.getDest().setCurrentValue(0);
                         edgesRemoved++;
                     }
                 }
@@ -131,8 +134,6 @@ implements ActionListener {
                     if (e.getCurrentValue() <= edgeExcludeValue1) {
                         e.setOriginalValue(e.getCurrentValue());
                         e.setCurrentValue(0.0f);
-                        e.getSource().setCurrentValue(0);
-                        e.getDest().setCurrentValue(0);
                         edgesRemoved++;
                     }
                 }
@@ -146,8 +147,6 @@ implements ActionListener {
                     if (e.getCurrentValue() >= leftNum || e.getCurrentValue() <= rightNum) {
                         e.setOriginalValue(e.getCurrentValue());
                         e.setCurrentValue(0.0f);
-                        e.getSource().setCurrentValue(0);
-                        e.getDest().setCurrentValue(0);
                         edgesRemoved++;
                     }
                 }
@@ -158,6 +157,27 @@ implements ActionListener {
             MySequentialGraphVars.g.remainingEdges = (MySequentialGraphVars.g.getEdgeCount() - edgesRemoved);
             MySequentialGraphVars.getSequentialGraphViewer().excluded = true;
         }
+
+        /**
+         * Remove nodes with edges of zero values of neighbor nodes.
+         */
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        for (MyNode n : nodes) {
+            Collection<MyEdge> neighborEdges = MySequentialGraphVars.g.getIncidentEdges(n);
+            boolean allZeroEdges = true;
+            for (MyEdge e : neighborEdges) {
+                if (e.getCurrentValue() > 0) {
+                    allZeroEdges = false;
+                    break;
+                }
+            }
+
+            if (allZeroEdges) {
+                n.setOriginalValue(n.getCurrentValue());
+                n.setCurrentValue(0);
+            }
+        }
+
     }
 
     private void doNodeValueExclusion() {
@@ -284,6 +304,17 @@ implements ActionListener {
         if (nodesRemoved > 0) {
             MySequentialGraphVars.getSequentialGraphViewer().excluded = true;
             MySequentialGraphVars.g.remainingNodes = (MySequentialGraphVars.g.getVertexCount() - nodesRemoved);
+        }
+
+        /**
+         * Remvoe edges with zero values of nodes.
+         */
+        Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
+        for (MyEdge e : edges) {
+            if (e.getSource().getCurrentValue() == 0 || e.getDest().getCurrentValue() == 0) {
+                e.setOriginalValue(e.getCurrentValue());
+                e.setCurrentValue(0f);
+            }
         }
     }
 

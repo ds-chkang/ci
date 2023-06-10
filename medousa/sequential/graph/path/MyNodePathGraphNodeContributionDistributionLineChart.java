@@ -88,7 +88,7 @@ public class MyNodePathGraphNodeContributionDistributionLineChart extends JPanel
             chartPanel.setPreferredSize( new Dimension( 350 , 367 ) );
 
             JLabel titleLabel = new JLabel(" NODE CONT.");
-            titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
+            titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
             titleLabel.setBackground(Color.WHITE);
             titleLabel.setForeground(Color.DARK_GRAY);
 
@@ -98,7 +98,7 @@ public class MyNodePathGraphNodeContributionDistributionLineChart extends JPanel
             titlePanel.add(titleLabel);
 
             JButton enlargeBtn = new JButton("ENLARGE");
-            enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
+            enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
             enlargeBtn.setFocusable(false);
             enlargeBtn.setBackground(Color.WHITE);
             enlargeBtn.addActionListener(new ActionListener() {@Override

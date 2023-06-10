@@ -43,7 +43,8 @@ implements ActionListener {
     public MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution() {}
 
     public void decorate() {
-        setLayout(new BorderLayout(3, 3));
+        removeAll();
+        setLayout(new BorderLayout(1, 1));
         setBackground(Color.WHITE);
 
         ChartPanel chartPanel = new ChartPanel(setValueChart());
@@ -59,19 +60,56 @@ implements ActionListener {
         domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_90);
 
         BarRenderer barRenderer = (BarRenderer) chartPanel.getChart().getCategoryPlot().getRenderer();
-        barRenderer.setSeriesPaint(0, new Color(0, 0, 0, 0.25f));//Color.LIGHT_GRAY);//Color.decode("#2084FE"));
+        barRenderer.setSeriesPaint(0, new Color(0, 0, 0, 0.25f));
         barRenderer.setShadowPaint(Color.WHITE);
         barRenderer.setBaseFillPaint(Color.decode("#07CF61"));
         barRenderer.setBarPainter(new StandardBarPainter());
         barRenderer.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont11);
 
+        JLabel titleLabel = new JLabel(" CONT. CNT. BY OBJ.");
+        titleLabel.setToolTipText("CONTRIBUTION COUNT DISTRIBUTION BY OBJECT");
+        titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
+        titleLabel.setBackground(Color.WHITE);
+        titleLabel.setForeground(Color.DARK_GRAY);
+
+        JPanel titlePanel = new JPanel();
+        titlePanel.setBackground(Color.WHITE);
+        titlePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        titlePanel.add(titleLabel);
+
+        JButton enlargeBtn = new JButton("+");
+        enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        enlargeBtn.setFocusable(false);
+        enlargeBtn.setBackground(Color.WHITE);
+        enlargeBtn.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+            new Thread(new Runnable() {
+                @Override public void run() {
+                    enlarge();
+            }
+            }).start();
+        }});
+
+        JPanel btnPanel = new JPanel();
+        btnPanel.setBackground(Color.WHITE);
+        btnPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 2,2));
+        btnPanel.add(enlargeBtn);
+
+        JPanel northPanel = new JPanel();
+        northPanel.setBackground(Color.WHITE);
+        northPanel.setLayout(new BorderLayout(1,1));
+        northPanel.add(titlePanel, BorderLayout.WEST);
+        northPanel.add(btnPanel, BorderLayout.CENTER);
+
+        add(northPanel, BorderLayout.NORTH);
         add(chartPanel, BorderLayout.CENTER);
     }
 
     public void enlarge() {
             MyProgressBar pb = new MyProgressBar(false);
             try {
-                this.decorate();
+                MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution graphLevelTopLevelNodeContributionCountByObjectIDDistribution = new MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution();
+                graphLevelTopLevelNodeContributionCountByObjectIDDistribution.decorate();
 
                 String[] statTableColumns = {"PROPERTY", "VALUE"};
                 String[][] statTableData = {
@@ -182,7 +220,7 @@ implements ActionListener {
 
                 JSplitPane contentPane = new JSplitPane();
                 contentPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
-                contentPane.setLeftComponent(this);
+                contentPane.setLeftComponent(graphLevelTopLevelNodeContributionCountByObjectIDDistribution);
                 contentPane.setRightComponent(tableSplitPane);
                 contentPane.getRightComponent().setBackground(Color.WHITE);
                 contentPane.setDividerSize(5);

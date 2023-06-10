@@ -1,8 +1,6 @@
 package medousa.sequential.graph.flow;
 
-import medousa.MyProgressBar;
 import medousa.sequential.graph.MyDepthNode;
-import medousa.sequential.utils.MySequentialGraphVars;
 
 import javax.swing.*;
 import java.awt.*;
@@ -64,7 +62,7 @@ implements MouseListener {
                 Point point = e.getPoint();
                 if (pathAnalyzer.graphViewer.getPickSupport().getVertex(pathAnalyzer.graphViewer.getGraphLayout(), e.getX(), e.getY()) != null) {
                     selectedNode = pathAnalyzer.graphViewer.getPickSupport().getVertex(pathAnalyzer.graphViewer.getGraphLayout(), point.x, point.y);
-                    selectedNode.isSelectedNodePath = true;
+                    selectedNode.isNodeInPath = true;
                     Collection<MyDepthNode> successors = pathAnalyzer.graphViewer.getGraphLayout().getGraph().getSuccessors(selectedNode);
                     for (MyDepthNode successor : successors) {
                         setSuccessorsToTrue(successor);
@@ -75,7 +73,7 @@ implements MouseListener {
                         setPredecessorsToTrue(predecessor);
                     }
                 } else if (selectedNode != null) {
-                    selectedNode.isSelectedNodePath = false;
+                    selectedNode.isNodeInPath = false;
                     Collection<MyDepthNode> nodes = pathAnalyzer.graphViewer.getGraphLayout().getGraph().getSuccessors(selectedNode);
                     for (MyDepthNode successor : nodes) {
                         setSuccessorToFalse(successor);
@@ -87,7 +85,17 @@ implements MouseListener {
                     }
                     selectedNode = null;
                 } else {
+                    selectedNode.isNodeInPath = false;
+                    Collection<MyDepthNode> nodes = pathAnalyzer.graphViewer.getGraphLayout().getGraph().getSuccessors(selectedNode);
+                    for (MyDepthNode successor : nodes) {
+                        setSuccessorToFalse(successor);
+                    }
 
+                    Collection<MyDepthNode> predecessors = pathAnalyzer.graphViewer.getGraphLayout().getGraph().getPredecessors(selectedNode);
+                    for (MyDepthNode predecessor : predecessors) {
+                        setPredecessorsToFalse(predecessor);
+                    }
+                    selectedNode = null;
                 }
                 pathAnalyzer.graphViewer.revalidate();
                 pathAnalyzer.graphViewer.repaint();
@@ -97,7 +105,7 @@ implements MouseListener {
     }
 
     private void setSuccessorsToTrue(MyDepthNode n) {
-        n.isSelectedNodePath = true;
+        n.isNodeInPath = true;
         Collection<MyDepthNode> nodes = pathAnalyzer.graphViewer.getGraphLayout().getGraph().getSuccessors(n);
         for (MyDepthNode successor : nodes) {
             setSuccessorsToTrue(successor);
@@ -105,7 +113,7 @@ implements MouseListener {
     }
 
     private void setPredecessorsToTrue(MyDepthNode n) {
-        n.isSelectedNodePath = true;
+        n.isNodeInPath = true;
         Collection<MyDepthNode> nodes = pathAnalyzer.graphViewer.getGraphLayout().getGraph().getPredecessors(n);
         for (MyDepthNode predecessor : nodes) {
             setPredecessorsToTrue(predecessor);
@@ -113,7 +121,7 @@ implements MouseListener {
     }
 
     private void setPredecessorsToFalse(MyDepthNode n) {
-        n.isSelectedNodePath = true;
+        n.isNodeInPath = true;
         Collection<MyDepthNode> predecessors = pathAnalyzer.graphViewer.getGraphLayout().getGraph().getPredecessors(n);
         for (MyDepthNode predecessor : predecessors) {
             setPredecessorsToTrue(predecessor);
@@ -121,7 +129,7 @@ implements MouseListener {
     }
 
     private void setSuccessorToFalse(MyDepthNode n) {
-        n.isSelectedNodePath = false;
+        n.isNodeInPath = false;
         Collection<MyDepthNode> nodes = pathAnalyzer.graphViewer.getGraphLayout().getGraph().getSuccessors(n);
         for (MyDepthNode successor : nodes) {
             setSuccessorToFalse(successor);

@@ -822,6 +822,7 @@ implements ActionListener {
         nodeLevelStatPanel.add(this.nodeLevelSuccessorEdgeValueDistribution);
 
         chartTabbedPane = new JTabbedPane();
+        chartTabbedPane.setFont(MyDirectGraphVars.tahomaBoldFont12);
         chartTabbedPane.addTab("V. D.", null, nodeLevelStatPanel, "VALUE DISTRIBUTIONS");
         chartTabbedPane.addTab("L. D.", null, setLabelDistributionChart(), "LABEL DISTRIBUTIONS");
 

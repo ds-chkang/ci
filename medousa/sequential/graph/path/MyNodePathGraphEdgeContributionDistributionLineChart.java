@@ -130,7 +130,7 @@ extends JPanel {
                 chartPanel.setPreferredSize(new Dimension(350, 367));
 
                 JLabel titleLabel = new JLabel(" EDGE CONT.");
-                titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
+                titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
                 titleLabel.setBackground(Color.WHITE);
                 titleLabel.setForeground(Color.DARK_GRAY);
 
@@ -140,7 +140,7 @@ extends JPanel {
                 titlePanel.add(titleLabel);
 
                 JButton enlargeBtn = new JButton("+");
-                enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
+                enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
                 enlargeBtn.setBackground(Color.WHITE);
                 enlargeBtn.setFocusable(false);
                 enlargeBtn.addActionListener(new ActionListener() {

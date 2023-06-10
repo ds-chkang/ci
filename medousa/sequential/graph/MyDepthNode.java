@@ -12,7 +12,7 @@ implements Serializable {
     public int physicalDepth;
     public Point2D nodeLocation;
     public Ellipse2D.Double nodeSize;
-    public boolean isSelectedNodePath;
+    public boolean isNodeInPath;
 
     public MyDepthNode() {}
 

@@ -33,6 +33,7 @@ extends JPanel {
         if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthNeighborNodeTypeSelector.getSelectedItem().toString().contains("S.")) {
             Map<String, Map<String, Long>> depthNodeSuccessorMaps = MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeSuccessorMaps;
             for (MyEdge e : edges) {
+                if (e.getCurrentValue() == 0) continue;
                 if (depthNodeSuccessorMaps.keySet().contains(e.getSource().getName())) {
                     for (String depthNode : depthNodeSuccessorMaps.keySet()) {
                         Map<String, Long> successorSet = depthNodeSuccessorMaps.get(depthNode);
@@ -57,6 +58,7 @@ extends JPanel {
         } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthNeighborNodeTypeSelector.getSelectedItem().toString().contains("P.")) {
             Map<String, Map<String, Long>> depthNodePredecessorSetMap = MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodePredecessorMaps;
             for (MyEdge e : edges) {
+                if (e.getCurrentValue() == 0) continue;
                 if (depthNodePredecessorSetMap.keySet().contains(e.getDest().getName())) {
                     for (String depthNode : depthNodePredecessorSetMap.keySet()) {
                         Map<String, Long> predecessorMap = depthNodePredecessorSetMap.get(depthNode);
@@ -95,8 +97,8 @@ extends JPanel {
         Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
 
         for (MyEdge e : edges) {
+            if (e.getCurrentValue() == 0) continue;
             if (MySequentialGraphVars.getSequentialGraphViewer().edgeValName.contains("NONE")) {continue;}
-            else if (e.getDest().getCurrentValue() ==0 || e.getSource().getCurrentValue() == 0) continue;
             String predecessor = MySequentialGraphSysUtil.getNodeName(e.getSource().getName());
             String successor = MySequentialGraphSysUtil.getNodeName(e.getDest().getName());
             String name = predecessor+"-"+successor;
@@ -121,8 +123,8 @@ extends JPanel {
         this.colors = new ArrayList<>();
         Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
         for (MyEdge e : edges) {
+            if (e.getCurrentValue() == 0) continue;
             if (e.getSource() != MySequentialGraphVars.getSequentialGraphViewer().singleNode && e.getDest() != MySequentialGraphVars.getSequentialGraphViewer().singleNode) continue;
-            else if (e.getDest().getCurrentValue() ==0 || e.getSource().getCurrentValue() == 0) continue;
             String predecessor = MySequentialGraphSysUtil.getNodeName(e.getSource().getName());
             String successor = MySequentialGraphSysUtil.getNodeName(e.getDest().getName());
             String name = predecessor+"-"+successor;

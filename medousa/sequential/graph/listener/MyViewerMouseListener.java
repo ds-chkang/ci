@@ -45,6 +45,8 @@ implements MouseListener {
                     new Thread(new Runnable() {
                         @Override public void run() {
                             MyViewerComponentControllerUtil.setDefaultViewerLook();
+                            MySequentialGraphVars.app.revalidate();
+                            MySequentialGraphVars.app.repaint();
                         }
                     }).start();
                 }

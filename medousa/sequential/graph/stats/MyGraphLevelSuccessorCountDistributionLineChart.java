@@ -91,7 +91,7 @@ public class MyGraphLevelSuccessorCountDistributionLineChart extends JPanel {
 
                     JLabel titleLabel = new JLabel(" S. C.");
                     titleLabel.setToolTipText("SUCCESSOR COUNT DISTRIBUTION");
-                    titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
+                    titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
                     titleLabel.setBackground(Color.WHITE);
                     titleLabel.setForeground(Color.DARK_GRAY);
 
@@ -101,7 +101,7 @@ public class MyGraphLevelSuccessorCountDistributionLineChart extends JPanel {
                     titlePanel.add(titleLabel);
 
                     JButton enlargeBtn = new JButton("+");
-                    enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
+                    enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
                     enlargeBtn.setFocusable(false);
                     enlargeBtn.setBackground(Color.WHITE);
                     enlargeBtn.addActionListener(new ActionListener() {@Override
@@ -227,7 +227,7 @@ public class MyGraphLevelSuccessorCountDistributionLineChart extends JPanel {
 
         JLabel titleLabel = new JLabel(" S. C.");
         titleLabel.setToolTipText("NODE VALUE DISTRIBUTION");
-        titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
+        titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
         titleLabel.setBackground(Color.WHITE);
         titleLabel.setForeground(Color.DARK_GRAY);
 
@@ -238,7 +238,7 @@ public class MyGraphLevelSuccessorCountDistributionLineChart extends JPanel {
 
         chartMenu = new JComboBox();
         chartMenu.setFocusable(false);
-        chartMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        chartMenu.setFont(MySequentialGraphVars.tahomaPlainFont12);
         chartMenu.setBackground(Color.WHITE);
         chartMenu.addItem("S. C. B.");
         chartMenu.addItem("S. C.");
@@ -302,7 +302,6 @@ public class MyGraphLevelSuccessorCountDistributionLineChart extends JPanel {
             f.setBackground(Color.WHITE);
             f.setPreferredSize(new Dimension(400, 450));
             f.setCursor(Cursor.HAND_CURSOR);
-            f.setAlwaysOnTop(true);
             f.getContentPane().add(new MyGraphLevelSuccessorCountDistributionLineChart(), BorderLayout.CENTER);
             f.addWindowListener(new WindowAdapter() {
                 @Override
@@ -325,7 +324,6 @@ public class MyGraphLevelSuccessorCountDistributionLineChart extends JPanel {
             pb.updateValue(100, 100);
             pb.dispose();
             f.setVisible(true);
-            f.setAlwaysOnTop(false);
         } catch (Exception ex) {
             MAXIMIZED = false;
             pb.updateValue(100, 100);

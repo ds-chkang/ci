@@ -19,11 +19,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-public class MyGraphTopLevelReachTimeDistribution
+public class MyGraphLevelReachTimeByNodeDistribution
 extends JPanel
 implements ActionListener {
 
@@ -35,7 +34,7 @@ implements ActionListener {
     private float toTime = 1f;
     private int selectedTime = 0;
 
-    public MyGraphTopLevelReachTimeDistribution() {}
+    public MyGraphLevelReachTimeByNodeDistribution() {}
 
     public void decorate() {
         MyProgressBar pb = new MyProgressBar(false);
@@ -112,7 +111,7 @@ implements ActionListener {
             try {
                 this.decorate();
 
-                JFrame f = new JFrame(" REACH TIME DISTRIBUTION");
+                JFrame f = new JFrame(" REACH TIME BY NODE DISTRIBUTION");
                 f.setBackground(Color.WHITE);
                 f.setPreferredSize(new Dimension(550, 450));
                 f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -163,31 +162,19 @@ implements ActionListener {
 
         for (MyNode n : this.nodes) {
             if (n.getCurrentValue() == 0) continue;
-            for (int s=0; s < MySequentialGraphVars.seqs.length; s++) {
-                for (int i=1; i < MySequentialGraphVars.seqs[s].length; i++) {
-                    String itemset  = MySequentialGraphVars.seqs[s][i-1].split(":")[0];
-                    if (itemset.equals(n.getName())) {
-                        long time = (long) ((float) Long.parseLong(MySequentialGraphVars.seqs[s][i].split(":")[1])/toTime);
-                        if (time == 0) continue;
+            long time = (long) (n.getTotalReachTime()/toTime);
+            if (time > this.maxValue) {
+                this.maxValue = time;
+            }
 
-                        totalValue += time;
-                        nodeCount++;
+            if (time > 0 && time < this.minValue) {
+                this.minValue = time;
+            }
 
-                        if (time > this.maxValue) {
-                            this.maxValue = time;
-                        }
-
-                        if (time > 0 && time < this.minValue) {
-                            this.minValue = time;
-                        }
-
-                        if (valueMap.containsKey(time)) {
-                            valueMap.put(time, valueMap.get(time) + 1);
-                        } else {
-                            valueMap.put(time, 1);
-                        }
-                    }
-                }
+            if (valueMap.containsKey(time)) {
+                valueMap.put(time, valueMap.get(time) + 1);
+            } else {
+                valueMap.put(time, 1);
             }
         }
 
@@ -200,7 +187,7 @@ implements ActionListener {
         this.stdValue = getNodeValueStandardDeviation(valueMap);
 
         String plotTitle = "";
-        String xaxis = "REACH TIME";
+        String xaxis = "REACH TIME BY NODE";
         String yaxis = "";
         PlotOrientation orientation = PlotOrientation.VERTICAL;
         boolean show = false;

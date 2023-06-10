@@ -81,9 +81,9 @@ public class MyGraphLevelNodeValueDistributionLineChart extends JPanel {
                     ChartPanel chartPanel = new ChartPanel( chart );
                     chartPanel.setPreferredSize( new Dimension( 350 , 367 ) );
 
-                    JLabel titleLabel = new JLabel(" N.. V.");
+                    JLabel titleLabel = new JLabel(" N. V.");
                     titleLabel.setToolTipText("NODE VALUE DISTRIBUTION");
-                    titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
+                    titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
                     titleLabel.setBackground(Color.WHITE);
                     titleLabel.setForeground(Color.DARK_GRAY);
 
@@ -93,14 +93,21 @@ public class MyGraphLevelNodeValueDistributionLineChart extends JPanel {
                     titlePanel.add(titleLabel);
 
                     JButton enlargeBtn = new JButton("+");
-                    enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
+                    enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
                     enlargeBtn.setFocusable(false);
                     enlargeBtn.setBackground(Color.WHITE);
                     enlargeBtn.addActionListener(new ActionListener() {@Override
                     public void actionPerformed(ActionEvent e) {
                         new Thread(new Runnable() {@Override
                         public void run() {
-                            enlarge();
+                            if (MySequentialGraphVars.getSequentialGraphViewer().nodeValueName.contains("TIME") ||
+                                    MySequentialGraphVars.getSequentialGraphViewer().nodeValueName.contains("DURATION")) {
+                                MyGraphLevelTopLevelNodeTimeValueDistribution graphLevelTopLevelNodeTimeValueDistribution = new MyGraphLevelTopLevelNodeTimeValueDistribution();
+                                graphLevelTopLevelNodeTimeValueDistribution.enlarge();
+                            } else {
+                                MyGraphLevelTopLevelNodeValueDistribution graphLevelTopLevelNodeValueDistribution = new MyGraphLevelTopLevelNodeValueDistribution();
+                                graphLevelTopLevelNodeValueDistribution.enlarge();
+                            }
                         }
                         }).start();
                     }

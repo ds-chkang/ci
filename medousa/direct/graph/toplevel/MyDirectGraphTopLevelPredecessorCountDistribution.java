@@ -65,7 +65,7 @@ implements ActionListener {
                     barRenderer.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont11);
                     JLabel titleLabel = new JLabel(" P. C.");
                     titleLabel.setToolTipText("PREDECESSOR COUNT DISTRIBUTION");
-                    titleLabel.setFont(MyDirectGraphVars.tahomaBoldFont11);
+                    titleLabel.setFont(MyDirectGraphVars.tahomaBoldFont12);
                     titleLabel.setBackground(Color.WHITE);
                     titleLabel.setForeground(Color.DARK_GRAY);
 
@@ -78,7 +78,7 @@ implements ActionListener {
                     enlargeBtn.setToolTipText("ENLARGE");
                     enlargeBtn.setBackground(Color.WHITE);
                     enlargeBtn.setFocusable(false);
-                    enlargeBtn.setFont(MyDirectGraphVars.tahomaPlainFont11);
+                    enlargeBtn.setFont(MyDirectGraphVars.tahomaPlainFont12);
                     enlargeBtn.addActionListener(new ActionListener() {
                         @Override public void actionPerformed(ActionEvent e) {
                             SwingUtilities.invokeLater(new Runnable() {
