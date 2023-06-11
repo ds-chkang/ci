@@ -49,7 +49,7 @@ extends JPanel {
                     if (!isValueExists) {
                         JLabel titleLabel = new JLabel(" S. E. V.");
                         titleLabel.setToolTipText("SUCCESSOR EDGE VALUE DISTRIBUTION");
-                        titleLabel.setFont(MyDirectGraphVars.tahomaBoldFont11);
+                        titleLabel.setFont(MyDirectGraphVars.tahomaBoldFont12);
                         titleLabel.setBackground(Color.WHITE);
                         titleLabel.setForeground(Color.DARK_GRAY);
 
@@ -87,11 +87,11 @@ extends JPanel {
                         barRenderer.setShadowPaint(Color.WHITE);
                         barRenderer.setBaseFillPaint(Color.decode("#07CF61"));
                         barRenderer.setBarPainter(new StandardBarPainter());
-                        barRenderer.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont11);
+                        barRenderer.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont12);
 
                         JLabel titleLabel = new JLabel(" S. E. V.");
                         titleLabel.setToolTipText("SUCCESSOR EDGE VALUE DISTRIBUTION");
-                        titleLabel.setFont(MyDirectGraphVars.tahomaBoldFont11);
+                        titleLabel.setFont(MyDirectGraphVars.tahomaBoldFont12);
                         titleLabel.setBackground(Color.WHITE);
                         titleLabel.setForeground(Color.DARK_GRAY);
 
@@ -101,7 +101,7 @@ extends JPanel {
                         titlePanel.add(titleLabel);
 
                         JButton enlargeBtn = new JButton("+");
-                        enlargeBtn.setFont(MyDirectGraphVars.tahomaPlainFont11);
+                        enlargeBtn.setFont(MyDirectGraphVars.tahomaPlainFont12);
                         enlargeBtn.setBackground(Color.WHITE);
                         enlargeBtn.setFocusable(false);
                         enlargeBtn.addActionListener(new ActionListener() {

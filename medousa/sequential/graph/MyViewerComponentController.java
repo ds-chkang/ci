@@ -172,7 +172,7 @@ implements ActionListener {
     public Set<MyNode> visitedNodes;
     public JLabel edgeLabelExcludeComboBoxMenuLabel = new JLabel(" E. L.");
     public JLabel edgeLabelLabel = new JLabel("  E. L.");
-    public JLabel edgeValueLabel = new JLabel("   E. V.");
+    public JLabel edgeValueLabel = new JLabel("  E. V.");
     public JLabel edgeValueExludeLabel = new JLabel(" E. V.");
     public JLabel nodeLabelLabel = new JLabel(" N. L.");
     public JButton edgeValueDistributionBtn = new JButton("E. V.");

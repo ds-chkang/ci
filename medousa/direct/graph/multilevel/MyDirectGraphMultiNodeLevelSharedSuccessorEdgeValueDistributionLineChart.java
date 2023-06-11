@@ -92,7 +92,7 @@ extends JPanel {
 
                         JLabel titleLabel = new JLabel(" SHARED S. E. V.");
                         titleLabel.setToolTipText("SHARED SUCCESSOR EDGE VALUE DISTRIBUTION");
-                        titleLabel.setFont(MyDirectGraphVars.tahomaBoldFont11);
+                        titleLabel.setFont(MyDirectGraphVars.tahomaBoldFont12);
                         titleLabel.setBackground(Color.WHITE);
                         titleLabel.setForeground(Color.DARK_GRAY);
 
@@ -103,7 +103,7 @@ extends JPanel {
 
                         JButton enlargeBtn = new JButton("+");
                         enlargeBtn.setToolTipText("ENLARGE");
-                        enlargeBtn.setFont(MyDirectGraphVars.tahomaPlainFont11);
+                        enlargeBtn.setFont(MyDirectGraphVars.tahomaPlainFont12);
                         enlargeBtn.setFocusable(false);
                         enlargeBtn.setBackground(Color.WHITE);
                         enlargeBtn.addActionListener(new ActionListener() {

@@ -47,7 +47,7 @@ extends JPanel {
                     if (!isValueExists) {
                         JLabel titleLabel = new JLabel(" SHARED P. E. V.");
                         titleLabel.setToolTipText("SHARED PREDECESSOR EDGE VALUE DISTRIBUTION");
-                        titleLabel.setFont(MyDirectGraphVars.tahomaBoldFont11);
+                        titleLabel.setFont(MyDirectGraphVars.tahomaBoldFont12);
                         titleLabel.setBackground(Color.WHITE);
                         titleLabel.setForeground(Color.DARK_GRAY);
 
@@ -92,7 +92,7 @@ extends JPanel {
 
                         JLabel titleLabel = new JLabel(" SHARED P. E. V.");
                         titleLabel.setToolTipText("SHARED PREDECESSOR EDGE VALUE DISTRIBUTION");
-                        titleLabel.setFont(MyDirectGraphVars.tahomaBoldFont11);
+                        titleLabel.setFont(MyDirectGraphVars.tahomaBoldFont12);
                         titleLabel.setBackground(Color.WHITE);
                         titleLabel.setForeground(Color.DARK_GRAY);
 
@@ -102,7 +102,7 @@ extends JPanel {
                         titlePanel.add(titleLabel);
 
                         JButton enlargeBtn = new JButton("+");
-                        enlargeBtn.setFont(MyDirectGraphVars.tahomaPlainFont11);
+                        enlargeBtn.setFont(MyDirectGraphVars.tahomaPlainFont12);
                         enlargeBtn.setFocusable(false);
                         enlargeBtn.setBackground(Color.WHITE);
                         enlargeBtn.addActionListener(new ActionListener() {

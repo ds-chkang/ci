@@ -52,7 +52,7 @@ extends JPanel {
                     if (!isValueExists) {
                             JLabel titleLabel = new JLabel(" P. E. V.");
                             titleLabel.setToolTipText("PREDECESSOR EDGE VALUE DISTRIBUTION");
-                            titleLabel.setFont(MyDirectGraphVars.tahomaBoldFont11);
+                            titleLabel.setFont(MyDirectGraphVars.tahomaBoldFont12);
                             titleLabel.setBackground(Color.WHITE);
                             titleLabel.setForeground(Color.DARK_GRAY);
 
@@ -94,7 +94,7 @@ extends JPanel {
 
                         JLabel titleLabel = new JLabel(" P. E. V.");
                         titleLabel.setToolTipText("PREDECESSOR EDGE VALUE DISTRIBUTION");
-                        titleLabel.setFont(MyDirectGraphVars.tahomaBoldFont11);
+                        titleLabel.setFont(MyDirectGraphVars.tahomaBoldFont12);
                         titleLabel.setBackground(Color.WHITE);
                         titleLabel.setForeground(Color.DARK_GRAY);
 
@@ -105,7 +105,7 @@ extends JPanel {
 
                         JButton enlargeBtn = new JButton("+");
                         enlargeBtn.setToolTipText("ENLARGE");
-                        enlargeBtn.setFont(MyDirectGraphVars.tahomaPlainFont11);
+                        enlargeBtn.setFont(MyDirectGraphVars.tahomaPlainFont12);
                         enlargeBtn.setBackground(Color.WHITE);
                         enlargeBtn.setFocusable(false);
                         enlargeBtn.addActionListener(new ActionListener() {

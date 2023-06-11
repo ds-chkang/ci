@@ -34,7 +34,7 @@ implements ActionListener {
     }
 
     public void decorate() {
-        final MyGraphLevelLabelDistributionLineChart graphLevelLabelValueDistributionLineChart = this;
+        final MyGraphLevelLabelDistributionLineChart graphLevelLabelDistributionLineChart = this;
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
                 try {
@@ -59,13 +59,14 @@ implements ActionListener {
                             enlarge();
                         }}).start();}});
 
+                    labelValueMenu = new JComboBox();
                     labelValueMenu.setBackground(Color.WHITE);
                     labelValueMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
                     labelValueMenu.setFocusable(false);
                     labelValueMenu.addItem("");
                     if (MySequentialGraphVars.userDefinedNodeLabelSet.size() > 0) labelValueMenu.addItem("NODE");
                     if (MySequentialGraphVars.userDefinedEdgeLabelSet.size() > 0) labelValueMenu.addItem("EDGE");
-                    labelValueMenu.addActionListener(graphLevelLabelValueDistributionLineChart);
+                    labelValueMenu.addActionListener(graphLevelLabelDistributionLineChart);
 
                     JPanel titlePanel = new JPanel();
                     titlePanel.setBackground(Color.WHITE);
@@ -84,12 +85,9 @@ implements ActionListener {
                     topPanel.add(titlePanel, BorderLayout.WEST);
                     topPanel.add(buttonPanel, BorderLayout.EAST);
 
-                    JLabel msg = new JLabel("N/A");
-                    msg.setFont(MySequentialGraphVars.tahomaPlainFont12);
-                    msg.setBackground(Color.WHITE);
-                    msg.setHorizontalAlignment(JLabel.CENTER);
                     add(topPanel, BorderLayout.NORTH);
-                    add(msg, BorderLayout.CENTER);
+                    revalidate();
+                    repaint();
                 } catch (Exception ex) {}
             }
         });
@@ -104,14 +102,12 @@ implements ActionListener {
             f.setBackground(Color.WHITE);
             f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             f.setPreferredSize(new Dimension(400, 450));
-            f.getContentPane().add(new MyGraphLevelInContributionByDepthLineChart(), BorderLayout.CENTER);
+            f.getContentPane().add(new MyGraphLevelLabelDistributionLineChart(), BorderLayout.CENTER);
             f.pack();
             f.setCursor(Cursor.HAND_CURSOR);
-            f.setAlwaysOnTop(true);
             pb.updateValue(100, 100);
             pb.dispose();
             f.setVisible(true);
-            f.setAlwaysOnTop(false);
         } catch (Exception ex) {
             pb.updateValue(100, 100);
             pb.dispose();
@@ -119,17 +115,21 @@ implements ActionListener {
     }
 
     @Override public void actionPerformed(ActionEvent e) {
-        final MyGraphLevelLabelDistributionLineChart graphLevelLabelValueDistributionLineChart = this;
+        final MyGraphLevelLabelDistributionLineChart graphLevelLabelDistributionLineChart = this;
         new Thread(new Runnable() {
             @Override public void run() {
                 if (e.getSource() == labelValueMenu) {
+                    if (labelValueMenu.getSelectedIndex() == 0) {
+                        decorate();
+                        return;
+                    }
                     LinkedHashMap<String, Long> labelValueMap = new LinkedHashMap<>();
                     if (labelValueMenu.getSelectedItem().toString().contains("NODE")) {
                         if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelSelecter.getSelectedIndex() < 2) {
-                            MyMessageUtil.showInfoMsg("Select a node label, first.");
-                            labelValueMenu.removeActionListener(graphLevelLabelValueDistributionLineChart);
+                            MyMessageUtil.showInfoMsg("Select a node label.");
+                            //labelValueMenu.removeActionListener(graphLevelLabelDistributionLineChart);
                             labelValueMenu.setSelectedIndex(0);
-                            labelValueMenu.addActionListener(graphLevelLabelValueDistributionLineChart);
+                            //labelValueMenu.addActionListener(graphLevelLabelDistributionLineChart);
                             return;
                         }
                         MyProgressBar pb = new MyProgressBar(false);
@@ -161,9 +161,9 @@ implements ActionListener {
                     } else if (labelValueMenu.getSelectedItem().toString().contains("EDGE")) {
                         if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelSelecter.getSelectedIndex() == 0) {
                             MyMessageUtil.showInfoMsg("Select an edge label, first");
-                            labelValueMenu.removeActionListener(graphLevelLabelValueDistributionLineChart);
+                            //labelValueMenu.removeActionListener(graphLevelLabelDistributionLineChart);
                             labelValueMenu.setSelectedIndex(0);
-                            labelValueMenu.addActionListener(graphLevelLabelValueDistributionLineChart);
+                           //labelValueMenu.addActionListener(graphLevelLabelDistributionLineChart);
                             return;
                         }
                         MyProgressBar pb = new MyProgressBar(false);
@@ -194,12 +194,10 @@ implements ActionListener {
                         pb.dispose();
                     } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelSelecter.getSelectedIndex() == 0) {
                         MyMessageUtil.showInfoMsg("Select an node or edge label, first.");
-                        return;
                     }
                 }
             }
-        }).start();
-    }
+        }).start();}
 
     private void setLabelDistribution(Map<String, Long> labelValueMap, int selectedItemIdx) {
         removeAll();
@@ -237,7 +235,7 @@ implements ActionListener {
 
         JLabel titleLabel = new JLabel(" L. V.");
         titleLabel.setToolTipText("NODE & EDGE LABEL VALUE DISTRIBUTION");
-        titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
+        titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
         titleLabel.setBackground(Color.WHITE);
         titleLabel.setForeground(Color.DARK_GRAY);
 
@@ -247,15 +245,13 @@ implements ActionListener {
         titlePanel.add(titleLabel);
 
         JButton enlargeBtn = new JButton("+");
-        enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
         enlargeBtn.setBackground(Color.WHITE);
         enlargeBtn.setFocusable(false);
         enlargeBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+            @Override public void actionPerformed(ActionEvent e) {
                 new Thread(new Runnable() {
-                    @Override
-                    public void run() {
+                    @Override public void run() {
                         enlarge();
                     }
                 }).start();

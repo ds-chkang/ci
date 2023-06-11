@@ -3,6 +3,7 @@ package medousa.sequential.graph;
 import edu.uci.ics.jung.algorithms.cluster.WeakComponentClusterer;
 import edu.uci.ics.jung.algorithms.importance.BetweennessCentrality;
 import edu.uci.ics.jung.algorithms.metrics.Metrics;
+import medousa.message.MyMessageUtil;
 import medousa.sequential.graph.common.MyClosenessCentrality;
 import medousa.sequential.graph.common.MyNodeEigenvectorCentrality;
 import medousa.sequential.utils.MyMathUtil;
@@ -362,7 +363,12 @@ public class MyTimeConstrainedBuilider {
                     }
                 }
             }
-        } catch (Exception ex) {ex.printStackTrace();}
+        } catch (NumberFormatException nex) {
+            MyMessageUtil.showErrorMsg("<html><body>Node value number format exception has occurred.<br>Check the node value.</body></html>");
+            //ex.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public void setTimeConstrainedEdgeLabels() {
@@ -447,7 +453,12 @@ public class MyTimeConstrainedBuilider {
                     }
                 }
             }
-        } catch (Exception ex) {ex.printStackTrace();}
+        } catch (NumberFormatException nex) {
+            MyMessageUtil.showErrorMsg("<html><body>Node value number format exception has occurred.<br>Check the node value.</body></html>");
+            //ex.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public void setTimeConstrainedNodeLabels() {
@@ -521,7 +532,9 @@ public class MyTimeConstrainedBuilider {
                     }
                 }
             }
-        } catch (Exception ex) {ex.printStackTrace();}
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public void setTotalNodeDuration() {

@@ -2,6 +2,7 @@ package medousa.sequential.graph;
 
 import edu.uci.ics.jung.algorithms.cluster.WeakComponentClusterer;
 import edu.uci.ics.jung.algorithms.metrics.Metrics;
+import medousa.message.MyMessageUtil;
 import medousa.sequential.graph.common.MyNodeBetweennessCentrality;
 import medousa.sequential.graph.common.MyClosenessCentrality;
 import medousa.sequential.graph.common.MyNodeEigenvectorCentrality;
@@ -361,7 +362,12 @@ public class MyGraphBuilder {
                     }
                 }
             }
-        } catch (Exception ex) {ex.printStackTrace();}
+        } catch (NumberFormatException nex) {
+            MyMessageUtil.showErrorMsg("<html><body>Node value number format exception has occurred.<br>Check the node value.</body></html>");
+            //ex.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public void setEdgeLabels() {
@@ -446,7 +452,12 @@ public class MyGraphBuilder {
                     }
                 }
             }
-        } catch (Exception ex) {ex.printStackTrace();}
+        } catch (NumberFormatException nex) {
+            MyMessageUtil.showErrorMsg("<html><body>Node value number format exception has occurred.<br>Check the node value.</body></html>");
+            //ex.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public void setNodeLabels() {

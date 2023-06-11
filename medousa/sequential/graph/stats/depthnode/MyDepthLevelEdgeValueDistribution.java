@@ -58,7 +58,7 @@ extends JPanel {
                     barRenderer.setBaseLegendTextFont(MySequentialGraphVars.tahomaPlainFont11);
 
                     JLabel titleLabel = new JLabel(" E. V.");
-                    titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
+                    titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
                     titleLabel.setBackground(Color.WHITE);
                     titleLabel.setForeground(Color.DARK_GRAY);
 
@@ -68,7 +68,7 @@ extends JPanel {
                     titlePanel.add(titleLabel);
 
                     JButton enlargeBtn = new JButton("+");
-                    enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
+                    enlargeBtn.setFont(MySequentialGraphVars.tahomaBoldFont12);
                     enlargeBtn.setBackground(Color.WHITE);
                     enlargeBtn.setFocusable(false);
                     enlargeBtn.addActionListener(new ActionListener() {

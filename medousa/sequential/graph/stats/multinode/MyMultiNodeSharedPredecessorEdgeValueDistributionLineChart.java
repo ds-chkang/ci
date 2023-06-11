@@ -40,7 +40,7 @@ extends JPanel {
                     if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() < 2) {
                         JLabel titleLabel = new JLabel(" SHARED P. E. V.");
                         titleLabel.setToolTipText("SHARED PREDECESSOR EDGE VALUE DISTRIBUTION");
-                        titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
+                        titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
                         titleLabel.setBackground(Color.WHITE);
                         titleLabel.setForeground(Color.DARK_GRAY);
 
@@ -134,7 +134,7 @@ extends JPanel {
                         titlePanel.add(titleLabel);
 
                         JButton enlargeBtn = new JButton("+");
-                        enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
+                        enlargeBtn.setFont(MySequentialGraphVars.tahomaBoldFont12);
                         enlargeBtn.setBackground(Color.WHITE);
                         enlargeBtn.setFocusable(false);
                         enlargeBtn.addActionListener(new ActionListener() {
