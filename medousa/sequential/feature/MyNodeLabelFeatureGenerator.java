@@ -10,7 +10,7 @@ import java.util.Locale;
  */
 public class MyNodeLabelFeatureGenerator {
 
-    private int weightLoc;
+    private int labelLoc;
     private int itemLoc;
     private int objIDIdx;
     private int trIDIdx;
@@ -21,11 +21,14 @@ public class MyNodeLabelFeatureGenerator {
     public MyNodeLabelFeatureGenerator() {}
 
     public void generateNodeLabelFeatures(String nodeLabelVariable, ArrayList<ArrayList<String>> dataIn, String nodeLabelType) {
-        this.fw = new MyWeightFeatureWriter(nodeLabelVariable.replaceAll(" ", "").toLowerCase(Locale.ENGLISH)+ MySequentialGraphVars.nodeLabelFileExt);
+        this.fw =
+            new MyWeightFeatureWriter(nodeLabelVariable.replaceAll(" ", "").
+                toLowerCase(Locale.ENGLISH) + MySequentialGraphVars.nodeLabelFileExt);
         setObjectIDIndex();
         setTransactionIDIndex();
         setItemNameIndex(this.itemIDColNm);
-        setWeightNameIndex(nodeLabelVariable);
+        setLabelNameIndex(nodeLabelVariable);
+        System.out.println(nodeLabelVariable);
         run(dataIn, nodeLabelType);
         this.fw.close();
     }
@@ -33,11 +36,20 @@ public class MyNodeLabelFeatureGenerator {
     private void setObjectIDIndex() { 
         objIDIdx = MySequentialGraphVars.app.getSequentialGraphMsgBroker().getHeaderIndex(objIDColNm);
     }
-    private void setWeightNameIndex(String edgeWeightVariable) {weightLoc = MySequentialGraphVars.app.getSequentialGraphMsgBroker().getHeaderIndex(edgeWeightVariable);}
-    private void setItemNameIndex(String itemIDColNm) {itemLoc = MySequentialGraphVars.app.getSequentialGraphMsgBroker().getHeaderIndex(itemIDColNm);}
+
+    private void setLabelNameIndex(String nodeLabelName) {
+        labelLoc = MySequentialGraphVars.app.getSequentialGraphMsgBroker().getHeaderIndex(nodeLabelName);
+        System.out.println(labelLoc);
+    }
+
+    private void setItemNameIndex(String itemIDColNm) {
+        itemLoc = MySequentialGraphVars.app.getSequentialGraphMsgBroker().getHeaderIndex(itemIDColNm);
+    }
+
     private void setTransactionIDIndex() {
         trIDIdx = MySequentialGraphVars.app.getSequentialGraphMsgBroker().getHeaderIndex(trIDColNm);
     }
+
     private void run(ArrayList<ArrayList<String>> dataIn, String nodeValueType) {
         try {
             String itemsetDelimeter = MySequentialGraphVars.hyphenDelimeter;
@@ -48,14 +60,15 @@ public class MyNodeLabelFeatureGenerator {
             String preObjID = dataIn.get(0).get(objIDIdx);
             String preTrID = dataIn.get(0).get(trIDIdx);
             int recCnt = 0;
+
             for (; recCnt < dataIn.size(); recCnt++) {
                 if (dataIn.get(recCnt).get(objIDIdx).equals(preObjID)) {
                     if (dataIn.get(recCnt).get(trIDIdx).equals(preTrID)) {
                         if (weights.length() == 0) {
                             items = dataIn.get(recCnt).get(itemLoc);
-                            weights = dataIn.get(recCnt).get(weightLoc);
+                            weights = dataIn.get(recCnt).get(labelLoc);
                         } else {
-                            weights = weights + MySequentialGraphVars.commaDelimeter + dataIn.get(recCnt).get(weightLoc);
+                            weights = weights + MySequentialGraphVars.commaDelimeter + dataIn.get(recCnt).get(labelLoc);
                             items = items + MySequentialGraphVars.commaDelimeter + dataIn.get(recCnt).get(itemLoc);
                         }
                     } else {
@@ -67,7 +80,7 @@ public class MyNodeLabelFeatureGenerator {
                             itemSeq += itemsetDelimeter + items;
                         }
                         items = dataIn.get(recCnt).get(itemLoc);
-                        weights = dataIn.get(recCnt).get(weightLoc);
+                        weights = dataIn.get(recCnt).get(labelLoc);
                         preTrID = dataIn.get(recCnt).get(trIDIdx);
                     }
                 } else {
@@ -78,7 +91,7 @@ public class MyNodeLabelFeatureGenerator {
                         weightSeq = weightSeq + itemsetDelimeter + weights;
                         itemSeq = itemSeq + itemsetDelimeter + items;
                     }
-                    this.fw.addSequence(this.setEdgeLabel(itemSeq, weightSeq, itemsetDelimeter));
+                    this.fw.addSequence(this.setNodeLabel(itemSeq, weightSeq, itemsetDelimeter));
                     weights = "";
                     weightSeq = "";
                     items = "";
@@ -88,6 +101,7 @@ public class MyNodeLabelFeatureGenerator {
                     --recCnt;
                 }
             }
+
             if (weightSeq.length() != 0) {
                 weightSeq = weightSeq + itemsetDelimeter + weights;
                 itemSeq = itemSeq + itemsetDelimeter + items;
@@ -95,18 +109,26 @@ public class MyNodeLabelFeatureGenerator {
                 weightSeq = weights;
                 itemSeq = items;
             }
-            this.fw.addSequence(this.setEdgeLabel(itemSeq, weightSeq, itemsetDelimeter));
-        } catch (Exception ex) {ex.printStackTrace();}
+
+            this.fw.addSequence(this.setNodeLabel(itemSeq, weightSeq, itemsetDelimeter));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
-    private String setEdgeLabel(String itemSeq, String weightSeq, String itemsetDelimeter) {
+    private String setNodeLabel(String itemSeq, String weightSeq, String itemsetDelimeter) {
         String [] weightItemSets = weightSeq.split(itemsetDelimeter);
         String [] itemSets = itemSeq.split(itemsetDelimeter);
         String resultSeq = "";
+
         for (int i = 0; i < weightItemSets.length; i++) {
-            if (resultSeq.length() == 0) {resultSeq = itemSets[i] + itemsetDelimeter + weightItemSets[i];
-            } else {resultSeq += itemsetDelimeter + itemSets[i] + itemsetDelimeter + weightItemSets[i];}
+            if (resultSeq.length() == 0) {
+                resultSeq = itemSets[i] + itemsetDelimeter + weightItemSets[i];
+            } else {
+                resultSeq += itemsetDelimeter + itemSets[i] + itemsetDelimeter + weightItemSets[i];
+            }
         }
+
         return resultSeq;
     }
 }

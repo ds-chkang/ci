@@ -264,8 +264,8 @@ implements ActionListener {
         labelValueMenu.setFont(MySequentialGraphVars.tahomaPlainFont11);
         labelValueMenu.setFocusable(false);
         labelValueMenu.addItem("");
-        labelValueMenu.addItem("NODE");
-        labelValueMenu.addItem("EDGE");
+        if (MySequentialGraphVars.userDefinedNodeLabelSet.size() > 0) labelValueMenu.addItem("NODE");
+        if (MySequentialGraphVars.userDefinedEdgeLabelSet.size() > 0) labelValueMenu.addItem("EDGE");
         labelValueMenu.setSelectedIndex(selectedItemIdx);
         labelValueMenu.addActionListener(this);
 

@@ -63,8 +63,8 @@ public class MyTimeConstrainedBuilider {
             if (!MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getNodeLabelTable().getValueAt(i, 0).toString().contains("SELECT") &&
                 !MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getNodeLabelTable().getValueAt(i, 1).toString().contains("NO") &&
                 !MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getNodeLabelTable().getValueAt(i, 2).toString().contains("SELECT")) {
-                String value = MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getNodeLabelTable().getValueAt(i, 0).toString().replaceAll(" ", "");
-                String valueType = MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getNodeLabelTable().getValueAt(i, 2).toString().replaceAll(" ", "");
+                String value = MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getNodeLabelTable().getValueAt(i, 0).toString();//.replaceAll(" ", "");
+                String valueType = MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getNodeLabelTable().getValueAt(i, 2).toString();//.replaceAll(" ", "");
                 MySequentialGraphVars.userDefinedNodeLabelSet.add(MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getNodeLabelTable().getValueAt(i, 0).toString().substring(2));
                 MySequentialGraphVars.app.getSequentialGraphMsgBroker().generateNodeLabelFeatures(value, valueType);
             }
