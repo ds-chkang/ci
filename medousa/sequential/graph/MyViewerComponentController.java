@@ -1028,7 +1028,7 @@ implements ActionListener {
                             MyBetweenReachTimeDistributionLineChart betweenReachTimeDistribution = new MyBetweenReachTimeDistributionLineChart();
                             betweenReachTimeDistribution.enlarge();
                         } else if (distributionSelecter.getSelectedIndex() == 7) {
-                            MyGraphLevelReachTimeByNodeDistribution reachTiimeByNodeDistribution = new MyGraphLevelReachTimeByNodeDistribution();
+                            MyGraphLevelReachTimeDistribution reachTiimeByNodeDistribution = new MyGraphLevelReachTimeDistribution();
                             reachTiimeByNodeDistribution.enlarge();
                         } else if (distributionSelecter.getSelectedIndex() == 8) {
                             MyGraphLevelIndividualReachTimeDistribution individualReachTimeDistribution = new MyGraphLevelIndividualReachTimeDistribution();

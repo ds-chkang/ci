@@ -111,7 +111,7 @@ extends JPanel {
 
                 JButton enlargeBtn = new JButton("+");
                 enlargeBtn.setBackground(Color.WHITE);
-                enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
+                enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
                 enlargeBtn.setFocusable(false);
                 enlargeBtn.addActionListener(new ActionListener() {
                     @Override public void actionPerformed(ActionEvent e) {

@@ -96,11 +96,9 @@ extends JPanel {
             f.setPreferredSize(new Dimension(350, 350));
             f.pack();
             f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            f.setAlwaysOnTop(true);
             pb.updateValue(100, 100);
             pb.dispose();
             f.setVisible(true);
-            f.setAlwaysOnTop(false);
         } catch (Exception ex) {
             pb.updateValue(100, 100);
             pb.dispose();

@@ -62,7 +62,6 @@ extends JPanel {
                 graphLevelShortestDistanceNodeValueDistributionLineChart = new MyGraphLevelShortestDistanceNodeValueDistributionLineChart();
                 graphLevelShortestDistanceUnreachableNodeCountDistributionLineChart = new MyGraphLevelShortestDistanceUnreachableNodeCountDistributionLineChart();
                 graphLevelAverageNodeValueByDistanceDistributionLineChart = new MyGraphLevelAverageNodeValueByDistanceDistributionLineChart();
-                //graphLevelTotalNodeByShortestDistanceDistributionLineChart = new MyGraphLevelTotalNodeByShortestDistanceDistributionLineChart();
 
                 JPanel shortestDistanceProfilePanel = new JPanel();
                 shortestDistanceProfilePanel.setBackground(Color.WHITE);
@@ -119,13 +118,6 @@ extends JPanel {
                 "NETWORK EXPLORER", TitledBorder.LEFT, TitledBorder.TOP, MySequentialGraphVars.tahomaBoldFont12);
 
                 if (MySequentialGraphVars.isTimeOn) {
-                    graphLevelAverageValuesByDepthLineChart = new MyGraphLevelAverageValuesByDepthLineChart();
-                    graphLevelReachTimeByDepthLineChart = new MyGraphLevelReachTimeByDepthLineChart();
-                    graphLevelUniqueNodesByDepthLineChart = new MyGraphLevelUniqueNodesByDepthDistributionChart();
-                    graphLevelContributionByDepthLineChart = new MyGraphLevelContributionByDepthLineChart();
-                    graphLevelPredecessorSuccessorByDepthLineChart = new MyGraphLevelPredecessorSuccessorByDepthLineChart();
-                    graphLevelDurationByDepthLineChart = new MyGraphLevelDurationByDepthLineChart();
-
                     graphLevelPredecessorCountDistributionLineChart = new MyGraphLevelPredecessorCountDistributionLineChart();
                     graphLevelSuccessorCountDistributionLineChart = new MyGraphLevelSuccessorCountDistributionLineChart();
                     graphLevelNodeValueDistributionLineChart = new MyGraphLevelNodeValueDistributionLineChart();
@@ -149,6 +141,13 @@ extends JPanel {
                         graphProfilePanel.add(graphLevelEdgeValueDistributionLineChart);
                         graphProfilePanel.add(graphLevelLabelDistributionLineChart);
                     }
+
+                    graphLevelAverageValuesByDepthLineChart = new MyGraphLevelAverageValuesByDepthLineChart();
+                    graphLevelReachTimeByDepthLineChart = new MyGraphLevelReachTimeByDepthLineChart();
+                    graphLevelUniqueNodesByDepthLineChart = new MyGraphLevelUniqueNodesByDepthDistributionChart();
+                    graphLevelContributionByDepthLineChart = new MyGraphLevelContributionByDepthLineChart();
+                    graphLevelPredecessorSuccessorByDepthLineChart = new MyGraphLevelPredecessorSuccessorByDepthLineChart();
+                    graphLevelDurationByDepthLineChart = new MyGraphLevelDurationByDepthLineChart();
 
                     JPanel dataProfilePanel = new JPanel();
                     dataProfilePanel.setBackground(Color.WHITE);
@@ -185,6 +184,30 @@ extends JPanel {
                         }
                     });
                 } else {
+                    graphLevelPredecessorCountDistributionLineChart = new MyGraphLevelPredecessorCountDistributionLineChart();
+                    graphLevelSuccessorCountDistributionLineChart = new MyGraphLevelSuccessorCountDistributionLineChart();
+                    graphLevelNodeValueDistributionLineChart = new MyGraphLevelNodeValueDistributionLineChart();
+                    graphLevelEdgeValueDistributionLineChart = new MyGraphLevelEdgeValueDistributionLineChart();
+                    graphLevelLabelDistributionLineChart = new MyGraphLevelLabelDistributionLineChart();
+
+                    JPanel graphProfilePanel = new JPanel();
+                    graphProfilePanel.setBackground(Color.WHITE);
+                    if (MySequentialGraphVars.userDefinedNodeLabelSet.size() == 0 &&
+                            MySequentialGraphVars.userDefinedEdgeLabelSet.size() == 0) {
+                        graphProfilePanel.setLayout(new GridLayout(4, 1));
+                        graphProfilePanel.add(graphLevelPredecessorCountDistributionLineChart);
+                        graphProfilePanel.add(graphLevelSuccessorCountDistributionLineChart);
+                        graphProfilePanel.add(graphLevelNodeValueDistributionLineChart);
+                        graphProfilePanel.add(graphLevelEdgeValueDistributionLineChart);
+                    } else {
+                        graphProfilePanel.setLayout(new GridLayout(5, 1));
+                        graphProfilePanel.add(graphLevelPredecessorCountDistributionLineChart);
+                        graphProfilePanel.add(graphLevelSuccessorCountDistributionLineChart);
+                        graphProfilePanel.add(graphLevelNodeValueDistributionLineChart);
+                        graphProfilePanel.add(graphLevelEdgeValueDistributionLineChart);
+                        graphProfilePanel.add(graphLevelLabelDistributionLineChart);
+                    }
+
                     graphLevelAverageValuesByDepthLineChart = new MyGraphLevelAverageValuesByDepthLineChart();
                     graphLevelUniqueNodesByDepthLineChart = new MyGraphLevelUniqueNodesByDepthDistributionChart();
                     graphLevelContributionByDepthLineChart = new MyGraphLevelContributionByDepthLineChart();
@@ -200,6 +223,7 @@ extends JPanel {
                     dataProfilePanel.setBorder(dataProfileTitledBorder);
 
                     JTabbedPane tabbedPane = new JTabbedPane();
+                    tabbedPane.addTab("G. P.", null, graphProfilePanel, "GRAPH PROFILE");
                     tabbedPane.addTab("D. P.", null, dataProfilePanel, "DATA PROFILE");
                     tabbedPane.addTab("G. S.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setStatTable(), "GRAPH STATISTICS");
                     tabbedPane.setFont(MySequentialGraphVars.tahomaBoldFont12);
@@ -405,6 +429,23 @@ extends JPanel {
                 }
 
                 if (MySequentialGraphVars.isTimeOn) {
+                    MySingleNodePredecessorValueDistributionLineChart singleNodePredecessorValueDistributionLineChart = new MySingleNodePredecessorValueDistributionLineChart();
+                    MySingleNodeSuccessorValueDistributionLineChart singleNodeSuccessorValueDistributionLineChart = new MySingleNodeSuccessorValueDistributionLineChart();
+                    MySingleNodePredecessorEdgeValueDistributionLineChart singleNodePredecessorEdgeValueDistributionLineChart = new MySingleNodePredecessorEdgeValueDistributionLineChart();
+                    MySingleNodeSuccessorEdgeValueDistributionLineChart singleNodeSuccessorEdgeValueDistributionLineChart = new MySingleNodeSuccessorEdgeValueDistributionLineChart();
+                    MySingleNodeHopCountDistributionLineChart singleNodeHopCountDistributionLineChart = new MySingleNodeHopCountDistributionLineChart();
+                    MySingleNodeReachTimeDistribution singleNodeReachTimeDistribution = new MySingleNodeReachTimeDistribution();
+
+                    JPanel graphProfilePanel = new JPanel();
+                    graphProfilePanel.setBackground(Color.WHITE);
+                    graphProfilePanel.setLayout(new GridLayout(6,1));
+                    graphProfilePanel.add(singleNodePredecessorValueDistributionLineChart);
+                    graphProfilePanel.add(singleNodeSuccessorValueDistributionLineChart);
+                    graphProfilePanel.add(singleNodePredecessorEdgeValueDistributionLineChart);
+                    graphProfilePanel.add(singleNodeSuccessorEdgeValueDistributionLineChart);
+                    graphProfilePanel.add(singleNodeHopCountDistributionLineChart);
+                    graphProfilePanel.add(singleNodeReachTimeDistribution);
+
                     MySingleNodeAverageValuesByDepthLineChart singleNodeAverageValuesByDepthLineChart = new MySingleNodeAverageValuesByDepthLineChart();
                     MySingleNodeContributionByDepthLineChart singleNodeNodeContributionByDepthLineChart = new MySingleNodeContributionByDepthLineChart();
                     MySingleNodeReachTimeByDepthLineChart singleNodeReachTimeByDepthLineChart = new MySingleNodeReachTimeByDepthLineChart();
@@ -424,8 +465,9 @@ extends JPanel {
                     dataProfilePanel.setBorder(dataProfileTitledBorder);
 
                     JTabbedPane tabbedPane = new JTabbedPane();
-                    tabbedPane.addTab("D. P.", null, dataProfilePanel, "SELECTED NODE DATA PROFILE");
-                    tabbedPane.addTab("N. S.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setSelectedNodeStatTable(), "SELECTED NODE STATISTICS");
+                    tabbedPane.addTab("G. P.", null, graphProfilePanel, "GRAPH PROFILE FOR SELECTED NODE");
+                    tabbedPane.addTab("D. P.", null, dataProfilePanel, "DATA PROFILE FOR SELECTED NODE");
+                    tabbedPane.addTab("N. S.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setSelectedNodeStatTable(), "STATISTICS FOR SELECTED NODE");
                     tabbedPane.setFont(MySequentialGraphVars.tahomaBoldFont12);
 
                     MySequentialGraphVars.app.getSequentialGraphViewerPanel().setBorder(networkTitledBorder);
@@ -445,6 +487,21 @@ extends JPanel {
                         }
                     });
                 } else {
+                    MySingleNodePredecessorValueDistributionLineChart singleNodePredecessorValueDistributionLineChart = new MySingleNodePredecessorValueDistributionLineChart();
+                    MySingleNodeSuccessorValueDistributionLineChart singleNodeSuccessorValueDistributionLineChart = new MySingleNodeSuccessorValueDistributionLineChart();
+                    MySingleNodePredecessorEdgeValueDistributionLineChart singleNodePredecessorEdgeValueDistributionLineChart = new MySingleNodePredecessorEdgeValueDistributionLineChart();
+                    MySingleNodeSuccessorEdgeValueDistributionLineChart singleNodeSuccessorEdgeValueDistributionLineChart = new MySingleNodeSuccessorEdgeValueDistributionLineChart();
+                    MySingleNodeHopCountDistributionLineChart singleNodeHopCountDistributionLineChart = new MySingleNodeHopCountDistributionLineChart();
+
+                    JPanel graphProfilePanel = new JPanel();
+                    graphProfilePanel.setBackground(Color.WHITE);
+                    graphProfilePanel.setLayout(new GridLayout(5,1));
+                    graphProfilePanel.add(singleNodePredecessorValueDistributionLineChart);
+                    graphProfilePanel.add(singleNodeSuccessorValueDistributionLineChart);
+                    graphProfilePanel.add(singleNodePredecessorEdgeValueDistributionLineChart);
+                    graphProfilePanel.add(singleNodeSuccessorEdgeValueDistributionLineChart);
+                    graphProfilePanel.add(singleNodeHopCountDistributionLineChart);
+
                     MySingleNodeAverageValuesByDepthLineChart singleNodeLevelAverageValuesByDepthLineChart = new MySingleNodeAverageValuesByDepthLineChart();
                     MySingleNodeContributionByDepthLineChart singleNodeLevelNodeContributionByDepthLineChart = new MySingleNodeContributionByDepthLineChart();
                     MySingleNodePredecessorsAndSuccessorsByDepthLineChart singleNodePredecessorsAndSuccessorsByDepthLineChart = new MySingleNodePredecessorsAndSuccessorsByDepthLineChart();
@@ -460,7 +517,8 @@ extends JPanel {
                     dataProfilePanel.setBorder(dataProfileTitledBorder);
 
                     JTabbedPane tabbedPane = new JTabbedPane();
-                    tabbedPane.addTab("D. P.", null, dataProfilePanel, "SELECTED NODE DATA PROFILE");
+                    tabbedPane.addTab("G. P.", null, graphProfilePanel, "GRAPH PROFILE FOR SELECTED NODE");
+                    tabbedPane.addTab("D. P.", null, dataProfilePanel, "DATA PROFILE FOR SELECTED NODE");
                     tabbedPane.addTab("N. S.", null, MySequentialGraphVars.getSequentialGraphViewer().vc.setSelectedNodeStatTable(), "SELECTED NODE STATISTICS");
                     tabbedPane.setFont(MySequentialGraphVars.tahomaBoldFont12);
 

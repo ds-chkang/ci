@@ -151,11 +151,9 @@ public class MyGraphLevelTotalNodeByShortestDistanceDistributionLineChart extend
                     f.setAlwaysOnTop(false);
                 }
             });
-            f.setAlwaysOnTop(true);
             pb.updateValue(100, 100);
             pb.dispose();
             f.setVisible(true);
-            f.setAlwaysOnTop(false);
         } catch (Exception ex) {
             pb.updateValue(100, 100);
             pb.dispose();

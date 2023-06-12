@@ -36,10 +36,9 @@ extends JPanel {
             if (MySequentialGraphVars.getSequentialGraphViewer().edgeValName.contains("NONE")) {continue;}
             else if (e.getDest().getCurrentValue() ==0 || e.getSource().getCurrentValue() == 0) continue;
             else if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != e.getSource() && MySequentialGraphVars.getSequentialGraphViewer().singleNode != e.getDest()) continue;
-            String predecessor = (e.getSource().getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(e.getSource().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getSource().getName()));
-            String successor = (e.getDest().getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(e.getDest().getName()) : MySequentialGraphSysUtil.decodeNodeName(e.getDest().getName()));
+            String predecessor = MySequentialGraphSysUtil.getNodeName(e.getSource().getName());
+            String successor = MySequentialGraphSysUtil.getNodeName(e.getDest().getName());
             String name = predecessor+"-"+successor;
-           // System.out.println(name + "   " + e.getValue());
             this.data.put(name, e.getCurrentValue());
             final float hue = this.rand.nextFloat();
             final float saturation = 0.9f;

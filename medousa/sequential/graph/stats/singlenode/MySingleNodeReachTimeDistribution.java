@@ -1,4 +1,4 @@
-package medousa.sequential.graph.stats;
+package medousa.sequential.graph.stats.singlenode;
 
 import medousa.MyProgressBar;
 import medousa.direct.utils.MyDirectGraphVars;
@@ -15,6 +15,7 @@ import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,7 +23,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeMap;
 
-public class MyGraphLevelReachTimeByNodeDistribution
+public class MySingleNodeReachTimeDistribution
 extends JPanel
 implements ActionListener {
 
@@ -34,7 +35,13 @@ implements ActionListener {
     private float toTime = 1f;
     private int selectedTime = 0;
 
-    public MyGraphLevelReachTimeByNodeDistribution() {}
+    public MySingleNodeReachTimeDistribution() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override public void run() {
+                decorate();
+            }
+        });
+    }
 
     public void decorate() {
         MyProgressBar pb = new MyProgressBar(false);
@@ -46,10 +53,10 @@ implements ActionListener {
         chartPanel.getChart().getCategoryPlot().setRangeGridlinePaint(Color.DARK_GRAY);
         chartPanel.getChart().getCategoryPlot().setDomainGridlinePaint(Color.DARK_GRAY);
         chartPanel.getChart().getCategoryPlot().setBackgroundPaint(Color.WHITE);
-        chartPanel.getChart().getCategoryPlot().getDomainAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont10);
-        chartPanel.getChart().getCategoryPlot().getDomainAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont10);
-        chartPanel.getChart().getCategoryPlot().getRangeAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont10);
-        chartPanel.getChart().getCategoryPlot().getRangeAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont10);
+        chartPanel.getChart().getCategoryPlot().getDomainAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont11);
+        chartPanel.getChart().getCategoryPlot().getDomainAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont11);
+        chartPanel.getChart().getCategoryPlot().getRangeAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont11);
+        chartPanel.getChart().getCategoryPlot().getRangeAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont11);
 
         CategoryAxis domainAxis = chartPanel.getChart().getCategoryPlot().getDomainAxis();
         domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_90);
@@ -90,15 +97,38 @@ implements ActionListener {
                 }).start();
             }
         });
-        JPanel timeConvertMenuPanel = new JPanel();
-        timeConvertMenuPanel.setBackground(Color.WHITE);
-        timeConvertMenuPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 3, 3));
-        timeConvertMenuPanel.add(timeMenu);
+
+        JButton enlargeBtn = new JButton("+");
+        enlargeBtn.setBackground(Color.WHITE);
+        enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        enlargeBtn.setFocusable(false);
+        enlargeBtn.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                new Thread(new Runnable() {
+                    @Override public void run() {
+                        enlarge();
+                    }
+                }).start();
+            }
+        });
+
+        JPanel btnPanel = new JPanel();
+        btnPanel.setBackground(Color.WHITE);
+        btnPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 3, 3));
+        btnPanel.add(timeMenu);
+        btnPanel.add(enlargeBtn);
+
+        JLabel titleLabel = new JLabel(" N. H.");
+        titleLabel.setToolTipText("NODE HOP COUNT DISTRIBUTION");
+        titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
+        titleLabel.setBackground(Color.WHITE);
+        titleLabel.setForeground(Color.DARK_GRAY);
 
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BorderLayout(3, 3));
         topPanel.setBackground(Color.WHITE);
-        topPanel.add(timeConvertMenuPanel, BorderLayout.EAST);
+        topPanel.add(titleLabel, BorderLayout.EAST);
+        topPanel.add(btnPanel, BorderLayout.CENTER);
 
         add(topPanel, BorderLayout.NORTH);
         add(chartPanel, BorderLayout.CENTER);
@@ -110,7 +140,6 @@ implements ActionListener {
     public void enlarge() {
             try {
                 this.decorate();
-
                 JFrame f = new JFrame(" REACH TIME BY NODE DISTRIBUTION");
                 f.setBackground(Color.WHITE);
                 f.setPreferredSize(new Dimension(550, 450));
@@ -124,57 +153,27 @@ implements ActionListener {
 
     }
 
-    private Set<MyNode> nodes = null;
-
     private JFreeChart setValueChart() {
         int nodeCount = 0;
         float totalValue = 0;
 
         TreeMap<Long, Integer> valueMap = new TreeMap<>();
-        if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
-            if (MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly) {
-                this.nodes = MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors;
-            } else if (MySequentialGraphVars.getSequentialGraphViewer().successorsOnly) {
-                this.nodes = MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors;
-            } else if (MySequentialGraphVars.getSequentialGraphViewer().neighborsOnly) {
-                this.nodes = MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors;
-                this.nodes.addAll(MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors);
-            }
-        } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null && MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size() > 0) {
-            if (MySequentialGraphVars.getSequentialGraphViewer().predecessorsOnly) {
-                this.nodes = MySequentialGraphVars.getSequentialGraphViewer().multiNodePredecessors;
-            } else if (MySequentialGraphVars.getSequentialGraphViewer().successorsOnly) {
-                this.nodes = MySequentialGraphVars.getSequentialGraphViewer().multiNodeSuccessors;
-            } else if (MySequentialGraphVars.getSequentialGraphViewer().neighborsOnly) {
-                this.nodes = MySequentialGraphVars.getSequentialGraphViewer().multiNodePredecessors;
-                this.nodes.addAll(MySequentialGraphVars.getSequentialGraphViewer().multiNodeSuccessors);
-            } else if (MySequentialGraphVars.getSequentialGraphViewer().sharedNeighborsOnly) {
-                this.nodes = MySequentialGraphVars.getSequentialGraphViewer().sharedSuccessors;
-                this.nodes.addAll(MySequentialGraphVars.getSequentialGraphViewer().sharedPredecessors);
-            } else if (MySequentialGraphVars.getSequentialGraphViewer().sharedPredecessorsOly) {
-                this.nodes = MySequentialGraphVars.getSequentialGraphViewer().sharedPredecessors;
-            } else if (MySequentialGraphVars.getSequentialGraphViewer().sharedSuccessorsOnly) {
-                this.nodes = MySequentialGraphVars.getSequentialGraphViewer().sharedSuccessors;
-            }
-        } else {
-            this.nodes = new HashSet<>(MySequentialGraphVars.g.getVertices());
-        }
+        for (String n : MySequentialGraphVars.getSequentialGraphViewer().singleNode.reachTimeMapByObjectID.keySet()) {
+            for (long time : MySequentialGraphVars.getSequentialGraphViewer().singleNode.reachTimeMapByObjectID.get(n).keySet()) {
+                time = (long) (time/toTime);
+                if (time > this.maxValue) {
+                    this.maxValue = time;
+                }
 
-        for (MyNode n : this.nodes) {
-            if (n.getCurrentValue() == 0) continue;
-            long time = (long) (n.getTotalReachTime()/toTime);
-            if (time > this.maxValue) {
-                this.maxValue = time;
-            }
+                if (time > 0 && time < this.minValue) {
+                    this.minValue = time;
+                }
 
-            if (time > 0 && time < this.minValue) {
-                this.minValue = time;
-            }
-
-            if (valueMap.containsKey(time)) {
-                valueMap.put(time, valueMap.get(time) + 1);
-            } else {
-                valueMap.put(time, 1);
+                if (valueMap.containsKey(time)) {
+                    valueMap.put(time, valueMap.get(time) + 1);
+                } else {
+                    valueMap.put(time, 1);
+                }
             }
         }
 

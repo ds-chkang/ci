@@ -15,7 +15,8 @@ public class MyFeatureWriter {
 
     public MyFeatureWriter() {
         try {
-            MySequentialGraphVars.inputSequenceFile = MySequentialGraphVars.outputDir + ".." + MySequentialGraphSysUtil.getDirectorySlash() + "features.txt";
+            MySequentialGraphVars.inputSequenceFile = MySequentialGraphSysUtil.getWorkingDir() +
+                    MySequentialGraphSysUtil.getDirectorySlash() + "features.txt";
             File feature_file = new File(MySequentialGraphVars.inputSequenceFile);
             if (feature_file.exists()) {
                 feature_file.delete();
@@ -29,7 +30,9 @@ public class MyFeatureWriter {
 
     public MyFeatureWriter(String fileName) {
         try {
-            File feature_file = new File(MySequentialGraphVars.outputDir + "../" + fileName.replaceAll(" ", "").toLowerCase(Locale.ENGLISH));
+            File feature_file = new File(MySequentialGraphSysUtil.getWorkingDir() +
+                    MySequentialGraphSysUtil.getDirectorySlash() +
+                    fileName.replaceAll(" ", "").toLowerCase(Locale.ENGLISH));
             if (feature_file.exists()) {
                 feature_file.delete();
                 feature_file.createNewFile();

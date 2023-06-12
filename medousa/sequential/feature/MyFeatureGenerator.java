@@ -181,8 +181,10 @@ public class MyFeatureGenerator {
                 }
             } else if (MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getSupplimentaryVariableTable().getCategoryType(i, 2).contains("REAL")) {
                 MySequentialGraphCategory category = MySequentialGraphVars.app.getSequentialGraphMsgBroker().getCategoryList().getCategory(colNm);
-                if (variableStr.length() == 0) { variableStr = category.getCategory(lastTrLine.get(colNmIdx)); }
-                else { variableStr = variableStr + MySequentialGraphVars.commaDelimeter + category.getCategory(lastTrLine.get(colNmIdx));
+                if (variableStr.length() == 0) {
+                    variableStr = category.getCategory(lastTrLine.get(colNmIdx));
+                } else {
+                    variableStr = variableStr + MySequentialGraphVars.commaDelimeter + category.getCategory(lastTrLine.get(colNmIdx));
                 }
             } else break;
         }

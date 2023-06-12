@@ -45,7 +45,7 @@ public class MyDepthLevelNeighborNodeValueBarChart extends JPanel {
                         for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
                             if (MySequentialGraphVars.seqs[s][0].split(":")[0].equals(depthNode)) {
                                 for (int i = 1; i < MySequentialGraphVars.seqs[s].length; i++) {
-                                    String sn = (MySequentialGraphVars.seqs[s][i].split(":")[0].contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(MySequentialGraphVars.seqs[s][i].split(":")[0]) : MySequentialGraphSysUtil.decodeNodeName(MySequentialGraphVars.seqs[s][i].split(":")[0]));
+                                    String sn = MySequentialGraphSysUtil.getNodeName(MySequentialGraphVars.seqs[s][i].split(":")[0]);
                                     if (this.successors.containsKey(sn)) {
                                             this.successors.put(sn, this.successors.get(sn) + 1);
                                     } else {
@@ -64,9 +64,9 @@ public class MyDepthLevelNeighborNodeValueBarChart extends JPanel {
                     for (String depthNode : MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeSuccessorMaps.keySet()) {
                         Map<String, Long> successorMap = MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodeSuccessorMaps.get(depthNode);
                         for (String successor : successorMap.keySet()) {
-                            String decodedName = (depthNode.contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(depthNode) : MySequentialGraphSysUtil.decodeNodeName(depthNode));
-                            MyNode s = (MyNode) MySequentialGraphVars.g.vRefs.get(successor);
-                            this.successors.put(decodedName, (float) s.getNodeDepthInfo(MySequentialGraphVars.currentGraphDepth + 1).getInContribution());
+                            String decodedName = MySequentialGraphSysUtil.getNodeName(depthNode);
+                            MyNode sn = (MyNode) MySequentialGraphVars.g.vRefs.get(successor);
+                            this.successors.put(decodedName, (float) sn.getNodeDepthInfo(MySequentialGraphVars.currentGraphDepth + 1).getInContribution());
                             final float hue = this.rand.nextFloat();
                             final float saturation = 0.9f;
                             final float luminance = 1.0f;
@@ -79,7 +79,7 @@ public class MyDepthLevelNeighborNodeValueBarChart extends JPanel {
                 for (String depthNode : MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodePredecessorMaps.keySet()) {
                     Map<String, Long> predecessorMap = MySequentialGraphVars.getSequentialGraphViewer().vc.depthNodePredecessorMaps.get(depthNode);
                     for (String predecessor : predecessorMap.keySet()) {
-                        String decodedName = (depthNode.contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(depthNode) : MySequentialGraphSysUtil.decodeNodeName(depthNode));
+                        String decodedName = MySequentialGraphSysUtil.getNodeName(depthNode);
                         this.predecessors.put(decodedName, (float) ((MyNode) MySequentialGraphVars.g.vRefs.get(predecessor)).getNodeDepthInfo(MySequentialGraphVars.currentGraphDepth-1).getOutContribution());
                         final float hue = this.rand.nextFloat();
                         final float saturation = 0.9f;

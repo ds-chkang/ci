@@ -43,7 +43,7 @@ public class MyMultiLevelNeighborNodeValueBarChart extends JPanel {
         this.successorColors = new ArrayList<>();
 
         for (MyNode n : MySequentialGraphVars.getSequentialGraphViewer().sharedPredecessors) {
-            String pName = (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName()));
+            String pName = MySequentialGraphSysUtil.getNodeName(n.getName());
             this.sharedPredecessorMap.put(pName, n.getCurrentValue());
             final float hue = this.rand.nextFloat();
             final float saturation = 0.9f;
@@ -53,7 +53,7 @@ public class MyMultiLevelNeighborNodeValueBarChart extends JPanel {
         }
 
         for (MyNode n : MySequentialGraphVars.getSequentialGraphViewer().sharedSuccessors) {
-            String sName = (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.decodeNodeName(n.getName()));
+            String sName = MySequentialGraphSysUtil.getNodeName(n.getName());
             this.sharedSuccessorMap.put(sName, n.getCurrentValue());
             final float hue = this.rand.nextFloat();
             final float saturation = 0.9f;

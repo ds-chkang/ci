@@ -1,7 +1,7 @@
 package medousa.sequential.graph.stats;
 
-import medousa.sequential.graph.MyNode;
 import medousa.MyProgressBar;
+import medousa.sequential.graph.MyNode;
 import medousa.sequential.utils.MySequentialGraphVars;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -9,8 +9,6 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.data.general.Dataset;
-import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.HorizontalAlignment;
@@ -23,11 +21,11 @@ import java.awt.geom.Ellipse2D;
 import java.util.Collection;
 import java.util.TreeMap;
 
-public class MyGraphLevelNodeAverageHopCountDistributionLineChart
+public class MyGraphLevelHopCountDistributionLineChart
 extends JPanel {
 
     public static int instances = 0;
-    public MyGraphLevelNodeAverageHopCountDistributionLineChart() {decorate();}
+    public MyGraphLevelHopCountDistributionLineChart() {decorate();}
 
     public void decorate() {
         try {
@@ -63,7 +61,8 @@ extends JPanel {
             enlargeBtn.setBackground(Color.WHITE);
             enlargeBtn.setFocusable(false);
             enlargeBtn.addActionListener(new ActionListener() {
-                @Override public void actionPerformed(ActionEvent e) {
+                @Override
+                public void actionPerformed(ActionEvent e) {
                     new Thread(new Runnable() {
                         @Override public void run() {
                             enlarge();
@@ -135,9 +134,11 @@ extends JPanel {
             f.setPreferredSize(new Dimension(450, 350));
             f.pack();
             f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            f.setAlwaysOnTop(true);
             pb.updateValue(100, 100);
             pb.dispose();
             f.setVisible(true);
+            f.setAlwaysOnTop(false);
         } catch (Exception ex) {
             pb.updateValue(100, 100);
             pb.dispose();
