@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeMap;
 
-public class MyGraphTopLevelDurationDistribution
+public class MyGraphLevelDurationDistribution
 extends JPanel
 implements ActionListener {
 
@@ -34,7 +34,7 @@ implements ActionListener {
     private float toTime = 1f;
     private int selectedTime = 0;
     private MyProgressBar pb;
-    public MyGraphTopLevelDurationDistribution() {}
+    public MyGraphLevelDurationDistribution() {}
 
     public void decorate() {
         this.pb = new MyProgressBar(false);

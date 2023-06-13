@@ -129,6 +129,7 @@ implements ActionListener {
     public JComboBox edgeValueSelecter = new JComboBox();
     public JComboBox nodeValueExcludeSymbolSelecter = new JComboBox();
     public JComboBox edgeValueExcludeSymbolSelecter  = new JComboBox();
+    public JComboBox nodeDateValueExcludeSymbolSelecter = new JComboBox();
     public JComboBox edgeLabelSelecter = new JComboBox();
     public JComboBox nodeLabelSelecter = new JComboBox();
     public JComboBox nodeLabelExcludeMathSymbolSelecter = new JComboBox();
@@ -144,6 +145,8 @@ implements ActionListener {
     public JComboBox clusteringSelector = new JComboBox();
     public JTextField nodeValueExcludeTxt = new JTextField();
     public JTextField edgeValueExcludeTxt = new JTextField();
+    public JTextField nodeDateValueExcludeTxt = new JTextField();
+
     public JCheckBox weightedNodeColor = new JCheckBox("N. C.");
     public JCheckBox nodeValueBarChart = new JCheckBox("N. V. B.");
     public JCheckBox nodeLabelBarChart = new JCheckBox("N. L. B.");
@@ -170,6 +173,7 @@ implements ActionListener {
     JPanel shortestDistanceDestTablePanel;
     public boolean isTableUpdating;
     public Set<MyNode> visitedNodes;
+    public JLabel nodeDateValueExcludeLabel = new JLabel("DATE");
     public JLabel edgeLabelExcludeComboBoxMenuLabel = new JLabel(" E. L.");
     public JLabel edgeLabelLabel = new JLabel("  E. L.");
     public JLabel edgeValueLabel = new JLabel("  E. V.");
@@ -178,7 +182,6 @@ implements ActionListener {
     public JButton edgeValueDistributionBtn = new JButton("E. V.");
     public JButton nodeValueDistributionBtn = new JButton("N. V.");
     public int previousTableTabbedPane;
-    public JComboBox distributionSelecter = new JComboBox();
 
     public MyViewerComponentController() {}
 
@@ -444,9 +447,6 @@ implements ActionListener {
                                             MySequentialGraphSysUtil.getNodeName(n),
                                             MyMathUtil.getCommaSeperatedNumber(valueMap.get(n))});
                                 }
-
-                                //updateTopLevelCharts();
-                                //updateTableInfos();
 
                                 MySequentialGraphVars.getSequentialGraphViewer().revalidate();
                                 MySequentialGraphVars.getSequentialGraphViewer().repaint();
@@ -973,21 +973,22 @@ implements ActionListener {
         this.setBackground(Color.WHITE);
         this.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        this.distributionSelecter.addItem("DISTRIBUTIONS");
-        this.distributionSelecter.addItem("CONT. CNT. D. BY OBJ.");
-        this.distributionSelecter.addItem("BTW. CONT. CNT. D. BY OBJ.");
-        this.distributionSelecter.addItem("AVG. HOP CNT. D.");
-        this.distributionSelecter.addItem("SEQ. LEG. D.");
-        this.distributionSelecter.addItem("INOUT VAL. DIFF. BY DEP.");
+        MySequentialGraphVars.app.getToolBar().distributionSelecter.addItem(" DISTRIBUTIONS");
+        MySequentialGraphVars.app.getToolBar().distributionSelecter.addItem(" CONT. CNT. D. BY OBJ.");
+        MySequentialGraphVars.app.getToolBar().distributionSelecter.addItem(" BTW. CONT. CNT. D. BY OBJ.");
+        MySequentialGraphVars.app.getToolBar().distributionSelecter.addItem(" AVG. HOP CNT. D.");
+        MySequentialGraphVars.app.getToolBar().distributionSelecter.addItem(" SEQ. LEG. D.");
+        MySequentialGraphVars.app.getToolBar().distributionSelecter.addItem(" INOUT VAL. DIFF. BY DEP.");
 
         if (MySequentialGraphVars.isTimeOn) {
-            this.distributionSelecter.addItem("BTW. T. DIST.");
-            this.distributionSelecter.addItem("REACH TIME BY N. D.");
-            this.distributionSelecter.addItem("IND. REACH T. D.");
-            this.distributionSelecter.addItem("DURATION D.");
+            MySequentialGraphVars.app.getToolBar().distributionSelecter.addItem(" NODE CONT. BY DATE D.");
+            MySequentialGraphVars.app.getToolBar().distributionSelecter.addItem(" BTW. T. DIST.");
+            MySequentialGraphVars.app.getToolBar().distributionSelecter.addItem(" REACH TIME BY N. D.");
+            MySequentialGraphVars.app.getToolBar().distributionSelecter.addItem(" IND. REACH T. D.");
+            MySequentialGraphVars.app.getToolBar().distributionSelecter.addItem(" DURATION D.");
         }
 
-        String[] distributionSelecterTooltips = new String[10];
+        String[] distributionSelecterTooltips = new String[11];
         distributionSelecterTooltips[0] = "SELECT A DISTRIBUTION";
         distributionSelecterTooltips[1] = "CONTRIBUTION COUNT DISTRIBUTION BY OBJECT";
         distributionSelecterTooltips[2] = "BETWEEN CONTRIBUTION COUNT DISTRIBUTION BY OBJECT";
@@ -996,45 +997,48 @@ implements ActionListener {
         distributionSelecterTooltips[5] = "INOUT VALUE DIFFERENCES BY DEPTH";
 
         if (MySequentialGraphVars.isTimeOn) {
-            distributionSelecterTooltips[6] = "BETWEEN REACH TIME DISTRIBUTION";
-            distributionSelecterTooltips[7] = "REACH TIME BY NODE DISTRIBUTION";
-            distributionSelecterTooltips[8] = "INDIVIDUAL REACH TIME DISTRIBUTION";
-            distributionSelecterTooltips[9] = "DURATION DISTRIBUTION";
+            distributionSelecterTooltips[6] = "NODE CONTRIBUTIONS BY DATE DISTRIBUTION";
+            distributionSelecterTooltips[7] = "BETWEEN REACH TIME DISTRIBUTION";
+            distributionSelecterTooltips[8] = "REACH TIME BY NODE DISTRIBUTION";
+            distributionSelecterTooltips[9] = "INDIVIDUAL REACH TIME DISTRIBUTION";
+            distributionSelecterTooltips[10] = "DURATION DISTRIBUTION";
         }
 
-        this.distributionSelecter.setRenderer(new MyComboBoxTooltipRenderer(distributionSelecterTooltips));
-        this.distributionSelecter.setFocusable(false);
-        this.distributionSelecter.setBackground(Color.WHITE);
-        this.distributionSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
-        this.distributionSelecter.addActionListener(new ActionListener() {
+        MySequentialGraphVars.app.getToolBar().distributionSelecter.setRenderer(new MyComboBoxTooltipRenderer(distributionSelecterTooltips));
+        MySequentialGraphVars.app.getToolBar().distributionSelecter.setFocusable(false);
+        MySequentialGraphVars.app.getToolBar().distributionSelecter.setBackground(Color.WHITE);
+        MySequentialGraphVars.app.getToolBar().distributionSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        MySequentialGraphVars.app.getToolBar().distributionSelecter.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 new Thread(new Runnable() {
                     @Override public void run() {
-                        if (distributionSelecter.getSelectedIndex() == 1) {
+                        if (MySequentialGraphVars.app.getToolBar().distributionSelecter.getSelectedIndex() == 1) {
                             MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution graphLevelContributionCountByObjectIDDistribution = new MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution();
                             graphLevelContributionCountByObjectIDDistribution.enlarge();
-                        } else if (distributionSelecter.getSelectedIndex() == 2) {
+                        } else if (MySequentialGraphVars.app.getToolBar().distributionSelecter.getSelectedIndex() == 2) {
                             MyBetweenContributionDistributionByObjectLineChart betweenContributionDistributionByObject = new MyBetweenContributionDistributionByObjectLineChart();
                             betweenContributionDistributionByObject.enlarge();
-                        } else if (distributionSelecter.getSelectedIndex() == 3) {
+                        } else if (MySequentialGraphVars.app.getToolBar().distributionSelecter.getSelectedIndex() == 3) {
                             MyGraphLevelNodeAverageHopCountDistributionLineChart hopCountDistribution = new MyGraphLevelNodeAverageHopCountDistributionLineChart();
                             hopCountDistribution.enlarge();
-                        } else if (distributionSelecter.getSelectedIndex() == 4) {
+                        } else if (MySequentialGraphVars.app.getToolBar().distributionSelecter.getSelectedIndex() == 4) {
                             MyGraphLevelSequenceLengthDistribution sequenceLengthDistribution = new MyGraphLevelSequenceLengthDistribution();
-                        } else if (distributionSelecter.getSelectedIndex() == 5) {
+                        } else if (MySequentialGraphVars.app.getToolBar().distributionSelecter.getSelectedIndex() == 5) {
                             MyInOutValueDifferenceStatByDepthChart inOutDifferenceStatByDepthChart = new MyInOutValueDifferenceStatByDepthChart();
                             inOutDifferenceStatByDepthChart.enlarge();
-                        } else if (distributionSelecter.getSelectedIndex() == 6) {
+                        } else if (MySequentialGraphVars.app.getToolBar().distributionSelecter.getSelectedIndex() == 6) {
+                            MyNodeContributionByDateDistributionLineChart nodeContributionByDateDistributionLineChart = new MyNodeContributionByDateDistributionLineChart();
+                        } else if (MySequentialGraphVars.app.getToolBar().distributionSelecter.getSelectedIndex() == 7) {
                             MyBetweenReachTimeDistributionLineChart betweenReachTimeDistribution = new MyBetweenReachTimeDistributionLineChart();
                             betweenReachTimeDistribution.enlarge();
-                        } else if (distributionSelecter.getSelectedIndex() == 7) {
+                        } else if (MySequentialGraphVars.app.getToolBar().distributionSelecter.getSelectedIndex() == 8) {
                             MyGraphLevelReachTimeDistribution reachTiimeByNodeDistribution = new MyGraphLevelReachTimeDistribution();
                             reachTiimeByNodeDistribution.enlarge();
-                        } else if (distributionSelecter.getSelectedIndex() == 8) {
+                        } else if (MySequentialGraphVars.app.getToolBar().distributionSelecter.getSelectedIndex() == 9) {
                             MyGraphLevelIndividualReachTimeDistribution individualReachTimeDistribution = new MyGraphLevelIndividualReachTimeDistribution();
                             individualReachTimeDistribution.enlarge();
-                        } else if (distributionSelecter.getSelectedIndex() == 9) {
-                            MyGraphTopLevelDurationDistribution durationDistribution = new MyGraphTopLevelDurationDistribution();
+                        } else if (MySequentialGraphVars.app.getToolBar().distributionSelecter.getSelectedIndex() == 10) {
+                            MyGraphLevelDurationDistribution durationDistribution = new MyGraphLevelDurationDistribution();
                             durationDistribution.enlarge();
                         }
                     }
@@ -1084,6 +1088,16 @@ implements ActionListener {
         this.depthExcludeSymbolSelecter.addItem("!=");
         this.depthExcludeSymbolSelecter.addItem("<");
         this.depthExcludeSymbolSelecter.addItem(">");
+
+        this.nodeDateValueExcludeSymbolSelecter.setBackground(Color.WHITE);
+        this.nodeDateValueExcludeSymbolSelecter.setFocusable(false);
+        this.nodeDateValueExcludeSymbolSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.nodeDateValueExcludeSymbolSelecter.addItem("");
+        this.nodeDateValueExcludeSymbolSelecter.addItem("==");
+        this.nodeDateValueExcludeSymbolSelecter.addItem("!=");
+        this.nodeDateValueExcludeSymbolSelecter.addItem("<");
+        this.nodeDateValueExcludeSymbolSelecter.addItem(">");
+        this.nodeDateValueExcludeSymbolSelecter.addItem("BTW.");
 
         this.nodeValueExcludeSymbolSelecter.setFocusable(false);
         this.nodeValueExcludeSymbolSelecter.setBackground(Color.WHITE);
@@ -1168,6 +1182,10 @@ implements ActionListener {
         }
         MyViewerComponentControllerUtil.setNodeValueComboBoxMenu();
 
+        this.nodeDateValueExcludeLabel.setToolTipText("DATE");
+        this.nodeDateValueExcludeLabel.setBackground(Color.WHITE);
+        this.nodeDateValueExcludeLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
+
         this.edgeValueLabel.setToolTipText("EDGE VALUE");
         this.edgeValueLabel.setBackground(Color.WHITE);
         this.edgeValueLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
@@ -1219,6 +1237,7 @@ implements ActionListener {
         }
         this.edgeLabelSelecter.addActionListener(this);
 
+        this.nodeDateValueExcludeLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.nodeLabelLabel.setToolTipText("NODE LABEL");
         this.nodeLabelLabel.setBackground(Color.WHITE);
         this.nodeLabelLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
@@ -1247,6 +1266,13 @@ implements ActionListener {
         this.nodeValueExcludeTxt.setBorder(new LineBorder(Color.DARK_GRAY,1));
         this.nodeValueExcludeTxt.setBackground(Color.WHITE);
         this.nodeValueExcludeTxt.setPreferredSize(new Dimension(60, 20));
+
+        this.nodeDateValueExcludeTxt.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.nodeDateValueExcludeTxt.setToolTipText("ENTER A DATE VALUE");
+        this.nodeDateValueExcludeTxt.setHorizontalAlignment(JTextField.CENTER);
+        this.nodeDateValueExcludeTxt.setBorder(new LineBorder(Color.DARK_GRAY,1));
+        this.nodeDateValueExcludeTxt.setBackground(Color.WHITE);
+        this.nodeDateValueExcludeTxt.setPreferredSize(new Dimension(60, 20));
 
         this.excludeBtn = new JButton("EXCL.");
         //this.excludeBtn.setBackground(Color.GREEN);
@@ -1306,6 +1332,7 @@ implements ActionListener {
         this.topLeftPanel.add(this.edgeValueExludeLabel);
         this.topLeftPanel.add(this.edgeValueExcludeSymbolSelecter);
         this.topLeftPanel.add(this.edgeValueExcludeTxt);
+        //this.topLeftPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
 
         JLabel nodeLabelExcludeComboBoxMenuLabel = new JLabel( "  N. L.");
         nodeLabelExcludeComboBoxMenuLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
@@ -1381,6 +1408,11 @@ implements ActionListener {
         }
         this.topLeftPanel.add(this.depthExcludeSelecter);
         this.topLeftPanel.add(this.depthExcludeSymbolSelecter);
+        if (MySequentialGraphVars.isTimeOn) {
+            this.topLeftPanel.add(this.nodeDateValueExcludeLabel);
+            this.topLeftPanel.add(this.nodeDateValueExcludeSymbolSelecter);
+            this.topLeftPanel.add(this.nodeDateValueExcludeTxt);
+        }
         this.topLeftPanel.add(this.excludeBtn);
 
         this.bottomPanel.setBackground(Color.WHITE);
@@ -1444,7 +1476,7 @@ implements ActionListener {
                 new Thread(new Runnable() {
                     @Override public void run() {
                         if (MySequentialGraphVars.getSequentialGraphViewer().nodeValueName.contains("TIME") ||
-                                MySequentialGraphVars.getSequentialGraphViewer().nodeValueName.contains("DURATION")) {
+                            MySequentialGraphVars.getSequentialGraphViewer().nodeValueName.contains("DURATION")) {
                             MyGraphLevelTopLevelNodeTimeValueDistribution graphLevelTopLevelNodeTimeValueDistribution = new MyGraphLevelTopLevelNodeTimeValueDistribution();
                             graphLevelTopLevelNodeTimeValueDistribution.enlarge();
                         } else {
@@ -1493,14 +1525,14 @@ implements ActionListener {
         graphGroupNodeNumberPercentLabel.setBackground(Color.WHITE);
         graphGroupNodeNumberPercentLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
         graphGroupNodeNumberPercentLabel.setText("");
-        topRightPanel.add(graphGroupNodeNumberPercentLabel);
+        //topRightPanel.add(graphGroupNodeNumberPercentLabel);
         if (MySequentialGraphVars.getSequentialGraphViewer().singleNode == null &&
             MySequentialGraphVars.getSequentialGraphViewer().multiNodes == null &&
             depthSelecter.getSelectedIndex() == 0) {
-            topRightPanel.add(this.distributionSelecter);
+            //topRightPanel.add(MySequentialGraphVars.app.getToolBar().distributionSelecter.distributionSelecter);
         }
 
-        topPanel.add(topRightPanel, BorderLayout.EAST);
+        //topPanel.add(topRightPanel, BorderLayout.EAST);
         topPanel.add(this.topLeftPanel, BorderLayout.WEST);
 
         this.tableTabbedPane.setFocusable(false);
@@ -1612,10 +1644,10 @@ implements ActionListener {
             int i = 0;
             for (MyNode n : nodes) {
                 ((DefaultTableModel) shortestDistanceDestTable.getModel()).addRow(
-                        new String[]{"" + (++i),
-                                MySequentialGraphSysUtil.getNodeName(n.getName()),
-                                "0"
-                        }
+                    new String[]{"" + (++i),
+                        MySequentialGraphSysUtil.getNodeName(n.getName()),
+                        "0"
+                    }
                 );
             }
 
