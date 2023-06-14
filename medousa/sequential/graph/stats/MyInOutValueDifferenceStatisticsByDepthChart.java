@@ -2,7 +2,6 @@ package medousa.sequential.graph.stats;
 
 import medousa.MyProgressBar;
 import medousa.sequential.graph.MyNode;
-import medousa.sequential.utils.MyMathUtil;
 import medousa.sequential.utils.MySequentialGraphVars;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -23,10 +22,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 
-public class MyInOutValueDifferenceStatByDepthChart
+public class MyInOutValueDifferenceStatisticsByDepthChart
 extends JPanel {
 
-    public MyInOutValueDifferenceStatByDepthChart() {
+    public MyInOutValueDifferenceStatisticsByDepthChart() {
         SwingUtilities.invokeLater(
                 new Runnable() {
                     @Override public void run() {
@@ -184,7 +183,7 @@ extends JPanel {
             f.setLayout(new BorderLayout());
             f.setBackground(Color.WHITE);
             f.setPreferredSize(new Dimension(760, 450));
-            f.getContentPane().add(new MyInOutValueDifferenceStatByDepthChart(), BorderLayout.CENTER);
+            f.getContentPane().add(new MyInOutValueDifferenceStatisticsByDepthChart(), BorderLayout.CENTER);
             f.pack();
             f.setAlwaysOnTop(true);
             f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

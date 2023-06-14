@@ -22,6 +22,7 @@ implements ActionListener {
 
     private MyViewerComponentController vc;
 
+
     public MyNodeEdgeExclusionActionListener(MyViewerComponentController vc) {
         this.vc = vc;
     }
@@ -31,20 +32,30 @@ implements ActionListener {
             @Override public void run() {
                 MyProgressBar pb = new MyProgressBar(false);
                 try {
+                    int nodesRemoved = 0;
+                    int edgesRemoved = 0;
+
+                    Collection<MyEdge> edges = MySequentialGraphVars.g.getEdges();
+                    for (MyEdge e : edges) {
+                        if (e.getCurrentValue() == 0) {
+                            edgesRemoved++;
+                        }
+                    }
+
+                    Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+                    for (MyNode n : nodes) {
+                        if (n.getCurrentValue() == 0) {
+                            nodesRemoved++;
+                        }
+                    }
+
                     if (vc.nodeValueExcludeTxt.getText().length() > 0 &&
-                            vc.nodeValueExcludeTxt.getText().matches("[0-9]+")) {
+                        vc.nodeValueExcludeTxt.getText().matches("[0-9]+")) {
                         doNodeValueExclusion();
                     }
 
-                    if (vc.nodeLabelExcludeSelecter.isShowing() &&
-                            vc.nodeLabelExcludeSelecter.getSelectedIndex() > 0 &&
-                            vc.nodeLabelExcludeMathSymbolSelecter.isShowing() &&
-                            vc.nodeLabelExcludeMathSymbolSelecter.getSelectedIndex() > 0) {
-                        doNodeLabelExclusion();
-                    }
-
                     if (vc.edgeValueExcludeTxt.getText().length() > 0 &&
-                            vc.edgeValueExcludeTxt.getText().matches("[0-9]+")) {
+                        vc.edgeValueExcludeTxt.getText().matches("[0-9]+")) {
                         if (vc.edgeValueSelecter.getSelectedIndex() <= 1) {
                             MyMessageUtil.showInfoMsg(MySequentialGraphVars.app, "Select an edge value.");
                             return;
@@ -52,15 +63,24 @@ implements ActionListener {
                         doEdgeValueExclusion();
                     }
 
+                    if (vc.nodeLabelExcludeSelecter.isShowing() &&
+                        vc.nodeLabelExcludeSelecter.getSelectedIndex() > 0 &&
+                        vc.nodeLabelExcludeMathSymbolSelecter.isShowing() &&
+                        vc.nodeLabelExcludeMathSymbolSelecter.getSelectedIndex() > 0) {
+                        doNodeLabelExclusion();
+                    }
+
                     if (vc.edgeLabelExcludeSelecter.isShowing() &&
-                            vc.edgeLabelExcludeSelecter.getSelectedIndex() > 0 &&
-                            vc.edgeLabelExcludeMathSymbolSelecter.isShowing() &&
-                            vc.edgeLabelExcludeMathSymbolSelecter.getSelectedIndex() > 0) {
+                        vc.edgeLabelExcludeSelecter.getSelectedIndex() > 0 &&
+                        vc.edgeLabelExcludeMathSymbolSelecter.isShowing() &&
+                        vc.edgeLabelExcludeMathSymbolSelecter.getSelectedIndex() > 0) {
                         doEdgeLabelExclusion();
                     }
 
-                    if (vc.depthExcludeSelecter.getSelectedIndex() > 0 &&
-                            vc.depthExcludeSymbolSelecter.getSelectedIndex() > 0) {
+                    if (vc.depthExcludeSelecter.isShowing() &&
+                        vc.depthExcludeSelecter.getSelectedIndex() > 0 &&
+                        vc.depthExcludeSymbolSelecter.getSelectedIndex() > 0) {
+                        System.out.println(4);
                         MyDepthNodeExcluder.exludeDepthNodes(Integer.parseInt(vc.depthExcludeSelecter.getSelectedItem().toString()));
                     }
 
@@ -110,8 +130,33 @@ implements ActionListener {
                     }
                     MySequentialGraphVars.app.revalidate();
                     MySequentialGraphVars.app.repaint();
+
+                    int afterEdgesRemoved = 0;
+                    int afterNodesRemoved = 0;
+
+                    for (MyEdge e : edges) {
+                        if (e.getCurrentValue() == 0) {
+                            afterEdgesRemoved++;
+                        }
+                    }
+
+                    for (MyNode n : nodes) {
+                        if (n.getCurrentValue() == 0) {
+                            afterNodesRemoved++;
+                        }
+                    }
+
+                    nodesRemoved = afterNodesRemoved - nodesRemoved;
+                    edgesRemoved = afterEdgesRemoved - edgesRemoved;
+
                     pb.updateValue(100, 100);
                     pb.dispose();
+
+                    MyMessageUtil.showInfoMsg(
+                        MyMathUtil.getCommaSeperatedNumber(nodesRemoved) + " nodes & " +
+                        MyMathUtil.getCommaSeperatedNumber(edgesRemoved) + " edges got removed.");
+
+                    MySequentialGraphVars.getSequentialGraphViewer().excluded = true;
                 } catch (Exception ex) {
                     pb.updateValue(100, 100);
                     pb.dispose();
@@ -134,7 +179,6 @@ implements ActionListener {
     }
 
     private void doEdgeValueExclusion() {
-        int edgesRemoved = 0;
         double edgeExcludeValue1 = Double.parseDouble(vc.edgeValueExcludeTxt.getText().trim());
 
         /**
@@ -147,7 +191,6 @@ implements ActionListener {
                     if (e.getCurrentValue() > edgeExcludeValue1) {
                         e.setOriginalValue(e.getCurrentValue());
                         e.setCurrentValue(0.0f);
-                        edgesRemoved++;
                     }
                 }
             }
@@ -157,7 +200,6 @@ implements ActionListener {
                     if (e.getCurrentValue() >= edgeExcludeValue1) {
                         e.setOriginalValue(e.getCurrentValue());
                         e.setCurrentValue(0.0f);
-                        edgesRemoved++;
                     }
                 }
             }
@@ -167,7 +209,6 @@ implements ActionListener {
                     if (e.getCurrentValue() > edgeExcludeValue1) {
                         e.setOriginalValue(e.getCurrentValue());
                         e.setCurrentValue(0.0f);
-                        edgesRemoved++;
                     }
                 }
             }
@@ -177,7 +218,6 @@ implements ActionListener {
                     if (e.getCurrentValue() != edgeExcludeValue1) {
                         e.setOriginalValue(e.getCurrentValue());
                         e.setCurrentValue(0.0f);
-                        edgesRemoved++;
                     }
                 }
             }
@@ -187,7 +227,6 @@ implements ActionListener {
                     if (e.getCurrentValue() < edgeExcludeValue1) {
                         e.setOriginalValue(e.getCurrentValue());
                         e.setCurrentValue(0.0f);
-                        edgesRemoved++;
                     }
                 }
             }
@@ -197,7 +236,6 @@ implements ActionListener {
                     if (e.getCurrentValue() <= edgeExcludeValue1) {
                         e.setOriginalValue(e.getCurrentValue());
                         e.setCurrentValue(0.0f);
-                        edgesRemoved++;
                     }
                 }
             }
@@ -210,15 +248,9 @@ implements ActionListener {
                     if (e.getCurrentValue() >= leftNum || e.getCurrentValue() <= rightNum) {
                         e.setOriginalValue(e.getCurrentValue());
                         e.setCurrentValue(0.0f);
-                        edgesRemoved++;
                     }
                 }
             }
-        }
-
-        if (edgesRemoved > 0) {
-            MySequentialGraphVars.g.remainingEdges = (MySequentialGraphVars.g.getEdgeCount() - edgesRemoved);
-            MySequentialGraphVars.getSequentialGraphViewer().excluded = true;
         }
 
         /**
@@ -244,9 +276,7 @@ implements ActionListener {
     }
 
     private void doNodeValueExclusion() {
-        int nodesRemoved = 0;
         double nodeExcludeValue1 = Double.parseDouble(vc.nodeValueExcludeTxt.getText().trim());
-
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
         if (vc.nodeValueExcludeSymbolSelecter.getSelectedIndex() == 1) {
             float maxVal = 0f;
@@ -255,8 +285,6 @@ implements ActionListener {
                     if (n.getCurrentValue() > nodeExcludeValue1) {
                         n.setOriginalValue(n.getCurrentValue());
                         n.setCurrentValue(0);
-                        nodesRemoved++;
-
                         if (maxVal < n.getCurrentValue()) {
                             maxVal = n.getCurrentValue();
                         }
@@ -271,7 +299,6 @@ implements ActionListener {
                     if (n.getCurrentValue() >= nodeExcludeValue1) {
                         n.setOriginalValue(n.getCurrentValue());
                         n.setCurrentValue(0);
-                        nodesRemoved++;
 
                         if (maxVal < n.getCurrentValue()) {
                             maxVal = n.getCurrentValue();
@@ -287,8 +314,6 @@ implements ActionListener {
                     if (n.getCurrentValue() == nodeExcludeValue1) {
                         n.setOriginalValue(n.getCurrentValue());
                         n.setCurrentValue(0);
-                        nodesRemoved++;
-
                         if (maxVal < n.getCurrentValue()) {
                             maxVal = n.getCurrentValue();
                         }
@@ -303,8 +328,6 @@ implements ActionListener {
                     if (n.getCurrentValue() != nodeExcludeValue1) {
                         n.setOriginalValue(n.getCurrentValue());
                         n.setCurrentValue(0);
-                        nodesRemoved++;
-
                         if (maxVal < n.getCurrentValue()) {
                             maxVal = n.getCurrentValue();
                         }
@@ -319,8 +342,6 @@ implements ActionListener {
                     if (n.getCurrentValue() < nodeExcludeValue1) {
                         n.setOriginalValue(n.getCurrentValue());
                         n.setCurrentValue(0);
-                        nodesRemoved++;
-
                         if (maxVal < n.getCurrentValue()) {
                             maxVal = n.getCurrentValue();
                         }
@@ -335,8 +356,6 @@ implements ActionListener {
                     if (n.getCurrentValue() <= nodeExcludeValue1) {
                         n.setOriginalValue(n.getCurrentValue());
                         n.setCurrentValue(0);
-                        nodesRemoved++;
-
                         if (maxVal < n.getCurrentValue()) {
                             maxVal = n.getCurrentValue();
                         }
@@ -354,7 +373,6 @@ implements ActionListener {
                     if (n.getCurrentValue() >= leftNum || n.getCurrentValue() <= rightNum) {
                         n.setOriginalValue(n.getCurrentValue());
                         n.setCurrentValue(0);
-                        nodesRemoved++;
                         if (maxVal < n.getCurrentValue()) {
                             maxVal = n.getCurrentValue();
                         }
@@ -362,11 +380,6 @@ implements ActionListener {
                 }
             }
             MySequentialGraphVars.g.MX_N_VAL = maxVal;
-        }
-
-        if (nodesRemoved > 0) {
-            MySequentialGraphVars.getSequentialGraphViewer().excluded = true;
-            MySequentialGraphVars.g.remainingNodes = (MySequentialGraphVars.g.getVertexCount() - nodesRemoved);
         }
 
         /**
@@ -383,8 +396,6 @@ implements ActionListener {
 
     private void doNodeDateTimeExclusion() {
         try {
-            int nodesRemoved = 0;
-
             if (vc.nodeDateValueExcludeSymbolSelecter.getSelectedIndex() == 1) {
                 List<String> filteredNodes = new ArrayList<>();
                 String [] userDateTime = vc.nodeDateValueExcludeTxt.getText().split(","); // Separate date and time with a space separator.
@@ -444,7 +455,6 @@ implements ActionListener {
                     if (n.getCurrentValue() > 0 && filteredNodes.contains(n.getName())) {
                         n.setOriginalValue(n.getCurrentValue());
                         n.setCurrentValue(0);
-                        nodesRemoved++;
                     } else {
                         if (maxVal < n.getCurrentValue()) {
                             maxVal = n.getCurrentValue();
@@ -513,7 +523,6 @@ implements ActionListener {
                     if (n.getCurrentValue() > 0 && filteredNodes.contains(n.getName())) {
                         n.setOriginalValue(n.getCurrentValue());
                         n.setCurrentValue(0);
-                        nodesRemoved++;
                     } else {
                         if (maxVal < n.getCurrentValue()) {
                             maxVal = n.getCurrentValue();
@@ -579,7 +588,6 @@ implements ActionListener {
                     if (n.getCurrentValue() > 0 && filteredNodes.contains(n.getName())) {
                         n.setOriginalValue(n.getCurrentValue());
                         n.setCurrentValue(0);
-                        nodesRemoved++;
                     } else {
                         if (maxVal < n.getCurrentValue()) {
                             maxVal = n.getCurrentValue();
@@ -595,16 +603,15 @@ implements ActionListener {
                 userDateElements = userDateTime[0].split("-");
 
                 Date userDateTimeObject =new Date(
-                        Integer.parseInt(userDateElements[0].trim()),
-                        Integer.parseInt(userDateElements[1].trim()),
-                        Integer.parseInt(userDateElements[2].trim()),
-                        (userTimeElements != null ? Integer.parseInt(userTimeElements[0].trim()) : 0),
-                        (userTimeElements != null ? Integer.parseInt(userTimeElements[1].trim()) : 0),
-                        (userTimeElements != null ? Integer.parseInt(userTimeElements[2].trim()) : 0));
+                    Integer.parseInt(userDateElements[0].trim()),
+                    Integer.parseInt(userDateElements[1].trim()),
+                    Integer.parseInt(userDateElements[2].trim()),
+                    (userTimeElements != null ? Integer.parseInt(userTimeElements[0].trim()) : 0),
+                    (userTimeElements != null ? Integer.parseInt(userTimeElements[1].trim()) : 0),
+                    (userTimeElements != null ? Integer.parseInt(userTimeElements[2].trim()) : 0));
 
                 float maxVal = 0f;
-                BufferedReader br = new BufferedReader(
-                        new FileReader(MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "nodedatefeatures.txt"));
+                BufferedReader br = new BufferedReader(new FileReader(MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "nodedatefeatures.txt"));
                 String line = "";
 
                 while ((line = br.readLine()) != null) {
@@ -617,21 +624,21 @@ implements ActionListener {
                             String [] currentDataDateElements = currentDataDateTime[0].split("\\*");
                             String [] currentDataTimeElements = currentDataDateTime[1].split(":");
                             dataDateTimeObject = new Date(Integer.parseInt(currentDataDateElements[0].trim()),
-                                    Integer.parseInt(currentDataDateElements[1].trim()),
-                                    Integer.parseInt(currentDataDateElements[2].trim()),
-                                    Integer.parseInt(currentDataTimeElements[0].trim()),
-                                    Integer.parseInt(currentDataTimeElements[1].trim()),
-                                    Integer.parseInt(currentDataTimeElements[2].trim())
+                                Integer.parseInt(currentDataDateElements[1].trim()),
+                                Integer.parseInt(currentDataDateElements[2].trim()),
+                                Integer.parseInt(currentDataTimeElements[0].trim()),
+                                Integer.parseInt(currentDataTimeElements[1].trim()),
+                                Integer.parseInt(currentDataTimeElements[2].trim())
                             );
                         } else {
                             String [] currentDataDateElements = currentDataDateTime[0].split("\\*");
                             dataDateTimeObject = new Date(
-                                    Integer.parseInt(currentDataDateElements[0].trim()),
-                                    Integer.parseInt(currentDataDateElements[1].trim()),
-                                    Integer.parseInt(currentDataDateElements[2].trim()),
-                                    0,
-                                    0,
-                                    0);
+                                Integer.parseInt(currentDataDateElements[0].trim()),
+                                Integer.parseInt(currentDataDateElements[1].trim()),
+                                Integer.parseInt(currentDataDateElements[2].trim()),
+                                0,
+                                0,
+                                0);
                         }
                         boolean equal = userDateTimeObject.equals(dataDateTimeObject);
                         if (!equal) {
@@ -645,7 +652,6 @@ implements ActionListener {
                     if (n.getCurrentValue() > 0 && filteredNodes.contains(n.getName())) {
                         n.setOriginalValue(n.getCurrentValue());
                         n.setCurrentValue(0);
-                        nodesRemoved++;
                     } else {
                         if (maxVal < n.getCurrentValue()) {
                             maxVal = n.getCurrentValue();
@@ -661,12 +667,12 @@ implements ActionListener {
                 userDateElements = userDateTime[0].split("-");
 
                 Date userDateTimeObject =new Date(
-                        Integer.parseInt(userDateElements[0].trim()),
-                        Integer.parseInt(userDateElements[1].trim()),
-                        Integer.parseInt(userDateElements[2].trim()),
-                        (userTimeElements != null ? Integer.parseInt(userTimeElements[0].trim()) : 0),
-                        (userTimeElements != null ? Integer.parseInt(userTimeElements[1].trim()) : 0),
-                        (userTimeElements != null ? Integer.parseInt(userTimeElements[2].trim()) : 0));
+                    Integer.parseInt(userDateElements[0].trim()),
+                    Integer.parseInt(userDateElements[1].trim()),
+                    Integer.parseInt(userDateElements[2].trim()),
+                    (userTimeElements != null ? Integer.parseInt(userTimeElements[0].trim()) : 0),
+                    (userTimeElements != null ? Integer.parseInt(userTimeElements[1].trim()) : 0),
+                    (userTimeElements != null ? Integer.parseInt(userTimeElements[2].trim()) : 0));
 
                 float maxVal = 0f;
                 BufferedReader br = new BufferedReader(
@@ -683,22 +689,22 @@ implements ActionListener {
                             String [] currentDataDateElements = currentDataDateTime[0].split("\\*");
                             String [] currentDataTimeElements = currentDataDateTime[1].split(":");
                             dataDateTimeObject = new Date(Integer.parseInt(currentDataDateElements[0].trim()),
-                                    Integer.parseInt(currentDataDateElements[1].trim()),
-                                    Integer.parseInt(currentDataDateElements[2].trim()),
-                                    Integer.parseInt(currentDataTimeElements[0].trim()),
-                                    Integer.parseInt(currentDataTimeElements[1].trim()),
-                                    Integer.parseInt(currentDataTimeElements[2].trim())
+                                Integer.parseInt(currentDataDateElements[1].trim()),
+                                Integer.parseInt(currentDataDateElements[2].trim()),
+                                Integer.parseInt(currentDataTimeElements[0].trim()),
+                                Integer.parseInt(currentDataTimeElements[1].trim()),
+                                Integer.parseInt(currentDataTimeElements[2].trim())
                             );
                         } else {
                             String [] currentDataDateElements = currentDataDateTime[0].split("\\*");
                             // System.out.println(currentDataDateElements[0] + "-" + currentDataDateElements[1] + "-" + currentDataDateElements[2]);
                             dataDateTimeObject = new Date(
-                                    Integer.parseInt(currentDataDateElements[0].trim()),
-                                    Integer.parseInt(currentDataDateElements[1].trim()),
-                                    Integer.parseInt(currentDataDateElements[2].trim()),
-                                    0,
-                                    0,
-                                    0);
+                                Integer.parseInt(currentDataDateElements[0].trim()),
+                                Integer.parseInt(currentDataDateElements[1].trim()),
+                                Integer.parseInt(currentDataDateElements[2].trim()),
+                                0,
+                                0,
+                                0);
                         }
                         int comparison = userDateTimeObject.compareTo(dataDateTimeObject);
                         if (comparison < 0) {
@@ -712,7 +718,6 @@ implements ActionListener {
                     if (n.getCurrentValue() > 0 && filteredNodes.contains(n.getName())) {
                         n.setOriginalValue(n.getCurrentValue());
                         n.setCurrentValue(0);
-                        nodesRemoved++;
                     } else {
                         if (maxVal < n.getCurrentValue()) {
                             maxVal = n.getCurrentValue();
@@ -780,7 +785,6 @@ implements ActionListener {
                     if (n.getCurrentValue() > 0 && filteredNodes.contains(n.getName())) {
                         n.setOriginalValue(n.getCurrentValue());
                         n.setCurrentValue(0);
-                        nodesRemoved++;
                     } else {
                         if (maxVal < n.getCurrentValue()) {
                             maxVal = n.getCurrentValue();
@@ -848,7 +852,6 @@ implements ActionListener {
                     if (n.getCurrentValue() > 0 && filteredNodes.contains(n.getName())) {
                         n.setOriginalValue(n.getCurrentValue());
                         n.setCurrentValue(0);
-                        nodesRemoved++;
                     } else {
                         if (maxVal < n.getCurrentValue()) {
                             maxVal = n.getCurrentValue();
@@ -856,11 +859,6 @@ implements ActionListener {
                     }
                 }
                 MySequentialGraphVars.g.MX_N_VAL = maxVal;
-            }
-
-            if (nodesRemoved > 0) {
-                MySequentialGraphVars.getSequentialGraphViewer().excluded = true;
-                MySequentialGraphVars.g.remainingNodes = (MySequentialGraphVars.g.getVertexCount() - nodesRemoved);
             }
 
             /**
@@ -880,14 +878,12 @@ implements ActionListener {
 
     private void doNodeLabelExclusion() {
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
-        int nodesRemoved = 0;
         if (vc.nodeLabelExcludeMathSymbolSelecter.getSelectedIndex() > 0) {// Node label condition is on.
             if (vc.nodeLabelExcludeMathSymbolSelecter.getSelectedIndex() == 1) {
                 for (MyNode n : nodes) {
                     if (n.getCurrentValue() > 0) {
                         if (n.nodeLabelMap.containsValue(vc.nodeLabelExcludeSelecter.getSelectedItem().toString().trim())) {
                             n.setCurrentValue(0);
-                            nodesRemoved++;
                         }
                     }
                 }
@@ -896,22 +892,15 @@ implements ActionListener {
                     if (n.getCurrentValue() > 0) {
                         if (!n.nodeLabelMap.containsValue(vc.nodeLabelExcludeSelecter.getSelectedItem().toString().trim())) {
                             n.setCurrentValue(0);
-                            nodesRemoved++;
                         }
                     }
                 }
             }
         }
-
-        if (nodesRemoved > 0) {
-            MySequentialGraphVars.getSequentialGraphViewer().excluded = true;
-            MySequentialGraphVars.g.remainingNodes = (MySequentialGraphVars.g.getVertexCount() - nodesRemoved);
-        }
     }
 
     private void doEdgeLabelExclusion() {
         Collection<MyEdge> edges = MySequentialGraphVars.g.getVertices();
-        int edgesRemoved = 0;
         if (vc.edgeLabelExcludeMathSymbolSelecter.getSelectedIndex() > 0) {// Edge label exclusion condition is on.
             if (vc.edgeLabelExcludeMathSymbolSelecter.getSelectedIndex() == 1) {
                 for (MyEdge e : edges) {
@@ -919,9 +908,6 @@ implements ActionListener {
                         if (e.edgeLabelMap.containsValue(vc.edgeLabelExcludeSelecter.getSelectedItem().toString().trim())) {
                             e.setOriginalValue(e.getCurrentValue());
                             e.setCurrentValue(0.0f);
-                            e.getSource().setCurrentValue(0);
-                            e.getDest().setCurrentValue(0);
-                            edgesRemoved++;
                         }
                     }
                 }
@@ -931,18 +917,10 @@ implements ActionListener {
                         if (!e.edgeLabelMap.containsValue(vc.edgeLabelExcludeSelecter.getSelectedItem().toString().trim())) {
                             e.setOriginalValue(e.getCurrentValue());
                             e.setCurrentValue(0.0f);
-                            e.getSource().setCurrentValue(0);
-                            e.getDest().setCurrentValue(0);
-                            edgesRemoved++;
                         }
                     }
                 }
             }
-        }
-
-        if (edgesRemoved > 0) {
-            MySequentialGraphVars.g.remainingEdges = (MySequentialGraphVars.g.getEdgeCount() - edgesRemoved);
-            MySequentialGraphVars.getSequentialGraphViewer().excluded = true;
         }
     }
 

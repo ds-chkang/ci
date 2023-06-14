@@ -102,10 +102,10 @@ public class MyGraphLevelNodeValueDistributionLineChart extends JPanel {
                         public void run() {
                             if (MySequentialGraphVars.getSequentialGraphViewer().nodeValueName.contains("TIME") ||
                                     MySequentialGraphVars.getSequentialGraphViewer().nodeValueName.contains("DURATION")) {
-                                MyGraphLevelTopLevelNodeTimeValueDistribution graphLevelTopLevelNodeTimeValueDistribution = new MyGraphLevelTopLevelNodeTimeValueDistribution();
+                                MyGraphLevelNodeTimeValueDistribution graphLevelTopLevelNodeTimeValueDistribution = new MyGraphLevelNodeTimeValueDistribution();
                                 graphLevelTopLevelNodeTimeValueDistribution.enlarge();
                             } else {
-                                MyGraphLevelTopLevelNodeValueDistribution graphLevelTopLevelNodeValueDistribution = new MyGraphLevelTopLevelNodeValueDistribution();
+                                MyGraphLevelNodeValueDistribution graphLevelTopLevelNodeValueDistribution = new MyGraphLevelNodeValueDistribution();
                                 graphLevelTopLevelNodeValueDistribution.enlarge();
                             }
                         }

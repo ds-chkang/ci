@@ -24,7 +24,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
-public class MyGraphLevelTopLevelEdgeValueDistribution
+public class MyGraphLevelEdgeValueDistribution
 extends JPanel
 implements ActionListener {
 
@@ -34,7 +34,7 @@ implements ActionListener {
     private float avgValue = 0;
     private float stdValue = 0;
 
-    public MyGraphLevelTopLevelEdgeValueDistribution() {
+    public MyGraphLevelEdgeValueDistribution() {
 
     }
 

@@ -14,7 +14,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Collection;
 
 public class MyViewerMenu
 extends JPopupMenu
@@ -169,15 +168,15 @@ implements ActionListener {
                 } else if (e.getSource() == currentNodeValueDistribution) {
                     if (MySequentialGraphVars.getSequentialGraphViewer().nodeValueName.contains("TIME") ||
                         MySequentialGraphVars.getSequentialGraphViewer().nodeValueName.contains("DURATION")) {
-                        MyGraphLevelTopLevelNodeTimeValueDistribution graphLevelTopLevelNodeTimeValueDistribution = new MyGraphLevelTopLevelNodeTimeValueDistribution();
+                        MyGraphLevelNodeTimeValueDistribution graphLevelTopLevelNodeTimeValueDistribution = new MyGraphLevelNodeTimeValueDistribution();
                         graphLevelTopLevelNodeTimeValueDistribution.enlarge();
                     } else {
-                        MyGraphLevelTopLevelNodeValueDistribution graphLevelTopLevelNodeValueDistribution = new MyGraphLevelTopLevelNodeValueDistribution();
+                        MyGraphLevelNodeValueDistribution graphLevelTopLevelNodeValueDistribution = new MyGraphLevelNodeValueDistribution();
                         graphLevelTopLevelNodeValueDistribution.enlarge();
                     }
                 } else if (e.getSource() == currentEdgeValueDistribution) {
                     if (MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.getSelectedIndex() > 1) {
-                        MyGraphLevelTopLevelEdgeValueDistribution graphLevelTopLevelEdgeValueDistribution = new MyGraphLevelTopLevelEdgeValueDistribution();
+                        MyGraphLevelEdgeValueDistribution graphLevelTopLevelEdgeValueDistribution = new MyGraphLevelEdgeValueDistribution();
                         graphLevelTopLevelEdgeValueDistribution.enlarge();
                     } else {
                         MyMessageUtil.showInfoMsg(MySequentialGraphVars.app, "Select an edge value.");

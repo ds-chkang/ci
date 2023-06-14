@@ -1013,7 +1013,7 @@ implements ActionListener {
                 new Thread(new Runnable() {
                     @Override public void run() {
                         if (MySequentialGraphVars.app.getToolBar().distributionSelecter.getSelectedIndex() == 1) {
-                            MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution graphLevelContributionCountByObjectIDDistribution = new MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution();
+                            MyGraphLevelNodeContributionCountByObjectIDDistribution graphLevelContributionCountByObjectIDDistribution = new MyGraphLevelNodeContributionCountByObjectIDDistribution();
                             graphLevelContributionCountByObjectIDDistribution.enlarge();
                         } else if (MySequentialGraphVars.app.getToolBar().distributionSelecter.getSelectedIndex() == 2) {
                             MyBetweenContributionDistributionByObjectLineChart betweenContributionDistributionByObject = new MyBetweenContributionDistributionByObjectLineChart();
@@ -1024,10 +1024,10 @@ implements ActionListener {
                         } else if (MySequentialGraphVars.app.getToolBar().distributionSelecter.getSelectedIndex() == 4) {
                             MyGraphLevelSequenceLengthDistribution sequenceLengthDistribution = new MyGraphLevelSequenceLengthDistribution();
                         } else if (MySequentialGraphVars.app.getToolBar().distributionSelecter.getSelectedIndex() == 5) {
-                            MyInOutValueDifferenceStatByDepthChart inOutDifferenceStatByDepthChart = new MyInOutValueDifferenceStatByDepthChart();
+                            MyInOutValueDifferenceStatisticsByDepthChart inOutDifferenceStatByDepthChart = new MyInOutValueDifferenceStatisticsByDepthChart();
                             inOutDifferenceStatByDepthChart.enlarge();
                         } else if (MySequentialGraphVars.app.getToolBar().distributionSelecter.getSelectedIndex() == 6) {
-                            MyNodeContributionByDateDistributionLineChart nodeContributionByDateDistributionLineChart = new MyNodeContributionByDateDistributionLineChart();
+                            MyNodeObjectIDContributionByDateDistributionLineChart nodeContributionByDateDistributionLineChart = new MyNodeObjectIDContributionByDateDistributionLineChart();
                         } else if (MySequentialGraphVars.app.getToolBar().distributionSelecter.getSelectedIndex() == 7) {
                             MyBetweenReachTimeDistributionLineChart betweenReachTimeDistribution = new MyBetweenReachTimeDistributionLineChart();
                             betweenReachTimeDistribution.enlarge();
@@ -1451,7 +1451,7 @@ implements ActionListener {
                 new Thread(new Runnable() {
                     @Override public void run() {
                         if (edgeValueSelecter.getSelectedIndex() > 1) {
-                            MyGraphLevelTopLevelEdgeValueDistribution graphLevelTopLevelEdgeValueDistribution = new MyGraphLevelTopLevelEdgeValueDistribution();
+                            MyGraphLevelEdgeValueDistribution graphLevelTopLevelEdgeValueDistribution = new MyGraphLevelEdgeValueDistribution();
                             graphLevelTopLevelEdgeValueDistribution.enlarge();
                         } else {
                             MyMessageUtil.showInfoMsg(MySequentialGraphVars.app, "Select an edge value.");
@@ -1472,10 +1472,10 @@ implements ActionListener {
                     @Override public void run() {
                         if (MySequentialGraphVars.getSequentialGraphViewer().nodeValueName.contains("TIME") ||
                             MySequentialGraphVars.getSequentialGraphViewer().nodeValueName.contains("DURATION")) {
-                            MyGraphLevelTopLevelNodeTimeValueDistribution graphLevelTopLevelNodeTimeValueDistribution = new MyGraphLevelTopLevelNodeTimeValueDistribution();
+                            MyGraphLevelNodeTimeValueDistribution graphLevelTopLevelNodeTimeValueDistribution = new MyGraphLevelNodeTimeValueDistribution();
                             graphLevelTopLevelNodeTimeValueDistribution.enlarge();
                         } else {
-                            MyGraphLevelTopLevelNodeValueDistribution graphLevelTopLevelNodeValueDistribution = new MyGraphLevelTopLevelNodeValueDistribution();
+                            MyGraphLevelNodeValueDistribution graphLevelTopLevelNodeValueDistribution = new MyGraphLevelNodeValueDistribution();
                             graphLevelTopLevelNodeValueDistribution.enlarge();
                         }
                     }

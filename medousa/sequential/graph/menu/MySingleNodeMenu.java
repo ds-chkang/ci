@@ -80,7 +80,7 @@ implements ActionListener {
         new Thread(new Runnable() {
             @Override public void run() {
                 if (e.getSource() == contributionDistributionNyObject) {
-                    MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution graphLevelContributionCountByObjectIDDistribution = new MyGraphLevelTopLevelNodeContributionCountByObjectIDDistribution();
+                    MyGraphLevelNodeContributionCountByObjectIDDistribution graphLevelContributionCountByObjectIDDistribution = new MyGraphLevelNodeContributionCountByObjectIDDistribution();
                     graphLevelContributionCountByObjectIDDistribution.enlarge();
                 } else if (e.getSource() == predecessorStatistics) {
                     MyPredecessorStatistics predecessorStatistics = new MyPredecessorStatistics();

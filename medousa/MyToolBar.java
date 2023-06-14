@@ -396,6 +396,7 @@ implements ActionListener {
                                                 funnelBtn.setVisible(false);
                                                 clusteringBtn.setVisible(false);
                                                 networkBtn.setVisible(false);
+                                                distributionSelecter.setVisible(false);
                                                 MyMessageUtil.showInfoMsg("<html><body>An exception has occurred while creating a network.<br>Please, check the information provided in the configuration panel.</body></html>");
                                             } else {
                                                 MyMessageUtil.showInfoMsg("Network has successfully been built!");
@@ -416,6 +417,7 @@ implements ActionListener {
                                             clusteringBtn.setVisible(false);
                                             //networkBtn.setEnabled(false);
                                             networkBtn.setVisible(false);
+                                            distributionSelecter.setVisible(false);
                                             MyMessageUtil.showInfoMsg("<html><body>An exception has occurred while creating a network.<br>Please, check the information provided in the configuration panel.</body></html>");
                                         } finally {
 
