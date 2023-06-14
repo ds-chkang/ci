@@ -6,6 +6,7 @@ import medousa.sequential.utils.MySequentialGraphVars;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Created by changhee on 2017. 7. 14.
@@ -77,6 +78,7 @@ public class MyNodeDateFeatureGenerator {
         setItemIDIndex();
         setItemNameIndex();
         setTrTimeIdx();
+        MySequentialGraphVars.years = new HashSet<>();
 
         generateSequences(dataIn);
 
@@ -134,12 +136,15 @@ public class MyNodeDateFeatureGenerator {
                             items = dataIn.get(recCnt).get(this.itemIDIdx);
                         } else {
                             items = items + MySequentialGraphVars.commaDelimeter + dataIn.get(recCnt).get(itemIDIdx);;
+
                         }
                     } else {
                         if (seq.length() == 0) {
                             seq = items + ":" + (dataIn.get(dataIn.size()-1).get(trTimeIdx)).replaceAll("-", "*");
+                            MySequentialGraphVars.years.add(dataIn.get(dataIn.size()-1).get(trTimeIdx));
                         } else {
                             seq = seq + MySequentialGraphVars.hyphenDelimeter + items + ":" + (dataIn.get(dataIn.size()-1).get(trTimeIdx)).replaceAll("-", "*");
+                            MySequentialGraphVars.years.add(dataIn.get(dataIn.size()-1).get(trTimeIdx));
                         }
                         items = dataIn.get(recCnt).get(itemIDIdx);
                         preTrID = dataIn.get(recCnt).get(trIDIdx);
@@ -147,8 +152,10 @@ public class MyNodeDateFeatureGenerator {
                 } else {
                     if (seq.length() == 0) {
                         seq = items + ":" + (dataIn.get(recCnt-1).get(trTimeIdx)).replaceAll("-", "*");
+                        MySequentialGraphVars.years.add(dataIn.get(dataIn.size()-1).get(trTimeIdx));
                     } else {
                         seq = seq + MySequentialGraphVars.hyphenDelimeter + items + ":" + (dataIn.get(dataIn.size()-1).get(trTimeIdx)).replaceAll("-", "*");
+                        MySequentialGraphVars.years.add(dataIn.get(dataIn.size()-1).get(trTimeIdx));
                     }
                     this.fw.addSequence(seq);
                     items = "";
@@ -160,6 +167,7 @@ public class MyNodeDateFeatureGenerator {
                 }
             }
             items = items + ":" + (dataIn.get(dataIn.size()-1).get(trTimeIdx)).replaceAll("-", "*");
+            MySequentialGraphVars.years.add(dataIn.get(dataIn.size()-1).get(trTimeIdx));
             if (seq.length() != 0) {
                 seq = seq + MySequentialGraphVars.hyphenDelimeter + items;
             } else {

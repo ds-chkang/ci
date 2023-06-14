@@ -263,7 +263,7 @@ implements ActionListener {
                                 for (String n : nodeMap.keySet()) {
                                     ((DefaultTableModel) bottomTable.getModel()).addRow(new String[]{
                                         " " + (++i),
-                                        " " + n, //MySequentialGraphSysUtil.getNodeName(n),
+                                        " " + MySequentialGraphSysUtil.getNodeName(n),
                                         " " + MyMathUtil.getCommaSeperatedNumber(nodeMap.get(n))
                                     });
                                 }

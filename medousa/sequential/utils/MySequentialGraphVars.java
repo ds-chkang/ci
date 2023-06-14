@@ -34,6 +34,7 @@ public class MySequentialGraphVars {
     public final static Font tahomaBoldFont28 = new Font("Tahoma", Font.BOLD, 28);
     public final static Font tahomaPlainFont18 = new Font("Tahoma", Font.PLAIN, 18);
 
+    public static Set<String> years;
     public static int numberOfGraphs;
     public static String outputDir = "";
     public static MyGraph g;

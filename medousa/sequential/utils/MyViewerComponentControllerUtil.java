@@ -36,7 +36,6 @@ public class MyViewerComponentControllerUtil {
         MySequentialGraphVars.getSequentialGraphViewer().add(MySequentialGraphVars.getSequentialGraphViewer().depthNodeLevelNodeValueBarChart);
     }
 
-
     public static void setDepthNeighborNodeBarChartToViewer() {
         MySequentialGraphVars.getSequentialGraphViewer().depthNodeLevelNeighborNodeValueBarChart = new MyDepthLevelNeighborNodeValueBarChart();
         MySequentialGraphVars.getSequentialGraphViewer().depthNodeLevelNeighborNodeValueBarChart.setNeighborNodeValueBarChart();
@@ -398,6 +397,7 @@ public class MyViewerComponentControllerUtil {
             MySequentialGraphVars.getSequentialGraphViewer().neighborsOnly = false;
             MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueExcludeTxt.setText("");
             MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueExcludeTxt.setText("");
+            MySequentialGraphVars.getSequentialGraphViewer().vc.nodeDateValueExcludeTxt.setText("");
             MySequentialGraphVars.getSequentialGraphViewer().excluded = false;
             MySequentialGraphVars.getSequentialGraphViewer().isClustered = false;
             MySequentialGraphVars.getSequentialGraphViewer().hoveredNode = null;
@@ -440,6 +440,7 @@ public class MyViewerComponentControllerUtil {
             MySequentialGraphVars.getSequentialGraphViewer().vc.edgeLabelSelecter.setSelectedIndex(0);
             MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelSelecter.setSelectedIndex(1);
             MySequentialGraphVars.getSequentialGraphViewer().vc.depthExcludeSymbolSelecter.setSelectedIndex(0);
+            MySequentialGraphVars.getSequentialGraphViewer().vc.nodeDateValueExcludeSymbolSelecter.setSelectedIndex(0);
             MySequentialGraphVars.getSequentialGraphViewer().vc.depthExcludeSelecter.setSelectedIndex(0);
             MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueExcludeTxt.setText("");
             MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueExcludeTxt.setText("");

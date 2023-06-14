@@ -230,6 +230,7 @@ public class MySequentialGraphSysUtil {
         MySequentialGraphVars.nodeOrderByComboBoxIdx = -1;
         MySequentialGraphVars.currentGraphDepth = 0;
         MySequentialGraphVars.itemToIdMap = null;
+        MySequentialGraphVars.years = null;
 
         MySequentialGraphVars.userDefinedNodeLabelSet = new HashSet<>();
         MySequentialGraphVars.userDefinedNodeValueMap = new HashMap<>();
@@ -336,6 +337,28 @@ public class MySequentialGraphSysUtil {
         } else {
             return getDecodedNodeName(encodedNodeName);
         }
+    }
+
+    public static int getMaxYear() {
+        int max = 0;
+        for (String year : MySequentialGraphVars.years) {
+            int intYear = Integer.parseInt(year.split("-")[0]);
+            if (max < intYear) {
+                max = intYear;
+            }
+        }
+        return max;
+    }
+
+    public static int getMinYear() {
+        int min = 1000000000;
+        for (String year : MySequentialGraphVars.years) {
+            int intYear = Integer.parseInt(year.split("-")[0]);
+            if (min > intYear) {
+                min = intYear;
+            }
+        }
+        return min;
     }
 
 }
