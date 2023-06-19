@@ -51,7 +51,7 @@ public class MyGraphLevelPredecessorCountDistributionLineChart extends JPanel {
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
         for (MyNode n : nodes) {
             if (n.getCurrentValue() == 0 || (MySequentialGraphVars.getSequentialGraphViewer().isClustered && n.clusteringColor != MyClusteringConfig.selectedClusterColor)) continue;
-            String nodeName = (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName()));
+            String nodeName = MySequentialGraphSysUtil.getNodeName(n.getName());
             valueMap.put(nodeName, (long) MySequentialGraphVars.g.getPredecessorCount(n));
             final float hue = rand.nextFloat();
             final float saturation = 0.9f;
@@ -136,6 +136,7 @@ public class MyGraphLevelPredecessorCountDistributionLineChart extends JPanel {
         });
 
         JButton enlargeBtn = new JButton("+");
+        enlargeBtn.setToolTipText("ENLARGE");
         enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
         enlargeBtn.setBackground(Color.WHITE);
         enlargeBtn.setFocusable(false);
@@ -162,6 +163,8 @@ public class MyGraphLevelPredecessorCountDistributionLineChart extends JPanel {
         topPanel.add(buttonPanel, BorderLayout.EAST);
         add(topPanel, BorderLayout.NORTH);
         add(chartPanel, BorderLayout.CENTER);
+
+        chart.removeLegend();
         revalidate();
         repaint();
     }
@@ -198,7 +201,7 @@ public class MyGraphLevelPredecessorCountDistributionLineChart extends JPanel {
                     XYSeriesCollection dataset = new XYSeriesCollection();
                     dataset.addSeries(predecessorCountSeries);
 
-                    JFreeChart chart = ChartFactory.createXYLineChart("", "DEPTH", "", dataset);
+                    JFreeChart chart = ChartFactory.createXYLineChart("", "", "", dataset);
                     chart.getTitle().setHorizontalAlignment(HorizontalAlignment.LEFT);
                     chart.getXYPlot().setBackgroundPaint(Color.WHITE);
                     chart.getXYPlot().setDomainGridlinePaint(Color.DARK_GRAY);
@@ -289,6 +292,7 @@ public class MyGraphLevelPredecessorCountDistributionLineChart extends JPanel {
                     renderer.setBaseLegendTextFont(MySequentialGraphVars.tahomaPlainFont11);
                     add(chartPanel, BorderLayout.CENTER);
 
+                    chart.removeLegend();
                     revalidate();
                     repaint();
                 } catch (Exception ex) {

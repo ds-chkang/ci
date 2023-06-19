@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -80,8 +81,7 @@ implements ActionListener {
                     if (vc.depthExcludeSelecter.isShowing() &&
                         vc.depthExcludeSelecter.getSelectedIndex() > 0 &&
                         vc.depthExcludeSymbolSelecter.getSelectedIndex() > 0) {
-                        System.out.println(4);
-                        MyDepthNodeExcluder.exludeDepthNodes(Integer.parseInt(vc.depthExcludeSelecter.getSelectedItem().toString()));
+                        exludeDepthNodes(Integer.parseInt(vc.depthExcludeSelecter.getSelectedItem().toString()));
                     }
 
                     if (vc.nodeDateValueExcludeTxt.getText().length() > 0) {
@@ -119,8 +119,10 @@ implements ActionListener {
                         }
                     }
 
+                    doNodeDayExclusion();
                     updateBarCharts();
                     vc.updateTableInfos();
+                    
                     if (MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
                         MySequentialGraphVars.app.getSequentialGraphDashboard().setSingleNodeDashBoard();
                     } else if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null) {
@@ -136,6 +138,8 @@ implements ActionListener {
 
                     for (MyEdge e : edges) {
                         if (e.getCurrentValue() == 0) {
+                            afterEdgesRemoved++;
+                        } else if (e.getSource().getCurrentValue() == 0 || e.getDest().getCurrentValue() == 0) {
                             afterEdgesRemoved++;
                         }
                     }
@@ -164,6 +168,115 @@ implements ActionListener {
                 }
             }
         }).start();
+    }
+
+    public void exludeDepthNodes(int depth) {
+        Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+        float max = 0f;
+        if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthExcludeSymbolSelecter.getSelectedIndex() == 1) {
+            for (MyNode n : nodes) {
+                if (n.getCurrentValue() > 0) {
+                    if (n.nodeDepthInfoMap.containsKey(depth)) {
+                        n.setOriginalValue(n.getCurrentValue());
+                        n.setCurrentValue(0);
+                    } else if (max < n.getCurrentValue()) {
+                        max = n.getCurrentValue();
+                    }
+                }
+            }
+        } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthExcludeSymbolSelecter.getSelectedIndex() == 2) {
+            for (MyNode n : nodes) {
+                if (n.getCurrentValue() > 0) {
+                    if (!n.nodeDepthInfoMap.containsKey(depth)) {
+                        n.setOriginalValue(n.getCurrentValue());
+                        n.setCurrentValue(0);
+                    } else if (max < n.getCurrentValue()) {
+                        max = n.getCurrentValue();
+                    }
+                }
+            }
+        } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthExcludeSymbolSelecter.getSelectedIndex() == 3) {
+            for (MyNode n : nodes) {
+                if (n.getCurrentValue() > 0) {
+                    boolean isLowerThanDepth = false;
+                    for (int i = depth+1; i <= MySequentialGraphVars.mxDepth; i++) {
+                        if (n.nodeDepthInfoMap.containsKey(i)) {
+                            isLowerThanDepth = true;
+                            break;
+                        }
+                    }
+
+                    if (!isLowerThanDepth) {
+                        n.setOriginalValue(n.getCurrentValue());
+                        n.setCurrentValue(0);
+                    } else if (max < n.getCurrentValue()) {
+                        max = n.getCurrentValue();
+                    }
+                }
+            }
+        } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthExcludeSymbolSelecter.getSelectedIndex() == 4) {
+            for (MyNode n : nodes) {
+                if (n.getCurrentValue() > 0) {
+                    boolean isGreaterThanOrEqualDepth = false;
+                    for (int i = depth; i <= MySequentialGraphVars.mxDepth; i++) {
+                        if (n.nodeDepthInfoMap.containsKey(i)) {
+                            isGreaterThanOrEqualDepth = true;
+                            break;
+                        }
+                    }
+
+                    if (!isGreaterThanOrEqualDepth) {
+                        n.setOriginalValue(n.getCurrentValue());
+                        n.setCurrentValue(0);
+                    } else if (max < n.getCurrentValue()) {
+                        max = n.getCurrentValue();
+                    }
+                }
+            }
+        } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthExcludeSymbolSelecter.getSelectedIndex() == 5) {
+            for (MyNode n : nodes) {
+                if (n.getCurrentValue() > 0) {
+                    boolean isLowerThanDepth = false;
+                    for (int i = 1; i < depth; i++) {
+                        if (n.nodeDepthInfoMap.containsKey(i)) {
+                            isLowerThanDepth = true;
+                            break;
+                        }
+                    }
+
+                    if (isLowerThanDepth) {
+                        n.setOriginalValue(n.getCurrentValue());
+                        n.setCurrentValue(0);
+                    } else if (max < n.getCurrentValue()) {
+                        max = n.getCurrentValue();
+                    }
+                }
+            }
+        } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.depthExcludeSymbolSelecter.getSelectedIndex() == 6) {
+            for (MyNode n : nodes) {
+                if (n.getCurrentValue() > 0) {
+                    boolean isLowerThanOrEqualDepth = false;
+                    for (int i = 1; i <= depth; i++) {
+                        if (n.nodeDepthInfoMap.containsKey(i)) {
+                            isLowerThanOrEqualDepth = true;
+                            break;
+                        }
+                    }
+
+                    if (isLowerThanOrEqualDepth) {
+                        n.setOriginalValue(n.getCurrentValue());
+                        n.setCurrentValue(0);
+                    } else if (max < n.getCurrentValue()) {
+                        max = n.getCurrentValue();
+                    }
+                }
+            }
+        }
+
+        if (max > 0) {
+            MySequentialGraphVars.g.MX_N_VAL = max;
+            MySequentialGraphVars.getSequentialGraphViewer().excluded = true;
+        }
     }
 
     private void updateBarCharts() {
@@ -394,10 +507,214 @@ implements ActionListener {
         }
     }
 
+    private void doNodeDayExclusion() {
+        try {
+            if (vc.dayExcludeSelecter.getSelectedIndex() == 1) {
+                Set<String> filteredNodes = new HashSet<>();
+                float maxVal = 0f;
+                BufferedReader br = new BufferedReader(
+                        new FileReader(MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "nodedatefeatures.txt"));
+                String line = "";
+                while ((line = br.readLine()) != null) {
+                    String[] itemsets = line.split("-");
+                    for (String itemset : itemsets) {
+                        String day = itemset.split(":")[1];
+                        if (day.equals(vc.daySet.get(vc.dayExcludeSelecter.getSelectedIndex()-1))) {
+                            filteredNodes.add(itemset.split(":")[0]);
+                        }
+                    }
+                }
+
+                Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+                for (MyNode n : nodes) {
+                    if (n.getCurrentValue() > 0 && filteredNodes.contains(n.getName())) {
+                        n.setOriginalValue(n.getCurrentValue());
+                        n.setCurrentValue(0);
+                    } else {
+                        if (maxVal < n.getCurrentValue()) {
+                            maxVal = n.getCurrentValue();
+                        }
+                    }
+                }
+
+                MySequentialGraphVars.g.MX_N_VAL = maxVal;
+            } else if (vc.dayExcludeSelecter.getSelectedIndex() == 2) {
+                if (vc.dayExcludeSelecter.getSelectedIndex() == 1) {
+                    Set<String> filteredNodes = new HashSet<>();
+                    float maxVal = 0f;
+                    BufferedReader br = new BufferedReader(
+                            new FileReader(MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "nodedatefeatures.txt"));
+                    String line = "";
+                    while ((line = br.readLine()) != null) {
+                        String[] itemsets = line.split("-");
+                        for (String itemset : itemsets) {
+                            String day = itemset.split(":")[1];
+                            if (!day.equals(vc.daySet.get(vc.dayExcludeSelecter.getSelectedIndex()-1))) {
+                                filteredNodes.add(itemset.split(":")[0]);
+                            }
+                        }
+                    }
+
+                    Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+                    for (MyNode n : nodes) {
+                        if (n.getCurrentValue() > 0 && filteredNodes.contains(n.getName())) {
+                            n.setOriginalValue(n.getCurrentValue());
+                            n.setCurrentValue(0);
+                        } else {
+                            if (maxVal < n.getCurrentValue()) {
+                                maxVal = n.getCurrentValue();
+                            }
+                        }
+                    }
+
+                    MySequentialGraphVars.g.MX_N_VAL = maxVal;
+                }
+            } else if (vc.dayExcludeSelecter.getSelectedIndex() == 3) {
+                String dateFormatPattern = "EEEE";
+                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(dateFormatPattern);
+                DayOfWeek dayOfWeek1 = DayOfWeek.from(dateFormatter.parse(vc.daySet.get(vc.dayExcludeSelecter.getSelectedIndex()-1)));
+
+                Set<String> filteredNodes = new HashSet<>();
+                float maxVal = 0f;
+                BufferedReader br = new BufferedReader(
+                        new FileReader(MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "nodedatefeatures.txt"));
+                String line = "";
+                while ((line = br.readLine()) != null) {
+                    String[] itemsets = line.split("-");
+                    for (String itemset : itemsets) {
+                        String day = itemset.split(":")[1];
+                        DayOfWeek dayOfWeek2 = DayOfWeek.from(dateFormatter.parse(day));
+                        int comparisonResult = dayOfWeek1.compareTo(dayOfWeek2);
+                        if (comparisonResult > 0) {
+                            filteredNodes.add(itemset.split(":")[0]);
+                        }
+                    }
+                }
+
+                Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+                for (MyNode n : nodes) {
+                    if (n.getCurrentValue() > 0 && filteredNodes.contains(n.getName())) {
+                        n.setOriginalValue(n.getCurrentValue());
+                        n.setCurrentValue(0);
+                    } else {
+                        if (maxVal < n.getCurrentValue()) {
+                            maxVal = n.getCurrentValue();
+                        }
+                    }
+                }
+                MySequentialGraphVars.g.MX_N_VAL = maxVal;
+            } else if (vc.dayExcludeSelecter.getSelectedIndex() == 6) {
+                String dateFormatPattern = "EEEE";
+                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(dateFormatPattern);
+                DayOfWeek dayOfWeek1 = DayOfWeek.from(dateFormatter.parse(vc.daySet.get(vc.dayExcludeSelecter.getSelectedIndex()-1)));
+
+                Set<String> filteredNodes = new HashSet<>();
+                float maxVal = 0f;
+                BufferedReader br = new BufferedReader(
+                        new FileReader(MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "nodedatefeatures.txt"));
+                String line = "";
+                while ((line = br.readLine()) != null) {
+                    String[] itemsets = line.split("-");
+                    for (String itemset : itemsets) {
+                        String day = itemset.split(":")[1];
+                        DayOfWeek dayOfWeek2 = DayOfWeek.from(dateFormatter.parse(day));
+                        int comparisonResult = dayOfWeek1.compareTo(dayOfWeek2);
+                        if (comparisonResult > 0 || day.equals(vc.daySet.get(vc.dayExcludeSelecter.getSelectedIndex()-1))) {
+                            filteredNodes.add(itemset.split(":")[0]);
+                        }
+                    }
+                }
+
+                Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+                for (MyNode n : nodes) {
+                    if (n.getCurrentValue() > 0 && filteredNodes.contains(n.getName())) {
+                        n.setOriginalValue(n.getCurrentValue());
+                        n.setCurrentValue(0);
+                    } else {
+                        if (maxVal < n.getCurrentValue()) {
+                            maxVal = n.getCurrentValue();
+                        }
+                    }
+                }
+                MySequentialGraphVars.g.MX_N_VAL = maxVal;
+            } else if (vc.dayExcludeSelecter.getSelectedIndex() == 5) {
+                String dateFormatPattern = "EEEE";
+                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(dateFormatPattern);
+                DayOfWeek dayOfWeek1 = DayOfWeek.from(dateFormatter.parse(vc.daySet.get(vc.dayExcludeSelecter.getSelectedIndex()-1)));
+
+                Set<String> filteredNodes = new HashSet<>();
+                float maxVal = 0f;
+                BufferedReader br = new BufferedReader(
+                        new FileReader(MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "nodedatefeatures.txt"));
+                String line = "";
+                while ((line = br.readLine()) != null) {
+                    String[] itemsets = line.split("-");
+                    for (String itemset : itemsets) {
+                        String day = itemset.split(":")[1];
+                        DayOfWeek dayOfWeek2 = DayOfWeek.from(dateFormatter.parse(day));
+                        int comparisonResult = dayOfWeek1.compareTo(dayOfWeek2);
+                        if (comparisonResult < 0) {
+                            filteredNodes.add(itemset.split(":")[0]);
+                        }
+                    }
+                }
+
+                Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+                for (MyNode n : nodes) {
+                    if (n.getCurrentValue() > 0 && filteredNodes.contains(n.getName())) {
+                        n.setOriginalValue(n.getCurrentValue());
+                        n.setCurrentValue(0);
+                    } else {
+                        if (maxVal < n.getCurrentValue()) {
+                            maxVal = n.getCurrentValue();
+                        }
+                    }
+                }
+                MySequentialGraphVars.g.MX_N_VAL = maxVal;
+            } else if (vc.dayExcludeSelecter.getSelectedIndex() == 6) {
+                String dateFormatPattern = "EEEE";
+                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(dateFormatPattern);
+                DayOfWeek dayOfWeek1 = DayOfWeek.from(dateFormatter.parse(vc.daySet.get(vc.dayExcludeSelecter.getSelectedIndex()-1)));
+
+                Set<String> filteredNodes = new HashSet<>();
+                float maxVal = 0f;
+                BufferedReader br = new BufferedReader(
+                        new FileReader(MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "nodedatefeatures.txt"));
+                String line = "";
+                while ((line = br.readLine()) != null) {
+                    String[] itemsets = line.split("-");
+                    for (String itemset : itemsets) {
+                        String day = itemset.split(":")[1];
+                        DayOfWeek dayOfWeek2 = DayOfWeek.from(dateFormatter.parse(day));
+                        int comparisonResult = dayOfWeek1.compareTo(dayOfWeek2);
+                        if (comparisonResult < 0 || day.equals(vc.daySet.get(vc.dayExcludeSelecter.getSelectedIndex()-1))) {
+                            filteredNodes.add(itemset.split(":")[0]);
+                        }
+                    }
+                }
+
+                Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+                for (MyNode n : nodes) {
+                    if (n.getCurrentValue() > 0 && filteredNodes.contains(n.getName())) {
+                        n.setOriginalValue(n.getCurrentValue());
+                        n.setCurrentValue(0);
+                    } else {
+                        if (maxVal < n.getCurrentValue()) {
+                            maxVal = n.getCurrentValue();
+                        }
+                    }
+                }
+                MySequentialGraphVars.g.MX_N_VAL = maxVal;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     private void doNodeDateTimeExclusion() {
         try {
             if (vc.nodeDateValueExcludeSymbolSelecter.getSelectedIndex() == 1) {
-                List<String> filteredNodes = new ArrayList<>();
+                Set<String> filteredNodes = new HashSet<>();
                 String [] userDateTime = vc.nodeDateValueExcludeTxt.getText().split(","); // Separate date and time with a space separator.
                 String [] userDateElements = userDateTime[0].split(" ");
                 String [] userTimeElements = (userDateElements.length > 1 ? userDateElements[1].split(":") : null);
@@ -464,7 +781,7 @@ implements ActionListener {
 
                 MySequentialGraphVars.g.MX_N_VAL = maxVal;
             } else if (vc.nodeDateValueExcludeSymbolSelecter.getSelectedIndex() == 2) {
-                List<String> filteredNodes = new ArrayList<>();
+                Set<String> filteredNodes = new HashSet<>();
                 String [] userDateTime = vc.nodeDateValueExcludeTxt.getText().split(","); // Separate date and time with a space separator.
                 String [] userDateElements = userDateTime[0].split(" ");
                 String [] userTimeElements = (userDateElements.length > 1 ? userDateElements[1].split(":") : null);
@@ -531,7 +848,7 @@ implements ActionListener {
                 }
                 MySequentialGraphVars.g.MX_N_VAL = maxVal;
             } else if (vc.nodeDateValueExcludeSymbolSelecter.getSelectedIndex() == 3) {
-                List<String> filteredNodes = new ArrayList<>();
+                Set<String> filteredNodes = new HashSet<>();
                 String [] userDateTime = vc.nodeDateValueExcludeTxt.getText().split(","); // Separate date and time with a space separator.
                 String [] userDateElements = userDateTime[0].split(" ");
                 String [] userTimeElements = (userDateElements.length > 1 ? userDateElements[1].split(":") : null);
@@ -596,7 +913,7 @@ implements ActionListener {
                 }
                 MySequentialGraphVars.g.MX_N_VAL = maxVal;
             } else if (vc.nodeDateValueExcludeSymbolSelecter.getSelectedIndex() == 4) {
-                List<String> filteredNodes = new ArrayList<>();
+                Set<String> filteredNodes = new HashSet<>();
                 String [] userDateTime = vc.nodeDateValueExcludeTxt.getText().split(","); // Separate date and time with a space separator.
                 String [] userDateElements = userDateTime[0].split(" ");
                 String [] userTimeElements = (userDateElements.length > 1 ? userDateElements[1].split(":") : null);
@@ -660,7 +977,7 @@ implements ActionListener {
                 }
                 MySequentialGraphVars.g.MX_N_VAL = maxVal;
             } else if (vc.nodeDateValueExcludeSymbolSelecter.getSelectedIndex() == 5) {
-                List<String> filteredNodes = new ArrayList<>();
+                Set<String> filteredNodes = new HashSet<>();
                 String [] userDateTime = vc.nodeDateValueExcludeTxt.getText().split(","); // Separate date and time with a space separator.
                 String [] userDateElements = userDateTime[0].split(" ");
                 String [] userTimeElements = (userDateElements.length > 1 ? userDateElements[1].split(":") : null);
@@ -726,7 +1043,7 @@ implements ActionListener {
                 }
                 MySequentialGraphVars.g.MX_N_VAL = maxVal;
             } else if (vc.nodeDateValueExcludeSymbolSelecter.getSelectedIndex() == 6) {
-                List<String> filteredNodes = new ArrayList<>();
+                Set<String> filteredNodes = new HashSet<>();
                 String [] userDateTime = vc.nodeDateValueExcludeTxt.getText().split(","); // Separate date and time with a space separator.
                 String [] userDateElements = userDateTime[0].split(" ");
                 String [] userTimeElements = (userDateElements.length > 1 ? userDateElements[1].split(":") : null);
@@ -793,7 +1110,7 @@ implements ActionListener {
                 }
                 MySequentialGraphVars.g.MX_N_VAL = maxVal;
             } else if (vc.nodeDateValueExcludeSymbolSelecter.getSelectedIndex() == 7) {
-                List<String> filteredNodes = new ArrayList<>();
+                Set<String> filteredNodes = new HashSet<>();
                 String [] userDateTime = vc.nodeDateValueExcludeTxt.getText().split(","); // Separate date and time with a space separator.
                 String [] userDateElements = userDateTime[0].split(" ");
                 String [] userTimeElements = (userDateElements.length > 1 ? userDateElements[1].split(":") : null);

@@ -85,8 +85,6 @@ implements ActionListener {
             sourceTable.setFocusable(false);
             sourceTable.setFont(MySequentialGraphVars.f_pln_12);
             sourceTable.setRowHeight(26);
-            sourceTable.setSelectionForeground(Color.WHITE);
-            sourceTable.setSelectionBackground(Color.BLACK);
             sourceTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
                 public void valueChanged(ListSelectionEvent event) {
                     new Thread(new Runnable() {
@@ -208,8 +206,6 @@ implements ActionListener {
         destTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont12);
         destTable.setFocusable(false);
         destTable.getTableHeader().setOpaque(false);
-        destTable.setSelectionForeground(Color.WHITE);
-        destTable.setSelectionBackground(Color.BLACK);
         destTable.getTableHeader().setBackground(new Color(0,0,0,0));
         destTable.setBackground(Color.WHITE);
         destTable.setFont(MySequentialGraphVars.f_pln_12);
@@ -280,10 +276,6 @@ implements ActionListener {
 
         CategoryAxis domainAxis = chartPanel.getChart().getCategoryPlot().getDomainAxis();
         domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_90);
-        //Get the plot and set the range axis tick unit
-        //NumberAxis rangeAxis = (NumberAxis) chartPanel.getChart().getCategoryPlot().getRangeAxis();
-        //rangeAxis.setTickUnit(new NumberTickUnit(1));
-
         BarRenderer barRenderer = (BarRenderer) chartPanel.getChart().getCategoryPlot().getRenderer();
         barRenderer.setSeriesPaint(0, new Color(0, 0, 0, 0.25f));//Color.LIGHT_GRAY);//Color.decode("#2084FE"));
         barRenderer.setShadowPaint(Color.WHITE);

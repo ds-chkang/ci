@@ -166,7 +166,7 @@ implements ActionListener {
             MySequentialGraphVars.getSequentialGraphViewer().singleNode = null;
 
             pb.updateValue(90, 100);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
+            //MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
             MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
             MySequentialGraphSysUtil.setSharedPredecessors(MySequentialGraphVars.getSequentialGraphViewer().singleNode, n);
             MySequentialGraphSysUtil.setSharedSuccessors(MySequentialGraphVars.getSequentialGraphViewer().singleNode, n);
@@ -180,7 +180,7 @@ implements ActionListener {
             pb.updateValue(20, 100);
             MySequentialGraphVars.getSequentialGraphViewer().multiNodeSuccessors.addAll(MySequentialGraphVars.g.getSuccessors(n));
             pb.updateValue(30, 100);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
+            //MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
             pb.updateValue(40, 100);
             MyViewerComponentControllerUtil.removeNodeBarChartsFromViewer();
             pb.updateValue(50, 100);
@@ -203,7 +203,7 @@ implements ActionListener {
             pb.updateValue(40, 100);
             MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors.addAll(MySequentialGraphVars.g.getSuccessors(n));
             pb.updateValue(50, 100);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
+            //MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
             pb.updateValue(60, 100);
             MyViewerComponentControllerUtil.setDepthOptionForSelectedNode();
             pb.updateValue(70, 100);

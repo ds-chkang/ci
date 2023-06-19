@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
+import java.text.SimpleDateFormat;
 
 public class MySequentialGraphSysUtil {
 
@@ -348,6 +349,43 @@ public class MySequentialGraphSysUtil {
             }
         }
         return max;
+    }
+
+    public static boolean isDateTimeFeatureExists() {
+        File f = new File(MySequentialGraphSysUtil.getWorkingDir()+
+            MySequentialGraphSysUtil.getDirectorySlash()+"nodedatefeatures.txt");
+        return f.exists();
+    }
+    public static String getDayFromDate(String dateStr) {
+        try {
+            String dateFormat = "yyyy-MM-dd";
+            SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+            Date date = sdf.parse(dateStr);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+            switch (dayOfWeek) {
+                case Calendar.SUNDAY:
+                    return "Sunday";
+                case Calendar.MONDAY:
+                    return "Monday";
+                case Calendar.TUESDAY:
+                    return "Tuesday";
+                case Calendar.WEDNESDAY:
+                    return "Wednesday";
+                case Calendar.THURSDAY:
+                    return "Thursday";
+                case Calendar.FRIDAY:
+                    return "Friday";
+                case Calendar.SATURDAY:
+                    return "Saturday";
+                default:
+                    return "Invalid day";
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
 
     public static int getMinYear() {

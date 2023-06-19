@@ -88,7 +88,7 @@ extends JPanel {
             dataset.addSeries(valueSeries);
         }
 
-        JFreeChart chart = ChartFactory.createXYLineChart("", "E. V.", "", dataset);
+        JFreeChart chart = ChartFactory.createXYLineChart("", "", "", dataset);
         chart.getTitle().setHorizontalAlignment(HorizontalAlignment.LEFT);
         chart.getXYPlot().setBackgroundPaint(Color.WHITE);
         chart.getXYPlot().setDomainGridlinePaint(Color.DARK_GRAY);
@@ -152,6 +152,7 @@ extends JPanel {
         add(topPanel, BorderLayout.NORTH);
         add(chartPanel, BorderLayout.CENTER);
 
+        chart.removeLegend();
         revalidate();
         repaint();
     }

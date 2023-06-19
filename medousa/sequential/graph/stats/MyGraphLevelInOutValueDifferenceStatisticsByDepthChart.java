@@ -22,10 +22,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 
-public class MyInOutValueDifferenceStatisticsByDepthChart
+public class MyGraphLevelInOutValueDifferenceStatisticsByDepthChart
 extends JPanel {
 
-    public MyInOutValueDifferenceStatisticsByDepthChart() {
+    public MyGraphLevelInOutValueDifferenceStatisticsByDepthChart() {
         SwingUtilities.invokeLater(
                 new Runnable() {
                     @Override public void run() {
@@ -37,7 +37,7 @@ extends JPanel {
 
     private void decorate() {
         try {
-            this.setLayout(new BorderLayout(5, 5));
+            this.setLayout(new BorderLayout(2, 2));
             this.setBackground(Color.WHITE);
 
             Map<Integer, Long> inNodesByDepthMap = new HashMap<>();
@@ -138,7 +138,7 @@ extends JPanel {
             titleLabel.setForeground(Color.DARK_GRAY);
             titleLabel.setHorizontalAlignment(JLabel.LEFT);
 
-            JButton enlargeBtn = new JButton("ENLARGE");
+            JButton enlargeBtn = new JButton("+");
             enlargeBtn.setFocusable(false);
             enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
             enlargeBtn.setBackground(Color.WHITE);
@@ -183,7 +183,7 @@ extends JPanel {
             f.setLayout(new BorderLayout());
             f.setBackground(Color.WHITE);
             f.setPreferredSize(new Dimension(760, 450));
-            f.getContentPane().add(new MyInOutValueDifferenceStatisticsByDepthChart(), BorderLayout.CENTER);
+            f.getContentPane().add(new MyGraphLevelInOutValueDifferenceStatisticsByDepthChart(), BorderLayout.CENTER);
             f.pack();
             f.setAlwaysOnTop(true);
             f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

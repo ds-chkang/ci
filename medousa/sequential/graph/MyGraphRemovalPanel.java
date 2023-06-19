@@ -223,7 +223,7 @@ implements ActionListener {
                             }
                         }
 
-                        MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
+                        //MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
                         MySequentialGraphVars.getSequentialGraphViewer().vc.updateTableInfos();
                         if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.isSelected()) {
                             MySequentialGraphVars.getSequentialGraphViewer().remove(MySequentialGraphVars.getSequentialGraphViewer().graphLevelNodeValueBarChart);

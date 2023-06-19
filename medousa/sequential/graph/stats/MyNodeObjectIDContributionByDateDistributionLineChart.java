@@ -34,7 +34,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class MyNodeObjectIDContributionByDateDistributionLineChart
 implements ActionListener {
@@ -46,6 +48,7 @@ implements ActionListener {
     private JComboBox tableOption = new JComboBox();
     private JTable optionTable;
     private JTable bottomTable;
+    private JTable topTable;
     private ChartPanel chartPanel = new ChartPanel(null);
     private LinkedHashMap<String, Long> timeSeariesDataMap;
 
@@ -73,26 +76,21 @@ implements ActionListener {
             String [] propertyColumns = {"PROPERTY", "VALUE"};
             String [][] propertyData = {};
 
-            DefaultTableModel topTableStatisticsModel = new DefaultTableModel(propertyData, propertyColumns);
-            JTable tableTopStatistics = new JTable(topTableStatisticsModel);
-            tableTopStatistics.setBackground(Color.WHITE);
-            tableTopStatistics.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont12);
-            tableTopStatistics.getTableHeader().setBackground(new Color(0,0,0,0));
-            tableTopStatistics.getTableHeader().setOpaque(false);
-            tableTopStatistics.setRowHeight(26);
-            tableTopStatistics.setFont(MySequentialGraphVars.f_pln_12);
-            tableTopStatistics.getColumnModel().getColumn(1).setPreferredWidth(60);
-            tableTopStatistics.getColumnModel().getColumn(0).setPreferredWidth(195);
-
-            topTableStatisticsModel.addRow(new String[]{" NO. OF DATES", " " + MyMathUtil.getCommaSeperatedNumber(timeSeariesDataMap.size())});
-            topTableStatisticsModel.addRow(new String[]{" MAX.", " " + MyMathUtil.getCommaSeperatedNumber(max)});
-            topTableStatisticsModel.addRow(new String[]{" MIN.", " " + MyMathUtil.getCommaSeperatedNumber(min)});
-            topTableStatisticsModel.addRow(new String[]{" AVG.", " " + MyMathUtil.twoDecimalFormat(avg)});
+            DefaultTableModel topTableModel = new DefaultTableModel(propertyData, propertyColumns);
+            topTable = new JTable(topTableModel);
+            topTable.setBackground(Color.WHITE);
+            topTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont12);
+            topTable.getTableHeader().setBackground(new Color(0,0,0,0));
+            topTable.getTableHeader().setOpaque(false);
+            topTable.setRowHeight(26);
+            topTable.setFont(MySequentialGraphVars.f_pln_12);
+            topTable.getColumnModel().getColumn(1).setPreferredWidth(60);
+            topTable.getColumnModel().getColumn(0).setPreferredWidth(195);
 
             JSplitPane topMiddleSplitPane = new JSplitPane();
             topMiddleSplitPane.setDividerSize(5);
             topMiddleSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-            topMiddleSplitPane.setTopComponent(new JScrollPane(tableTopStatistics));
+            topMiddleSplitPane.setTopComponent(new JScrollPane(topTable));
             topMiddleSplitPane.setBottomComponent(setOptionTable(timeSeariesDataMap));
             topMiddleSplitPane.setDividerLocation(0.35f);
             topMiddleSplitPane.addComponentListener(new ComponentAdapter() {
@@ -128,6 +126,11 @@ implements ActionListener {
                 }
             });
 
+            topTableModel.addRow(new String[]{" NO. OF DATES", " " + MyMathUtil.getCommaSeperatedNumber(timeSeariesDataMap.size())});
+            topTableModel.addRow(new String[]{" MAX.", " " + MyMathUtil.getCommaSeperatedNumber(max)});
+            topTableModel.addRow(new String[]{" MIN.", " " + MyMathUtil.getCommaSeperatedNumber(min)});
+            topTableModel.addRow(new String[]{" AVG.", " " + MyMathUtil.twoDecimalFormat(avg)});
+
             JFrame f = new JFrame(" NODE CONTRIBUTIONS BY DATE DISTRIBUTION");
             f.setPreferredSize(new Dimension(600, 400));
             f.setLayout(new BorderLayout(3,3));
@@ -144,7 +147,7 @@ implements ActionListener {
         float totalContribution = 0f;
         chartPanel.removeAll();
         TimeSeries series = new TimeSeries("");
-        //System.out.println(timeSeriesDataMap);
+
         for (String date : timeSeriesDataMap.keySet()) {
             long nodeContribution = timeSeriesDataMap.get(date);
             totalContribution += nodeContribution;
@@ -166,7 +169,74 @@ implements ActionListener {
         TimeSeriesCollection dataset = new TimeSeriesCollection();
         dataset.addSeries(series);
 
-        // Create chart
+        JFreeChart chart = ChartFactory.createTimeSeriesChart(
+                "",
+                "",
+                "",
+                dataset,
+                false,
+                true,
+                false
+        );
+
+        chart.getXYPlot().setBackgroundPaint(Color.WHITE);
+        chart.getXYPlot().setDomainGridlinePaint(Color.DARK_GRAY);
+        chart.getXYPlot().setRangeGridlinePaint(Color.DARK_GRAY);
+
+        XYPlot plot = (XYPlot) chart.getPlot();
+        DateAxis dateAxis = new DateAxis();
+        dateAxis.setDateFormatOverride(new SimpleDateFormat("yyyy-MM-dd"));
+        dateAxis.setLabelAngle(Math.PI / 6.0);
+        dateAxis.setVerticalTickLabels(true);
+        plot.setDomainAxis(dateAxis);
+        NumberAxis rangeAxis = (NumberAxis) chart.getXYPlot().getRangeAxis();
+        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+
+        chart.getXYPlot().getDomainAxis().setTickLabelFont(MyDirectGraphVars.f_pln_12);
+        chart.getXYPlot().getRangeAxis().setTickLabelFont(MyDirectGraphVars.f_pln_12);
+        chart.getTitle().setFont(MySequentialGraphVars.tahomaBoldFont12);
+
+        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
+        renderer.setSeriesPaint(0, Color.DARK_GRAY);
+        renderer.setSeriesStroke(0, new BasicStroke(1.4f));
+        renderer.setSeriesShapesVisible(0, true);
+        renderer.setSeriesShape(0, new Ellipse2D.Double(-2.0, -2.0, 4.0, 4.0));
+        renderer.setSeriesFillPaint(0, Color.WHITE);
+        renderer.setUseFillPaint(true);
+
+        renderer.setSeriesToolTipGenerator(0, new StandardXYToolTipGenerator());
+        chart.removeLegend();
+        chartPanel.setChart(chart);
+        chartPanel.revalidate();
+        chartPanel.repaint();
+    }
+
+    private void setNodeDateChart(LinkedHashMap<String, Long> timeSeriesDataMap) {
+        float totalContribution = 0f;
+        chartPanel.removeAll();
+        TimeSeries series = new TimeSeries("");
+
+        for (String date : timeSeriesDataMap.keySet()) {
+            long nodeContribution = timeSeriesDataMap.get(date);
+            totalContribution += nodeContribution;
+
+            if (nodeContribution > max) {
+                max = nodeContribution;
+            }
+
+            if (min > nodeContribution) {
+                min = nodeContribution;
+            }
+
+            String [] dateElements = (date.contains("*") ? date.split("\\*") : date.split("-"));
+            series.add(new Day(Integer.parseInt(dateElements[2]), Integer.parseInt(dateElements[1]), Integer.parseInt(dateElements[0])), timeSeriesDataMap.get(date));
+        }
+
+        avg = totalContribution/ timeSeriesDataMap.size();
+
+        TimeSeriesCollection dataset = new TimeSeriesCollection();
+        dataset.addSeries(series);
+
         JFreeChart chart = ChartFactory.createTimeSeriesChart(
                 "",
                 "",
@@ -414,72 +484,159 @@ implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == tableOption) {
-            if (tableOption.getSelectedIndex() == 0) {
-                selectedTable = 0;
+              new Thread(new Runnable() {
+                @Override public void run() {
+                    try {
+                        if (e.getSource() == tableOption) {
+                            if (tableOption.getSelectedIndex() == 0) {
+                                selectedTable = 0;
 
-                int row = optionTable.getRowCount();
-                while (row > 0) {
-                    ((DefaultTableModel) optionTable.getModel()).removeRow(row - 1);
-                    row = optionTable.getRowCount();
-                }
+                                int row = optionTable.getRowCount();
+                                while (row > 0) {
+                                    ((DefaultTableModel) optionTable.getModel()).removeRow(row - 1);
+                                    row = optionTable.getRowCount();
+                                }
 
-                int i=0;
-                for (String date : timeSeariesDataMap.keySet()) {
-                    ((DefaultTableModel) optionTable.getModel()).addRow(new String[]{" " + (++i),
-                        " " + date.replaceAll("\\*", "-"),
-                        " " + MyMathUtil.getCommaSeperatedNumber(timeSeariesDataMap.get(date))
-                    });
-                }
+                                int i = 0;
+                                for (String date : timeSeariesDataMap.keySet()) {
+                                    ((DefaultTableModel) optionTable.getModel()).addRow(new String[]{" " + (++i),
+                                            " " + date.replaceAll("\\*", "-"),
+                                            " " + MyMathUtil.getCommaSeperatedNumber(timeSeariesDataMap.get(date))
+                                    });
+                                }
 
-                JTableHeader th = optionTable.getTableHeader();
-                TableColumnModel tcm = th.getColumnModel();
-                TableColumn tc = tcm.getColumn(1);
-                tc.setHeaderValue( "DATE" );
-                th.repaint();
+                                JTableHeader th = optionTable.getTableHeader();
+                                TableColumnModel tcm = th.getColumnModel();
+                                TableColumn tc = tcm.getColumn(1);
+                                tc.setHeaderValue("DATE");
+                                th.repaint();
 
-                optionTable.revalidate();
-                optionTable.repaint();
+                                optionTable.revalidate();
+                                optionTable.repaint();
 
-                setChart(timeSeariesDataMap);
-            } else if (tableOption.getSelectedIndex() == 1) {
-                selectedTable = 1;
+                                setChart(timeSeariesDataMap);
 
-                int row = optionTable.getRowCount();
-                while (row > 0) {
-                    ((DefaultTableModel) optionTable.getModel()).removeRow(row - 1);
-                    row = optionTable.getRowCount();
-                }
+                                row = topTable.getRowCount();
+                                while (row > 0) {
+                                    ((DefaultTableModel) topTable.getModel()).removeRow(row - 1);
+                                    row = topTable.getRowCount();
+                                }
 
-                JTableHeader th = optionTable.getTableHeader();
-                TableColumnModel tcm = th.getColumnModel();
-                TableColumn tc = tcm.getColumn(1);
-                tc.setHeaderValue( "NODE" );
-                th.repaint();
+                                ((DefaultTableModel) topTable.getModel()).addRow(new String[]{" NO. OF DATES", " " + MyMathUtil.getCommaSeperatedNumber(timeSeariesDataMap.size())});
+                                ((DefaultTableModel) topTable.getModel()).addRow(new String[]{" MAX.", " " + MyMathUtil.getCommaSeperatedNumber(max)});
+                                ((DefaultTableModel) topTable.getModel()).addRow(new String[]{" MIN.", " " + MyMathUtil.getCommaSeperatedNumber(min)});
+                                ((DefaultTableModel) topTable.getModel()).addRow(new String[]{" AVG.", " " + MyMathUtil.twoDecimalFormat(avg)});
 
-                int i=0;
-                Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
-                LinkedHashMap<String, Long> nodeContributionByDateMap = new LinkedHashMap<>();
-                for (MyNode n : nodes) {
-                    if (nodeContributionByDateMap.containsKey(n.getName())) {
-                        nodeContributionByDateMap.put(n.getName(), nodeContributionByDateMap.get(n.getName()) + 1);
-                    } else {
-                        nodeContributionByDateMap.put(n.getName(), 1L);
+                                topTable.revalidate();
+                                topTable.repaint();
+                            } else if (tableOption.getSelectedIndex() == 1) {
+                                selectedTable = 1;
+
+                                int row = optionTable.getRowCount();
+                                while (row > 0) {
+                                    ((DefaultTableModel) optionTable.getModel()).removeRow(row - 1);
+                                    row = optionTable.getRowCount();
+                                }
+
+                                JTableHeader th = optionTable.getTableHeader();
+                                TableColumnModel tcm = th.getColumnModel();
+                                TableColumn tc = tcm.getColumn(1);
+                                tc.setHeaderValue("NODE");
+                                th.repaint();
+
+                                int i = 0;
+                                Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
+                                LinkedHashMap<String, Long> nodeContributionByDateMap = new LinkedHashMap<>();
+                                for (MyNode n : nodes) {
+                                    if (nodeContributionByDateMap.containsKey(n.getName())) {
+                                        nodeContributionByDateMap.put(n.getName(), nodeContributionByDateMap.get(n.getName()) + 1);
+                                    } else {
+                                        nodeContributionByDateMap.put(n.getName(), 1L);
+                                    }
+                                }
+
+                                for (String n : nodeContributionByDateMap.keySet()) {
+                                    ((DefaultTableModel) optionTable.getModel()).addRow(
+                                            new String[]{
+                                                    " " + (++i),
+                                                    " " + MySequentialGraphSysUtil.getNodeName(n),
+                                                    " " + MyMathUtil.getCommaSeperatedNumber(nodeContributionByDateMap.get(n))
+                                            });
+                                }
+
+                                optionTable.revalidate();
+                                optionTable.repaint();
+
+                                row = topTable.getRowCount();
+                                while (row > 0) {
+                                    ((DefaultTableModel) topTable.getModel()).removeRow(row - 1);
+                                    row = topTable.getRowCount();
+                                }
+
+                                BufferedReader br = new BufferedReader(
+                                        new FileReader(MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "nodedatefeatures.txt"));
+
+                                String line = "";
+                                Map<String, Map<String, Long>> timeSeriesDataMap = new HashMap<>();
+                                long total = 0L;
+                                while ((line = br.readLine()) != null) {
+                                    String[] itemsets = line.split("-");
+                                    for (String itemset : itemsets) {
+                                        String node = itemset.split(":")[0];
+                                        String date = itemset.split(":")[1].replaceAll("\\*", "-");
+                                        if (timeSeriesDataMap.containsKey(node)) {
+                                            if (timeSeriesDataMap.get(node).containsKey(date)) {
+                                                Map<String, Long> timeSeriesMap = timeSeriesDataMap.get(node);
+                                                timeSeriesMap.put(date, timeSeriesMap.get(date)+1);
+                                                timeSeriesDataMap.put(node, timeSeriesMap);
+                                                if (max < timeSeriesMap.get(date)+1) {
+                                                    max = timeSeriesMap.get(date)+1;
+                                                }
+
+                                                total += 1;
+                                            } else {
+                                                Map<String, Long> timeSeriesMap = timeSeriesDataMap.get(node);
+                                                timeSeriesMap.put(date, 1L);
+                                                timeSeriesDataMap.put(node, timeSeriesMap);
+                                                total += 1;
+                                            }
+                                        } else {
+                                            Map<String, Long> timeSeriesMap = new HashMap<>();
+                                            timeSeriesMap.put(date, 1L);
+                                            timeSeriesDataMap.put(node, timeSeriesMap);
+
+                                            if (max < 1) {
+                                                max = 1;
+                                            }
+
+                                            min = 1;
+                                            total += 1;
+                                        }
+                                    }
+                                }
+
+                                avg = ((float)total/MySequentialGraphVars.g.getVertexCount());
+
+                                ((DefaultTableModel) topTable.getModel()).addRow(new String[]{" NO. OF NODES", " " + MyMathUtil.getCommaSeperatedNumber(MySequentialGraphVars.g.getVertexCount())});
+                                ((DefaultTableModel) topTable.getModel()).addRow(new String[]{" MAX.", " " + MyMathUtil.getCommaSeperatedNumber(max)});
+                                ((DefaultTableModel) topTable.getModel()).addRow(new String[]{" MIN.", " " + MyMathUtil.getCommaSeperatedNumber(min)});
+                                ((DefaultTableModel) topTable.getModel()).addRow(new String[]{" AVG.", " " + MyMathUtil.twoDecimalFormat(avg)});
+
+                                topTable.revalidate();
+                                topTable.repaint();
+                                setNodeDateChart(new LinkedHashMap<>());
+
+                            }
+
+                            int row = bottomTable.getRowCount();
+                            while (row > 0) {
+                                ((DefaultTableModel) bottomTable.getModel()).removeRow(row - 1);
+                                row = bottomTable.getRowCount();
+                            }
+                        }
+                    } catch (Exception ex) {
                     }
                 }
-
-                for (String n : nodeContributionByDateMap.keySet()) {
-                    ((DefaultTableModel) optionTable.getModel()).addRow(
-                        new String[]{
-                            " " + (++i),
-                            " " + MySequentialGraphSysUtil.getNodeName(n),
-                            " " + MyMathUtil.getCommaSeperatedNumber(nodeContributionByDateMap.get(n))
-                    });
-                }
-
-                optionTable.revalidate();
-                optionTable.repaint();
-            }
-        }
+            }).start();
     }
 }

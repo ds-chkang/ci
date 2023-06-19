@@ -39,7 +39,6 @@ implements ActionListener {
     }
 
     public void decorate() {
-        final MyDirectGraphTopLevelNodeValueDistribution nodeValueLabelDistribution = this;
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
                 removeAll();
@@ -80,7 +79,7 @@ implements ActionListener {
                 enlargeBtn.setToolTipText("ENLARGE");
                 enlargeBtn.setFocusable(false);
                 enlargeBtn.setBackground(Color.WHITE);
-                enlargeBtn.setFont(MyDirectGraphVars.tahomaPlainFont11);
+                enlargeBtn.setFont(MyDirectGraphVars.tahomaPlainFont12);
                 enlargeBtn.addActionListener(new ActionListener() {
                     @Override public void actionPerformed(ActionEvent e) {
                         new Thread(new Runnable() {
@@ -93,18 +92,18 @@ implements ActionListener {
 
                 JPanel menuPanel = new JPanel();
                 menuPanel.setBackground(Color.WHITE);
-                menuPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 3, 3));
+                menuPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 2, 2));
                 menuPanel.add(enlargeBtn);
 
                 JPanel topPanel = new JPanel();
                 topPanel.setBackground(Color.WHITE);
-                topPanel.setLayout(new BorderLayout(3, 3));
+                topPanel.setLayout(new BorderLayout(2, 2));
                 topPanel.add(titlePanel, BorderLayout.WEST);
                 topPanel.add(menuPanel, BorderLayout.EAST);
 
                 add(chartPanel, BorderLayout.CENTER);
                 add(topPanel, BorderLayout.NORTH);
-
+                //chartPanel.getChart().removeLegend();
                 revalidate();
                 repaint();
             }
@@ -183,7 +182,7 @@ implements ActionListener {
 
                 JPanel nodeTablePanel = new JPanel();
                 nodeTablePanel.setBackground(Color.WHITE);
-                nodeTablePanel.setLayout(new BorderLayout(3, 3));
+                nodeTablePanel.setLayout(new BorderLayout(2, 2));
                 nodeTablePanel.add(nodeTableScrollPane, BorderLayout.CENTER);
                 nodeTablePanel.add(nodeTableSearchPanel, BorderLayout.SOUTH);
 
@@ -191,17 +190,6 @@ implements ActionListener {
                 f.setBackground(Color.WHITE);
                 f.setPreferredSize(new Dimension(550, 450));
                 f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                f.addMouseListener(new MouseAdapter() {
-                    @Override public void mouseEntered(MouseEvent e) {
-                        super.mouseEntered(e);
-                        f.setAlwaysOnTop(true);
-                    }
-
-                    @Override public void mouseExited(MouseEvent e) {
-                        super.mouseExited(e);
-                        f.setAlwaysOnTop(false);
-                    }
-                });
 
                 JSplitPane tableSplitPane = new JSplitPane();
                 tableSplitPane.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
@@ -218,7 +206,7 @@ implements ActionListener {
                 contentPane.getRightComponent().setBackground(Color.WHITE);
                 contentPane.setDividerSize(5);
 
-                f.setLayout(new BorderLayout(3, 3));
+                f.setLayout(new BorderLayout(2, 2));
                 f.getContentPane().add(contentPane, BorderLayout.CENTER);
                 f.pack();
                 f.addComponentListener(new ComponentAdapter() {
@@ -229,12 +217,10 @@ implements ActionListener {
                     }
                 });
 
-                f.setAlwaysOnTop(true);
                 pb.updateValue(100, 100);
                 pb.dispose();
 
                 f.setVisible(true);
-                f.setAlwaysOnTop(false);
             } catch (Exception ex) {
                 pb.updateValue(100, 100);
                 pb.dispose();

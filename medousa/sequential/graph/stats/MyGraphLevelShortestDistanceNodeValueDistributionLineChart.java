@@ -23,7 +23,8 @@ import java.awt.geom.Ellipse2D;
 import java.util.Collection;
 import java.util.TreeMap;
 
-public class MyGraphLevelShortestDistanceNodeValueDistributionLineChart extends JPanel {
+public class MyGraphLevelShortestDistanceNodeValueDistributionLineChart
+extends JPanel {
 
     public MyGraphLevelShortestDistanceNodeValueDistributionLineChart() {
         this.decorate();
@@ -82,7 +83,7 @@ public class MyGraphLevelShortestDistanceNodeValueDistributionLineChart extends 
 
                     JLabel titleLabel = new JLabel(" N. V.");
                     titleLabel.setToolTipText("NODE VALUE DISTRIBUTION");
-                    titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
+                    titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
                     titleLabel.setBackground(Color.WHITE);
                     titleLabel.setForeground(Color.DARK_GRAY);
 
@@ -92,7 +93,7 @@ public class MyGraphLevelShortestDistanceNodeValueDistributionLineChart extends 
                     titlePanel.add(titleLabel);
 
                     JButton enlargeBtn = new JButton("+");
-                    enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
+                    enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
                     enlargeBtn.setFocusable(false);
                     enlargeBtn.setBackground(Color.WHITE);
                     enlargeBtn.addActionListener(new ActionListener() {@Override
@@ -138,24 +139,12 @@ public class MyGraphLevelShortestDistanceNodeValueDistributionLineChart extends 
             f.setPreferredSize(new Dimension(400, 450));
             f.setCursor(Cursor.HAND_CURSOR);
             f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            MyGraphLevelShortestDistanceNodeValueDistributionLineChart depthNodeLevelNeighborNodeCountDistributionLineGraph = new MyGraphLevelShortestDistanceNodeValueDistributionLineChart();
-            f.getContentPane().add(depthNodeLevelNeighborNodeCountDistributionLineGraph, BorderLayout.CENTER);
+            MyGraphLevelShortestDistanceNodeValueDistributionLineChart graphLevelShortestDistanceNodeValueDistributionLineChart = new MyGraphLevelShortestDistanceNodeValueDistributionLineChart();
+            f.getContentPane().add(graphLevelShortestDistanceNodeValueDistributionLineChart, BorderLayout.CENTER);
             f.pack();
-            f.addMouseListener(new MouseAdapter() {
-                @Override public void mouseEntered(MouseEvent e) {
-                    super.mouseEntered(e);
-                    f.setAlwaysOnTop(true);
-                }
-                @Override public void mouseExited(MouseEvent e) {
-                    super.mouseEntered(e);
-                    f.setAlwaysOnTop(false);
-                }
-            });
-            f.setAlwaysOnTop(true);
             pb.updateValue(100, 100);
             pb.dispose();
             f.setVisible(true);
-            f.setAlwaysOnTop(false);
         } catch (Exception ex) {
             pb.updateValue(100, 100);
             pb.dispose();

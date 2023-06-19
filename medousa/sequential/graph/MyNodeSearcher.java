@@ -45,7 +45,7 @@ public class MyNodeSearcher {
 
         MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.setText("SHARED N. V. B.");
         MyMultiNodeUtil.adjustMultiNodeNeighborNodeValues();
-        MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
+        //MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
         pb.updateValue(90, 100);
         MySequentialGraphVars.sequentialGraphDashBoard.setMultiNodeDashBoard();
         MySequentialGraphVars.getSequentialGraphViewer().getRenderContext().setEdgeDrawPaintTransformer(MySequentialGraphVars.getSequentialGraphViewer().edgeColor);
@@ -74,7 +74,7 @@ public class MyNodeSearcher {
             MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors = new HashSet<>(MySequentialGraphVars.g.getPredecessors(selectedNode));
             MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors = new HashSet<>(MySequentialGraphVars.g.getSuccessors(selectedNode));
             MySelectedNodeUtil.adjustSelectedNodeNeighborNodeValues(MySequentialGraphVars.getSequentialGraphViewer().singleNode);
-            MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
+           // MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
             pb.updateValue(85, 100);
             MyViewerComponentControllerUtil.setDepthOptionForSelectedNode();
             pb.updateValue(90, 100);

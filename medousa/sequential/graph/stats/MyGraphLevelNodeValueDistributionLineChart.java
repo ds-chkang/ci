@@ -56,7 +56,7 @@ public class MyGraphLevelNodeValueDistributionLineChart extends JPanel {
                     }
                     dataset.addSeries(series);
 
-                    JFreeChart chart = ChartFactory.createXYLineChart("", "N. V.", "", dataset);
+                    JFreeChart chart = ChartFactory.createXYLineChart("", "", "", dataset);
                     chart.getTitle().setHorizontalAlignment(HorizontalAlignment.LEFT);
                     chart.getXYPlot().setBackgroundPaint(Color.WHITE);
                     chart.getXYPlot().setDomainGridlinePaint(Color.DARK_GRAY);
@@ -127,6 +127,7 @@ public class MyGraphLevelNodeValueDistributionLineChart extends JPanel {
                     renderer.setBaseLegendTextFont(MySequentialGraphVars.tahomaPlainFont11);
                     add(chartPanel, BorderLayout.CENTER);
 
+                    chart.removeLegend();
                     revalidate();
                     repaint();
                 } catch (Exception ex) {
@@ -146,8 +147,8 @@ public class MyGraphLevelNodeValueDistributionLineChart extends JPanel {
             f.setPreferredSize(new Dimension(400, 450));
             f.setCursor(Cursor.HAND_CURSOR);
             f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            MyGraphLevelNodeValueDistributionLineChart depthNodeLevelNeighborNodeCountDistributionLineGraph = new MyGraphLevelNodeValueDistributionLineChart();
-            f.getContentPane().add(depthNodeLevelNeighborNodeCountDistributionLineGraph, BorderLayout.CENTER);
+            MyGraphLevelNodeValueDistributionLineChart graphLevelNodeValueDistributionLineChart = new MyGraphLevelNodeValueDistributionLineChart();
+            f.getContentPane().add(graphLevelNodeValueDistributionLineChart, BorderLayout.CENTER);
             f.pack();
             f.addMouseListener(new MouseAdapter() {
                 @Override public void mouseEntered(MouseEvent e) {

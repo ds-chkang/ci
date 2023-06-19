@@ -70,6 +70,12 @@ implements ActionListener {
         "CLUSTERING COEFFICIENT"
     };
 
+    private JButton addExcludeControlBtn = new JButton();
+    private JButton removeExcludeControlBtn = new JButton();
+    private JComboBox  excludeControlOptions = new JComboBox();
+    public JComboBox dayExcludeSelecter = new JComboBox();
+    public JComboBox dayExcludeSymbolSelecter = new JComboBox();
+
     public final String [] depthNodeValueItems = {
         "CONTRIBUTION",
         "IN-CONTRIBUTION",
@@ -122,7 +128,7 @@ implements ActionListener {
     public JPanel bottomPanel = new JPanel();
     public MyNode shortestDistanceSourceNode;
     public JButton topLeftNodeExcludeBtn;
-    public MyTextStatistics vTxtStat = new MyTextStatistics();
+    //public MyTextStatistics vTxtStat = new MyTextStatistics();
     public JComboBox shortestDistanceMenu = new JComboBox();
     public JComboBox depthSelecter = new JComboBox();
     public JComboBox nodeValueSelecter = new JComboBox();
@@ -160,7 +166,7 @@ implements ActionListener {
     public Map<String, Map<String, Long>> depthNodePredecessorMaps;
     public Set<String> depthNodeNameSet;
     public Set<String> depthNeighborSet;
-    public JLabel nodeValueSelecterLabel = new JLabel("  N. V.");
+    public JLabel nodeValueSelecterLabel = new JLabel("   N. V.");
     public JSplitPane graphTableSplitPane = new JSplitPane();
     public JTabbedPane tableTabbedPane = new JTabbedPane();
     public JTable shortestDistanceSourceTable;
@@ -177,11 +183,12 @@ implements ActionListener {
     public JLabel edgeLabelExcludeComboBoxMenuLabel = new JLabel(" E. L.");
     public JLabel edgeLabelLabel = new JLabel("  E. L.");
     public JLabel edgeValueLabel = new JLabel("  E. V.");
-    public JLabel edgeValueExludeLabel = new JLabel(" E. V.");
+    public JLabel edgeValueExludeLabel = new JLabel("E. V.");
     public JLabel nodeLabelLabel = new JLabel(" N. L.");
     public JButton edgeValueDistributionBtn = new JButton("E. V.");
     public JButton nodeValueDistributionBtn = new JButton("N. V.");
     public int previousTableTabbedPane;
+    public List<String> daySet = new ArrayList<>();
 
     public MyViewerComponentController() {}
 
@@ -251,6 +258,86 @@ implements ActionListener {
             this.edgeValueExcludeSymbolSelecter.setFocusable(false);
             this.edgeValueExcludeSymbolSelecter.addActionListener(this);
         }
+    }
+
+    private void setDayExcludeControlOption() {
+        this.dayExcludeSelecter.setToolTipText("SELECT A DAY TO EXCLUDE NODES & EDGES");
+        this.dayExcludeSelecter.setBackground(Color.WHITE);
+        this.dayExcludeSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.dayExcludeSelecter.setFocusable(false);
+        this.dayExcludeSelecter.addItem("DAY");
+        this.dayExcludeSelecter.addItem("MON.");
+        this.dayExcludeSelecter.addItem("TUE.");
+        this.dayExcludeSelecter.addItem("WEN.");
+        this.dayExcludeSelecter.addItem("THUR.");
+        this.dayExcludeSelecter.addItem("FRI.");
+        this.dayExcludeSelecter.addItem("SAT.");
+        this.dayExcludeSelecter.addItem("SUN.");
+
+        String[] excludeControlOptionTooltips = new String[8];
+        excludeControlOptionTooltips[0] = "SELECT A DAY TO EXCLUDE NODES & EDGES";
+        excludeControlOptionTooltips[1] = "MONDAY";
+        excludeControlOptionTooltips[2] = "TUESDAY";
+        excludeControlOptionTooltips[3] = "WENDSDAY";
+        excludeControlOptionTooltips[4] = "THURSDAY";
+        excludeControlOptionTooltips[5] = "FRIDAY";
+        excludeControlOptionTooltips[6] = "SATURDAY";
+        excludeControlOptionTooltips[7] = "SUNDAY";
+        this.dayExcludeSelecter.setRenderer(new MyComboBoxTooltipRenderer(excludeControlOptionTooltips));
+
+        daySet.add("MONDAY");
+        daySet.add("TUESDAY");
+        daySet.add("WENDESDAY");
+        daySet.add("THURSDAY");
+        daySet.add("FRIDAY");
+        daySet.add("SATURDAY");
+        daySet.add("SUNDAY");
+
+        this.dayExcludeSymbolSelecter.setBackground(Color.WHITE);
+        this.dayExcludeSymbolSelecter.setFocusable(false);
+        this.dayExcludeSymbolSelecter.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.dayExcludeSymbolSelecter.addItem("");
+        this.dayExcludeSymbolSelecter.addItem("==");
+        this.dayExcludeSymbolSelecter.addItem("!=");
+        this.dayExcludeSymbolSelecter.addItem("<");
+        this.dayExcludeSymbolSelecter.addItem("<=");
+        this.dayExcludeSymbolSelecter.addItem(">");
+        this.dayExcludeSymbolSelecter.addItem(">=");
+
+    }
+    private void setExcludeControlOptions() {
+        this.excludeControlOptions.setToolTipText("SELECT A CONTROL OPTION TO EXCLUDE NODES & EDGES");
+        this.excludeControlOptions.setBackground(Color.WHITE);
+        this.excludeControlOptions.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.excludeControlOptions.setFocusable(false);
+        this.excludeControlOptions.addItem("");
+        this.excludeControlOptions.addItem(" N. L.");
+        this.excludeControlOptions.addItem(" E. V.");
+        this.excludeControlOptions.addItem(" E. L.");
+        this.excludeControlOptions.addItem(" D. & T.");
+        this.excludeControlOptions.addItem(" D.");
+        this.excludeControlOptions.addItem(" DEP.");
+
+        String[] excludeControlOptionTooltips = new String[7];
+        excludeControlOptionTooltips[0] = "SELECT A CONTROL OPTION TO EXCLUDE NODES & EDGES";
+        excludeControlOptionTooltips[1] = "NODE LABEL";
+        excludeControlOptionTooltips[2] = "EDGE VALUE";
+        excludeControlOptionTooltips[3] = "EDGE LABEL";
+        excludeControlOptionTooltips[4] = "DATE & TIME";
+        excludeControlOptionTooltips[5] = "DAY(MONDAY, TUESDAY, ...)";
+        excludeControlOptionTooltips[5] = "DEPTH(1, 2, ...)";
+        this.excludeControlOptions.setRenderer(new MyComboBoxTooltipRenderer(excludeControlOptionTooltips));
+
+        this.addExcludeControlBtn.setText("+");
+        //this.addExcludeControlBtn.setPreferredSize(new Dimension(30, 28));
+        this.addExcludeControlBtn.setBackground(Color.WHITE);
+        this.addExcludeControlBtn.setFocusable(false);
+        this.addExcludeControlBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
+
+        this.removeExcludeControlBtn.setText("-");
+        this.removeExcludeControlBtn.setBackground(Color.WHITE);
+        this.removeExcludeControlBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        this.removeExcludeControlBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
     }
 
     private void setShortestOutDistancedNodes() {
@@ -973,6 +1060,9 @@ implements ActionListener {
         this.setBackground(Color.WHITE);
         this.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
+        setExcludeControlOptions();
+        setDayExcludeControlOption();
+
         MySequentialGraphVars.app.getToolBar().distributionSelecter.addItem(" DISTRIBUTIONS");
         MySequentialGraphVars.app.getToolBar().distributionSelecter.addItem(" CONT. CNT. D. BY OBJ.");
         MySequentialGraphVars.app.getToolBar().distributionSelecter.addItem(" BTW. CONT. CNT. D. BY OBJ.");
@@ -1013,7 +1103,7 @@ implements ActionListener {
                 new Thread(new Runnable() {
                     @Override public void run() {
                         if (MySequentialGraphVars.app.getToolBar().distributionSelecter.getSelectedIndex() == 1) {
-                            MyGraphLevelNodeContributionCountByObjectIDDistribution graphLevelContributionCountByObjectIDDistribution = new MyGraphLevelNodeContributionCountByObjectIDDistribution();
+                            MyGraphLevelNodeContributionCountByObjectDistribution graphLevelContributionCountByObjectIDDistribution = new MyGraphLevelNodeContributionCountByObjectDistribution();
                             graphLevelContributionCountByObjectIDDistribution.enlarge();
                         } else if (MySequentialGraphVars.app.getToolBar().distributionSelecter.getSelectedIndex() == 2) {
                             MyBetweenContributionDistributionByObjectLineChart betweenContributionDistributionByObject = new MyBetweenContributionDistributionByObjectLineChart();
@@ -1024,7 +1114,7 @@ implements ActionListener {
                         } else if (MySequentialGraphVars.app.getToolBar().distributionSelecter.getSelectedIndex() == 4) {
                             MyGraphLevelSequenceLengthDistribution sequenceLengthDistribution = new MyGraphLevelSequenceLengthDistribution();
                         } else if (MySequentialGraphVars.app.getToolBar().distributionSelecter.getSelectedIndex() == 5) {
-                            MyInOutValueDifferenceStatisticsByDepthChart inOutDifferenceStatByDepthChart = new MyInOutValueDifferenceStatisticsByDepthChart();
+                            MyGraphLevelInOutValueDifferenceStatisticsByDepthChart inOutDifferenceStatByDepthChart = new MyGraphLevelInOutValueDifferenceStatisticsByDepthChart();
                             inOutDifferenceStatByDepthChart.enlarge();
                         } else if (MySequentialGraphVars.app.getToolBar().distributionSelecter.getSelectedIndex() == 6) {
                             MyNodeObjectIDContributionByDateDistributionLineChart nodeContributionByDateDistributionLineChart = new MyNodeObjectIDContributionByDateDistributionLineChart();
@@ -1086,8 +1176,9 @@ implements ActionListener {
         this.depthExcludeSymbolSelecter.addItem("==");
         this.depthExcludeSymbolSelecter.addItem("!=");
         this.depthExcludeSymbolSelecter.addItem("<");
-        this.depthExcludeSymbolSelecter.addItem("<");
+        this.depthExcludeSymbolSelecter.addItem("<=");
         this.depthExcludeSymbolSelecter.addItem(">");
+        this.depthExcludeSymbolSelecter.addItem(">=");
 
         this.nodeDateValueExcludeSymbolSelecter.setBackground(Color.WHITE);
         this.nodeDateValueExcludeSymbolSelecter.setFocusable(false);
@@ -1318,13 +1409,25 @@ implements ActionListener {
 
         this.topLeftPanel.setBackground(Color.WHITE);
         this.topLeftPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        //this.topLeftPanel.add(this.excludeControlOptions);
+        //this.topLeftPanel.add(this.addExcludeControlBtn);
         this.topLeftPanel.add(nodeValueExcludeOptionLabel);
         this.topLeftPanel.add(this.nodeValueExcludeSymbolSelecter);
         this.topLeftPanel.add(this.nodeValueExcludeTxt);
+
+        JLabel edgeValueRemoveLabel = new JLabel("X");
+        edgeValueRemoveLabel.setPreferredSize(new Dimension(14, 14));
+        edgeValueRemoveLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
+        edgeValueRemoveLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        edgeValueRemoveLabel.setToolTipText("EDGE VALUE EXCLUSION CONTROL OPTION");
+        edgeValueRemoveLabel.setBackground(Color.WHITE);
+        edgeValueRemoveLabel.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+
+        //this.topLeftPanel.add(edgeValueRemoveLabel);
         this.topLeftPanel.add(this.edgeValueExludeLabel);
         this.topLeftPanel.add(this.edgeValueExcludeSymbolSelecter);
         this.topLeftPanel.add(this.edgeValueExcludeTxt);
-        //this.topLeftPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+       // this.topLeftPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
 
         JLabel nodeLabelExcludeComboBoxMenuLabel = new JLabel( "  N. L.");
         nodeLabelExcludeComboBoxMenuLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
@@ -1398,16 +1501,23 @@ implements ActionListener {
             this.topLeftPanel.add(this.edgeLabelValueExcludeSelecter);
         }
 
-        JLabel nodeDateExcludeLabel = new JLabel("D. T.");
+        JLabel nodeDateExcludeLabel = new JLabel(" D. & T.");
         nodeDateExcludeLabel.setToolTipText("PROVIDE A DATE & TIME TO EXCLUDE NODES AND EDGES");
         nodeDateExcludeLabel.setFont(MySequentialGraphVars.tahomaPlainFont12);
         nodeDateExcludeLabel.setBackground(Color.WHITE);
 
+        if (MySequentialGraphSysUtil.isDateTimeFeatureExists()) {
+            this.topLeftPanel.add(nodeDateExcludeLabel);
+            this.topLeftPanel.add(this.nodeDateValueExcludeTxt);
+            this.topLeftPanel.add(this.nodeDateValueExcludeSymbolSelecter);
+        }
         this.topLeftPanel.add(this.depthExcludeSelecter);
         this.topLeftPanel.add(this.depthExcludeSymbolSelecter);
-        this.topLeftPanel.add(nodeDateExcludeLabel);
-        this.topLeftPanel.add(this.nodeDateValueExcludeTxt);
-        this.topLeftPanel.add(this.nodeDateValueExcludeSymbolSelecter);
+
+        if (MySequentialGraphSysUtil.isDateTimeFeatureExists()) {
+            this.topLeftPanel.add(this.dayExcludeSelecter);
+            this.topLeftPanel.add(this.dayExcludeSymbolSelecter);
+        }
         this.topLeftPanel.add(this.topLeftNodeExcludeBtn);
 
         this.bottomPanel.setBackground(Color.WHITE);
@@ -1527,7 +1637,7 @@ implements ActionListener {
         this.nodeDateValueExcludeTxt.setHorizontalAlignment(JTextField.CENTER);
         this.nodeDateValueExcludeTxt.setBorder(new LineBorder(Color.DARK_GRAY,1));
         this.nodeDateValueExcludeTxt.setBackground(Color.WHITE);
-        this.nodeDateValueExcludeTxt.setPreferredSize(new Dimension(110, 21));
+        this.nodeDateValueExcludeTxt.setPreferredSize(new Dimension(116, 21));
 
         this.nodeDateValueExcludeTxt2.setFont(MySequentialGraphVars.tahomaPlainFont12);
         this.nodeDateValueExcludeTxt2.setToolTipText("ENTER A DATE & TIME (Ex.: 2000-01-01 12:00:00)");

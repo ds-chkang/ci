@@ -75,13 +75,13 @@ extends JPanel {
 
         TreeMap<Long, Long> valueMap = createNodeValueMap();
         XYSeriesCollection dataset = new XYSeriesCollection();
-        valueSeries = new XYSeries("N. V.");
+        valueSeries = new XYSeries("");
         for (Long value : valueMap.keySet()) {
             valueSeries.add(value, valueMap.get(value));
         }
         dataset.addSeries(valueSeries);
 
-        JFreeChart chart = ChartFactory.createXYLineChart("", "N. V.", "", dataset);
+        JFreeChart chart = ChartFactory.createXYLineChart("", "", "", dataset);
         chart.getTitle().setHorizontalAlignment(HorizontalAlignment.LEFT);
         chart.getXYPlot().setBackgroundPaint(Color.WHITE);
         chart.getXYPlot().setDomainGridlinePaint(Color.DARK_GRAY);
@@ -109,17 +109,18 @@ extends JPanel {
 
         JLabel titleLabel = new JLabel(" N. V.");
         titleLabel.setToolTipText("CURRENT NODE VALUE DISTRIBUTION");
-        titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
+        titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
         titleLabel.setBackground(Color.WHITE);
         titleLabel.setForeground(Color.DARK_GRAY);
 
         JPanel titlePanel = new JPanel();
         titlePanel.setBackground(Color.WHITE);
-        titlePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
+        titlePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 2));
         titlePanel.add(titleLabel);
 
         JButton enlargeBtn = new JButton("+");
-        enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        enlargeBtn.setToolTipText("ENLARGE");
+        enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
         enlargeBtn.setBackground(Color.WHITE);
         enlargeBtn.setFocusable(false);
         enlargeBtn.addActionListener(new ActionListener() {
@@ -171,6 +172,7 @@ extends JPanel {
         add(topPanel, BorderLayout.NORTH);
         add(chartPanel, BorderLayout.CENTER);
 
+        chart.removeLegend();
         revalidate();
         repaint();
     }
@@ -186,21 +188,9 @@ extends JPanel {
             f.pack();
             f.setCursor(Cursor.HAND_CURSOR);
             f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            f.addMouseListener(new MouseAdapter() {
-                @Override public void mouseEntered(MouseEvent e) {
-                    super.mouseEntered(e);
-                    f.setAlwaysOnTop(true);
-                }
-                @Override public void mouseExited(MouseEvent e) {
-                    super.mouseEntered(e);
-                    f.setAlwaysOnTop(false);
-                }
-            });
-            f.setAlwaysOnTop(true);
             pb.updateValue(100, 100);
             pb.dispose();
             f.setVisible(true);
-            f.setAlwaysOnTop(false);
         } catch (Exception ex) {
             MAXIMIZED = false;
             pb.updateValue(100, 100);
@@ -220,7 +210,7 @@ extends JPanel {
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
         for (MyNode n : nodes) {
             if (n.getCurrentValue() == 0) continue;
-            String nodeName = (n.getName().contains("x") ? MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName()) : MySequentialGraphSysUtil.getDecodedNodeName(n.getName()));
+            String nodeName = MySequentialGraphSysUtil.getNodeName(n.getName());
             valueMap.put(nodeName, (long)n.getCurrentValue());
             final float hue = rand.nextFloat();
             final float saturation = 0.9f;
@@ -231,7 +221,7 @@ extends JPanel {
         if (valueMap.size() == 0) {
             JLabel titleLabel = new JLabel(" N. V.");
             titleLabel.setToolTipText("NODE VALUE DISTRIBUTION");
-            titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
+            titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
             titleLabel.setBackground(Color.WHITE);
             titleLabel.setForeground(Color.DARK_GRAY);
 
@@ -251,6 +241,8 @@ extends JPanel {
             msg.setHorizontalAlignment(JLabel.CENTER);
             add(topPanel, BorderLayout.NORTH);
             add(msg, BorderLayout.CENTER);
+
+
             return;
         }
 
@@ -294,13 +286,13 @@ extends JPanel {
 
         JLabel titleLabel = new JLabel(" N. V.");
         titleLabel.setToolTipText("NODE VALUE DISTRIBUTION");
-        titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont11);
+        titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
         titleLabel.setBackground(Color.WHITE);
         titleLabel.setForeground(Color.DARK_GRAY);
 
         JPanel titlePanel = new JPanel();
         titlePanel.setBackground(Color.WHITE);
-        titlePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
+        titlePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 2));
         titlePanel.add(titleLabel);
 
         chartMenu = new JComboBox();
@@ -330,7 +322,7 @@ extends JPanel {
         });
 
         JButton enlargeBtn = new JButton("+");
-        enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont11);
+        enlargeBtn.setFont(MySequentialGraphVars.tahomaPlainFont12);
         enlargeBtn.setBackground(Color.WHITE);
         enlargeBtn.setFocusable(false);
         enlargeBtn.addActionListener(new ActionListener() {
@@ -345,17 +337,19 @@ extends JPanel {
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.WHITE);
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 3, 3));
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 2, 2));
         buttonPanel.add(chartMenu);
         buttonPanel.add(enlargeBtn);
 
         JPanel topPanel = new JPanel();
-        topPanel.setLayout(new BorderLayout(3, 3));
+        topPanel.setLayout(new BorderLayout(2, 2));
         topPanel.setBackground(Color.WHITE);
         topPanel.add(titlePanel, BorderLayout.WEST);
         topPanel.add(buttonPanel, BorderLayout.EAST);
         add(topPanel, BorderLayout.NORTH);
         add(chartPanel, BorderLayout.CENTER);
+
+        chart.removeLegend();
         revalidate();
         repaint();
     }

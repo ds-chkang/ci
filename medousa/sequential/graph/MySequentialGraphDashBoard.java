@@ -107,6 +107,7 @@ extends JPanel {
     MyGraphLevelNodeValueDistributionLineChart graphLevelNodeValueDistributionLineChart;
     MyGraphLevelEdgeValueDistributionLineChart graphLevelEdgeValueDistributionLineChart;
     MyGraphLevelLabelDistributionLineChart graphLevelLabelDistributionLineChart;
+    MyGraphLevelNodeContributionCountByObjectDistribution graphLevelNodeContributionCountByObjectDistribution;
 
     public void setGraphLevelDashBoard() {
         SwingUtilities.invokeLater(new Runnable() {
@@ -123,23 +124,27 @@ extends JPanel {
                     graphLevelNodeValueDistributionLineChart = new MyGraphLevelNodeValueDistributionLineChart();
                     graphLevelEdgeValueDistributionLineChart = new MyGraphLevelEdgeValueDistributionLineChart();
                     graphLevelLabelDistributionLineChart = new MyGraphLevelLabelDistributionLineChart();
+                    graphLevelNodeContributionCountByObjectDistribution = new MyGraphLevelNodeContributionCountByObjectDistribution();
+                    graphLevelNodeContributionCountByObjectDistribution.decorate();
 
                     JPanel graphProfilePanel = new JPanel();
                     graphProfilePanel.setBackground(Color.WHITE);
                     if (MySequentialGraphVars.userDefinedNodeLabelSet.size() == 0 &&
                         MySequentialGraphVars.userDefinedEdgeLabelSet.size() == 0) {
-                        graphProfilePanel.setLayout(new GridLayout(4, 1));
-                        graphProfilePanel.add(graphLevelPredecessorCountDistributionLineChart);
-                        graphProfilePanel.add(graphLevelSuccessorCountDistributionLineChart);
-                        graphProfilePanel.add(graphLevelNodeValueDistributionLineChart);
-                        graphProfilePanel.add(graphLevelEdgeValueDistributionLineChart);
-                    } else {
                         graphProfilePanel.setLayout(new GridLayout(5, 1));
                         graphProfilePanel.add(graphLevelPredecessorCountDistributionLineChart);
                         graphProfilePanel.add(graphLevelSuccessorCountDistributionLineChart);
                         graphProfilePanel.add(graphLevelNodeValueDistributionLineChart);
                         graphProfilePanel.add(graphLevelEdgeValueDistributionLineChart);
+                        graphProfilePanel.add(graphLevelNodeContributionCountByObjectDistribution);
+                    } else {
+                        graphProfilePanel.setLayout(new GridLayout(6, 1));
+                        graphProfilePanel.add(graphLevelPredecessorCountDistributionLineChart);
+                        graphProfilePanel.add(graphLevelSuccessorCountDistributionLineChart);
+                        graphProfilePanel.add(graphLevelNodeValueDistributionLineChart);
+                        graphProfilePanel.add(graphLevelEdgeValueDistributionLineChart);
                         graphProfilePanel.add(graphLevelLabelDistributionLineChart);
+                        graphProfilePanel.add(graphLevelNodeContributionCountByObjectDistribution);
                     }
 
                     graphLevelAverageValuesByDepthLineChart = new MyGraphLevelAverageValuesByDepthLineChart();
@@ -189,23 +194,27 @@ extends JPanel {
                     graphLevelNodeValueDistributionLineChart = new MyGraphLevelNodeValueDistributionLineChart();
                     graphLevelEdgeValueDistributionLineChart = new MyGraphLevelEdgeValueDistributionLineChart();
                     graphLevelLabelDistributionLineChart = new MyGraphLevelLabelDistributionLineChart();
+                    graphLevelNodeContributionCountByObjectDistribution = new MyGraphLevelNodeContributionCountByObjectDistribution();
+                    graphLevelNodeContributionCountByObjectDistribution.decorate();
 
                     JPanel graphProfilePanel = new JPanel();
                     graphProfilePanel.setBackground(Color.WHITE);
                     if (MySequentialGraphVars.userDefinedNodeLabelSet.size() == 0 &&
-                            MySequentialGraphVars.userDefinedEdgeLabelSet.size() == 0) {
-                        graphProfilePanel.setLayout(new GridLayout(4, 1));
-                        graphProfilePanel.add(graphLevelPredecessorCountDistributionLineChart);
-                        graphProfilePanel.add(graphLevelSuccessorCountDistributionLineChart);
-                        graphProfilePanel.add(graphLevelNodeValueDistributionLineChart);
-                        graphProfilePanel.add(graphLevelEdgeValueDistributionLineChart);
-                    } else {
+                        MySequentialGraphVars.userDefinedEdgeLabelSet.size() == 0) {
                         graphProfilePanel.setLayout(new GridLayout(5, 1));
                         graphProfilePanel.add(graphLevelPredecessorCountDistributionLineChart);
                         graphProfilePanel.add(graphLevelSuccessorCountDistributionLineChart);
                         graphProfilePanel.add(graphLevelNodeValueDistributionLineChart);
                         graphProfilePanel.add(graphLevelEdgeValueDistributionLineChart);
+                        graphProfilePanel.add(graphLevelNodeContributionCountByObjectDistribution);
+                    } else {
+                        graphProfilePanel.setLayout(new GridLayout(6, 1));
+                        graphProfilePanel.add(graphLevelPredecessorCountDistributionLineChart);
+                        graphProfilePanel.add(graphLevelSuccessorCountDistributionLineChart);
+                        graphProfilePanel.add(graphLevelNodeValueDistributionLineChart);
+                        graphProfilePanel.add(graphLevelEdgeValueDistributionLineChart);
                         graphProfilePanel.add(graphLevelLabelDistributionLineChart);
+                        graphProfilePanel.add(graphLevelNodeContributionCountByObjectDistribution);
                     }
 
                     graphLevelAverageValuesByDepthLineChart = new MyGraphLevelAverageValuesByDepthLineChart();

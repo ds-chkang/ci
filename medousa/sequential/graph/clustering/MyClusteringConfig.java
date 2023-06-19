@@ -293,7 +293,7 @@ implements ActionListener {
                                             chartPanel.revalidate();
                                             chartPanel.repaint();
                                             chartPanel.repaint();
-                                            MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
+                                            //MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
                                             MySequentialGraphVars.app.getSequentialGraphDashboard().setGraphLevelDashBoard();
                                             MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.setText("N. V. B.");
                                             MySequentialGraphVars.getSequentialGraphViewer().revalidate();
@@ -314,7 +314,7 @@ implements ActionListener {
                                             chartPanel.add(clusterChartAndTableSplitPane, BorderLayout.CENTER);
                                             chartPanel.revalidate();
                                             chartPanel.repaint();
-                                            MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setClusterTextStatistics();
+                                            //MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setClusterTextStatistics();
                                             MySequentialGraphVars.app.getSequentialGraphDashboard().setGraphLevelDashBoard();
                                             MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.setText("C. N. V. B.");
                                             MySequentialGraphVars.getSequentialGraphViewer().revalidate();

@@ -1,6 +1,10 @@
 package medousa.sequential.graph;
 
+import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.visualization.RenderContext;
+import edu.uci.ics.jung.visualization.renderers.BasicVertexLabelRenderer;
 import edu.uci.ics.jung.visualization.renderers.DefaultVertexLabelRenderer;
+import edu.uci.ics.jung.visualization.renderers.VertexLabelAsShapeRenderer;
 import medousa.sequential.graph.listener.MyMotionListener;
 import medousa.sequential.graph.stats.barchart.*;
 import medousa.sequential.graph.listener.MyGraphMouseListener;
@@ -23,8 +27,7 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Point2D;
+import java.awt.geom.*;
 import java.io.Serializable;
 import java.util.*;
 
@@ -60,8 +63,8 @@ implements Serializable {
     public MyViewerComponentController vc;
     public Set<MyNode> sharedPredecessors;
     public Set<MyNode> sharedSuccessors;
-    public Font nodeFont = new Font("Noto Sans", Font.PLAIN, 50);
-    public Font edgeFont = new Font("Noto Sans", Font.PLAIN, 50);
+    public Font nodeFont = new Font("Noto Sans", Font.PLAIN, 46);
+    public Font edgeFont = new Font("Noto Sans", Font.PLAIN, 46);
     public MyGraphLevelNodeValueBarChart graphLevelNodeValueBarChart;
     public MyGraphLevelNodeLabelBarChart graphLevelNodeLabelBarChart;
     public MyGraphLevelEdgeValueBarChart graphLevelEdgeValueBarChart;
@@ -77,6 +80,7 @@ implements Serializable {
     public MyGraphMouseListener graphMouseListener;
     public MyViewerMouseListener viewerMouseListener;
     public Set<MyNode> selectedTableNodeSet;
+    private final Color vertexLabelColor = Color.BLACK;
 
     public MySequentialGraphViewer(VisualizationModel<MyNode, MyEdge> vm) {
         super(vm);
@@ -108,7 +112,7 @@ implements Serializable {
             this.getRenderContext().setVertexStrokeTransformer(this.nodeStroker);
             this.getRenderContext().setVertexDrawPaintTransformer(new Transformer<MyNode, Paint>() {
                 @Override public Paint transform(MyNode n) {
-                   if (vc.depthSelecter.getSelectedIndex() > 0) {
+                    if (vc.depthSelecter.getSelectedIndex() > 0) {
                         if (vc.nodeListTable.getSelectedRow() >= 0) {
                             String tableNode = vc.nodeListTable.getValueAt(vc.nodeListTable.getSelectedRow(), 1).toString();
                             if (tableNode.equals(MySequentialGraphSysUtil.getDecodedNodeName(n.getName()))) {return Color.ORANGE;
@@ -122,15 +126,15 @@ implements Serializable {
             final Color vertexLabelColor = Color.BLACK;
             DefaultVertexLabelRenderer vertexLabelRenderer = new DefaultVertexLabelRenderer(vertexLabelColor) {
                 @Override public <MyNode> Component getVertexLabelRendererComponent(
-                    JComponent vv, Object value, Font font,
-                    boolean isSelected, MyNode vertex) {
+                        JComponent vv, Object value, Font font,
+                        boolean isSelected, MyNode vertex) {
                     super.getVertexLabelRendererComponent(vv, value, font, isSelected, vertex);
                     setForeground(vertexLabelColor);
                     return this;
                 }
             };
-
             this.getRenderContext().setVertexLabelRenderer(vertexLabelRenderer);
+
             this.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.S);
             this.getRenderContext().setVertexLabelTransformer(this.nodeLabeller);
             this.getRenderContext().setEdgeLabelTransformer(new Transformer<MyEdge, String>() {
@@ -139,19 +143,26 @@ implements Serializable {
                 }
             });
 
-            this.getRenderContext().setVertexFontTransformer(new Transformer<MyNode, Font>() {
+           this.getRenderContext().setVertexFontTransformer(new Transformer<MyNode, Font>() {
                 @Override public Font transform(MyNode n) {
-                    if (n.getCurrentValue() == 0) {return new Font("Noto Sans", Font.PLAIN, 0);
-                    } else {return nodeFont;}
+                    if (n.getCurrentValue() == 0) {
+                        return new Font("Noto Sans", Font.PLAIN, 0);
+                    } else {
+                        return nodeFont;
+                    }
                 }
             });
 
             this.getRenderContext().setEdgeFontTransformer(new Transformer<MyEdge, Font>() {
                 @Override public Font transform(MyEdge e) {
-                    if (e.getCurrentValue() == 0) {return new Font("Noto Sans", Font.PLAIN, 0);
-                    } else {return edgeFont;}
+                    if (e.getCurrentValue() == 0) {
+                        return new Font("Noto Sans", Font.PLAIN, 0);
+                    } else {
+                        return edgeFont;
+                    }
                 }
             });
+
 
             this.getRenderContext().setEdgeShapeTransformer(new EdgeShape.QuadCurve<MyNode, MyEdge>());
             this.vc = new MyViewerComponentController();
@@ -161,7 +172,6 @@ implements Serializable {
             titledBorder.setTitleJustification(TitledBorder.LEFT);
             titledBorder.setTitleFont(MySequentialGraphVars.tahomaBoldFont12);
             titledBorder.setTitleColor(Color.DARK_GRAY);
-            //this.vc.setBorder(titledBorder);
 
             this.addComponentListener(new ComponentAdapter() {
                 @Override public void componentResized(ComponentEvent e) {
@@ -278,16 +288,9 @@ implements Serializable {
 
     private Transformer<MyNode, Stroke> nodeStroker = new Transformer<MyNode, Stroke>() {
         @Override public Stroke transform(MyNode n) {
-            if (vc.depthSelecter.getSelectedIndex() > 0 || vc.depthNeighborNodeTypeSelector.getSelectedIndex() > 0) {
-                return new BasicStroke(4f);
-            } else if (vc.tableTabbedPane.getSelectedIndex() == 2) {
-                return new BasicStroke(4f);
-            } else if ((singleNode != null && n == singleNode) || (multiNodes != null && multiNodes.contains(n))) {
-                return new BasicStroke(15f);
-            } else {
-                float currentNodeValueWeight = n.getCurrentValue() / MySequentialGraphVars.g.MX_N_VAL;
-                return setNodeDrawStroke(currentNodeValueWeight);
-            }
+            return new BasicStroke(3f);
+            //float currentNodeValueWeight = n.getCurrentValue() / MySequentialGraphVars.g.MX_N_VAL;
+            //return setNodeDrawStroke(currentNodeValueWeight);
         }
     };
 

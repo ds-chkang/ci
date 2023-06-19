@@ -230,7 +230,7 @@ implements MouseListener {
             MySequentialGraphVars.getSequentialGraphViewer().singleNodePredecessors = null;
             MySequentialGraphVars.getSequentialGraphViewer().singleNodeSuccessors = null;
             MyMultiNodeUtil.adjustMultiNodeNeighborNodeValues();
-            MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
+            //MySequentialGraphVars.getSequentialGraphViewer().vc.vTxtStat.setTextStatistics();
             MySequentialGraphVars.getSequentialGraphViewer().vc.updateTableInfos();
             MySequentialGraphVars.getSequentialGraphViewer().vc.nodeValueBarChart.setText("SHARED N. V. B.");
             MySequentialGraphVars.sequentialGraphDashBoard.setMultiNodeDashBoard();

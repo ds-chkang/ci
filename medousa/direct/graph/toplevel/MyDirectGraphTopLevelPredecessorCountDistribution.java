@@ -58,7 +58,7 @@ implements ActionListener {
                     domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_90);
 
                     BarRenderer barRenderer = (BarRenderer) chartPanel.getChart().getCategoryPlot().getRenderer();
-                    barRenderer.setSeriesPaint(0, new Color(0, 0, 0, 0.25f));//Color.LIGHT_GRAY);//Color.decode("#2084FE"));
+                    barRenderer.setSeriesPaint(0, new Color(0, 0, 0, 0.25f));
                     barRenderer.setShadowPaint(Color.WHITE);
                     barRenderer.setBaseFillPaint(Color.decode("#07CF61"));
                     barRenderer.setBarPainter(new StandardBarPainter());
@@ -95,12 +95,12 @@ implements ActionListener {
 
                     JPanel buttonPanel = new JPanel();
                     buttonPanel.setBackground(Color.WHITE);
-                    buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 3, 3));
+                    buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 2, 2));
                     buttonPanel.add(enlargeBtn);
 
                     JPanel topPanel = new JPanel();
                     topPanel.setBackground(Color.WHITE);
-                    topPanel.setLayout(new BorderLayout(3, 3));
+                    topPanel.setLayout(new BorderLayout(2, 2));
                     topPanel.add(titlePanel, BorderLayout.WEST);
                     topPanel.add(buttonPanel, BorderLayout.EAST);
 
@@ -196,18 +196,6 @@ implements ActionListener {
             f.setBackground(Color.WHITE);
             f.setPreferredSize(new Dimension(550, 450));
             f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            f.addMouseListener(new MouseAdapter() {
-                @Override public void mouseEntered(MouseEvent e) {
-                    super.mouseEntered(e);
-                    f.setAlwaysOnTop(true);
-                }
-
-                @Override public void mouseExited(MouseEvent e) {
-                    super.mouseExited(e);
-                    f.setAlwaysOnTop(false);
-                }
-            });
-
             JSplitPane tableSplitPane = new JSplitPane();
             tableSplitPane.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
             tableSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
@@ -234,12 +222,10 @@ implements ActionListener {
                 }
             });
 
-            f.setAlwaysOnTop(true);
             pb.updateValue(100, 100);
             pb.dispose();
 
             f.setVisible(true);
-            f.setAlwaysOnTop(false);
         } catch (Exception ex) {
             pb.updateValue(100, 100);
             pb.dispose();

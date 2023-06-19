@@ -47,14 +47,12 @@ implements ActionListener {
         this.add(new JSeparator());
         this.setMenuItem(null, this.download, "DOWNLOAD");
         this.setMenuItem(this.download, this.downloadUsers, "DOWNLOAD USERS");
-        this.add(new JSeparator());
         if (MySequentialGraphVars.g.getSuccessorCount(MySequentialGraphVars.getSequentialGraphViewer().singleNode) > 0) {
-            this.setMenuItem(null, this.fromPathFlow, "FROM PATH FLOW");
             this.add(new JSeparator());
+            this.setMenuItem(null, this.fromPathFlow, "FROM PATH FLOW");
         }
         if (MySequentialGraphVars.g.getPredecessorCount(MySequentialGraphVars.getSequentialGraphViewer().singleNode) > 0) {
             this.setMenuItem(null, this.toPathFlow, "TO PATH FLOW");
-            this.add(new JSeparator());
         }
        // if (MySequentialGraphVars.isTimeOn) {
        //     this.setMenuItem(null, this.betweenTimeDistribution, "TIME DISTRIBUTION");
@@ -80,7 +78,7 @@ implements ActionListener {
         new Thread(new Runnable() {
             @Override public void run() {
                 if (e.getSource() == contributionDistributionNyObject) {
-                    MyGraphLevelNodeContributionCountByObjectIDDistribution graphLevelContributionCountByObjectIDDistribution = new MyGraphLevelNodeContributionCountByObjectIDDistribution();
+                    MyGraphLevelNodeContributionCountByObjectDistribution graphLevelContributionCountByObjectIDDistribution = new MyGraphLevelNodeContributionCountByObjectDistribution();
                     graphLevelContributionCountByObjectIDDistribution.enlarge();
                 } else if (e.getSource() == predecessorStatistics) {
                     MyPredecessorStatistics predecessorStatistics = new MyPredecessorStatistics();

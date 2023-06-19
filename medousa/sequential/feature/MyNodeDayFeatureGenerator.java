@@ -1,22 +1,20 @@
 package medousa.sequential.feature;
 
-import medousa.sequential.category.MySequentialGraphCategory;
 import medousa.sequential.utils.MySequentialGraphSysUtil;
 import medousa.sequential.utils.MySequentialGraphVars;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 
 /**
  * Created by changhee on 2017. 7. 14.
  */
-public class MyNodeDateFeatureGenerator {
+public class MyNodeDayFeatureGenerator {
 
     /**
      * Feature writer to save features to a file.
      */
-    MyFeatureWriter fw = new MyFeatureWriter("nodeDateFeatures.txt");
+    MyFeatureWriter fw = new MyFeatureWriter("nodeDayFeatures.txt");
 
     /**
      * declare item id index that user has set in the UI table.
@@ -66,7 +64,7 @@ public class MyNodeDateFeatureGenerator {
     /**
      * default constructor.
      */
-    public MyNodeDateFeatureGenerator() {}
+    public MyNodeDayFeatureGenerator() {}
 
     /**
      * generates input features with choices of running with categorization or without categorization.
@@ -139,18 +137,18 @@ public class MyNodeDateFeatureGenerator {
                         }
                     } else {
                         if (seq.length() == 0) {
-                            seq = items + ":" + (dataIn.get(dataIn.size()-1).get(trTimeIdx)).replaceAll("-", "*");
+                            seq = items + ":" + MySequentialGraphSysUtil.getDayFromDate(dataIn.get(dataIn.size()-1).get(trTimeIdx));
                         } else {
-                            seq = seq + MySequentialGraphVars.hyphenDelimeter + items + ":" + (dataIn.get(dataIn.size()-1).get(trTimeIdx)).replaceAll("-", "*");
+                            seq = seq + MySequentialGraphVars.hyphenDelimeter + items + ":" + MySequentialGraphSysUtil.getDayFromDate(dataIn.get(dataIn.size()-1).get(trTimeIdx));
                         }
                         items = dataIn.get(recCnt).get(itemIDIdx);
                         preTrID = dataIn.get(recCnt).get(trIDIdx);
                     }
                 } else {
                     if (seq.length() == 0) {
-                        seq = items + ":" + (dataIn.get(recCnt-1).get(trTimeIdx)).replaceAll("-", "*");
+                        seq = items + ":" + MySequentialGraphSysUtil.getDayFromDate(dataIn.get(dataIn.size()-1).get(trTimeIdx));
                     } else {
-                        seq = seq + MySequentialGraphVars.hyphenDelimeter + items + ":" + (dataIn.get(dataIn.size()-1).get(trTimeIdx)).replaceAll("-", "*");
+                        seq = seq + MySequentialGraphVars.hyphenDelimeter + items + ":" + MySequentialGraphSysUtil.getDayFromDate(dataIn.get(dataIn.size()-1).get(trTimeIdx));
                     }
                     this.fw.addSequence(seq);
                     items = "";
@@ -161,7 +159,7 @@ public class MyNodeDateFeatureGenerator {
                     recCnt--;
                 }
             }
-            items = items + ":" + (dataIn.get(dataIn.size()-1).get(trTimeIdx)).replaceAll("-", "*");
+            items = items + ":" + MySequentialGraphSysUtil.getDayFromDate(dataIn.get(dataIn.size()-1).get(trTimeIdx));
             if (seq.length() != 0) {
                 seq = seq + MySequentialGraphVars.hyphenDelimeter + items;
             } else {

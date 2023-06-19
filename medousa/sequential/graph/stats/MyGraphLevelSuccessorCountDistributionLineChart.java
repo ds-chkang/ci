@@ -64,7 +64,7 @@ public class MyGraphLevelSuccessorCountDistributionLineChart extends JPanel {
                     XYSeriesCollection dataset = new XYSeriesCollection();
                     dataset.addSeries(successorCountSeries);
 
-                    JFreeChart chart = ChartFactory.createXYLineChart("", "DEPTH", "", dataset);
+                    JFreeChart chart = ChartFactory.createXYLineChart("", "", "", dataset);
                     chart.getTitle().setHorizontalAlignment(HorizontalAlignment.LEFT);
                     chart.getXYPlot().setBackgroundPaint(Color.WHITE);
                     chart.getXYPlot().setDomainGridlinePaint(Color.DARK_GRAY);
@@ -153,6 +153,7 @@ public class MyGraphLevelSuccessorCountDistributionLineChart extends JPanel {
                     renderer.setBaseLegendTextFont(MySequentialGraphVars.tahomaPlainFont11);
                     add(chartPanel, BorderLayout.CENTER);
 
+                    chart.removeLegend();
                     revalidate();
                     repaint();
                 } catch (Exception ex) {

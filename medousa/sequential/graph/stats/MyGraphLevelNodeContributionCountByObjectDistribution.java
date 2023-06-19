@@ -30,7 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.TreeMap;
 
-public class MyGraphLevelNodeContributionCountByObjectIDDistribution
+public class MyGraphLevelNodeContributionCountByObjectDistribution
 extends JPanel
 implements ActionListener {
 
@@ -40,7 +40,7 @@ implements ActionListener {
     private float avgValue = 0;
     private float stdValue = 0;
 
-    public MyGraphLevelNodeContributionCountByObjectIDDistribution() {}
+    public MyGraphLevelNodeContributionCountByObjectDistribution() {}
 
     public void decorate() {
         removeAll();
@@ -66,8 +66,8 @@ implements ActionListener {
         barRenderer.setBarPainter(new StandardBarPainter());
         barRenderer.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont11);
 
-        JLabel titleLabel = new JLabel(" CONT. CNT. BY OBJ.");
-        titleLabel.setToolTipText("CONTRIBUTION COUNT DISTRIBUTION BY OBJECT");
+        JLabel titleLabel = new JLabel(" NODE CONT. CNT. BY OBJ.");
+        titleLabel.setToolTipText("NODE CONTRIBUTION COUNT DISTRIBUTION BY OBJECT");
         titleLabel.setFont(MySequentialGraphVars.tahomaBoldFont12);
         titleLabel.setBackground(Color.WHITE);
         titleLabel.setForeground(Color.DARK_GRAY);
@@ -108,16 +108,16 @@ implements ActionListener {
     public void enlarge() {
             MyProgressBar pb = new MyProgressBar(false);
             try {
-                MyGraphLevelNodeContributionCountByObjectIDDistribution graphLevelTopLevelNodeContributionCountByObjectIDDistribution = new MyGraphLevelNodeContributionCountByObjectIDDistribution();
+                MyGraphLevelNodeContributionCountByObjectDistribution graphLevelTopLevelNodeContributionCountByObjectIDDistribution = new MyGraphLevelNodeContributionCountByObjectDistribution();
                 graphLevelTopLevelNodeContributionCountByObjectIDDistribution.decorate();
 
                 String[] statTableColumns = {"PROPERTY", "VALUE"};
                 String[][] statTableData = {
-                        {"NODES", MyMathUtil.getCommaSeperatedNumber(this.nodes.size())},
-                        {"MAX. VALUE", MyMathUtil.twoDecimalFormat(this.maxValue)},
-                        {"NIN. VALUE", MyMathUtil.twoDecimalFormat(this.minValue)},
-                        {"AVG. VALUE", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(this.avgValue))},
-                        {"STD. VALUE", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(this.stdValue))}
+                        {"NODES", MyMathUtil.getCommaSeperatedNumber(graphLevelTopLevelNodeContributionCountByObjectIDDistribution.nodes.size())},
+                        {"MAX. VALUE", MyMathUtil.twoDecimalFormat(graphLevelTopLevelNodeContributionCountByObjectIDDistribution.maxValue)},
+                        {"NIN. VALUE", MyMathUtil.twoDecimalFormat(graphLevelTopLevelNodeContributionCountByObjectIDDistribution.minValue)},
+                        {"AVG. VALUE", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(graphLevelTopLevelNodeContributionCountByObjectIDDistribution.avgValue))},
+                        {"STD. VALUE", MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(graphLevelTopLevelNodeContributionCountByObjectIDDistribution.stdValue))}
                 };
 
                 DefaultTableModel statTableModel = new DefaultTableModel(statTableData, statTableColumns);
@@ -144,7 +144,7 @@ implements ActionListener {
                 JTable nodeTable = new JTable(nodeTableModel);
                 nodeTable.setBackground(Color.WHITE);
                 nodeTable.setFont(MySequentialGraphVars.f_pln_12);
-                nodeTable.setRowHeight(22);
+                nodeTable.setRowHeight(23);
                 nodeTable.getTableHeader().setFont(MySequentialGraphVars.tahomaBoldFont11);
                 nodeTable.getTableHeader().setOpaque(false);
                 nodeTable.getTableHeader().setBackground(new Color(0, 0, 0, 0f));
@@ -163,7 +163,7 @@ implements ActionListener {
 
                 float max = 0f;
                 LinkedHashMap<String, Long> valueMap = new LinkedHashMap();
-                for (MyNode n : this.nodes) {
+                for (MyNode n : graphLevelTopLevelNodeContributionCountByObjectIDDistribution.nodes) {
                     long totalContributionByObject = n.getTotalContributionByObjects();
                     valueMap.put(n.getName(), totalContributionByObject);
                     if (max < totalContributionByObject) {
@@ -205,7 +205,7 @@ implements ActionListener {
                 nodeTablePanel.add(nodeTableScrollPane, BorderLayout.CENTER);
                 nodeTablePanel.add(nodeTableSearchPanel, BorderLayout.SOUTH);
 
-                JFrame f = new JFrame(" CONTRIBUTION COUNT BY OBJECT DISTRIBUTION");
+                JFrame f = new JFrame(" NODE CONTRIBUTION COUNT BY OBJECT DISTRIBUTION");
                 f.setBackground(Color.WHITE);
                 f.setPreferredSize(new Dimension(550, 450));
                 f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -294,7 +294,7 @@ implements ActionListener {
         this.stdValue = getNodeValueStandardDeviation(valueMap);
 
         String plotTitle = "";
-        String xaxis = "CONTRIBUTION COUNT BY OBJECT";
+        String xaxis = "";
         String yaxis = "";
         PlotOrientation orientation = PlotOrientation.VERTICAL;
         boolean show = false;

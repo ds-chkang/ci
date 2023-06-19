@@ -106,6 +106,7 @@ implements ActionListener {
                     add(chartPanel, BorderLayout.CENTER);
                     add(topPanel, BorderLayout.NORTH);
 
+
                     revalidate();
                     repaint();
                 } catch (Exception ex) {

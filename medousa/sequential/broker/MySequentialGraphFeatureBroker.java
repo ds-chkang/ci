@@ -1,9 +1,6 @@
 package medousa.sequential.broker;
 
-import medousa.sequential.feature.MyFeatureGenerator;
-import medousa.sequential.feature.MyNodeDateFeatureGenerator;
-import medousa.sequential.feature.MyTimeConstrainedFeatureGenerator;
-import medousa.sequential.feature.MyTimeConstrainedFeatureModifier;
+import medousa.sequential.feature.*;
 import medousa.sequential.utils.MySequentialGraphVars;
 
 public class MySequentialGraphFeatureBroker
@@ -30,6 +27,9 @@ extends MySequentialGraphCategoryBroker {
             }
             MyNodeDateFeatureGenerator nodeDateFeatureGenerator = new MyNodeDateFeatureGenerator();
             nodeDateFeatureGenerator.generateInputFeatures(getRawData());
+
+            MyNodeDayFeatureGenerator nodeDayFeatureGenerator = new MyNodeDayFeatureGenerator();
+            nodeDayFeatureGenerator.generateInputFeatures(getRawData());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
