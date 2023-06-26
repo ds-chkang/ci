@@ -34,9 +34,9 @@ public class MySequentialGraphVars {
     public final static Font tahomaBoldFont28 = new Font("Tahoma", Font.BOLD, 28);
     public final static Font tahomaPlainFont18 = new Font("Tahoma", Font.PLAIN, 18);
 
-    public static Set<String> years;
     public static int numberOfGraphs;
-    public static String outputDir = "";
+    public static String outputDir = MySequentialGraphSysUtil.getWorkingDir() +
+            MySequentialGraphSysUtil.getDirectorySlash();
     public static MyGraph g;
     public static String [][] seqs;
     public static MyMedousa app = null;
@@ -50,6 +50,7 @@ public class MySequentialGraphVars {
     public static int currentGraphDepth = -1;
     public static String mergedFileLocation;
     public static int accesssTimeColumnIdx;
+    public static int numberOfInputDataColumns;
 
     public static long totalOutputSize = 0L;
     public static long globalPatternCount = 0L;

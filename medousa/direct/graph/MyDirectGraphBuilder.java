@@ -54,15 +54,22 @@ public class MyDirectGraphBuilder {
 
     public MyDirectGraphBuilder() {
         this.setEdgeValues();
+        System.out.println("setEdgeValues() done.");
         this.setEdgeLabels();
+        System.out.println("setEdgeLabels() done.");
         this.setNodeValues();
+        System.out.println("setNodeValues() done.");
         this.setNodeLabels();
+        System.out.println("setNodeLabels() done.");
         MyDirectGraphVars.directGraph = new MyDirectGraph(EdgeType.DIRECTED);
     }
 
-    public MyDirectGraph createDirectMarkovChain(ArrayList<ArrayList<String>> data) {
+    public MyDirectGraph createDirectGraph(ArrayList<ArrayList<String>> data) {
         try {
+            int i = 0;
             for (ArrayList<String> row : data) {
+                i++;
+                if (row.size() % i == 1000) {System.out.println(i+1);}
                 String fromItem = row.get(MyDirectGraphVars.app.getDirectGraphMsgBroker().getHeaderIndex("FROM ITEM"));
                 String toItem = row.get(MyDirectGraphVars.app.getDirectGraphMsgBroker().getHeaderIndex("TO ITEM"));
                 if (!MyDirectGraphVars.directGraph.vRefs.containsKey(fromItem)) {
@@ -75,10 +82,10 @@ public class MyDirectGraphBuilder {
                     MyDirectGraphVars.directGraph.vRefs.put(toItem, n);
                     MyDirectGraphVars.directGraph.addVertex(n);
                 }
-                ((MyDirectNode) MyDirectGraphVars.directGraph.vRefs.get(fromItem)).setContribution(1);
-                ((MyDirectNode) MyDirectGraphVars.directGraph.vRefs.get(fromItem)).setOutContribution(1);
-                ((MyDirectNode) MyDirectGraphVars.directGraph.vRefs.get(toItem)).setContribution(1);
-                ((MyDirectNode) MyDirectGraphVars.directGraph.vRefs.get(toItem)).setInContribution(1);
+                (MyDirectGraphVars.directGraph.vRefs.get(fromItem)).setContribution(1);
+                (MyDirectGraphVars.directGraph.vRefs.get(fromItem)).setOutContribution(1);
+                (MyDirectGraphVars.directGraph.vRefs.get(toItem)).setContribution(1);
+                (MyDirectGraphVars.directGraph.vRefs.get(toItem)).setInContribution(1);
                 this.setEdge(fromItem, toItem, row);
             }
             return MyDirectGraphVars.directGraph;
@@ -89,14 +96,14 @@ public class MyDirectGraphBuilder {
     private void setEdge(String predecessor, String successor, ArrayList<String> row) {
         String edgeRef = predecessor + "-" + successor;
         try {
-            if (!MyDirectGraphVars.directGraph.directMarkovChainEdgeRefMap.containsKey(edgeRef)) {
-                MyDirectNode source = (MyDirectNode) MyDirectGraphVars.directGraph.vRefs.get(predecessor);
-                MyDirectNode dest = (MyDirectNode) MyDirectGraphVars.directGraph.vRefs.get(successor);
+            if (!MyDirectGraphVars.directGraph.directGraphEdgeRefMap.containsKey(edgeRef)) {
+                MyDirectNode source = MyDirectGraphVars.directGraph.vRefs.get(predecessor);
+                MyDirectNode dest = MyDirectGraphVars.directGraph.vRefs.get(successor);
                 MyDirectEdge edge = new MyDirectEdge(source, dest);
                 MyDirectGraphVars.directGraph.addEdge(edge, source, dest);
-                MyDirectGraphVars.directGraph.directMarkovChainEdgeRefMap.put(edgeRef, edge);
+                MyDirectGraphVars.directGraph.directGraphEdgeRefMap.put(edgeRef, edge);
             }
-            MyDirectEdge edge = ((MyDirectEdge) MyDirectGraphVars.directGraph.directMarkovChainEdgeRefMap.get(edgeRef));
+            MyDirectEdge edge = ((MyDirectEdge) MyDirectGraphVars.directGraph.directGraphEdgeRefMap.get(edgeRef));
             edge.setContribution(1);
             this.addEdgeValues(edge, row);
             this.addEdgeLabels(edge, row);

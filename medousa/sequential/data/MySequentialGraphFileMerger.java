@@ -18,13 +18,28 @@ public class MySequentialGraphFileMerger {
                 String aLine = "";
                 while ((aLine = in.readLine()) != null) {
                     String [] dataColumnValues = aLine.split(columnseparator);
-                    dataColumnValues[MySequentialGraphVars.app.getSequentialGraphMsgBroker().getHeaderIndex("ITEM ID")] =
-                        String.valueOf(dataColumnValues[MySequentialGraphVars.app.getSequentialGraphMsgBroker().getHeaderIndex("ITEM ID")]);
-                    aLine = dataColumnValues[0];
-                    for (int i = 1; i < dataColumnValues.length; i++) {
-                        aLine = aLine + columnseparator + dataColumnValues[i];
+
+                    if (dataColumnValues.length < MySequentialGraphVars.numberOfInputDataColumns) {
+                        continue;
                     }
-                    out.write(aLine + "\n");
+
+                    boolean allIsFine = true;
+                    for (String column : dataColumnValues) {
+                        if (column.length() == 0) {
+                            allIsFine = false;
+                            break;
+                        }
+                    }
+
+                    if (allIsFine) {
+                        dataColumnValues[MySequentialGraphVars.app.getSequentialGraphMsgBroker().getHeaderIndex("ITEM ID")] =
+                                String.valueOf(dataColumnValues[MySequentialGraphVars.app.getSequentialGraphMsgBroker().getHeaderIndex("ITEM ID")]);
+                        aLine = dataColumnValues[0];
+                        for (int i = 1; i < dataColumnValues.length; i++) {
+                            aLine = aLine + columnseparator + dataColumnValues[i];
+                        }
+                        out.write(aLine + "\n");
+                    }
                 }
                 in.close();
             }

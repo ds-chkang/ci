@@ -69,6 +69,11 @@ implements Serializable, Cloneable, Comparable<MyNode> {
 
     public MyNode() {}
 
+    public MyNode(String name, long contribution) {
+        this.name = name;
+        this.contribution = contribution;
+    }
+
     public void setAverageRecursiveTime(float avgRecursiveTime) {
         this.avgRecursiveTime = avgRecursiveTime;
     }

@@ -19,7 +19,6 @@ import java.util.*;
 
 public class MyTimeConstrainedBuilider {
 
-
     private void setEdgeValueNames() {
         for (int i = 0; i < MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getEdgeValueTable().getRowCount(); i++) {
             if (!MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getEdgeValueTable().getValueAt(i, 0).toString().contains("SELECT") &&
@@ -81,7 +80,8 @@ public class MyTimeConstrainedBuilider {
 
     private void createGraphWithVariables() {
         try {
-            BufferedReader br = new BufferedReader(new FileReader(MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "sequences.txt"));
+            BufferedReader br = new BufferedReader(
+                new FileReader(MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "sequences.txt"));
             String line = "";
 
             /*******************************************************
@@ -213,12 +213,18 @@ public class MyTimeConstrainedBuilider {
     }
 
     private void createNodes() {
-        File[] ptrnFiles = MySequentialGraphSysUtil.getFileList(MySequentialGraphVars.outputDir);
-        for (File file : ptrnFiles) {
-            String node = file.getName().split(MySequentialGraphVars.contributionSymbol)[0];
-            MyNode n = new MyNode(node);
-            MySequentialGraphVars.g.addVertex(n);
-            MySequentialGraphVars.g.vRefs.put(node, n);
+        for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
+            for (int i=0; i < MySequentialGraphVars.seqs[s].length; i++) {
+                String [] itemsets = MySequentialGraphVars.seqs[s][i].split("-");
+                for (String itemset : itemsets) {
+                    String nodeName = itemset.split(":")[0];
+                    if (!MySequentialGraphVars.g.vRefs.containsKey(nodeName)) {
+                        MyNode n = new MyNode(nodeName);
+                        MySequentialGraphVars.g.vRefs.put(nodeName, n);
+                        MySequentialGraphVars.g.addVertex(n);
+                    }
+                }
+            }
         }
     }
 
@@ -235,64 +241,65 @@ public class MyTimeConstrainedBuilider {
 
     private void createGraphWithoutVariables() {
         try {
-            BufferedReader br = new BufferedReader(new FileReader(MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "sequences.txt"));
+            BufferedReader br = new BufferedReader(new FileReader(
+                 MySequentialGraphSysUtil.getWorkingDir() + MySequentialGraphSysUtil.getDirectorySlash() + "sequences.txt"));
             String line = "";
 
             while ((line = br.readLine()) != null) {
-                String[] itemsets = line.split(MySequentialGraphVars.hyphenDelimeter);
-                Set<String> sequenceEdgeSet = new HashSet<>();
-                Set<String> sequenceNodeSet = new HashSet<>();
+                String [] itemsets = line.split(MySequentialGraphVars.hyphenDelimeter);
 
-                for (int i = 1; i < itemsets.length; i++) {
-                    String p = itemsets[i-1].split(":")[0];
-                    String s = itemsets[i].split(":")[0];
-                    String edgeName = p + "-" + s;
+                if (itemsets.length == 1) {
+                    String itemset = itemsets[0].split(":")[0];
+                    MyNode n = (MyNode) MySequentialGraphVars.g.vRefs.get(itemset);
+                    n.updateContribution(1);
+                    n.setUniqueContribution();
+                } else {
+                    Set<String> sequenceEdgeSet = new HashSet<>();
+                    Set<String> sequenceNodeSet = new HashSet<>();
 
-                    sequenceNodeSet.add(p);
-                    sequenceNodeSet.add(s);
-                    sequenceEdgeSet.add(edgeName);
+                    for (int i = 1; i < itemsets.length; i++) {
+                        String p = itemsets[i-1].split(":")[0];
+                        String s = itemsets[i].split(":")[0];
+                        String edgeName = p + "-" + s;
 
-                    if (!MySequentialGraphVars.g.edgeRefMap.containsKey(edgeName)) {
-                        MyNode pNode = (MyNode) MySequentialGraphVars.g.vRefs.get(p);
-                        MyNode sNode = (MyNode) MySequentialGraphVars.g.vRefs.get(s);
+                        sequenceNodeSet.add(p);
+                        sequenceNodeSet.add(s);
+                        sequenceEdgeSet.add(edgeName);
 
-                        pNode.setContribution(1);
-                        pNode.setOutContribution(1);
-                        if ((i+1) == itemsets.length) {
-                            sNode.setContribution(1);
+                        if (!MySequentialGraphVars.g.edgeRefMap.containsKey(edgeName)) {
+                            MyNode pNode = (MyNode) MySequentialGraphVars.g.vRefs.get(p);
+                            MyNode sNode = (MyNode) MySequentialGraphVars.g.vRefs.get(s);
+
+                            pNode.setOutContribution(1);
+                            sNode.setInContribution(1);
+
+                            MyEdge edge = new MyEdge(pNode, sNode);
+                            MySequentialGraphVars.g.addEdge(edge, pNode, sNode);
+                            MySequentialGraphVars.g.edgeRefMap.put(edgeName, edge);
+                        } else {
+                            MyNode pNode = (MyNode) MySequentialGraphVars.g.vRefs.get(p);
+                            MyNode sNode = (MyNode) MySequentialGraphVars.g.vRefs.get(s);
+
+                            pNode.setOutContribution(1);
+                            sNode.setInContribution(1);
+
+                            ((MyEdge) MySequentialGraphVars.g.edgeRefMap.get(edgeName)).setContribution(1);
                         }
-                        sNode.setInContribution(1);
-
-                        MyEdge edge = new MyEdge(pNode, sNode);
-                        MySequentialGraphVars.g.addEdge(edge, pNode, sNode);
-                        MySequentialGraphVars.g.edgeRefMap.put(edgeName, edge);
-                    } else {
-                        MyNode pNode = (MyNode) MySequentialGraphVars.g.vRefs.get(p);
-                        MyNode sNode = (MyNode) MySequentialGraphVars.g.vRefs.get(s);
-
-                        pNode.setContribution(1);
-                        pNode.setOutContribution(1);
-                        if ((i+1) == itemsets.length) {
-                            sNode.setContribution(1);
-                        }
-                        sNode.setInContribution(1);
-
-                        ((MyEdge) MySequentialGraphVars.g.edgeRefMap.get(edgeName)).setContribution(1);
                     }
-                }
 
-                /**********************************************************
-                 *  Set Node unique contribution.
-                 **********************************************************/
-                for (String n : sequenceNodeSet) {
-                    ((MyNode) MySequentialGraphVars.g.vRefs.get(n)).setUniqueContribution();
-                }
+                    /**********************************************************
+                     *  Set Node unique contribution.
+                     **********************************************************/
+                    for (String n : sequenceNodeSet) {
+                        ((MyNode) MySequentialGraphVars.g.vRefs.get(n)).setUniqueContribution();
+                    }
 
-                /**********************************************************
-                 *  Set Edge unique contribution.
-                 **********************************************************/
-                for (String e : sequenceEdgeSet) {
-                    ((MyEdge) MySequentialGraphVars.g.edgeRefMap.get(e)).setUniqueContribution(1);
+                    /**********************************************************
+                     *  Set Edge unique contribution.
+                     **********************************************************/
+                    for (String e : sequenceEdgeSet) {
+                        ((MyEdge) MySequentialGraphVars.g.edgeRefMap.get(e)).setUniqueContribution(1);
+                    }
                 }
             }
         } catch (Exception ex) {
@@ -825,109 +832,123 @@ public class MyTimeConstrainedBuilider {
                 Map<Integer, Set<String>> successorByDepthMap = new HashMap<>();
                 Map<Integer, MyNodeDepthInfo> nodeDepthInfoMap = new HashMap<>();
                 for (int s = 0; s < MySequentialGraphVars.seqs.length; s++) {
-                    for (int i = 0; i < MySequentialGraphVars.seqs[s].length; i++) {
-                        String [] itemset = MySequentialGraphVars.seqs[s][i].split(":");
-                        if (itemset[0].equals(n.getName())) {
-                            if (MySequentialGraphVars.seqs[s].length==1) {
-                                Set<String> predecessors = new HashSet<>();
-                                predecessorByDepthMap.put(i+1, predecessors);
-                                Set<String> successors= new HashSet<>();
-                                predecessorByDepthMap.put(i+1, successors);
-                                if (nodeDepthInfoMap.containsKey(i+1)) {
-                                    MyNodeDepthInfo nodeDepthInfo = nodeDepthInfoMap.get(i+1);
-                                    nodeDepthInfo.setContribution(1);
-                                    nodeDepthInfoMap.put(i+1, nodeDepthInfo);
-                                } else {
-                                    MyNodeDepthInfo nodeDepthInfo = new MyNodeDepthInfo();
-                                    nodeDepthInfo.setContribution(1);
-                                    nodeDepthInfoMap.put(i+1, nodeDepthInfo);
-                                }
-                            } else if (i == 0) {
-                                if (nodeDepthInfoMap.containsKey(i+1)) {
-                                    MyNodeDepthInfo nodeDepthInfo = nodeDepthInfoMap.get(i+1);
-                                    nodeDepthInfo.setContribution(1);
-                                    nodeDepthInfo.setOutContribution(1);
-                                    long duration = Long.parseLong(MySequentialGraphVars.seqs[s][i+1].split(":")[1]);
-                                    nodeDepthInfo.setDuration(duration);
-                                    nodeDepthInfoMap.put(i+1, nodeDepthInfo);
-
-                                    Set<String> successors = successorByDepthMap.get(i+1);
-                                    successors.add(MySequentialGraphVars.seqs[s][i+1].split(":")[0]);
-                                    successorByDepthMap.put(i+1, successors);
-                                } else {
-                                    MyNodeDepthInfo nodeDepthInfo = new MyNodeDepthInfo();
-                                    nodeDepthInfo.setContribution(1);
-                                    nodeDepthInfo.setOutContribution(1);
-                                    long duration = Long.parseLong(MySequentialGraphVars.seqs[s][i+1].split(":")[1]);
-                                    nodeDepthInfo.setDuration(duration);
-                                    nodeDepthInfoMap.put(i+1, nodeDepthInfo);
-
-                                    Set<String> successors = new HashSet<>();
-                                    successors.add(MySequentialGraphVars.seqs[s][i+1].split(":")[0]);
-                                    successorByDepthMap.put(i+1, successors);
-
+                    if (MySequentialGraphVars.seqs[s].length == 1) {
+                        MyNode exN = (MyNode) MySequentialGraphVars.g.vRefs.get(MySequentialGraphVars.seqs[s][0].split(":")[0]);
+                        if (exN.getNodeDepthInfoMap() != null && exN.getNodeDepthInfoMap().containsKey(1)) {
+                            MyNodeDepthInfo nodeDepthInfo = exN.nodeDepthInfoMap.get(1);
+                            nodeDepthInfo.setContribution(1);
+                            exN.nodeDepthInfoMap.put(1, nodeDepthInfo);
+                        } else {
+                            exN.nodeDepthInfoMap = new HashMap<>();
+                            MyNodeDepthInfo nodeDepthInfo = new MyNodeDepthInfo();
+                            nodeDepthInfo.setContribution(1);
+                            exN.nodeDepthInfoMap.put(1, nodeDepthInfo);
+                        }
+                    } else {
+                        for (int i = 0; i < MySequentialGraphVars.seqs[s].length; i++) {
+                            String[] itemset = MySequentialGraphVars.seqs[s][i].split(":");
+                            if (itemset[0].equals(n.getName())) {
+                                if (MySequentialGraphVars.seqs[s].length == 1) {
                                     Set<String> predecessors = new HashSet<>();
                                     predecessorByDepthMap.put(i+1, predecessors);
-                                }
-                            } else if ((i+1) == MySequentialGraphVars.seqs[s].length) {
-                                if (nodeDepthInfoMap.containsKey(i+1)) {
-                                    MyNodeDepthInfo nodeDepthInfo = nodeDepthInfoMap.get(i+1);
-                                    nodeDepthInfo.setContribution(1);
-                                    nodeDepthInfo.setReachTime(Long.parseLong(itemset[1]));
-                                    nodeDepthInfoMap.put(i+1, nodeDepthInfo);
-
-                                    Set<String> predecessors = predecessorByDepthMap.get(i+1);
-                                    predecessors.add(MySequentialGraphVars.seqs[s][i-1].split(":")[0]);
-                                    predecessorByDepthMap.put(i+1, predecessors);
-                                } else {
-                                    MyNodeDepthInfo nodeDepthInfo = new MyNodeDepthInfo();
-                                    nodeDepthInfo.setContribution(1);
-                                    nodeDepthInfo.setInContribution(1);
-                                    nodeDepthInfo.setReachTime(Long.parseLong(itemset[1]));
-                                    nodeDepthInfoMap.put(i+1, nodeDepthInfo);
-
-                                    Set<String> predecessors = new HashSet<>();
-                                    predecessors.add(MySequentialGraphVars.seqs[s][i-1].split(":")[0]);
-                                    predecessorByDepthMap.put(i+1, predecessors);
-
                                     Set<String> successors = new HashSet<>();
-                                    successorByDepthMap.put(i+1, successors);
-                                }
-                            } else {
-                                if (nodeDepthInfoMap.containsKey(i+1)) {
-                                    MyNodeDepthInfo nodeDepthInfo = nodeDepthInfoMap.get(i+1);
-                                    nodeDepthInfo.setContribution(1);
-                                    nodeDepthInfo.setOutContribution(1);
-                                    nodeDepthInfo.setInContribution(1);
-                                    long duration = Long.parseLong(MySequentialGraphVars.seqs[s][i+1].split(":")[1]);
-                                    nodeDepthInfo.setDuration(duration);
-                                    nodeDepthInfo.setReachTime(Long.parseLong(itemset[1]));
-                                    nodeDepthInfoMap.put(i+1, nodeDepthInfo);
+                                    predecessorByDepthMap.put(i+1, successors);
+                                    if (nodeDepthInfoMap.containsKey(i + 1)) {
+                                        MyNodeDepthInfo nodeDepthInfo = nodeDepthInfoMap.get(i + 1);
+                                        nodeDepthInfo.setContribution(1);
+                                        nodeDepthInfoMap.put(i+1, nodeDepthInfo);
+                                    } else {
+                                        MyNodeDepthInfo nodeDepthInfo = new MyNodeDepthInfo();
+                                        nodeDepthInfo.setContribution(1);
+                                        nodeDepthInfoMap.put(i+1, nodeDepthInfo);
+                                    }
+                                } else if (i == 0) {
+                                    if (nodeDepthInfoMap.containsKey(i+1)) {
+                                        MyNodeDepthInfo nodeDepthInfo = nodeDepthInfoMap.get(i + 1);
+                                        nodeDepthInfo.setContribution(1);
+                                        nodeDepthInfo.setOutContribution(1);
+                                        long duration = Long.parseLong(MySequentialGraphVars.seqs[s][i + 1].split(":")[1]);
+                                        nodeDepthInfo.setDuration(duration);
+                                        nodeDepthInfoMap.put(i+1, nodeDepthInfo);
 
-                                    Set<String> predecessors = predecessorByDepthMap.get(i+1);
-                                    predecessors.add(MySequentialGraphVars.seqs[s][i-1].split(":")[0]);
-                                    predecessorByDepthMap.put(i+1, predecessors);
+                                        Set<String> successors = successorByDepthMap.get(i+1);
+                                        successors.add(MySequentialGraphVars.seqs[s][i+1].split(":")[0]);
+                                        successorByDepthMap.put(i+1, successors);
+                                    } else {
+                                        MyNodeDepthInfo nodeDepthInfo = new MyNodeDepthInfo();
+                                        nodeDepthInfo.setContribution(1);
+                                        nodeDepthInfo.setOutContribution(1);
+                                        long duration = Long.parseLong(MySequentialGraphVars.seqs[s][i+1].split(":")[1]);
+                                        nodeDepthInfo.setDuration(duration);
+                                        nodeDepthInfoMap.put(i+1, nodeDepthInfo);
 
-                                    Set<String> successors = successorByDepthMap.get(i+1);
-                                    successors.add(MySequentialGraphVars.seqs[s][i+1].split(":")[0]);
-                                    successorByDepthMap.put(i+1, successors);
+                                        Set<String> successors = new HashSet<>();
+                                        successors.add(MySequentialGraphVars.seqs[s][i + 1].split(":")[0]);
+                                        successorByDepthMap.put(i+1, successors);
+
+                                        Set<String> predecessors = new HashSet<>();
+                                        predecessorByDepthMap.put(i+1, predecessors);
+                                    }
+                                } else if ((i + 1) == MySequentialGraphVars.seqs[s].length) {
+                                    if (nodeDepthInfoMap.containsKey(i+1)) {
+                                        MyNodeDepthInfo nodeDepthInfo = nodeDepthInfoMap.get(i + 1);
+                                        nodeDepthInfo.setContribution(1);
+                                        nodeDepthInfo.setReachTime(Long.parseLong(itemset[1]));
+                                        nodeDepthInfoMap.put(i+1, nodeDepthInfo);
+
+                                        Set<String> predecessors = predecessorByDepthMap.get(i + 1);
+                                        predecessors.add(MySequentialGraphVars.seqs[s][i - 1].split(":")[0]);
+                                        predecessorByDepthMap.put(i + 1, predecessors);
+                                    } else {
+                                        MyNodeDepthInfo nodeDepthInfo = new MyNodeDepthInfo();
+                                        nodeDepthInfo.setContribution(1);
+                                        nodeDepthInfo.setInContribution(1);
+                                        nodeDepthInfo.setReachTime(Long.parseLong(itemset[1]));
+                                        nodeDepthInfoMap.put(i + 1, nodeDepthInfo);
+
+                                        Set<String> predecessors = new HashSet<>();
+                                        predecessors.add(MySequentialGraphVars.seqs[s][i - 1].split(":")[0]);
+                                        predecessorByDepthMap.put(i + 1, predecessors);
+
+                                        Set<String> successors = new HashSet<>();
+                                        successorByDepthMap.put(i + 1, successors);
+                                    }
                                 } else {
-                                    MyNodeDepthInfo nodeDepthInfo = new MyNodeDepthInfo();
-                                    nodeDepthInfo.setContribution(1);
-                                    nodeDepthInfo.setOutContribution(1);
-                                    nodeDepthInfo.setInContribution(1);
-                                    long duration = Long.parseLong(MySequentialGraphVars.seqs[s][i+1].split(":")[1]);
-                                    nodeDepthInfo.setDuration(duration);
-                                    nodeDepthInfo.setReachTime(Long.parseLong(itemset[1]));
-                                    nodeDepthInfoMap.put(i+1, nodeDepthInfo);
+                                    if (nodeDepthInfoMap.containsKey(i + 1)) {
+                                        MyNodeDepthInfo nodeDepthInfo = nodeDepthInfoMap.get(i + 1);
+                                        nodeDepthInfo.setContribution(1);
+                                        nodeDepthInfo.setOutContribution(1);
+                                        nodeDepthInfo.setInContribution(1);
+                                        long duration = Long.parseLong(MySequentialGraphVars.seqs[s][i + 1].split(":")[1]);
+                                        nodeDepthInfo.setDuration(duration);
+                                        nodeDepthInfo.setReachTime(Long.parseLong(itemset[1]));
+                                        nodeDepthInfoMap.put(i + 1, nodeDepthInfo);
 
-                                    Set<String> predecessors = new HashSet<>();
-                                    predecessors.add(MySequentialGraphVars.seqs[s][i-1].split(":")[0]);
-                                    predecessorByDepthMap.put(i+1, predecessors);
+                                        Set<String> predecessors = predecessorByDepthMap.get(i + 1);
+                                        predecessors.add(MySequentialGraphVars.seqs[s][i - 1].split(":")[0]);
+                                        predecessorByDepthMap.put(i + 1, predecessors);
 
-                                    Set<String> successors = new HashSet<>();
-                                    successors.add(MySequentialGraphVars.seqs[s][i+1].split(":")[0]);
-                                    successorByDepthMap.put(i+1, successors);
+                                        Set<String> successors = successorByDepthMap.get(i + 1);
+                                        successors.add(MySequentialGraphVars.seqs[s][i + 1].split(":")[0]);
+                                        successorByDepthMap.put(i + 1, successors);
+                                    } else {
+                                        MyNodeDepthInfo nodeDepthInfo = new MyNodeDepthInfo();
+                                        nodeDepthInfo.setContribution(1);
+                                        nodeDepthInfo.setOutContribution(1);
+                                        nodeDepthInfo.setInContribution(1);
+                                        long duration = Long.parseLong(MySequentialGraphVars.seqs[s][i + 1].split(":")[1]);
+                                        nodeDepthInfo.setDuration(duration);
+                                        nodeDepthInfo.setReachTime(Long.parseLong(itemset[1]));
+                                        nodeDepthInfoMap.put(i + 1, nodeDepthInfo);
+
+                                        Set<String> predecessors = new HashSet<>();
+                                        predecessors.add(MySequentialGraphVars.seqs[s][i - 1].split(":")[0]);
+                                        predecessorByDepthMap.put(i + 1, predecessors);
+
+                                        Set<String> successors = new HashSet<>();
+                                        successors.add(MySequentialGraphVars.seqs[s][i + 1].split(":")[0]);
+                                        successorByDepthMap.put(i + 1, successors);
+                                    }
                                 }
                             }
                         }

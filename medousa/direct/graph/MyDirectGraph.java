@@ -1,6 +1,7 @@
 package medousa.direct.graph;
 
-import medousa.direct.graph.common.MyDirectGraphNodeBetweennessCentrality;
+import edu.uci.ics.jung.algorithms.scoring.BetweennessCentrality;
+import medousa.direct.graph.common.MyDirectGraphEdgeBetweennessCentrality;
 import medousa.direct.graph.common.MyDirectGraphDirectGraphClosenessCentrality;
 import medousa.direct.graph.common.MyDirectGraphDirectGraphNodeEigenvectorCentrality;
 import medousa.direct.utils.MyDirectGraphMathUtil;
@@ -25,7 +26,7 @@ implements Serializable {
     private float minEdgeValue = 0.00f;
     public float maxNodeValue = 0.00f;
     public float minNodeValue = 0.00f;
-    public Map<String, MyDirectEdge> directMarkovChainEdgeRefMap = new HashMap<>();
+    public Map<String, MyDirectEdge> directGraphEdgeRefMap = new HashMap<>();
 
     public MyDirectGraph(EdgeType directed) {
         super(directed);
@@ -80,7 +81,7 @@ implements Serializable {
         long total = 0;
         Collection<MyDirectEdge> edges = MyDirectGraphVars.directGraph.getEdges();
         for (MyDirectEdge e : edges) {
-            if (e.getCurrentValue() > 0) {
+            if (e.getCurrentValue() > 0 && e.getSource().getCurrentValue() > 0 && e.getDest().getCurrentValue() > 0) {
                 total++;
             }
         }
@@ -845,22 +846,58 @@ implements Serializable {
 
     public float getMaxEdgeValue() {return this.maxEdgeValue;}
     public void setNodeBetweenessCentrality() {
-        MyDirectGraphNodeBetweennessCentrality betweennessCentrality = new MyDirectGraphNodeBetweennessCentrality(MyDirectGraphVars.directGraph);
+        MyDirectGraphEdgeBetweennessCentrality betweennessCentrality = new MyDirectGraphEdgeBetweennessCentrality(MyDirectGraphVars.directGraph);
         betweennessCentrality.computeBetweenness(MyDirectGraphVars.directGraph);
         Collection<MyDirectNode> nodes = MyDirectGraphVars.directGraph.getVertices();
+        double max = 0d;
         for (MyDirectNode n : nodes) {
-            n.setBetweeness(Double.valueOf(MyDirectGraphMathUtil.twoDecimalFormat(betweennessCentrality.getVertexRankScore(n))));
+            double value = betweennessCentrality.getVertexRankScore(n);
+            if (max < value) {
+                max = value;
+            }
+        }
+
+        for (MyDirectNode n : nodes) {
+            n.setBetweeness(Double.valueOf(MyDirectGraphMathUtil.threeDecimalFormat(betweennessCentrality.getVertexRankScore(n)/max)));
         }
     }
 
     public void setNodeClosenessCentrality() {
         MyDirectGraphDirectGraphClosenessCentrality closenessCentrality = new MyDirectGraphDirectGraphClosenessCentrality(MyDirectGraphVars.directGraph);
         Collection<MyDirectNode> nodes = MyDirectGraphVars.directGraph.getVertices();
+
+        double max = 0d;
         for (MyDirectNode n : nodes) {
             double value = closenessCentrality.getVertexScore(n);
-            n.setCloseness(Double.valueOf(MyDirectGraphMathUtil.twoDecimalFormat((value == Double.NaN ? 0 : value))));
+            if (max < value) {
+                max = value;
+            }
+        }
+
+        for (MyDirectNode n : nodes) {
+            double value = (closenessCentrality.getVertexScore(n)/max);
+            n.setCloseness(Double.valueOf(MyDirectGraphMathUtil.threeDecimalFormat((value == Double.NaN ? 0 : value))));
         }
     }
+
+    public void setEdgeBetweeness() {
+        float max = 0f;
+        BetweennessCentrality<MyDirectNode, MyDirectEdge> betweenness = new BetweennessCentrality<>(MyDirectGraphVars.directGraph);
+        for (MyDirectEdge e : MyDirectGraphVars.directGraph.getEdges()) {
+            if (e.getCurrentValue() == 0) continue;
+            e.betweeness = ((float) (double) betweenness.getEdgeScore(e));
+            if (e.betweeness > max) {
+                max = e.betweeness;
+            }
+        }
+
+        for (MyDirectEdge e : MyDirectGraphVars.directGraph.getEdges()) {
+            if (e.getCurrentValue() == 0) continue;
+            e.betweeness = Float.parseFloat(MyDirectGraphMathUtil.threeDecimalFormat(e.betweeness/max));
+        }
+    }
+
+
 
     public void setNodeEigenVectorCentrality() {
         MyDirectGraphDirectGraphNodeEigenvectorCentrality eigenvectorCentrality = new MyDirectGraphDirectGraphNodeEigenvectorCentrality(MyDirectGraphVars.directGraph);
@@ -868,9 +905,16 @@ implements Serializable {
         eigenvectorCentrality.evaluate();
 
         Collection<MyDirectNode> nodes = MyDirectGraphVars.directGraph.getVertices();
+        double max = 0d;
+        for (MyDirectNode n : nodes) {
+            double value = (double) eigenvectorCentrality.getVertexScore(n);
+            if (max < value) {
+                max = value;
+            }
+        }
+
         for(MyDirectNode n : nodes){
-            n.setEignevector(((double)eigenvectorCentrality.getVertexScore(n))*1000);
-            //System.out.println(MySysUtil.getDecodedNodeName(n.getName()) + " :eigen:"+ eigenvectorCentrality.getVertexScore(n));
+            n.setEignevector(((double)eigenvectorCentrality.getVertexScore(n)/max));
         }
     }
 

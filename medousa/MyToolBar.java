@@ -1,6 +1,8 @@
 package medousa;
 
 import medousa.direct.config.MyDirectGraphConfigPanel;
+import medousa.direct.utils.MyDirectGraphMathUtil;
+import medousa.preview.MyInputDataPreviewer;
 import medousa.direct.graph.analysis.MyDirectGraphAnalysisDirectGraphAnalyzer;
 import medousa.direct.graph.layout.MyDirectGraphFRLayout;
 import medousa.message.MyMessageUtil;
@@ -44,6 +46,7 @@ implements ActionListener {
     private final ImageIcon network_img_icon = new ImageIcon(getClass().getResource(MyDirectGraphVars.imgDir + "network.png"));
 
     public JComboBox distributionSelecter = new JComboBox();
+    public MyInputDataPreviewer inputDataPreviewTable;
 
     protected   JComboBox projectMenuComboBox;
     private final String [] projectMenuItems = {"", "DIRECT NETWORK", "COMPLEX NETWORK"};
@@ -174,16 +177,29 @@ implements ActionListener {
                                 if (MyDirectGraphVars.app.getContentTabbedPane().getTabCount() > 0) {
                                     MyDirectGraphVars.app.getContentTabbedPane().removeAll();
                                 }
+
+                                inputDataPreviewTable = new MyInputDataPreviewer();
+                                MyDirectGraphVars.app.getContentTabbedPane().addTab("      DATA PREVIEW       ", inputDataPreviewTable);
                                 MyDirectGraphVars.app.getContentTabbedPane().addTab("      CONFIGURATION       ", scrollPane);
                                 MyDirectGraphVars.app.getContentTabbedPane().addTab("      DASHBOARD       ", MyDirectGraphVars.app.resetDirectGraphDashBoard());
 
+                                setButton(headerBtn, header_img_icon, "Set header", true);
+                                setButton(inputBtn, input_img_icon, "Set input data", false);
+                                setButton(runBtn, run_img_icon, "Create network", false);
+                                //setButton(funnelBtn, funnel_img_icon, "Funnel Analyses", false);
+                                //setButton(clusteringBtn, clustering_img_icon, "Clustering Analysis", false);
+
+                                headerBtn.setEnabled(true);
+                                headerBtn.setVisible(true);
+                                inputBtn.setVisible(true);
                                 runBtn.setVisible(true);
-                                setButton(runBtn, run_img_icon, "CREATE NETWORK", false);
                             } else if (selectedTabIdx == 2) {
                                 MySequentialGraphSysUtil.initVariables();
                                 MySequentialGraphConfigPanel sequentialGraphConfigPanel = new MySequentialGraphConfigPanel();
                                 MySequentialGraphVars.app.getSequentialGraphMsgBroker().setSequentialConfigPanel(sequentialGraphConfigPanel);
 
+                                inputDataPreviewTable = new MyInputDataPreviewer();
+                                MySequentialGraphVars.app.getContentTabbedPane().addTab("      DATA PREVIEW       ", inputDataPreviewTable);
                                 MySequentialGraphVars.app.getContentTabbedPane().addTab("      CONFIGURATION       ", sequentialGraphConfigPanel);
                                 MySequentialGraphVars.app.getContentTabbedPane().addTab("      DASHBOARD       ", MySequentialGraphVars.app.resetSequentialGraphDashboard());
 
@@ -282,6 +298,7 @@ implements ActionListener {
                                 fc.showOpenDialog(MySequentialGraphVars.app);
 
                                 if (fc.getSelectedFile() != null) {
+
                                     String [] headers = MySequentialGraphVars.app.getSequentialGraphMsgBroker().loadHeader(fc.getSelectedFile());
                                     if (headers == null) {
                                         MyMessageUtil.showErrorMsg( "Please, check the format of the provided header file.");
@@ -294,13 +311,29 @@ implements ActionListener {
                                         headers[i] = " " + headers[i].toUpperCase();
                                     }
 
-                                    MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getDefaultVariableTable().updateTable(headers, true);
-                                    MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getSupplimentaryVariableTable().update(headers, true);
-                                    MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getEdgeValueTable().update(headers, true);
-                                    MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getEdgeLabelTable().update(headers, true);
-                                    MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getNodeValueTable().update(headers, true);
-                                    MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getNodeLabelTable().update(headers, true);
-                                    inputBtn.setEnabled(true);
+                                    final String [] splitHeaders = headers;
+                                    new Thread(new Runnable() {
+                                        @Override public void run() {
+                                            MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getDefaultVariableTable().updateTable(splitHeaders, true);
+                                            MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getSupplimentaryVariableTable().update(splitHeaders, true);
+                                            MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getEdgeValueTable().update(splitHeaders, true);
+                                            MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getEdgeLabelTable().update(splitHeaders, true);
+                                            MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getNodeValueTable().update(splitHeaders, true);
+                                            MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getNodeLabelTable().update(splitHeaders, true);
+                                            inputBtn.setEnabled(true);
+                                        }
+                                    }).start();
+
+                                    new Thread(new Runnable() {
+                                        @Override public void run() {
+                                            inputDataPreviewTable = new MyInputDataPreviewer();
+                                            inputDataPreviewTable.dataTableColumns = MyDirectGraphVars.app.getSequentialGraphMsgBroker().getHeaderLoader().getHeaders();
+                                            MySequentialGraphVars.app.getContentTabbedPane().setComponentAt(0, inputDataPreviewTable);
+                                            inputDataPreviewTable.decorate();
+                                            inputDataPreviewTable.revalidate();
+                                            inputDataPreviewTable.repaint();
+                                        }
+                                    }).start();
                                 } else {
                                     MyMessageUtil.showErrorMsg("Failed to header!");
                                 }
@@ -318,11 +351,16 @@ implements ActionListener {
                                 fc.setMultiSelectionEnabled(true);
                                 fc.showOpenDialog(MySequentialGraphVars.app);
                                 if (fc.getSelectedFile() != null) {
-                                    MySequentialGraphVars.app.getSequentialGraphMsgBroker().setInputFiles(fc.getSelectedFiles());
-                                    MyMessageUtil.showInfoMsg("Data have been successfully loaded!");
-                                    inputBtn.setBackground(Color.WHITE);
-                                    runBtn.setEnabled(true);
-                                    runBtn.setBackground(Color.GREEN);
+                                    boolean isDataLoaded = inputDataPreviewTable.loadInputDataToTable(fc.getSelectedFiles());
+                                    if (isDataLoaded) {
+                                        MySequentialGraphVars.app.getSequentialGraphMsgBroker().setInputFiles(fc.getSelectedFiles());
+                                        MyMessageUtil.showInfoMsg("Data have been successfully loaded!");
+                                        inputBtn.setBackground(Color.WHITE);
+                                        runBtn.setEnabled(true);
+                                        runBtn.setBackground(Color.GREEN);
+                                    } else {
+                                        MyMessageUtil.showErrorMsg("Failed to load data!");
+                                    }
                                 } else {
                                     inputBtn.setEnabled(true);
                                     MyMessageUtil.showErrorMsg("Failed to load data file!");
@@ -336,6 +374,14 @@ implements ActionListener {
                 } else if (evt.getSource() == runBtn) {
                     new Thread(new Runnable() {
                         @Override public void run() {
+                             if (!MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getDefaultVariableTable().getValueAt(0, 1).toString().replaceAll(" ", "").equals("OBJECTID") ||
+                                 !MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getDefaultVariableTable().getValueAt(1, 1).toString().replaceAll(" ", "").equals("TRANSACTIONID") ||
+                                 !MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getDefaultVariableTable().getValueAt(2, 1).toString().replaceAll(" ", "").equals("ITEMID") ||
+                                 !MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getDefaultVariableTable().getValueAt(3, 1).toString().replaceAll(" ", "").equals("ITEMNAME")) {
+                                MyMessageUtil.showErrorMsg("Please, check the data configuration to create a network.");
+                                return;
+                            }
+
                             MyProgressBar pb = new MyProgressBar(false);
                             try {
                                 inputBtn.setVisible(false);
@@ -379,7 +425,7 @@ implements ActionListener {
                                             //networkBtn.setEnabled(true);
                                             //networkBtn.setVisible(true);
                                             MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.removeActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
-                                            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.setSelectedIndex(1); // DEFAULT VALUE.
+                                            MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.setSelectedIndex(2); // DEFAULT VALUE.
                                             MySequentialGraphVars.getSequentialGraphViewer().vc.edgeValueSelecter.addActionListener(MySequentialGraphVars.getSequentialGraphViewer().vc);
 
                                             pb.updateValue(80, 100);
@@ -461,26 +507,96 @@ implements ActionListener {
     private void doDirectRelationOperations(ActionEvent evt) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
-                if (evt.getSource() == runBtn) {
+                if (evt.getSource() == headerBtn) {
+                    new Thread(new Runnable() {
+                        @Override public void run() {
+                            try {
+                                JFileChooser fc = new JFileChooser();
+                                fc.setFont(MyDirectGraphVars.f_pln_12);
+                                fc.setMultiSelectionEnabled(false);
+                                fc.setPreferredSize(new Dimension(600, 460));
+                                fc.showOpenDialog(MyDirectGraphVars.app);
+                                if (fc.getSelectedFile() != null) {
+                                    String [] headers = MyDirectGraphVars.app.getDirectGraphMsgBroker().loadHeader(fc.getSelectedFile());
+                                    for (int i=0; i < headers.length; i++) {headers[i] = " " + headers[i];}
+                                    if (headers != null) {
+                                        MyDirectGraphVars.app.getDirectGraphMsgBroker().getDirectConfigPanel().getDefaultVariableTable().update(headers, true);
+                                        MyDirectGraphVars.app.getDirectGraphMsgBroker().getDirectConfigPanel().getEdgeValueTable().update(headers, true);
+                                        MyDirectGraphVars.app.getDirectGraphMsgBroker().getDirectConfigPanel().getEdgeNameTable().update(headers, true);
+                                        inputBtn.setEnabled(true);
+                                    }
+
+                                    new Thread(new Runnable() {
+                                        @Override public void run() {
+                                            MyMessageUtil.showInfoMsg("Headers are loaded successfully!");
+                                        }
+                                    }).start();
+
+                                    new Thread(new Runnable() {
+                                        @Override public void run() {
+                                            inputDataPreviewTable = new MyInputDataPreviewer();
+                                            inputDataPreviewTable.dataTableColumns = MyDirectGraphVars.app.getDirectGraphMsgBroker().getHeaderLoader().getHeaders();
+                                            MyDirectGraphVars.app.getContentTabbedPane().setComponentAt(0, inputDataPreviewTable);
+                                            inputDataPreviewTable.decorate();
+                                            inputDataPreviewTable.revalidate();
+                                            inputDataPreviewTable.repaint();
+                                        }
+                                    }).start();
+                                } else {
+                                    MyMessageUtil.showErrorMsg("Failded to load header.");
+                                }
+                            } catch (Exception ex) {}
+                        }
+                    }).start();
+                } else if (evt.getSource() == inputBtn) {
+                    new Thread(new Runnable() {
+                        @Override public void run() {
+                            JFileChooser fc = new JFileChooser();
+                            fc.setFont(MyDirectGraphVars.f_pln_12);
+                            fc.setPreferredSize(new Dimension(600, 460));
+                            fc.setMultiSelectionEnabled(true);
+                            fc.showOpenDialog(MyDirectGraphVars.app);
+                            if (fc.getSelectedFile() != null) {
+                                boolean isDataLoaded = inputDataPreviewTable.loadInputDataToTable(fc.getSelectedFiles());
+                                if (isDataLoaded) {
+                                    MyDirectGraphVars.app.getDirectGraphMsgBroker().setInputFiles(fc.getSelectedFiles());
+                                    MyMessageUtil.showInfoMsg("Data have been successfully loaded!");
+                                    inputBtn.setBackground(Color.WHITE);
+                                    MyDirectGraphVars.app.getToolBar().runBtn.setEnabled(true);
+                                } else {
+                                    MyMessageUtil.showErrorMsg("Failed to load data!");
+                                }
+                            } else {
+                                MyMessageUtil.showErrorMsg("Failed to load data!");
+                            }
+                        }
+                    }).start();
+                } else if (evt.getSource() == runBtn) {
                     new Thread(new Runnable() {
                         @Override public void run() {
                             try {
                                 if (MyDirectGraphVars.app.getDirectGraphMsgBroker().getInputFiles() == null) {
                                     MyMessageUtil.showErrorMsg("Please, set input data files!");
                                     return;
+                                } else if (!MyDirectGraphVars.app.getDirectGraphMsgBroker().getDirectConfigPanel().getDefaultVariableTable().getValueAt(0, 1).toString().replaceAll(" ", "").equals("NO.") ||
+                                    !MyDirectGraphVars.app.getDirectGraphMsgBroker().getDirectConfigPanel().getDefaultVariableTable().getValueAt(1, 1).toString().replaceAll(" ", "").equals("FROMITEM") ||
+                                    !MyDirectGraphVars.app.getDirectGraphMsgBroker().getDirectConfigPanel().getDefaultVariableTable().getValueAt(2, 1).toString().replaceAll(" ", "").equals("TOITEM")) {
+                                    MyMessageUtil.showErrorMsg("Please, check the data configuration to create a network.");
+                                    return;
                                 }
+
                                 MyProgressBar pb = new MyProgressBar(false);
                                 MyDirectGraphVars.app.getDirectGraphMsgBroker().categorize();
                                 pb.updateValue(20, 100);
                                 Thread.sleep(200);
                                 pb.updateValue(50, 100);
                                 MyDirectGraphFRLayout layout = new MyDirectGraphFRLayout<>(MyDirectGraphVars.app.getDirectGraphMsgBroker().createDirectGraph(), new Dimension(6000, 5500));
+                                pb.updateValue(60, 100);
                                 MyDirectGraphVars.app.setDirectGraph(MyDirectGraphVars.app.getDirectGraphMsgBroker().createDirectGraphView(layout, new Dimension(6000, 5500)));
                                 MyDirectGraphVars.getDirectGraphViewer().layout = layout;
-                                MyDirectGraphVars.app.getContentTabbedPane().setSelectedIndex(1);
+                                MyDirectGraphVars.app.getContentTabbedPane().setSelectedIndex(2);
                                 pb.updateValue(80, 100);
                                 networkBtn.setEnabled(true);
-                                pb.updateValue(80, 100);
                                 Thread.sleep(300);
                                 runBtn.setEnabled(false);
                                 runBtn.setVisible(false);

@@ -61,6 +61,7 @@ implements ActionListener{
             "REACHED IN-NODES",
             "AVG. S. OUT-DISTANCE",
             "REACHED OUT-NODES",
+            "CLOSENESS",
             "BETWEENESS",
             "EIGENVECTOR"});
 
@@ -88,7 +89,7 @@ implements ActionListener{
         this.nodeStatDataSavePanel.setPreferredSize(new Dimension(100, 26));
 
         JPanel nodeOrderByPanel = new JPanel();
-        nodeOrderByPanel.setLayout(new BorderLayout(3, 3));
+        nodeOrderByPanel.setLayout(new BorderLayout(2, 2));
         nodeOrderByPanel.setPreferredSize(new Dimension(200, 28));
         JLabel nodeOrderByLabel = new JLabel(" ORDER BY: ");
         nodeOrderByLabel.setFont(MyDirectGraphVars.tahomaPlainFont12);
@@ -105,6 +106,7 @@ implements ActionListener{
         this.nodeOrderByComboBox.addItem("REACHED IN-NODES");
         this.nodeOrderByComboBox.addItem("AVG. SHORTEST OUT-DISTANCE");
         this.nodeOrderByComboBox.addItem("REACHED OUT-NODES");
+        this.nodeOrderByComboBox.addItem("CLOSENESS");
         this.nodeOrderByComboBox.addItem("BETWEENESS");
         this.nodeOrderByComboBox.addItem("EIGENVECTOR");
         this.nodeOrderByComboBox.setFocusable(false);
@@ -115,9 +117,7 @@ implements ActionListener{
             @Override public void actionPerformed(ActionEvent e) {
                 new Thread(new Runnable() {
                     @Override public void run() {
-                        f.setAlwaysOnTop(true);
                         setNodes();
-                        f.setAlwaysOnTop(false);
                     }
                 }).start();
             }
@@ -150,15 +150,19 @@ implements ActionListener{
                 } else if (nodeOrderByComboBox.getSelectedIndex()  == 8) {
                     sortedNodeMap.put(n.getName(), (float) n.getReachedOutNodeCount());
                 } else if (nodeOrderByComboBox.getSelectedIndex()  == 9) {
-                    sortedNodeMap.put(n.getName(), (float) n.getBetweeness());
+                    sortedNodeMap.put(n.getName(), (float) n.getCloseness());
                 } else if (nodeOrderByComboBox.getSelectedIndex()  == 10) {
+                    sortedNodeMap.put(n.getName(), (float) n.getBetweeness());
+                } else if (nodeOrderByComboBox.getSelectedIndex()  == 11) {
                     sortedNodeMap.put(n.getName(), (float) n.getEignevector());
                 }
             }
             sortedNodeMap = MyDirectGraphSysUtil.sortMapByFloatValue(sortedNodeMap);
 
-            for (int i = this.table.getRowCount()-1; i >= 0; i--) {
-                ((DefaultTableModel) this.table.getModel()).removeRow(i);
+            int row = this.table.getRowCount();
+            while (row > 0) {
+                ((DefaultTableModel) this.table.getModel()).removeRow(row - 1);
+                row = this.table.getRowCount();
             }
 
             int recCnt = 0;
@@ -168,15 +172,16 @@ implements ActionListener{
                     n,
                     MyDirectGraphMathUtil.getCommaSeperatedNumber(MyDirectGraphVars.directGraph.getSuccessorCount(MyDirectGraphVars.directGraph.vRefs.get(n))),
                     MyDirectGraphMathUtil.getCommaSeperatedNumber(MyDirectGraphVars.directGraph.getPredecessorCount(MyDirectGraphVars.directGraph.vRefs.get(n))),
-                    MyDirectGraphMathUtil.getCommaSeperatedNumber(MyDirectGraphVars.directGraph.getOutContributionByNode((MyDirectNode) MyDirectGraphVars.directGraph.vRefs.get(n))),
-                    MyDirectGraphMathUtil.getCommaSeperatedNumber(MyDirectGraphVars.directGraph.getInContributionByNode((MyDirectNode) MyDirectGraphVars.directGraph.vRefs.get(n))),
-                    MyDirectGraphMathUtil.getCommaSeperatedNumber(((MyDirectNode) MyDirectGraphVars.directGraph.vRefs.get(n)).getContribution()),
-                    MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat(((MyDirectNode) MyDirectGraphVars.directGraph.vRefs.get(n)).getAverageShortestInDistance())),
-                    MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.getCommaSeperatedNumber(((MyDirectNode) MyDirectGraphVars.directGraph.vRefs.get(n)).getReachedInNodeCount())),
-                    MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat(((MyDirectNode) MyDirectGraphVars.directGraph.vRefs.get(n)).getAverageShortestInDistance())),
-                    MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.getCommaSeperatedNumber(((MyDirectNode) MyDirectGraphVars.directGraph.vRefs.get(n)).getReachedOutNodeCount())),
-                    MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat(((MyDirectNode) MyDirectGraphVars.directGraph.vRefs.get(n)).getBetweeness())),
-                    MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat(((MyDirectNode) MyDirectGraphVars.directGraph.vRefs.get(n)).getEignevector()))
+                    MyDirectGraphMathUtil.getCommaSeperatedNumber(MyDirectGraphVars.directGraph.getOutContributionByNode(MyDirectGraphVars.directGraph.vRefs.get(n))),
+                    MyDirectGraphMathUtil.getCommaSeperatedNumber(MyDirectGraphVars.directGraph.getInContributionByNode(MyDirectGraphVars.directGraph.vRefs.get(n))),
+                    MyDirectGraphMathUtil.getCommaSeperatedNumber((MyDirectGraphVars.directGraph.vRefs.get(n)).getContribution()),
+                    MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat((MyDirectGraphVars.directGraph.vRefs.get(n)).getAverageShortestInDistance())),
+                    MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.getCommaSeperatedNumber((MyDirectGraphVars.directGraph.vRefs.get(n)).getReachedInNodeCount())),
+                    MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat((MyDirectGraphVars.directGraph.vRefs.get(n)).getAverageShortestInDistance())),
+                    MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.getCommaSeperatedNumber((MyDirectGraphVars.directGraph.vRefs.get(n)).getReachedOutNodeCount())),
+                    MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat((MyDirectGraphVars.directGraph.vRefs.get(n)).getCloseness())),
+                    MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat((MyDirectGraphVars.directGraph.vRefs.get(n)).getBetweeness())),
+                    MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat((MyDirectGraphVars.directGraph.vRefs.get(n)).getEignevector()))
                 });
                 pb.updateValue(recCnt, nodes.size());
             }
@@ -207,8 +212,10 @@ implements ActionListener{
                 } else if (nodeOrderByComboBox.getSelectedIndex()  == 8) {
                     sortedNodeMap.put(n.getName(), (float) n.getReachedOutNodeCount());
                 } else if (nodeOrderByComboBox.getSelectedIndex()  == 9) {
-                    sortedNodeMap.put(n.getName(), (float) n.getBetweeness());
+                    sortedNodeMap.put(n.getName(), (float) n.getCloseness());
                 } else if (nodeOrderByComboBox.getSelectedIndex()  == 10) {
+                    sortedNodeMap.put(n.getName(), (float) n.getBetweeness());
+                } else if (nodeOrderByComboBox.getSelectedIndex()  == 11) {
                     sortedNodeMap.put(n.getName(), (float) n.getEignevector());
                 }
             }
@@ -225,15 +232,16 @@ implements ActionListener{
                         n,
                         MyDirectGraphMathUtil.getCommaSeperatedNumber(MyDirectGraphVars.directGraph.getSuccessorCount(MyDirectGraphVars.directGraph.vRefs.get(n))),
                         MyDirectGraphMathUtil.getCommaSeperatedNumber(MyDirectGraphVars.directGraph.getPredecessorCount(MyDirectGraphVars.directGraph.vRefs.get(n))),
-                        MyDirectGraphMathUtil.getCommaSeperatedNumber(MyDirectGraphVars.directGraph.getOutContributionByNode((MyDirectNode) MyDirectGraphVars.directGraph.vRefs.get(n))),
-                        MyDirectGraphMathUtil.getCommaSeperatedNumber(MyDirectGraphVars.directGraph.getInContributionByNode((MyDirectNode) MyDirectGraphVars.directGraph.vRefs.get(n))),
-                        MyDirectGraphMathUtil.getCommaSeperatedNumber(((MyDirectNode) MyDirectGraphVars.directGraph.vRefs.get(n)).getContribution()),
-                        MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat(((MyDirectNode) MyDirectGraphVars.directGraph.vRefs.get(n)).getAverageShortestInDistance())),
-                        MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat(((MyDirectNode) MyDirectGraphVars.directGraph.vRefs.get(n)).getReachedInNodeCount())),
-                        MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat(((MyDirectNode) MyDirectGraphVars.directGraph.vRefs.get(n)).getAverageShortestInDistance())),
-                        MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat(((MyDirectNode) MyDirectGraphVars.directGraph.vRefs.get(n)).getReachedOutNodeCount())),
-                        MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat(((MyDirectNode) MyDirectGraphVars.directGraph.vRefs.get(n)).getBetweeness())),
-                        MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat(((MyDirectNode) MyDirectGraphVars.directGraph.vRefs.get(n)).getEignevector()))
+                        MyDirectGraphMathUtil.getCommaSeperatedNumber(MyDirectGraphVars.directGraph.getOutContributionByNode(MyDirectGraphVars.directGraph.vRefs.get(n))),
+                        MyDirectGraphMathUtil.getCommaSeperatedNumber(MyDirectGraphVars.directGraph.getInContributionByNode(MyDirectGraphVars.directGraph.vRefs.get(n))),
+                        MyDirectGraphMathUtil.getCommaSeperatedNumber((MyDirectGraphVars.directGraph.vRefs.get(n)).getContribution()),
+                        MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat((MyDirectGraphVars.directGraph.vRefs.get(n)).getAverageShortestInDistance())),
+                        MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat((MyDirectGraphVars.directGraph.vRefs.get(n)).getReachedInNodeCount())),
+                        MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat((MyDirectGraphVars.directGraph.vRefs.get(n)).getAverageShortestInDistance())),
+                        MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat((MyDirectGraphVars.directGraph.vRefs.get(n)).getReachedOutNodeCount())),
+                        MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat((MyDirectGraphVars.directGraph.vRefs.get(n)).getCloseness())),
+                        MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat((MyDirectGraphVars.directGraph.vRefs.get(n)).getBetweeness())),
+                        MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat((MyDirectGraphVars.directGraph.vRefs.get(n)).getEignevector()))
                 });
                 pb.updateValue(recCnt, nodes.size());
             }
@@ -257,7 +265,7 @@ implements ActionListener{
                         pb = new MyProgressBar(false);
                         int pbCnt = 0;
                         bw = new BufferedWriter(new FileWriter(fc.getSelectedFile()));
-                        bw.write("NO.,NODE,CONTRIBUTION,SUCCESSOR,PREDECESSOR,OUT-CONTRIBUTION,IN-CONTRIBUTION,AVG.-SHORTEST-IN-DISTANCE,AVG.-SHORTEST-OUT-DISTANCE,BETWEENESS,EIGENVECTOR" + "\n");
+                        bw.write("NO.,NODE,CONTRIBUTION,SUCCESSOR,PREDECESSOR,OUT-CONTRIBUTION,IN-CONTRIBUTION,AVG.-SHORTEST-IN-DISTANCE,AVG.-SHORTEST-OUT-DISTANCE,CLOSENESS,BETWEENESS,EIGENVECTOR" + "\n");
                         for (int i = 0; i < table.getRowCount(); i++) {
                             bw.write(
                         table.getValueAt(i, 0).toString() + "," +
@@ -272,7 +280,8 @@ implements ActionListener{
                                 table.getValueAt(i, 9).toString() + "," +
                                 table.getValueAt(i, 10).toString() + "," +
                                 table.getValueAt(i, 11).toString() + "," +
-                            table.getValueAt(i, 12).toString() + "\n");
+                                table.getValueAt(i, 12).toString() + "," +
+                            table.getValueAt(i, 13).toString() + "\n");
                             pb.updateValue(++pbCnt, table.getRowCount());
                         }
                         bw.close();

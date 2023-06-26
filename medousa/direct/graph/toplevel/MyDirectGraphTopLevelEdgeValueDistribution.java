@@ -82,20 +82,20 @@ implements ActionListener {
                     chartPanel.getChart().getCategoryPlot().setRangeGridlinePaint(Color.DARK_GRAY);
                     chartPanel.getChart().getCategoryPlot().setDomainGridlinePaint(Color.DARK_GRAY);
                     chartPanel.getChart().getCategoryPlot().setBackgroundPaint(Color.WHITE);
-                    chartPanel.getChart().getCategoryPlot().getDomainAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont11);
+                    chartPanel.getChart().getCategoryPlot().getDomainAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont10);
                     chartPanel.getChart().getCategoryPlot().getDomainAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont11);
-                    chartPanel.getChart().getCategoryPlot().getRangeAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont11);
+                    chartPanel.getChart().getCategoryPlot().getRangeAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont10);
                     chartPanel.getChart().getCategoryPlot().getRangeAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont11);
 
                     CategoryAxis domainAxis = chartPanel.getChart().getCategoryPlot().getDomainAxis();
                     domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_90);
 
                     BarRenderer barRenderer = (BarRenderer) chartPanel.getChart().getCategoryPlot().getRenderer();
-                    barRenderer.setSeriesPaint(0, new Color(0, 0, 0, 0.25f));//Color.LIGHT_GRAY);//Color.decode("#2084FE"));
+                    barRenderer.setSeriesPaint(0, new Color(0,0,0,0.3f));
                     barRenderer.setShadowPaint(Color.WHITE);
                     barRenderer.setBaseFillPaint(Color.decode("#07CF61"));
                     barRenderer.setBarPainter(new StandardBarPainter());
-                    barRenderer.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont11);
+                    barRenderer.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont10);
 
                     JLabel titleLabel = new JLabel(" E. V.");
                     titleLabel.setToolTipText("EDGE VALUE DISTRIBUTION");
@@ -156,10 +156,10 @@ implements ActionListener {
 
             String[] statTableColumns = {"PROPERTY", "VALUE"};
             String[][] statTableData = {
-                    {"MAX. VALUE", MyDirectGraphMathUtil.twoDecimalFormat(maxValue)},
-                    {"NIN. VALUE", MyDirectGraphMathUtil.twoDecimalFormat(minValue)},
-                    {"AVG. VALUE", MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat(avgValue))},
-                    {"STD. VALUE", MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat(stdValue))}
+                    {"MAX. VALUE", MyDirectGraphMathUtil.threeDecimalFormat(maxValue)},
+                    {"NIN. VALUE", MyDirectGraphMathUtil.threeDecimalFormat(minValue)},
+                    {"AVG. VALUE", MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat(avgValue))},
+                    {"STD. VALUE", MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat(stdValue))}
             };
 
             DefaultTableModel statTableModel = new DefaultTableModel(statTableData, statTableColumns);
@@ -186,8 +186,8 @@ implements ActionListener {
             edgeTable.getTableHeader().setOpaque(false);
             edgeTable.getTableHeader().setBackground(new Color(0, 0, 0, 0));
             edgeTable.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(35);
-            edgeTable.getTableHeader().getColumnModel().getColumn(3).setPreferredWidth(35);
-            edgeTable.getTableHeader().getColumnModel().getColumn(4).setPreferredWidth(35);
+            edgeTable.getTableHeader().getColumnModel().getColumn(3).setPreferredWidth(40);
+            edgeTable.getTableHeader().getColumnModel().getColumn(4).setPreferredWidth(40);
 
             int i = 0;
             Collection<MyDirectEdge> edges = MyDirectGraphVars.directGraph.getEdges();
@@ -202,8 +202,13 @@ implements ActionListener {
                 String p = n.split("-")[0];
                 String s = n.split("-")[1];
                 float value = valueMap.get(n);
-                String pr = MyDirectGraphMathUtil.twoDecimalFormat(valueMap.get(n) / MyDirectGraphVars.directGraph.maxEdgeValue);
-                edgeTableModel.addRow(new String[]{"" + (++i), p, s, MyDirectGraphMathUtil.getCommaSeperatedNumber((long) value), pr});
+                String pr = MyDirectGraphMathUtil.threeDecimalFormat(valueMap.get(n)/this.maxValue);
+                edgeTableModel.addRow(new String[]{
+                        "" + (++i),
+                        p,
+                        s,
+                        MyDirectGraphMathUtil.threeDecimalFormat(value),
+                        pr});
             }
 
             JScrollPane nodeTableScrollPane = new JScrollPane(edgeTable);
@@ -232,17 +237,6 @@ implements ActionListener {
             f.setBackground(Color.WHITE);
             f.setPreferredSize(new Dimension(550, 450));
             f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            f.addMouseListener(new MouseAdapter() {
-                @Override public void mouseEntered(MouseEvent e) {
-                    super.mouseEntered(e);
-                    f.setAlwaysOnTop(true);
-                }
-
-                @Override public void mouseExited(MouseEvent e) {
-                    super.mouseExited(e);
-                    f.setAlwaysOnTop(false);
-                }
-            });
 
             JSplitPane tableSplitPane = new JSplitPane();
             tableSplitPane.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
@@ -270,12 +264,10 @@ implements ActionListener {
                 }
             });
 
-            f.setAlwaysOnTop(true);
             pb.updateValue(100, 100);
             pb.dispose();
 
             f.setVisible(true);
-            f.setAlwaysOnTop(false);
         } catch (Exception ex) {
             pb.updateValue(100, 100);
             pb.dispose();
@@ -286,10 +278,10 @@ implements ActionListener {
         int nodeCount = 0;
         float totalValue = 0;
 
-        TreeMap<Integer, Integer> valueMap = new TreeMap<>();
+        TreeMap<Float, Integer> valueMap = new TreeMap<>();
         Collection<MyDirectEdge> edges = MyDirectGraphVars.directGraph.getEdges();
         for (MyDirectEdge e : edges) {
-            float value = e.getCurrentValue();
+            float value = Float.parseFloat(MyDirectGraphMathUtil.threeDecimalFormat(e.getCurrentValue()));
             totalValue += value;
             nodeCount++;
 
@@ -301,10 +293,10 @@ implements ActionListener {
                 this.minValue = value;
             }
 
-            if (valueMap.containsKey((int) value)) {
-                valueMap.put((int) value, valueMap.get((int) value) + 1);
+            if (valueMap.containsKey(value)) {
+                valueMap.put(value, valueMap.get(value) + 1);
             } else {
-                valueMap.put((int) value, 1);
+                valueMap.put(value, 1);
             }
 
             isValueExists = true;
@@ -314,12 +306,12 @@ implements ActionListener {
         this.stdValue = getEdgeValueStandardDeviation(valueMap);
 
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        for (Integer value : valueMap.keySet()) {
+        for (Float value : valueMap.keySet()) {
             dataset.addValue(valueMap.get(value), "E. V.", value);
         }
 
         String plotTitle = "";
-        String xaxis = "EDGE VALUE DISTRIBUTION";
+        String xaxis = "";
         String yaxis = "";
         PlotOrientation orientation = PlotOrientation.VERTICAL;
         boolean show = false;
@@ -328,14 +320,14 @@ implements ActionListener {
         return ChartFactory.createBarChart(plotTitle, xaxis, yaxis, dataset, orientation, show, toolTips, urls);
     }
 
-    public float getEdgeValueStandardDeviation(TreeMap<Integer, Integer> valueMap) {
+    public float getEdgeValueStandardDeviation(TreeMap<Float, Integer> valueMap) {
         float sum = 0.00F;
-        for (int n : valueMap.keySet()) {
+        for (float n : valueMap.keySet()) {
             sum += n;
         }
         double mean = sum / valueMap.size();
         sum = 0F;
-        for (int n : valueMap.keySet()) {
+        for (float n : valueMap.keySet()) {
             sum += Math.pow(n - mean, 2);
         }
         return (sum == 0 ? 0.00F : (float) Math.sqrt(sum / valueMap.size()));

@@ -25,14 +25,29 @@ extends MyFileLoader {
 
     @Override protected boolean readInputData() {
         boolean retVal = false;
+        long dataCount = 0;
         mergedFile = MySequentialGraphFileMerger.mergeFiles(inFiles, new File(inFiles[0].getParent()+this.mergedFileName));
         rawData = new ArrayList<>();
         try {
-            if (this.scanner == null) this.scanner = new Scanner(mergedFile);
+            if (this.scanner == null) {
+                this.scanner = new Scanner(mergedFile);
+            }
+
             while (scanner.hasNextLine()) {
                 String[] lineData = this.scanner.nextLine().split(MySequentialGraphVars.commaDelimeter);
-                rawData.add(new ArrayList<>(Arrays.asList(lineData)));
+                boolean allIsFine = true;
+                for (String column : lineData) {
+                    if (column.length() == 0) {
+                        allIsFine = false;
+                        break;
+                    }
+                }
+
+                if (allIsFine) {
+                    rawData.add(new ArrayList<>(Arrays.asList(lineData)));
+                }
             }
+            System.out.println(dataCount);
             retVal = true;
         } catch(Exception e) {
             e.printStackTrace();

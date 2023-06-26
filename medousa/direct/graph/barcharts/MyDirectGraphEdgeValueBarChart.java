@@ -200,7 +200,7 @@ public class MyDirectGraphEdgeValueBarChart extends JPanel {
                 g.setColor(Color.BLUE);
                 g.drawRect(0, (10 * i) + (i * this.gap), (int) valuePortion, 10);
 
-                String value = MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat(this.predecessorData.get(name)));
+                String value = MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat(this.predecessorData.get(name)));
                 value = (value.endsWith(".0") || value.endsWith(".00") ? value.substring(0, value.indexOf(".0")) : value);
                 g.setFont(MyDirectGraphVars.f_pln_12);
                 g.setColor(Color.DARK_GRAY);
@@ -222,7 +222,7 @@ public class MyDirectGraphEdgeValueBarChart extends JPanel {
                 g.setColor(Color.BLUE);
                 g.drawRect(0, (10 * i) + (i * this.gap), (int) valuePortion, 9);
 
-                String value = MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat(this.successorData.get(name)));
+                String value = MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat(this.successorData.get(name)));
                 value = (value.endsWith(".0") || value.endsWith(".00") ? value.substring(0, value.indexOf(".0")) : value);
                 g.setFont(MyDirectGraphVars.f_pln_12);
                 g.setColor(Color.DARK_GRAY);
@@ -250,7 +250,7 @@ public class MyDirectGraphEdgeValueBarChart extends JPanel {
                 g.setColor(Color.BLUE);
                 g.drawRect(0, (10 * i) + (i * this.gap), (int) valuePortion, 10);
 
-                String value = MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat(this.edgeData.get(name)));
+                String value = MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat(this.edgeData.get(name)));
                 value = (value.endsWith(".0") || value.endsWith(".00") ? value.substring(0, value.indexOf(".0")) : value);
                 g.setFont(MyDirectGraphVars.f_pln_12);
                 g.setColor(Color.DARK_GRAY);

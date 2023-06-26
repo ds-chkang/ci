@@ -35,6 +35,14 @@ public class MyDirectGraphSysUtil {
         return sortedMap;
     }
 
+    public static LinkedHashMap<Long, Long> sortMapByLongKeyByLongValue(Map<Long, Long> map) {
+        List<Map.Entry<Long, Long>> entries = new LinkedList<>(map.entrySet());
+        Collections.sort(entries, (o1, o2) -> o2.getValue().compareTo(o1.getValue()));
+        LinkedHashMap<Long, Long> sortedMap = new LinkedHashMap<>();
+        for (Map.Entry<Long, Long> entry : entries) {sortedMap.put(entry.getKey(), entry.getValue());}
+        return sortedMap;
+    }
+
     public static LinkedHashMap<String, Float> sortMapByFloatValue(Map<String, Float> map) {
         List<Map.Entry<String, Float>> entries = new LinkedList<>(map.entrySet());
         Collections.sort(entries, (o1, o2) -> o2.getValue().compareTo(o1.getValue()));

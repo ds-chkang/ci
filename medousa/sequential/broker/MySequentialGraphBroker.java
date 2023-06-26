@@ -93,7 +93,11 @@ extends MySequentialGraphEngineBroker {
                 MySequentialGraphVars.g.edRefs = null;
                 MySequentialGraphVars.g.edgeRefMap = null;
             }
-            MySequentialGraphSysUtil.setNodeNameMap();
+
+            for (String itemset : MySequentialGraphVars.itemToIdMap.keySet()) {
+                MySequentialGraphVars.nodeNameMap.put(MySequentialGraphVars.itemToIdMap.get(itemset), itemset);
+            }
+
         } catch (Exception ex) {ex.printStackTrace();}
         return MySequentialGraphVars.g;
     }

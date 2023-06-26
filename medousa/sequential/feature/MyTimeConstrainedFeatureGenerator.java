@@ -85,8 +85,8 @@ public class MyTimeConstrainedFeatureGenerator {
         setTrTimeIdx();
         MySequentialGraphVars.totalRecords = dataIn.size();
         MySequentialGraphVars.itemToIdMap = new HashMap<>();
+        this.variableMapper = new MyVaraibleNameToIdMapper();
         if (MySequentialGraphVars.isSupplementaryOn) {
-            this.variableMapper = new MyVaraibleNameToIdMapper();
             generateSequencesWithVariables(dataIn);
         } else {
             generateSequencesWithoutVariables(dataIn);
@@ -197,8 +197,9 @@ public class MyTimeConstrainedFeatureGenerator {
             String preTrTime = dataIn.get(0).get(trTimeIdx);
             for (int recCnt = 0; recCnt < dataIn.size(); recCnt++) {
                 MySequentialGraphVars.itemToIdMap.put(dataIn.get(recCnt).get(itemIDIdx), dataIn.get(recCnt).get(itemNmIdx));
-                if (dataIn.get(recCnt).get(objIDIdx).equals(preObjID)) { // 동일한 객체인지 확인.
-                    if (dataIn.get(recCnt).get(trIDIdx).equals(preTrID)) { // 동일한 객체가 동일내에서 동일한 트랜잭션인지 확인.
+                //System.out.println(dataIn.get(recCnt) + "           objIDIdx: " + objIDIdx + "         preObjID: " + preObjID);
+                if (dataIn.get(recCnt).get(objIDIdx).equals(preObjID)) {
+                    if (dataIn.get(recCnt).get(trIDIdx).equals(preTrID)) {
                         if (items.length() == 0) {
                             items = dataIn.get(recCnt).get(this.itemIDIdx);
                         } else {
@@ -219,14 +220,15 @@ public class MyTimeConstrainedFeatureGenerator {
                     } else {
                         seq = seq + MySequentialGraphVars.hyphenDelimeter + items + ":" + MySequentialGraphSysUtil.getTimeDifference(preTrTime, dataIn.get(recCnt-1).get(trTimeIdx));
                     }
-                    this.fw.addSequence(dataIn.get(recCnt).get(objIDIdx), seq);
+                    //String catStr = appendVariables(dataIn.get(--recCnt));
+                    //seq = catStr+seq;
+                    this.fw.addSequence(dataIn.get(--recCnt).get(objIDIdx), seq);
                     MySequentialGraphVars.sequeceFeatureCount++;
                     items = "";
                     seq = "";
-                    preObjID = dataIn.get(recCnt).get(objIDIdx);
-                    preTrID = dataIn.get(recCnt).get(trIDIdx);
-                    preTrTime = dataIn.get(recCnt).get(trTimeIdx);
-                    recCnt--;
+                    preObjID = dataIn.get(recCnt+1).get(objIDIdx);
+                    preTrID = dataIn.get(recCnt+1).get(trIDIdx);
+                    preTrTime = dataIn.get(recCnt+1).get(trTimeIdx);
                 }
             }
             items = items + ":" + MySequentialGraphSysUtil.getTimeDifference(preTrTime, dataIn.get(dataIn.size()-1).get(trTimeIdx));
@@ -235,13 +237,13 @@ public class MyTimeConstrainedFeatureGenerator {
             } else {
                 seq = items;
             }
+            //seq = appendVariables(dataIn.get(dataIn.size()-1))+seq;
             this.fw.addSequence(dataIn.get(dataIn.size()-1).get(objIDIdx), seq);
             MySequentialGraphVars.sequeceFeatureCount++;
             this.isSucceeded = true;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        finally {}
     }
 
     /**

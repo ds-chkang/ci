@@ -113,9 +113,9 @@ extends MyDirectGraphTabPane implements Serializable {
             }});
         JPanel btnPanel = new JPanel();
         btnPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 3, 3));
-        btnPanel.add(this.headerBtn);
-        btnPanel.add(this.dataBtn);
-        this.tablePanel.add(btnPanel, BorderLayout.SOUTH);
+        //btnPanel.add(this.headerBtn);
+        //btnPanel.add(this.dataBtn);
+        //this.tablePanel.add(btnPanel, BorderLayout.SOUTH);
     }
 
     class MyParameterTableRowHeaderRenderer extends JPanel implements TableCellRenderer {

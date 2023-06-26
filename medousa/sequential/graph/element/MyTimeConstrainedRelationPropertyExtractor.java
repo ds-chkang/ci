@@ -44,35 +44,11 @@ extends MyRelationPropertyExtractor {
 
     @Override protected void closeFileWriter() {
         try {
-            File renameFile = new File(MySequentialGraphVars.outputDir +
-                this.nodeFile.getName() +
-                MySequentialGraphVars.contributionSymbol +
-                this.contribution +
-                MySequentialGraphVars.uniqueContributionSeparator +
-                this.uniqueContribution +
-                MySequentialGraphVars.timeSeparator +
-                reachTime +
-                MySequentialGraphVars.durationSeparator +
-                duration
-            );
-
-            try {
+            if (bw != null) {
                 bw.close();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-
-            if (!this.nodeFile.renameTo(renameFile)) {
-                System.out.println("Rename failed for " + this.nodeFile.getName() + "   ----   " + renameFile.getName());
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-        } finally {
-            try {
-                bw.close();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
         }
     }
 }

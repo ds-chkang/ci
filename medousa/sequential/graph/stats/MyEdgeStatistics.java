@@ -157,8 +157,8 @@ implements ActionListener {
                             for (MyEdge e : edges) {
                                 model.addRow(new String[]{
                                     String.valueOf(++cnt),
-                                    MySequentialGraphSysUtil.decodeNodeName(e.getSource().getName()),
-                                    MySequentialGraphSysUtil.decodeNodeName(e.getDest().getName()),
+                                    MySequentialGraphSysUtil.getNodeName(e.getSource().getName()),
+                                    MySequentialGraphSysUtil.getNodeName(e.getDest().getName()),
                                     MyMathUtil.getCommaSeperatedNumber(e.getUniqueContribution()),
                                     MyMathUtil.getCommaSeperatedNumber(e.getContribution()),
                                     MyMathUtil.getCommaSeperatedNumber(edgeReachTimeMap.get(e)),
@@ -182,8 +182,8 @@ implements ActionListener {
                             for (MyEdge e : edges) {
                                 model.addRow(new String[]{
                                     String.valueOf(++cnt),
-                                    MySequentialGraphSysUtil.decodeNodeName(e.getSource().getName()),
-                                    MySequentialGraphSysUtil.decodeNodeName(e.getDest().getName()),
+                                    MySequentialGraphSysUtil.getNodeName(e.getSource().getName()),
+                                    MySequentialGraphSysUtil.getNodeName(e.getDest().getName()),
                                     MyMathUtil.getCommaSeperatedNumber(e.getUniqueContribution()),
                                     MyMathUtil.getCommaSeperatedNumber(e.getContribution()),
                                     MyMathUtil.twoDecimalFormat(e.getSupport()),
@@ -328,8 +328,8 @@ implements ActionListener {
             for (MyEdge e : edges) {
                 model.addRow(new String[]{
                     String.valueOf(++nodeCnt),
-                    MySequentialGraphSysUtil.decodeNodeName(e.getSource().getName()),
-                    MySequentialGraphSysUtil.decodeNodeName(e.getDest().getName()),
+                    MySequentialGraphSysUtil.getNodeName(e.getSource().getName()),
+                    MySequentialGraphSysUtil.getNodeName(e.getDest().getName()),
                     MyMathUtil.getCommaSeperatedNumber(edgeUniqueContributionMap.get(e)),
                     MyMathUtil.getCommaSeperatedNumber(edgeContributionMap.get(e)),
                     MyMathUtil.getCommaSeperatedNumber(edgeReachTimeMap.get(e)),
@@ -368,8 +368,8 @@ implements ActionListener {
             for (MyEdge e : edges) {
                 model.addRow(new String[]{
                     String.valueOf(++nodeCnt),
-                    MySequentialGraphSysUtil.decodeNodeName(e.getSource().getName()),
-                    MySequentialGraphSysUtil.decodeNodeName(e.getDest().getName()),
+                    MySequentialGraphSysUtil.getNodeName(e.getSource().getName()),
+                    MySequentialGraphSysUtil.getNodeName(e.getDest().getName()),
                     MyMathUtil.getCommaSeperatedNumber(edgeUniqueContributionMap.get(e)),
                     MyMathUtil.getCommaSeperatedNumber(edgeContributionMap.get(e)),
                     MyMathUtil.twoDecimalFormat(e.getSupport()),

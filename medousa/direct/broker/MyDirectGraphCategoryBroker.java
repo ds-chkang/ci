@@ -1,6 +1,6 @@
 package medousa.direct.broker;
 
-import medousa.direct.category.MyDirectGraphDirectGraphDirectGraphCategorizer;
+import medousa.direct.category.MyDirectGraphCategorizer;
 import medousa.direct.category.MyDirectGraphCategoryList;
 
 import java.util.ArrayList;
@@ -8,12 +8,12 @@ import java.util.ArrayList;
 public class MyDirectGraphCategoryBroker
 extends MyDirectGraphHeaderBroker {
 
-    private MyDirectGraphDirectGraphDirectGraphCategorizer categorizer;
+    private MyDirectGraphCategorizer categorizer;
 
     public MyDirectGraphCategoryBroker() { super(); }
 
     public boolean categorize() {
-        categorizer = new MyDirectGraphDirectGraphDirectGraphCategorizer(getInputFiles());
+        categorizer = new MyDirectGraphCategorizer(getInputFiles());
         return categorizer.categorize();
 
     }

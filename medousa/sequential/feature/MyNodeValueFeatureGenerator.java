@@ -87,7 +87,7 @@ public class MyNodeValueFeatureGenerator {
                         weightSeq = weightSeq + itemsetDelimeter + weights;
                         itemSeq = itemSeq + itemsetDelimeter + items;
                     }
-                    this.fw.addSequence(this.setEdgeValue(itemSeq, weightSeq, itemsetDelimeter));
+                    this.fw.addSequence(this.setNodeValue(itemSeq, weightSeq, itemsetDelimeter));
                     weights = "";
                     weightSeq = "";
                     items = "";
@@ -104,15 +104,16 @@ public class MyNodeValueFeatureGenerator {
                 weightSeq = weights;
                 itemSeq = items;
             }
-            this.fw.addSequence(this.setEdgeValue(itemSeq, weightSeq, itemsetDelimeter));
+            this.fw.addSequence(this.setNodeValue(itemSeq, weightSeq, itemsetDelimeter));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    private String setEdgeValue(String itemSeq, String weightSeq, String itemsetDelimeter) {
+    private String setNodeValue(String itemSeq, String weightSeq, String itemsetDelimeter) {
         String [] weightItemSets = weightSeq.split(itemsetDelimeter);
         String [] itemSets = itemSeq.split(itemsetDelimeter);
+
         String resultSeq = "";
         for (int i = 0; i < weightItemSets.length; i++) {
             if (resultSeq.length() == 0) {

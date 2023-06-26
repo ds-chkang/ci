@@ -1,6 +1,8 @@
 package medousa.sequential.category;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.LongSummaryStatistics;
 
 public class MySequentialGraphCategory {
 
@@ -20,6 +22,11 @@ public class MySequentialGraphCategory {
         this.min = min;
         this.max = max;
         this.headerIndex = headerIndex;
+        this.numOfCategories = numOfCategories;
+    }
+    public MySequentialGraphCategory(double min, double max, int numOfCategories) {
+        this.min = min;
+        this.max = max;
         this.numOfCategories = numOfCategories;
     }
     public int getHeaderIndex() { return this.headerIndex; }
@@ -46,6 +53,20 @@ public class MySequentialGraphCategory {
             }
         }
     }
+
+    public void setCategoryIntervals(List<Long> columnValues) {
+        this.maxBound = (int)Math.ceil(this.max);
+        this.minBound = (int)(this.min);
+        this.wholeRange = this.maxBound - this.minBound;
+        this.interval = (int)Math.ceil((double)this.wholeRange/this.numOfCategories);
+        for (int i=0; i < this.numOfCategories; i++) {
+            if (i > 0) {
+                this.categoryIntervals.add((this.minBound + (this.interval * (i + 1))) + i);
+            } else {
+                this.categoryIntervals.add(this.minBound + (this.interval * (i + 1)));
+            }
+        }
+    }
     public String getCategory(String columnValue) {
         for (int i=0; i < this.categoryIntervals.size(); i++) {
             int inputValue = Integer.valueOf(columnValue);
@@ -57,6 +78,9 @@ public class MySequentialGraphCategory {
         }
         return null;
     }
+
+    public ArrayList<Integer> getCategoryIntervals() {return categoryIntervals;}
+
     public void display() {
         System.out.println("Category name: " + this.name);
         System.out.println("Category header index: " + this.headerIndex);

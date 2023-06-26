@@ -72,7 +72,7 @@ implements ActionListener {
 
                     CategoryDataset dataset = new DefaultCategoryDataset();
                     for (String label : endingNodeValueMap.keySet()) {
-                        ((DefaultCategoryDataset) dataset).addValue(endingNodeValueMap.get(label), label, "");
+                        ((DefaultCategoryDataset) dataset).addValue(endingNodeValueMap.get(label), "", label);
                     }
 
                     // Create a bar chart with the dataset

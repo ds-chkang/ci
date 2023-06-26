@@ -21,4 +21,5 @@ extends MyDirectGraphFileBroker {
     public int getHeaderIndex(String columnName) {
         return this.headerLoader.getHeaderIndex(columnName);
     }
+    public MyDirectGraphHeaderLoader getHeaderLoader() {return this.headerLoader;}
 }

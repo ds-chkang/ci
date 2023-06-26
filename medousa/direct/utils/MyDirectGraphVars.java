@@ -10,6 +10,7 @@ import java.awt.*;
 
 public class MyDirectGraphVars {
     public static Font f_pln_9 = new Font( "Noto Sans", Font.PLAIN, 9);
+    public static Font f_pln_8 = new Font( "Noto Sans", Font.PLAIN, 8);
     public static Font f_pln_10 = new Font( "Noto Sans", Font.PLAIN, 10);
     public static Font f_pln_11 = new Font( "Noto Sans", Font.PLAIN, 11);
     public static Font f_pln_12 = new Font( "Noto Sans", Font.PLAIN, 12);
@@ -33,6 +34,7 @@ public class MyDirectGraphVars {
     public final static Font tahomaPlainFont9 = new Font("Tahoma", Font.PLAIN, 9);
     public final static Font tahomaBoldFont12 = new Font("Tahoma", Font.BOLD, 12);
     public final static Font tahomaBoldFont10 = new Font("Tahoma", Font.BOLD, 10);
+    public final static Font tahomaBoldFont14 = new Font("Tahoma", Font.BOLD, 14);
     public final static Font tahomaBoldFont11 = new Font("Tahoma", Font.BOLD, 11);
     public final static Font tahomaBoldFont13 = new Font("Tahoma", Font.BOLD, 13);
 

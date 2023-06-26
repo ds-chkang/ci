@@ -51,7 +51,7 @@ implements Serializable {
     public boolean isClustered;
     private ScalingControl viewScaler;
     public final float MX_E_STK = 32.0f;
-    public final float MIN_NODE_SZ = 50.0f;
+    public final float MIN_NODE_SZ = 24.0f;
     public Map<String, Integer> endNodesMap;
     public Set<String> nodesBetweenTwoNodes;
     public MyNode singleNode;
@@ -63,7 +63,7 @@ implements Serializable {
     public MyViewerComponentController vc;
     public Set<MyNode> sharedPredecessors;
     public Set<MyNode> sharedSuccessors;
-    public Font nodeFont = new Font("Noto Sans", Font.PLAIN, 46);
+    public Font nodeFont = new Font("Noto Sans", Font.PLAIN, 50);
     public Font edgeFont = new Font("Noto Sans", Font.PLAIN, 46);
     public MyGraphLevelNodeValueBarChart graphLevelNodeValueBarChart;
     public MyGraphLevelNodeLabelBarChart graphLevelNodeLabelBarChart;
@@ -162,6 +162,7 @@ implements Serializable {
                     }
                 }
             });
+            this.getRenderContext().setVertexStrokeTransformer(nodeStroker);
 
 
             this.getRenderContext().setEdgeShapeTransformer(new EdgeShape.QuadCurve<MyNode, MyEdge>());
@@ -320,7 +321,6 @@ implements Serializable {
                     if (singleNodeSuccessors.contains(e.getDest())) {
                         float edgeStroke = edgeStrokeWeight * MX_E_STK;
                         if (edgeStroke < 1) {
-                            edgeStroke = 0.2f;
                             edgeStroke = 0.2f;
                         }
                         return new BasicStroke(edgeStroke);
@@ -662,89 +662,143 @@ implements Serializable {
 
     private Ellipse2D.Double setNodeSize(float nodeWeight) {
         if (nodeWeight <= 0.05) {
-            float nodeSize = MIN_NODE_SZ/2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
+            float nodeSize = (this.MIN_NODE_SZ)/2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
         } else if (nodeWeight > 0.05 && nodeWeight <= 0.1) {
-            float nodeSize = (MIN_NODE_SZ+25)/2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
+            float nodeSize = (this.MIN_NODE_SZ + 3) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.05 && nodeWeight <= 0.125) {
+            float nodeSize = (this.MIN_NODE_SZ + 8) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
         } else if (nodeWeight > 0.1 && nodeWeight <= 0.15) {
-            float nodeSize = (MIN_NODE_SZ+35)/2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
+            float nodeSize = (this.MIN_NODE_SZ + 13) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.1 && nodeWeight <= 0.175) {
+            float nodeSize = (this.MIN_NODE_SZ + 18) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
         } else if (nodeWeight > 0.15 && nodeWeight <= 0.2) {
-            float nodeSize = (MIN_NODE_SZ+45)/2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
+            float nodeSize = (this.MIN_NODE_SZ + 24) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.2 && nodeWeight <= 0.225) {
+            float nodeSize = (this.MIN_NODE_SZ + 30) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
         } else if (nodeWeight > 0.2 && nodeWeight <= 0.25) {
-            float nodeSize = (MIN_NODE_SZ+55)/2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
+            float nodeSize = (this.MIN_NODE_SZ + 36) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.2 && nodeWeight <= 0.275) {
+            float nodeSize = (this.MIN_NODE_SZ + 42) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
         } else if (nodeWeight > 0.25 && nodeWeight <= 0.3) {
-            float nodeSize = (MIN_NODE_SZ+65)/2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
+            float nodeSize = (this.MIN_NODE_SZ + 48) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.3 && nodeWeight <= 0.325) {
+            float nodeSize = (this.MIN_NODE_SZ + 56) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
         } else if (nodeWeight > 0.3 && nodeWeight <= 0.35) {
-            float nodeSize = (MIN_NODE_SZ+75)/2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
-        } else if (nodeWeight > 0.35 && nodeWeight <= 0.4) {
-            float nodeSize = (MIN_NODE_SZ+85)/2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
-        } else if (nodeWeight > 0.4 && nodeWeight <= 0.45) {
-            float nodeSize = (MIN_NODE_SZ+95)/2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
-        } else if (nodeWeight > 0.45 && nodeWeight <= 0.5) {
-            float nodeSize = (MIN_NODE_SZ+113)/2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
+            float nodeSize = (this.MIN_NODE_SZ + 64) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.3 && nodeWeight <= 0.375) {
+            float nodeSize = (this.MIN_NODE_SZ + 72) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.35 && nodeWeight <= 0.40) {
+            float nodeSize = (this.MIN_NODE_SZ + 80) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.3 && nodeWeight <= 0.425) {
+            float nodeSize = (this.MIN_NODE_SZ + 90) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.3 && nodeWeight <= 0.45) {
+            float nodeSize = (this.MIN_NODE_SZ + 100) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.3 && nodeWeight <= 0.475) {
+            float nodeSize = (this.MIN_NODE_SZ + 110) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.45 && nodeWeight <= 0.50) {
+            float nodeSize = (this.MIN_NODE_SZ + 120) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.5 && nodeWeight <= 0.525) {
+            float nodeSize = (this.MIN_NODE_SZ + 130) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
         } else if (nodeWeight > 0.5 && nodeWeight <= 0.55) {
-            float nodeSize = (MIN_NODE_SZ+120)/2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
+            float nodeSize = (this.MIN_NODE_SZ + 140) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.5 && nodeWeight <= 0.575) {
+            float nodeSize = (this.MIN_NODE_SZ + 150) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
         } else if (nodeWeight > 0.55 && nodeWeight <= 0.6) {
-            float nodeSize = (MIN_NODE_SZ+130)/2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
+            float nodeSize = (this.MIN_NODE_SZ + 160) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.6 && nodeWeight <= 0.625) {
+            float nodeSize = (this.MIN_NODE_SZ + 170) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
         } else if (nodeWeight > 0.6 && nodeWeight <= 0.65) {
-            float nodeSize = (MIN_NODE_SZ+135)/2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
+            float nodeSize = (this.MIN_NODE_SZ + 180) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.6 && nodeWeight <= 0.675) {
+            float nodeSize = (this.MIN_NODE_SZ + 190) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
         } else if (nodeWeight > 0.65 && nodeWeight <= 0.7) {
-            float nodeSize = (MIN_NODE_SZ+145)/2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
+            float nodeSize = (this.MIN_NODE_SZ + 200) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.7 && nodeWeight <= 0.725) {
+            float nodeSize = (this.MIN_NODE_SZ + 210) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
         } else if (nodeWeight > 0.7 && nodeWeight <= 0.75) {
-            float nodeSize = (MIN_NODE_SZ+155)/2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
+            float nodeSize = (this.MIN_NODE_SZ + 220) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.7 && nodeWeight <= 0.775) {
+            float nodeSize = (this.MIN_NODE_SZ + 230) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
         } else if (nodeWeight > 0.75 && nodeWeight <= 0.8) {
-            float nodeSize = (MIN_NODE_SZ+165)/2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
+            float nodeSize = (this.MIN_NODE_SZ + 275) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.8 && nodeWeight <= 0.825) {
+            float nodeSize = (this.MIN_NODE_SZ + 240) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
         } else if (nodeWeight > 0.8 && nodeWeight <= 0.85) {
-            float nodeSize = (MIN_NODE_SZ+175)/2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
+            float nodeSize = (this.MIN_NODE_SZ + 260) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.8 && nodeWeight <= 0.875) {
+            float nodeSize = (this.MIN_NODE_SZ + 280) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
         } else if (nodeWeight > 0.85 && nodeWeight <= 0.9) {
-            float nodeSize = (MIN_NODE_SZ+183)/2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
+            float nodeSize = (this.MIN_NODE_SZ + 300) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.9 && nodeWeight <= 0.925) {
+            float nodeSize = (this.MIN_NODE_SZ + 320) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
         } else if (nodeWeight > 0.9 && nodeWeight <= 0.95) {
-            float nodeSize = (MIN_NODE_SZ+195)/2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
+            float nodeSize = (this.MIN_NODE_SZ + 340) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.9 && nodeWeight <= 0.975) {
+            float nodeSize = (this.MIN_NODE_SZ + 360) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
         } else {
-            float nodeSize = (MIN_NODE_SZ+210)/2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize*2, nodeSize*2);
+            float nodeSize = (this.MIN_NODE_SZ + 380) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
         }
     }
 
     private Stroke setNodeDrawStroke(float nodeValueWeight) {
         if (nodeValueWeight <= 0.1) {
-            return new BasicStroke(2f);
+            return new BasicStroke(1f);
         } else if (nodeValueWeight > 0.1 && nodeValueWeight <= 0.2) {
-            return new BasicStroke(4f);
+            return new BasicStroke(3f);
         } else if (nodeValueWeight > 0.2 && nodeValueWeight <= 0.3) {
-            return new BasicStroke(6f);
+            return new BasicStroke(5f);
         } else if (nodeValueWeight > 0.3 && nodeValueWeight <= 0.4) {
             return new BasicStroke(8f);
         } else if (nodeValueWeight > 0.4 && nodeValueWeight <= 0.5) {
             return new BasicStroke(12f);
         } else if (nodeValueWeight > 0.5 && nodeValueWeight <= 0.6) {
-            return new BasicStroke(15f);
+            return new BasicStroke(16f);
         } else if (nodeValueWeight > 0.6 && nodeValueWeight <= 0.7) {
-            return new BasicStroke(18f);
+            return new BasicStroke(22f);
         } else if (nodeValueWeight > 0.7 && nodeValueWeight <= 0.8) {
-            return new BasicStroke(21f);
-        } else if (nodeValueWeight > 0.8 && nodeValueWeight <= 0.9) {
-            return new BasicStroke(24f);
-        } else {
             return new BasicStroke(28f);
+        } else if (nodeValueWeight > 0.8 && nodeValueWeight <= 0.9) {
+            return new BasicStroke(32f);
+        } else {
+            return new BasicStroke(40f);
         }
     }
 
@@ -876,7 +930,7 @@ implements Serializable {
         } else if (e.getSource().getCurrentValue() == 0 || e.getDest().getCurrentValue() == 0) {
             return new Color(0.0f, 0.0f, 0.0f, 0.0f);
         } else if (e.getSource() == e.getDest()) {
-            return Color.YELLOW;
+            return Color.BLACK;
         } else {
             return Color.LIGHT_GRAY;
         }

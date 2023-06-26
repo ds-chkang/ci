@@ -49,16 +49,16 @@ implements ActionListener {
                     chartPanel.getChart().getCategoryPlot().setRangeGridlinePaint(Color.DARK_GRAY);
                     chartPanel.getChart().getCategoryPlot().setDomainGridlinePaint(Color.DARK_GRAY);
                     chartPanel.getChart().getCategoryPlot().setBackgroundPaint(Color.WHITE);
-                    chartPanel.getChart().getCategoryPlot().getDomainAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont11);
-                    chartPanel.getChart().getCategoryPlot().getDomainAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont11);
-                    chartPanel.getChart().getCategoryPlot().getRangeAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont11);
-                    chartPanel.getChart().getCategoryPlot().getRangeAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont11);
+                    chartPanel.getChart().getCategoryPlot().getDomainAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont10);
+                    chartPanel.getChart().getCategoryPlot().getDomainAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont10);
+                    chartPanel.getChart().getCategoryPlot().getRangeAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont10);
+                    chartPanel.getChart().getCategoryPlot().getRangeAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont10);
 
                     CategoryAxis domainAxis = chartPanel.getChart().getCategoryPlot().getDomainAxis();
                     domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_90);
 
                     BarRenderer barRenderer = (BarRenderer) chartPanel.getChart().getCategoryPlot().getRenderer();
-                    barRenderer.setSeriesPaint(0, new Color(0, 0, 0, 0.25f));
+                    barRenderer.setSeriesPaint(0, new Color(0,0,0,0.3f));
                     barRenderer.setShadowPaint(Color.WHITE);
                     barRenderer.setBaseFillPaint(Color.decode("#07CF61"));
                     barRenderer.setBarPainter(new StandardBarPainter());
@@ -107,6 +107,7 @@ implements ActionListener {
                     add(chartPanel, BorderLayout.CENTER);
                     add(topPanel, BorderLayout.NORTH);
 
+                    chartPanel.getChart().removeLegend();
                     revalidate();
                     repaint();
                 } catch (Exception ex) {
@@ -267,7 +268,7 @@ implements ActionListener {
         }
 
         String plotTitle = "";
-        String xaxis = "PREDECESSOR COUNT DISTRIBUTION";
+        String xaxis = "";
         String yaxis = "";
         PlotOrientation orientation = PlotOrientation.VERTICAL;
         boolean show = false;

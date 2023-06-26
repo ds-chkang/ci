@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.TreeMap;
 
-public class MyDirectGraphTopLevelDistributionChart
+public class MyDirectGraphLevelDistributionChart
 extends JPanel {
 
     protected boolean MAXIMIZED;
@@ -38,7 +38,7 @@ extends JPanel {
             "UNREACHED  OUT-NODE COUNT DISTRIBUTION"};
 
 
-    public MyDirectGraphTopLevelDistributionChart() {
+    public MyDirectGraphLevelDistributionChart() {
         this.decorate();
     }
 
@@ -50,40 +50,40 @@ extends JPanel {
                     setLayout(new BorderLayout(3, 3));
                     setBackground(Color.WHITE);
 
-                    ChartPanel chartPanel = null;
+                    ChartPanel cp = null;
                     if (selectedChartIdx == 0 || chartMenu == null) {
-                        chartPanel = new ChartPanel(setGraphNodeCountChart());
+                        cp = new ChartPanel(setGraphNodeCountChart());
                     } else if (selectedChartIdx == 1) {
-                        chartPanel = new ChartPanel(setAverageShortestOutDistanceChart());
+                        cp = new ChartPanel(setAverageShortestOutDistanceChart());
                     } else if (selectedChartIdx == 2) {
-                        chartPanel = new ChartPanel(setAverageShortestInDistanceChart());
+                        cp = new ChartPanel(setAverageShortestInDistanceChart());
                     } else if (selectedChartIdx == 3) {
-                        chartPanel = new ChartPanel(setReachedOutNodeCountChart());
+                        cp = new ChartPanel(setReachedOutNodeCountChart());
                     } else if (selectedChartIdx == 4) {
-                        chartPanel = new ChartPanel(setUnReachedOutNodeCountChart());
+                        cp = new ChartPanel(setUnReachedOutNodeCountChart());
                     }
-                    chartPanel.getChart().getCategoryPlot().setRangeGridlinePaint(Color.DARK_GRAY);
-                    chartPanel.getChart().getCategoryPlot().setDomainGridlinePaint(Color.DARK_GRAY);
-                    chartPanel.getChart().getCategoryPlot().setBackgroundPaint(Color.WHITE);
-                    chartPanel.getChart().getCategoryPlot().getDomainAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont11);
-                    chartPanel.getChart().getCategoryPlot().getDomainAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont11);
-                    chartPanel.getChart().getCategoryPlot().getRangeAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont11);
-                    chartPanel.getChart().getCategoryPlot().getRangeAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont11);
-                    CategoryAxis domainAxis = chartPanel.getChart().getCategoryPlot().getDomainAxis();
+                    cp.getChart().getCategoryPlot().setRangeGridlinePaint(Color.DARK_GRAY);
+                    cp.getChart().getCategoryPlot().setDomainGridlinePaint(Color.DARK_GRAY);
+                    cp.getChart().getCategoryPlot().setBackgroundPaint(Color.WHITE);
+                    cp.getChart().getCategoryPlot().getDomainAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont10);
+                    cp.getChart().getCategoryPlot().getDomainAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont10);
+                    cp.getChart().getCategoryPlot().getRangeAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont10);
+                    cp.getChart().getCategoryPlot().getRangeAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont10);
+                    CategoryAxis domainAxis = cp.getChart().getCategoryPlot().getDomainAxis();
                     domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_90);
 
-                    BarRenderer renderer = (BarRenderer) chartPanel.getChart().getCategoryPlot().getRenderer();
-                    renderer.setSeriesPaint(0, new Color(0, 0, 0, 0.2f));//Color.LIGHT_GRAY);//Color.decode("#2084FE"));
-                    renderer.setShadowPaint(Color.WHITE);
-                    renderer.setBaseFillPaint(Color.decode("#07CF61"));
-                    renderer.setBarPainter(new StandardBarPainter());
-                    renderer.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont13);
+                    BarRenderer r = (BarRenderer) cp.getChart().getCategoryPlot().getRenderer();
+                    r.setSeriesPaint(0, new Color(0,0,0,0.3f));
+                    r.setShadowPaint(Color.WHITE);
+                    r.setBaseFillPaint(Color.decode("#07CF61"));
+                    r.setBarPainter(new StandardBarPainter());
+                    r.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont10);
 
-                    JLabel titleLabel = new JLabel(" DIST.");
-                    titleLabel.setToolTipText("DISTRIBUTIONS");
-                    titleLabel.setFont(MyDirectGraphVars.tahomaBoldFont12);
-                    titleLabel.setBackground(Color.WHITE);
-                    titleLabel.setForeground(Color.DARK_GRAY);
+                    JLabel tl = new JLabel(" DIST.");
+                    tl.setToolTipText("DISTRIBUTIONS");
+                    tl.setFont(MyDirectGraphVars.tahomaBoldFont12);
+                    tl.setBackground(Color.WHITE);
+                    tl.setForeground(Color.DARK_GRAY);
 
                     chartMenu = new JComboBox();
                     chartMenu.addItem("G. N. C.");
@@ -117,7 +117,7 @@ extends JPanel {
                     JPanel titlePanel = new JPanel();
                     titlePanel.setBackground(Color.WHITE);
                     titlePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
-                    titlePanel.add(titleLabel);
+                    titlePanel.add(tl);
 
                     JButton enlargeBtn = new JButton("+");
                     enlargeBtn.setToolTipText("ENLARGE");
@@ -146,8 +146,9 @@ extends JPanel {
                     topPanel.add(titlePanel, BorderLayout.WEST);
                     topPanel.add(menuPanel, BorderLayout.EAST);
                     add(topPanel, BorderLayout.NORTH);
-                    add(chartPanel, BorderLayout.CENTER);
-                    renderer.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont11);
+                    add(cp, BorderLayout.CENTER);
+                    r.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont10);
+                    cp.getChart().removeLegend();
                     revalidate();
                     repaint();
                 } catch (Exception ex) {
@@ -182,7 +183,7 @@ extends JPanel {
 
         double avg = totalValue/totalCnt;
         String plotTitle = "";
-        String xaxis = "[AVG.: " + MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat(avg)) + "]";
+        String xaxis = "";
         String yaxis = "";
         PlotOrientation orientation = PlotOrientation.VERTICAL;
         boolean show = false;
@@ -215,7 +216,7 @@ extends JPanel {
 
         double avg = totalValue/totalCnt;
         String plotTitle = "";
-        String xaxis = "[AVG.: " + MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat(avg)) + "]";
+        String xaxis = "";
         String yaxis = "";
         PlotOrientation orientation = PlotOrientation.VERTICAL;
         boolean show = false;
@@ -228,6 +229,7 @@ extends JPanel {
         double totalValue = 0;
         TreeMap<Integer, Integer> valueMap = new TreeMap<>();
         Set<Set<MyDirectNode>> clusters = MyDirectGraphSysUtil.getGraphs();
+        if (clusters.size() == 1) MyDirectGraphVars.app.getDirectGraphDashBoard().graphFilterPanel.setVisible(false);
         for (Set<MyDirectNode> cluster : clusters) {
             int value = cluster.size();
             totalValue += value;
@@ -245,7 +247,7 @@ extends JPanel {
 
         String avgValue = MyDirectGraphMathUtil.twoDecimalFormat(totalValue/clusters.size());
         String plotTitle = "";
-        String xaxis = "[AVG.: " + MyDirectGraphSysUtil.formatAverageValue(avgValue)+"]";
+        String xaxis = "";
         String yaxis = "";
         PlotOrientation orientation = PlotOrientation.VERTICAL;
         boolean show = false;
@@ -277,7 +279,7 @@ extends JPanel {
 
         String avgValue = MyDirectGraphMathUtil.twoDecimalFormat(totalValue/totalCnt);
         String plotTitle = "";
-        String xaxis = "[AVG.: " + MyDirectGraphSysUtil.formatAverageValue(avgValue)+"]";
+        String xaxis = "";
         String yaxis = "";
         PlotOrientation orientation = PlotOrientation.VERTICAL;
         boolean show = false;
@@ -309,7 +311,7 @@ extends JPanel {
 
         String avgValue = MyDirectGraphMathUtil.twoDecimalFormat(totalValue/totalCnt);
         String plotTitle = "";
-        String xaxis = "[AVG.: " + MyDirectGraphSysUtil.formatAverageValue(avgValue)+"]";
+        String xaxis = "";
         String yaxis = "";
         PlotOrientation orientation = PlotOrientation.VERTICAL;
         boolean show = false;
@@ -342,7 +344,7 @@ extends JPanel {
 
         String avgValue = MyDirectGraphMathUtil.twoDecimalFormat(totalValue/totalCnt);
         String plotTitle = "";
-        String xaxis = "[AVG.: " + MyDirectGraphSysUtil.formatAverageValue(avgValue)+"]";
+        String xaxis = "";
         String yaxis = "";
         PlotOrientation orientation = PlotOrientation.VERTICAL;
         boolean show = false;
@@ -374,7 +376,7 @@ extends JPanel {
 
         String avgValue = MyDirectGraphMathUtil.twoDecimalFormat(totalValue/totalCnt);
         String plotTitle = "";
-        String xaxis = "[AVG.: " + MyDirectGraphSysUtil.formatAverageValue(avgValue)+"]";
+        String xaxis = "";
         String yaxis = "";
         PlotOrientation orientation = PlotOrientation.VERTICAL;
         boolean show = false;
@@ -386,30 +388,17 @@ extends JPanel {
     public void enlarge() {
         MyProgressBar pb = new MyProgressBar(false);
         try {
-            MyDirectGraphTopLevelDistributionChart topLevelDistributionChart = new MyDirectGraphTopLevelDistributionChart();
+            MyDirectGraphLevelDistributionChart topLevelDistributionChart = new MyDirectGraphLevelDistributionChart();
             topLevelDistributionChart.MAXIMIZED = true;
             JFrame f = new JFrame(" DISTRIBUTIONS");
             f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            f.addMouseListener(new MouseAdapter() {
-                @Override public void mouseEntered(MouseEvent e) {
-                    super.mouseEntered(e);
-                    f.setAlwaysOnTop(true);
-                }
-
-                @Override public void mouseExited(MouseEvent e) {
-                    super.mouseExited(e);
-                    f.setAlwaysOnTop(false);
-                }
-            });
-            f.setLayout(new BorderLayout(3, 3));
+            f.setLayout(new BorderLayout(2, 2));
             f.getContentPane().add(topLevelDistributionChart, BorderLayout.CENTER);
             f.setPreferredSize(new Dimension(450, 350));
             f.pack();
             pb.updateValue(100, 100);
             pb.dispose();
-            f.setAlwaysOnTop(true);
             f.setVisible(true);
-            f.setAlwaysOnTop(false);
         } catch (Exception ex) {
             MAXIMIZED = false;
             pb.updateValue(100, 100);

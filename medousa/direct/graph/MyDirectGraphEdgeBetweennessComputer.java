@@ -44,13 +44,10 @@ public class MyDirectGraphEdgeBetweennessComputer<V, E> implements Transformer<G
      * @param graph the graph
      */
     public Set<Set<V>> transform(Graph<V, E> graph) {
-        edges.clear();
-        for (int k = 0; k < graph.getEdgeCount(); k++) {
-            BetweennessCentrality<V, E> bc = new BetweennessCentrality<V, E>(graph);
-            for (E e : graph.getEdges()) {
-                double score = bc.getEdgeScore(e);
-                ((MyDirectEdge)e).betweeness = (float) score;
-            }
+        BetweennessCentrality<V, E> bc = new BetweennessCentrality<>(graph);
+        for (E e : graph.getEdges()) {
+            double score = bc.getEdgeScore(e);
+            ((MyDirectEdge)e).betweeness = (float) score;
         }
         return null;
     }
@@ -58,29 +55,24 @@ public class MyDirectGraphEdgeBetweennessComputer<V, E> implements Transformer<G
     public void compute() {
         MyProgressBar pb = new MyProgressBar(false);
         try {
-            int edgeCount = MyDirectGraphVars.directGraph.getEdgeCount();
-            edges.clear();
-            for (int k = 0; k < edgeCount; ) {
-                pb.updateValue(++k, edgeCount);
-                BetweennessCentrality<V, E> bc = new BetweennessCentrality<V, E>((Graph) MyDirectGraphVars.directGraph);
-                for (Object e : MyDirectGraphVars.directGraph.getEdges()) {
-                    if (MyDirectGraphVars.currentThread.isInterrupted()) {
-                        new Thread(new Runnable() {
-                            @Override public void run() {
-                                pb.updateValue(100, 100);
-                                pb.dispose();
-                                MyMessageUtil.showErrorMsg("The current execution has been interrupted.");
-                                MyDirectGraphVars.getDirectGraphViewer().directGraphViewerMouseListener.setDefaultView();
-                            }
-                        }).start();
-                        return;
-                    } else if (((MyDirectEdge) e).getCurrentValue() != 0) {
-                        double score = bc.getEdgeScore((E) e);
-                        ((MyDirectEdge) e).betweeness = (float) score;
-                        //if (score < 0) {
-                        //    System.out.println(score);
-                        //}
-                    }
+            BetweennessCentrality<V, E> bc = new BetweennessCentrality<V, E>((Graph) MyDirectGraphVars.directGraph);
+            for (Object e : MyDirectGraphVars.directGraph.getEdges()) {
+                if (MyDirectGraphVars.currentThread.isInterrupted()) {
+                    new Thread(new Runnable() {
+                        @Override public void run() {
+                            pb.updateValue(100, 100);
+                            pb.dispose();
+                            MyMessageUtil.showErrorMsg("The current execution has been interrupted.");
+                            MyDirectGraphVars.getDirectGraphViewer().directGraphViewerMouseListener.setDefaultView();
+                        }
+                    }).start();
+                    return;
+                } else if (((MyDirectEdge) e).getCurrentValue() != 0) {
+                    double score = bc.getEdgeScore((E) e);
+                    ((MyDirectEdge) e).betweeness = (float) score;
+                    //if (score < 0) {
+                    //    System.out.println(score);
+                    //}
                 }
             }
             pb.updateValue(100, 100);

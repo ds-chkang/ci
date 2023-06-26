@@ -1,5 +1,6 @@
 package medousa.sequential.broker;
 
+import medousa.direct.data.MyDirectGraphHeaderLoader;
 import medousa.sequential.data.MyHeaderLoader;
 
 import java.io.File;
@@ -21,4 +22,5 @@ extends MySequentialGraphFileBroker {
     public int getHeaderIndex(String columnName) {
         return this.headerLoader.getHeaderIndex(columnName);
     }
+    public MyHeaderLoader getHeaderLoader() {return this.headerLoader;}
 }

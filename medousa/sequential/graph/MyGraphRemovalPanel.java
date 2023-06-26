@@ -107,16 +107,6 @@ implements ActionListener {
                         return;
                     }
 
-                    int response = MyMessageUtil.showConfirmMessage(
-                        "<html><body>" +
-                             "Are you sure you want to remove graphs with the provided threshold?" +
-                             "<br>This operation will permanently remove corresponding nodes and edges." +
-                             "</body></html>");
-
-                    if (response != 1) {
-                        return;
-                    }
-
                     MyProgressBar pb = new MyProgressBar(false);
                     try {
                         WeakComponentClusterer<MyNode, MyEdge> wcSearch = new WeakComponentClusterer<>();
@@ -129,8 +119,8 @@ implements ActionListener {
                             for (Set<MyNode> cluster : clusters) {
                                 if (cluster.size() > threshold) {
                                     for (MyNode vertex : cluster) {
-                                        //vertex.setCurrentValue(0);
-                                        MySequentialGraphVars.g.removeVertex(vertex);
+                                        vertex.setCurrentValue(0);
+                                        //MySequentialGraphVars.g.removeVertex(vertex);
                                         removedNodeCnt++;
                                     }
                                     removeGraphCnt++;
@@ -143,8 +133,8 @@ implements ActionListener {
                             for (Set<MyNode> cluster : clusters) {
                                 if (cluster.size() < threshold) {
                                     for (MyNode vertex : cluster) {
-                                        //vertex.setCurrentValue(0);
-                                        MySequentialGraphVars.g.removeVertex(vertex);
+                                        vertex.setCurrentValue(0);
+                                        //MySequentialGraphVars.g.removeVertex(vertex);
                                         removedNodeCnt++;
                                     }
                                     removeGraphCnt++;
@@ -157,8 +147,8 @@ implements ActionListener {
                             for (Set<MyNode> cluster : clusters) {
                                 if (cluster.size() == threshold) {
                                     for (MyNode vertex : cluster) {
-                                        //vertex.setCurrentValue(0);
-                                        MySequentialGraphVars.g.removeVertex(vertex);
+                                        vertex.setCurrentValue(0);
+                                        //MySequentialGraphVars.g.removeVertex(vertex);
                                         removedNodeCnt++;
                                     }
                                     removeGraphCnt++;
@@ -171,8 +161,8 @@ implements ActionListener {
                             for (Set<MyNode> cluster : clusters) {
                                 if (cluster.size() != threshold) {
                                     for (MyNode vertex : cluster) {
-                                        //vertex.setCurrentValue(0);
-                                        MySequentialGraphVars.g.removeVertex(vertex);
+                                        vertex.setCurrentValue(0);
+                                        //MySequentialGraphVars.g.removeVertex(vertex);
                                         removedNodeCnt++;
                                     }
                                     removeGraphCnt++;
@@ -185,8 +175,8 @@ implements ActionListener {
                             for (Set<MyNode> cluster : clusters) {
                                 if (threshold <= cluster.size()) {
                                     for (MyNode vertex : cluster) {
-                                        //vertex.setCurrentValue(0);
-                                        MySequentialGraphVars.g.removeVertex(vertex);
+                                        vertex.setCurrentValue(0);
+                                        //MySequentialGraphVars.g.removeVertex(vertex);
                                         removedNodeCnt++;
                                     }
                                     removeGraphCnt++;
@@ -199,8 +189,8 @@ implements ActionListener {
                             for (Set<MyNode> cluster : clusters) {
                                 if (threshold >= cluster.size()) {
                                     for (MyNode vertex : cluster) {
-                                        // vertex.setCurrentValue(0);
-                                        MySequentialGraphVars.g.removeVertex(vertex);
+                                        vertex.setCurrentValue(0);
+                                        //MySequentialGraphVars.g.removeVertex(vertex);
                                         removedNodeCnt++;
                                     }
                                     removeGraphCnt++;
@@ -213,8 +203,8 @@ implements ActionListener {
                             for (Set<MyNode> cluster : clusters) {
                                 if (cluster.size() >= threshold || cluster.size() <= threshold) {
                                     for (MyNode vertex : cluster) {
-                                        //vertex.setCurrentValue(0);
-                                        MySequentialGraphVars.g.removeVertex(vertex);
+                                        vertex.setCurrentValue(0);
+                                        //MySequentialGraphVars.g.removeVertex(vertex);
                                         removedNodeCnt++;
                                     }
                                     removeGraphCnt++;

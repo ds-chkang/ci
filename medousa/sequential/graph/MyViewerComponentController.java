@@ -2287,8 +2287,8 @@ implements ActionListener {
         }
         sortedEdges = MySequentialGraphSysUtil.sortMapByFloatValue(sortedEdges);
         for (String e : sortedEdges.keySet()) {
-            String source = MySequentialGraphSysUtil.getDecodedNodeName(e.split("-")[0]);
-            String dest = MySequentialGraphSysUtil.getDecodedNodeName(e.split("-")[1]);
+            String source = MySequentialGraphSysUtil.getNodeName(e.split("-")[0]);
+            String dest = MySequentialGraphSysUtil.getNodeName(e.split("-")[1]);
             bottomTableModel.addRow(
                 new String[]{
                     source,
@@ -2537,7 +2537,7 @@ implements ActionListener {
             if (nn.getCurrentValue() > 0) {
                 ((DefaultTableModel) this.currentNodeListTable.getModel()).addRow(new String[]{
                     "" + (++i),
-                    MySequentialGraphSysUtil.getDecodedNodeName(nn.getName()),
+                    MySequentialGraphSysUtil.getNodeName(nn.getName()),
                     MyMathUtil.twoDecimalFormat((long) nn.getCurrentValue())}
                 );
             }
@@ -2711,7 +2711,7 @@ implements ActionListener {
                 for (String predecessor : predecessorMap.keySet()) {
                     ((DefaultTableModel) currentNodeListTable.getModel()).addRow(
                         new String[]{"" + MyMathUtil.getCommaSeperatedNumber(++tableRowCount),
-                            MySequentialGraphSysUtil.getDecodedNodeName(predecessor),
+                            MySequentialGraphSysUtil.getNodeName(predecessor),
                             MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(predecessorMap.get(predecessor)))
                         }
                     );
@@ -2721,7 +2721,7 @@ implements ActionListener {
                 for (String depthNode : depthNodeNameSet) {
                     ((DefaultTableModel) nodeListTable.getModel()).addRow(
                         new String[]{"" + MyMathUtil.getCommaSeperatedNumber(++tableRowCount),
-                            MySequentialGraphSysUtil.getDecodedNodeName(depthNode),
+                            MySequentialGraphSysUtil.getNodeName(depthNode),
                             MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(((MyNode) MySequentialGraphVars.g.vRefs.get(depthNode)).getInContribution()))
                         }
                     );
@@ -2745,7 +2745,7 @@ implements ActionListener {
                 for (String predecessor : uniquePredecessorMap.keySet()) {
                     ((DefaultTableModel) currentNodeListTable.getModel()).addRow(
                         new String[]{"" + MyMathUtil.getCommaSeperatedNumber(++tableRowCount),
-                            MySequentialGraphSysUtil.getDecodedNodeName(predecessor),
+                            MySequentialGraphSysUtil.getNodeName(predecessor),
                             MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(uniquePredecessorMap.get(predecessor)))
                         }
                     );
@@ -2755,7 +2755,7 @@ implements ActionListener {
                 for (String depthNode : depthNodeSet) {
                     ((DefaultTableModel) nodeListTable.getModel()).addRow(
                         new String[]{"" + MyMathUtil.getCommaSeperatedNumber(++tableRowCount),
-                            MySequentialGraphSysUtil.getDecodedNodeName(depthNode),
+                            MySequentialGraphSysUtil.getNodeName(depthNode),
                             MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(((MyNode) MySequentialGraphVars.g.vRefs.get(depthNode)).getInContribution()))
                         }
                     );
@@ -2772,7 +2772,7 @@ implements ActionListener {
                 for (String successor : successorMap.keySet()) {
                     ((DefaultTableModel) currentNodeListTable.getModel()).addRow(
                         new String [] {"" + MyMathUtil.getCommaSeperatedNumber(++tableRowCount),
-                            MySequentialGraphSysUtil.getDecodedNodeName(successor),
+                            MySequentialGraphSysUtil.getNodeName(successor),
                             MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat((double)successorMap.get(successor)))
                         }
                     );
@@ -2799,7 +2799,7 @@ implements ActionListener {
                 for (String successor : uniqueSuccessorMap.keySet()) {
                     ((DefaultTableModel) currentNodeListTable.getModel()).addRow(
                         new String [] {"" + MyMathUtil.getCommaSeperatedNumber(++tableRowCount),
-                            MySequentialGraphSysUtil.getDecodedNodeName(successor),
+                            MySequentialGraphSysUtil.getNodeName(successor),
                             MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(uniqueSuccessorMap.get(successor)))
                         }
                     );
@@ -2808,7 +2808,7 @@ implements ActionListener {
                 for (String depthNode : depthNodeSet) {
                     ((DefaultTableModel) nodeListTable.getModel()).addRow(
                         new String [] {"" + MyMathUtil.getCommaSeperatedNumber(++tableRowCount),
-                            MySequentialGraphSysUtil.getDecodedNodeName(depthNode),
+                            MySequentialGraphSysUtil.getNodeName(depthNode),
                             MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(((MyNode) MySequentialGraphVars.g.vRefs.get(depthNode)).getOutContribution()))
                         }
                     );
@@ -2823,7 +2823,7 @@ implements ActionListener {
                 for (String successor : successorMap.keySet()) {
                     ((DefaultTableModel) currentNodeListTable.getModel()).addRow(
                             new String [] {"" + MyMathUtil.getCommaSeperatedNumber(++tableRowCount),
-                                    MySequentialGraphSysUtil.getDecodedNodeName(successor),
+                                    MySequentialGraphSysUtil.getNodeName(successor),
                                     MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat((double)successorMap.get(successor)))
                             }
                     );
@@ -2833,7 +2833,7 @@ implements ActionListener {
                 MyNode n = (MyNode) MySequentialGraphVars.g.vRefs.get(selectedSingleNode);
                 ((DefaultTableModel) nodeListTable.getModel()).addRow(
                             new String [] {"" + MyMathUtil.getCommaSeperatedNumber(++tableRowCount),
-                                    MySequentialGraphSysUtil.getDecodedNodeName(selectedSingleNode),
+                                    MySequentialGraphSysUtil.getNodeName(selectedSingleNode),
                                     MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(n.getNodeDepthInfo(MySequentialGraphVars.currentGraphDepth).getContribution()))
                             });
 
@@ -2858,7 +2858,7 @@ implements ActionListener {
                 for (String successor : uniqueSuccessorMap.keySet()) {
                     ((DefaultTableModel) currentNodeListTable.getModel()).addRow(
                             new String [] {"" + MyMathUtil.getCommaSeperatedNumber(++tableRowCount),
-                                    MySequentialGraphSysUtil.getDecodedNodeName(successor),
+                                    MySequentialGraphSysUtil.getNodeName(successor),
                                     MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(uniqueSuccessorMap.get(successor)))
                             }
                     );
@@ -2867,7 +2867,7 @@ implements ActionListener {
                 for (String depthNode : depthNodeSet) {
                     ((DefaultTableModel) nodeListTable.getModel()).addRow(
                             new String [] {"" + MyMathUtil.getCommaSeperatedNumber(++tableRowCount),
-                                    MySequentialGraphSysUtil.getDecodedNodeName(depthNode),
+                                    MySequentialGraphSysUtil.getNodeName(depthNode),
                                     MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(((MyNode) MySequentialGraphVars.g.vRefs.get(depthNode)).getOutContribution()))
                             }
                     );
@@ -2879,7 +2879,7 @@ implements ActionListener {
                 MyNode selectedSingleNode = (MyNode) MySequentialGraphVars.g.vRefs.get(depthNodeNameSet.iterator().next());
                 ((DefaultTableModel) nodeListTable.getModel()).addRow(
                     new String [] {"" + MyMathUtil.getCommaSeperatedNumber(++tableRowCount),
-                        MySequentialGraphSysUtil.getDecodedNodeName(selectedSingleNode.getName()),
+                        MySequentialGraphSysUtil.getNodeName(selectedSingleNode.getName()),
                         MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(selectedSingleNode.getContribution()))
                     }
                 );
@@ -2887,7 +2887,7 @@ implements ActionListener {
                 tableRowCount = 0;
                 ((DefaultTableModel) currentNodeListTable.getModel()).addRow(
                      new String [] {"" + MyMathUtil.getCommaSeperatedNumber(++tableRowCount),
-                         MySequentialGraphSysUtil.getDecodedNodeName(selectedSingleNode.getName()),
+                         MySequentialGraphSysUtil.getNodeName(selectedSingleNode.getName()),
                          MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(selectedSingleNode.getContribution()))
                     });
             } else if (depthNodeNameSet != null && MySequentialGraphVars.getSequentialGraphViewer().singleNode != null) {
@@ -2895,7 +2895,7 @@ implements ActionListener {
                 for (String n : depthNodeNameSet) {
                     ((DefaultTableModel) nodeListTable.getModel()).addRow(
                         new String[]{"" + MyMathUtil.getCommaSeperatedNumber(++tableRowCount),
-                            MySequentialGraphSysUtil.getDecodedNodeName(n),
+                            MySequentialGraphSysUtil.getNodeName(n),
                             MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(((MyNode) MySequentialGraphVars.g.vRefs.get(n)).getContribution()))
                         }
                     );
@@ -2918,7 +2918,7 @@ implements ActionListener {
                 for (String n : nodeMap.keySet()) {
                     ((DefaultTableModel) currentNodeListTable.getModel()).addRow(
                         new String [] {"" + MyMathUtil.getCommaSeperatedNumber(++tableRowCount),
-                            MySequentialGraphSysUtil.getDecodedNodeName(n),
+                            MySequentialGraphSysUtil.getNodeName(n),
                             MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(nodeMap.get(n)))});
 
 
@@ -2935,7 +2935,7 @@ implements ActionListener {
                     if (nn.getCurrentValue() > 0) {
                         ((DefaultTableModel) currentNodeListTable.getModel()).addRow(new String[]{
                             "" + (++tableRowCount),
-                            MySequentialGraphSysUtil.getDecodedNodeName(nn.getName()),
+                            MySequentialGraphSysUtil.getNodeName(nn.getName()),
                             MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(nodeMap.get(n)))}
                         );
                     }
@@ -2945,7 +2945,7 @@ implements ActionListener {
                 for (String n :depthNodeNameSet) {
                     ((DefaultTableModel) nodeListTable.getModel()).addRow(
                         new String[]{"" + MyMathUtil.getCommaSeperatedNumber(++tableRowCount),
-                            MySequentialGraphSysUtil.getDecodedNodeName(n),
+                            MySequentialGraphSysUtil.getNodeName(n),
                             MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(nodeMap.get(n)))
                         }
                     );
@@ -2966,7 +2966,7 @@ implements ActionListener {
                 for (String n : nodeValueMap.keySet()) {
                     ((DefaultTableModel) currentNodeListTable.getModel()).addRow(
                             new String[]{"" + MyMathUtil.getCommaSeperatedNumber(++tableRowCount),
-                                    MySequentialGraphSysUtil.getDecodedNodeName(n),
+                                    MySequentialGraphSysUtil.getNodeName(n),
                                     MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(nodeValueMap.get(n)))}
                     );
                 }
@@ -2985,7 +2985,7 @@ implements ActionListener {
                 for (String n : nodeValueMap.keySet()) {
                     ((DefaultTableModel) nodeListTable.getModel()).addRow(
                             new String[]{"" + MyMathUtil.getCommaSeperatedNumber(++tableRowCount),
-                                    MySequentialGraphSysUtil.getDecodedNodeName(n),
+                                    MySequentialGraphSysUtil.getNodeName(n),
                                     MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(nodeValueMap.get(n)))}
                     );
                 }
@@ -3004,7 +3004,7 @@ implements ActionListener {
                     ((DefaultTableModel) currentNodeListTable.getModel()).addRow(
                             new String[]{
                                     "" + (++tableRowCount),
-                                    MySequentialGraphSysUtil.getDecodedNodeName(nn.getName()),
+                                    MySequentialGraphSysUtil.getNodeName(nn.getName()),
                                     MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(nodeValueMap.get(n)))});
                 }
 
@@ -3018,7 +3018,7 @@ implements ActionListener {
                 for (String n : nodeValueMap.keySet()) {
                     ((DefaultTableModel) nodeListTable.getModel()).addRow(
                         new String[]{"" + MyMathUtil.getCommaSeperatedNumber(++tableRowCount),
-                        MySequentialGraphSysUtil.getDecodedNodeName(n),
+                        MySequentialGraphSysUtil.getNodeName(n),
                         MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(nodeValueMap.get(n)))}
                     );
                 }
@@ -3038,7 +3038,7 @@ implements ActionListener {
                 ((DefaultTableModel) currentNodeListTable.getModel()).addRow(
                     new String[]{
                         "" + (++tableRowCount),
-                         MySequentialGraphSysUtil.getDecodedNodeName(nn.getName()),
+                         MySequentialGraphSysUtil.getNodeName(nn.getName()),
                          MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(nodeMap.get(n)))
                     });
             }
@@ -3054,7 +3054,7 @@ implements ActionListener {
             for (String n : nodeMap.keySet()) {
                 ((DefaultTableModel) nodeListTable.getModel()).addRow(
                         new String[]{"" + MyMathUtil.getCommaSeperatedNumber(++tableRowCount),
-                                MySequentialGraphSysUtil.getDecodedNodeName(n),
+                                MySequentialGraphSysUtil.getNodeName(n),
                                 MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(nodeMap.get(n)))
                         }
                 );
@@ -3072,7 +3072,7 @@ implements ActionListener {
                 if (nn.getCurrentValue() > 0) {
                     ((DefaultTableModel) currentNodeListTable.getModel()).addRow(new String[]{
                             "" + (++tableRowCount),
-                            MySequentialGraphSysUtil.getDecodedNodeName(nn.getName()),
+                            MySequentialGraphSysUtil.getNodeName(nn.getName()),
                             MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(nodeMap.get(n)))}
                     );
                 }
@@ -3082,7 +3082,7 @@ implements ActionListener {
             for (String n : nodeMap.keySet()) {
                 ((DefaultTableModel) nodeListTable.getModel()).addRow(
                         new String[]{"" + MyMathUtil.getCommaSeperatedNumber(++tableRowCount),
-                                MySequentialGraphSysUtil.getDecodedNodeName(n),
+                                MySequentialGraphSysUtil.getNodeName(n),
                                 MySequentialGraphSysUtil.formatAverageValue(MyMathUtil.twoDecimalFormat(nodeMap.get(n)))
                         }
                 );

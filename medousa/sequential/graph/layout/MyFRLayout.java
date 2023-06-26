@@ -38,8 +38,8 @@ public class MyFRLayout<V, E> extends AbstractLayout<V, E> implements IterativeC
         }
 
         this.frVertexData = LazyMap.decorate(new HashMap(), new NamelessClass_1());
-        this.attraction_multiplier = 0.75;
-        this.repulsion_multiplier = 0.75;
+        this.attraction_multiplier = 0.55;
+        this.repulsion_multiplier = 0.55;
         this.EPSILON = 1.0E-6;
         this.initialize();
         this.max_dimension = (double)Math.max(d.height, d.width);

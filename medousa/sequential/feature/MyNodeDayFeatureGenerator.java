@@ -76,7 +76,6 @@ public class MyNodeDayFeatureGenerator {
         setItemIDIndex();
         setItemNameIndex();
         setTrTimeIdx();
-        MySequentialGraphVars.years = new HashSet<>();
         if (trTimeIdx == -1) return false;
         generateSequences(dataIn);
         this.fw.close();

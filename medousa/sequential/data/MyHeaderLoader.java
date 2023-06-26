@@ -10,7 +10,6 @@ import java.util.Scanner;
 public class MyHeaderLoader {
 
     private File headerFile;
-    private int headerCount = 0;
     private String [] headers = null;
 
     public MyHeaderLoader() {}
@@ -28,6 +27,7 @@ public class MyHeaderLoader {
                 } else {
                     MyMessageUtil.showErrorMsg( "Please, check the format of the header file.");
                 }
+                MySequentialGraphVars.numberOfInputDataColumns = headers.length;
             } else {
                 MyMessageUtil.showErrorMsg( "Please, check the format of the header file.\n" +
                                             "The provided header file seems empty.");

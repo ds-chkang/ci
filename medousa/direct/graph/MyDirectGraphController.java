@@ -1,5 +1,6 @@
 package medousa.direct.graph;
 
+import edu.uci.ics.jung.algorithms.scoring.BetweennessCentrality;
 import medousa.direct.graph.barcharts.MyDirectGraphMultiNodeLevelNeighborNodeValueBarChart;
 import medousa.direct.graph.barcharts.MyDirectGraphNeighborNodeValueBarChart;
 import medousa.direct.graph.barcharts.MyDirectGraphNodeValueBarChart;
@@ -8,6 +9,8 @@ import medousa.direct.utils.MyDirectGraphMathUtil;
 import medousa.direct.utils.MyDirectGraphSysUtil;
 import medousa.direct.utils.MyDirectGraphVars;
 import medousa.MyProgressBar;
+import medousa.sequential.graph.MyEdge;
+import medousa.sequential.graph.MyNode;
 import org.apache.commons.collections15.Transformer;
 
 import javax.swing.*;
@@ -118,7 +121,9 @@ implements ActionListener {
         this.nodeLabelComboBoxMenu.setFocusable(false);
         this.nodeLabelComboBoxMenu.addItem("");
         this.nodeLabelComboBoxMenu.addItem("NAME");
-        for (String userDefinedNodeLabel : MyDirectGraphVars.userDefinedNodeLabels) {this.nodeLabelComboBoxMenu.addItem(userDefinedNodeLabel);}
+        for (String userDefinedNodeLabel : MyDirectGraphVars.userDefinedNodeLabels) {
+            this.nodeLabelComboBoxMenu.addItem(userDefinedNodeLabel);
+        }
         this.nodeLabelComboBoxMenu.setSelectedIndex(0);
 
         this.nodeValueComboBoxMenu = new JComboBox();
@@ -165,7 +170,7 @@ implements ActionListener {
 
         this.shortestDistanceNodeValueComboboxMenu = new JComboBox();
         this.shortestDistanceNodeValueComboboxMenu.setToolTipText("SELECT A NODE VALUE");
-        this.shortestDistanceNodeValueComboboxMenu.setFont(MyDirectGraphVars.tahomaPlainFont11);
+        this.shortestDistanceNodeValueComboboxMenu.setFont(MyDirectGraphVars.tahomaPlainFont12);
         this.shortestDistanceNodeValueComboboxMenu.setBackground(Color.WHITE);
         this.shortestDistanceNodeValueComboboxMenu.setFocusable(false);
         this.shortestDistanceNodeValueComboboxMenu.addItem("CONT.");
@@ -173,18 +178,18 @@ implements ActionListener {
         this.shortestDistanceNodeValueComboboxMenu.addItem("SUCC.");
 
         this.edgeLabelCheckBox.setFocusable(false);
-        this.edgeLabelCheckBox.setFont(MyDirectGraphVars.tahomaPlainFont11);
+        this.edgeLabelCheckBox.setFont(MyDirectGraphVars.tahomaPlainFont12);
         this.edgeLabelCheckBox.setBackground(Color.WHITE);
 
         this.edgeValueCheckBox.setFocusable(false);
         this.edgeValueCheckBox.setToolTipText("SHOW EDGE VALUES");
-        this.edgeValueCheckBox.setFont(MyDirectGraphVars.tahomaPlainFont11);
+        this.edgeValueCheckBox.setFont(MyDirectGraphVars.tahomaPlainFont12);
         this.edgeValueCheckBox.setBackground(Color.WHITE);
 
         this.nodeLabelExcludeComboBoxMenu = new JComboBox();
         this.nodeLabelExcludeComboBoxMenu.setToolTipText("SELECT NODE LABEL TO EXCLUDE FROM THE GRAPH.");
         this.nodeLabelExcludeComboBoxMenu.setFocusable(false);
-        this.nodeLabelExcludeComboBoxMenu.setFont(MyDirectGraphVars.tahomaPlainFont11);
+        this.nodeLabelExcludeComboBoxMenu.setFont(MyDirectGraphVars.tahomaPlainFont12);
         this.nodeLabelExcludeComboBoxMenu.setBackground(Color.WHITE);
         for (String nodeLabelValue : MyDirectGraphVars.userDefinedNodeLabels) {
             this.nodeLabelExcludeComboBoxMenu.addItem(nodeLabelValue);
@@ -194,19 +199,19 @@ implements ActionListener {
         this.nodeLabelValueExcludeComboBoxMenu = new JComboBox();
         this.nodeLabelValueExcludeComboBoxMenu.setToolTipText("SELECT NODE LABEL VALUE TO EXCLUDE FROM THE GRAPH.");
         this.nodeLabelValueExcludeComboBoxMenu.setFocusable(false);
-        this.nodeLabelValueExcludeComboBoxMenu.setFont(MyDirectGraphVars.tahomaPlainFont11);
+        this.nodeLabelValueExcludeComboBoxMenu.setFont(MyDirectGraphVars.tahomaPlainFont12);
         this.nodeLabelValueExcludeComboBoxMenu.setBackground(Color.WHITE);
 
         this.edgeLabelValueExcludeComboBoxMenu = new JComboBox();
         this.edgeLabelValueExcludeComboBoxMenu.setToolTipText("SELECT EDGE LABEL VALUE TO EXCLUDE FROM THE GRAPH.");
         this.edgeLabelValueExcludeComboBoxMenu.setFocusable(false);
-        this.edgeLabelValueExcludeComboBoxMenu.setFont(MyDirectGraphVars.tahomaPlainFont11);
+        this.edgeLabelValueExcludeComboBoxMenu.setFont(MyDirectGraphVars.tahomaPlainFont12);
         this.edgeLabelValueExcludeComboBoxMenu.setBackground(Color.WHITE);
 
         this.edgeLabelExcludeComboBoxMenu = new JComboBox();
         this.edgeLabelExcludeComboBoxMenu.setToolTipText("");
         this.edgeLabelExcludeComboBoxMenu.setFocusable(false);
-        this.edgeLabelExcludeComboBoxMenu.setFont(MyDirectGraphVars.tahomaPlainFont11);
+        this.edgeLabelExcludeComboBoxMenu.setFont(MyDirectGraphVars.tahomaPlainFont12);
         this.edgeLabelExcludeComboBoxMenu.setBackground(Color.WHITE);
         for (String nodeLabelValue : MyDirectGraphVars.userDefinedEdgeLabesl) {
             this.edgeLabelExcludeComboBoxMenu.addItem(nodeLabelValue);
@@ -216,43 +221,41 @@ implements ActionListener {
         this.excludeBtn.setToolTipText("EXCLUDE");
         this.excludeBtn.setBackground(Color.WHITE);
         this.excludeBtn.setFocusable(false);
-        this.excludeBtn.setFont(MyDirectGraphVars.tahomaPlainFont11);
+        this.excludeBtn.setFont(MyDirectGraphVars.tahomaPlainFont12);
         this.excludeBtn.addActionListener(this);
         this.edgeValueComboBoxMenu.addActionListener(this);
 
         this.nodeLabelCheckBox.setToolTipText("SHOW NODE LABELS");
         this.nodeLabelCheckBox.setFocusable(false);
-        this.nodeLabelCheckBox.setFont(MyDirectGraphVars.tahomaPlainFont11);
+        this.nodeLabelCheckBox.setFont(MyDirectGraphVars.tahomaPlainFont12);
         this.nodeLabelCheckBox.setBackground(Color.WHITE);
 
         this.nodeValueCheckBox.setToolTipText("SHOW NODE VALUES");
-        this.nodeValueCheckBox.setFont(MyDirectGraphVars.tahomaPlainFont11);
+        this.nodeValueCheckBox.setFont(MyDirectGraphVars.tahomaPlainFont12);
         this.nodeValueCheckBox.setBackground(Color.WHITE);
         this.nodeValueCheckBox.setFocusable(false);
         this.nodeLabelCheckBox.addActionListener(this);
         this.nodeValueCheckBox.addActionListener(this);
         this.edgeValueCheckBox.addActionListener(this);
         this.removeEdgeCheckBox.setToolTipText("REMOVE EDGES");
-        this.removeEdgeCheckBox.setFont(MyDirectGraphVars.tahomaPlainFont11);
+        this.removeEdgeCheckBox.setFont(MyDirectGraphVars.tahomaPlainFont12);
         this.removeEdgeCheckBox.setFocusable(false);
         this.removeEdgeCheckBox.setBackground(Color.WHITE);
         this.mouseHoverCheckBox.setToolTipText("HOVER MOUSE OVER NODES");
-        this.mouseHoverCheckBox.setFont(MyDirectGraphVars.tahomaPlainFont11);
+        this.mouseHoverCheckBox.setFont(MyDirectGraphVars.tahomaPlainFont12);
         this.mouseHoverCheckBox.setFocusable(false);
         this.mouseHoverCheckBox.setBackground(Color.WHITE);
 
         clusteringSectorLabel.setBackground(Color.WHITE);
-        clusteringSectorLabel.setFont(MyDirectGraphVars.tahomaPlainFont11);
+        clusteringSectorLabel.setFont(MyDirectGraphVars.tahomaPlainFont12);
 
         this.clusteringSelector.setBackground(Color.WHITE);
-        this.clusteringSelector.setFont(MyDirectGraphVars.tahomaPlainFont11);
+        this.clusteringSelector.setFont(MyDirectGraphVars.tahomaPlainFont12);
         this.clusteringSelector.setFocusable(false);
         this.clusteringSelector.addItem("");
         this.clusteringSelector.addItem("BTW.");
         this.clusteringSelector.addItem("MOD.");
         this.clusteringSelector.addActionListener(this);
-
-
 
         this.removeEdgeCheckBox.addActionListener(this);
         this.edgeLabelCheckBox.addActionListener(this);
@@ -263,10 +266,10 @@ implements ActionListener {
         nodeValueExcludeLabel.setToolTipText("SELECT A NODE VALUE TO EXCLUDE");
         nodeValueExcludeLabel.setFocusable(false);
         nodeValueExcludeLabel.setBackground(Color.WHITE);
-        nodeValueExcludeLabel.setFont(MyDirectGraphVars.tahomaPlainFont11);
+        nodeValueExcludeLabel.setFont(MyDirectGraphVars.tahomaPlainFont12);
 
         JLabel nodeLabelExcludeLabel = new JLabel("N. L.");
-        nodeLabelExcludeLabel.setFont(MyDirectGraphVars.tahomaPlainFont11);
+        nodeLabelExcludeLabel.setFont(MyDirectGraphVars.tahomaPlainFont12);
         nodeLabelExcludeLabel.setToolTipText("SELECT A NODE LABEL TO EXCLUDE");
 
         this.nodeValueExcludeSymbolComboBoxMenu = new JComboBox();
@@ -281,7 +284,7 @@ implements ActionListener {
         this.nodeValueExcludeSymbolComboBoxMenu.addItem("BTW.");
         this.nodeValueExcludeSymbolComboBoxMenu.setFocusable(false);
         this.nodeValueExcludeSymbolComboBoxMenu.setBackground(Color.WHITE);
-        this.nodeValueExcludeSymbolComboBoxMenu.setFont(MyDirectGraphVars.tahomaPlainFont11);
+        this.nodeValueExcludeSymbolComboBoxMenu.setFont(MyDirectGraphVars.tahomaPlainFont12);
 
         this.nodeLabelExcludeSymbolComboBoxMenu = new JComboBox();
         this.nodeLabelExcludeSymbolComboBoxMenu.addItem("");
@@ -289,21 +292,21 @@ implements ActionListener {
         this.nodeLabelExcludeSymbolComboBoxMenu.addItem("!=");
         this.nodeLabelExcludeSymbolComboBoxMenu.setFocusable(false);
         this.nodeLabelExcludeSymbolComboBoxMenu.setBackground(Color.WHITE);
-        this.nodeLabelExcludeSymbolComboBoxMenu.setFont(MyDirectGraphVars.tahomaPlainFont11);
+        this.nodeLabelExcludeSymbolComboBoxMenu.setFont(MyDirectGraphVars.tahomaPlainFont12);
 
         this.nodeValueExcludeTxt = new JTextField();
         this.nodeValueExcludeTxt.setToolTipText("INPUT A THRESHOLD");
         this.nodeValueExcludeTxt.setHorizontalAlignment(JTextField.CENTER);
         this.nodeValueExcludeTxt.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
         this.nodeValueExcludeTxt.setPreferredSize(new Dimension(60, 22));
-        this.nodeValueExcludeTxt.setFont(MyDirectGraphVars.tahomaPlainFont11);
+        this.nodeValueExcludeTxt.setFont(MyDirectGraphVars.tahomaPlainFont12);
 
         this.edgeValueExcludeLabel.setToolTipText("PROVIDE AN EDGE VALUE TO EXCLUDE");
         this.edgeValueExcludeLabel.setFocusable(false);
         this.edgeValueExcludeLabel.setBackground(Color.WHITE);
-        this.edgeValueExcludeLabel.setFont(MyDirectGraphVars.tahomaPlainFont11);
+        this.edgeValueExcludeLabel.setFont(MyDirectGraphVars.tahomaPlainFont12);
 
-        this.edgeLabelExcludeLabel.setFont(MyDirectGraphVars.tahomaPlainFont11);
+        this.edgeLabelExcludeLabel.setFont(MyDirectGraphVars.tahomaPlainFont12);
         this.edgeLabelExcludeLabel.setToolTipText("SELECT AN EDGE LABEL TO EXCLUDE");
 
         this.edgeValueExcludeSymbolComboBoxMenu = new JComboBox();
@@ -318,7 +321,7 @@ implements ActionListener {
         this.edgeValueExcludeSymbolComboBoxMenu.addItem("BTW.");
         this.edgeValueExcludeSymbolComboBoxMenu.setFocusable(false);
         this.edgeValueExcludeSymbolComboBoxMenu.setBackground(Color.WHITE);
-        this.edgeValueExcludeSymbolComboBoxMenu.setFont(MyDirectGraphVars.tahomaPlainFont11);
+        this.edgeValueExcludeSymbolComboBoxMenu.setFont(MyDirectGraphVars.tahomaPlainFont12);
 
         this.edgeLabelExcludeSymbolComboBoxMenu = new JComboBox();
         this.edgeLabelExcludeSymbolComboBoxMenu.addItem("");
@@ -326,25 +329,25 @@ implements ActionListener {
         this.edgeLabelExcludeSymbolComboBoxMenu.addItem("!=");
         this.edgeLabelExcludeSymbolComboBoxMenu.setFocusable(false);
         this.edgeLabelExcludeSymbolComboBoxMenu.setBackground(Color.WHITE);
-        this.edgeLabelExcludeSymbolComboBoxMenu.setFont(MyDirectGraphVars.tahomaPlainFont11);
+        this.edgeLabelExcludeSymbolComboBoxMenu.setFont(MyDirectGraphVars.tahomaPlainFont12);
 
         this.edgeValueExcludeTxt = new JTextField();
         this.edgeValueExcludeTxt.setToolTipText("INPUT A THRESHOLD");
         this.edgeValueExcludeTxt.setHorizontalAlignment(JTextField.CENTER);
         this.edgeValueExcludeTxt.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
         this.edgeValueExcludeTxt.setPreferredSize(new Dimension(60, 22));
-        this.edgeValueExcludeTxt.setFont(MyDirectGraphVars.tahomaPlainFont11);
+        this.edgeValueExcludeTxt.setFont(MyDirectGraphVars.tahomaPlainFont12);
 
         this.weightedNodeColorCheckBox.setFocusable(false);
         this.weightedNodeColorCheckBox.setToolTipText("SHOW WEIGHTED NODE COLORS");
-        this.weightedNodeColorCheckBox.setFont(MyDirectGraphVars.tahomaPlainFont11);
+        this.weightedNodeColorCheckBox.setFont(MyDirectGraphVars.tahomaPlainFont12);
         this.weightedNodeColorCheckBox.setBackground(Color.WHITE);
         this.weightedNodeColorCheckBox.addActionListener(this);
 
         this.checkBoxControlPanel.setBackground(Color.WHITE);
-        this.checkBoxControlPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 3,3));
+        this.checkBoxControlPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 2,2));
 
-        this.percentLabel.setFont(MyDirectGraphVars.tahomaPlainFont11);
+        this.percentLabel.setFont(MyDirectGraphVars.tahomaPlainFont12);
         this.percentLabel.setBackground(Color.WHITE);
         String nodePercent = MyDirectGraphMathUtil.getCommaSeperatedNumber(MyDirectGraphVars.directGraph.getVertexCount()) + "[100%]";
         this.percentLabel.setText(nodePercent);
@@ -391,7 +394,7 @@ implements ActionListener {
 
         JPanel leftControlPanel = new JPanel();
         leftControlPanel.setBackground(Color.WHITE);
-        leftControlPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 3,3));
+        leftControlPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 2,2));
 
         leftControlPanel.add(nodeValueExcludeLabel);
         leftControlPanel.add(this.nodeValueExcludeSymbolComboBoxMenu);
@@ -427,7 +430,6 @@ implements ActionListener {
     }
 
     @Override public void actionPerformed(ActionEvent ae) {
-        final MyDirectGraphController control = this;
         MyDirectGraphVars.currentThread = new Thread(new Runnable() {
             @Override public void run() {
                 if (ae.getSource() == clusteringSelector) {
@@ -482,13 +484,17 @@ implements ActionListener {
                     MyDirectGraphVars.getDirectGraphViewer().repaint();
                 } else if (ae.getSource() == excludeBtn) {
                     boolean allPassed = true;
+                    long nonZeroNodeCount = MyDirectGraphVars.directGraph.getNonZeroNodes();
+                    long nonZeroEdgeCount = MyDirectGraphVars.directGraph.getNonZeroEdges();
+
                     String edgeStrValue = edgeValueExcludeTxt.getText().trim();
-                    if (!edgeStrValue.contains(",") && edgeStrValue.matches("\\d")) {
+                    if (!edgeStrValue.contains(",") && edgeStrValue.matches("\\d+(\\.\\d+)?")) {
                         double numValue = Double.valueOf(edgeStrValue);
                         if (edgeValueComboBoxMenu.getSelectedIndex() == 0) {
                             MyMessageUtil.showInfoMsg("Select an edge value, first.");
                             return;
                         }
+
                         Collection<MyDirectEdge> edges = MyDirectGraphVars.directGraph.getEdges();
                         if (edgeValueExcludeSymbolComboBoxMenu.getSelectedIndex() == 0) {
                             MyProgressBar pb = new MyProgressBar(false);
@@ -505,7 +511,7 @@ implements ActionListener {
                         } else if (edgeValueExcludeSymbolComboBoxMenu.getSelectedIndex() == 1) {
                             MyProgressBar pb = new MyProgressBar(false);
                             for (MyDirectEdge e : edges) {
-                                if (e.getCurrentValue() >= numValue && e.getCurrentValue() > 0) {
+                                if (e.getCurrentValue() > numValue && e.getCurrentValue() > 0) {
                                     e.setOriginalNumericValue(e.getCurrentValue());
                                     e.setCurrentValue(0.0f);
                                 }
@@ -517,7 +523,7 @@ implements ActionListener {
                             int pbCnt = 0;
                             for (MyDirectEdge e : edges) {
                                 pb.updateValue(++pbCnt, edges.size());
-                                if (e.getCurrentValue() == numValue && e.getCurrentValue() > 0) {
+                                if (e.getCurrentValue() >= numValue && e.getCurrentValue() > 0) {
                                     e.setOriginalNumericValue(e.getCurrentValue());
                                     e.setCurrentValue(0.0f);
                                 }
@@ -529,7 +535,7 @@ implements ActionListener {
                             int pbCnt = 0;
                             for (MyDirectEdge e : edges) {
                                 pb.updateValue(++pbCnt, edges.size());
-                                if (e.getCurrentValue() < numValue && e.getCurrentValue() > 0) {
+                                if (e.getCurrentValue() == numValue && e.getCurrentValue() > 0) {
                                     e.setOriginalNumericValue(e.getCurrentValue());
                                     e.setCurrentValue(0.0f);
                                 }
@@ -541,7 +547,7 @@ implements ActionListener {
                             int pbCnt = 0;
                             for (MyDirectEdge e : edges) {
                                 pb.updateValue(++pbCnt, edges.size());
-                                if (e.getCurrentValue() <= numValue && e.getCurrentValue() > 0) {
+                                if (e.getCurrentValue() < numValue && e.getCurrentValue() > 0) {
                                     e.setOriginalNumericValue(e.getCurrentValue());
                                     e.setCurrentValue(0.0f);
                                 }
@@ -549,6 +555,18 @@ implements ActionListener {
                             pb.updateValue(100, 100);
                             pb.dispose();
                         } else if (edgeValueExcludeSymbolComboBoxMenu.getSelectedIndex() == 5) {
+                            MyProgressBar pb = new MyProgressBar(false);
+                            int pbCnt = 0;
+                            for (MyDirectEdge e : edges) {
+                                pb.updateValue(++pbCnt, edges.size());
+                                if (e.getCurrentValue() <= numValue && e.getCurrentValue() > 0) {
+                                    e.setOriginalNumericValue(e.getCurrentValue());
+                                    e.setCurrentValue(0.0f);
+                                }
+                            }
+                            pb.updateValue(100, 100);
+                            pb.dispose();
+                        } else if (edgeValueExcludeSymbolComboBoxMenu.getSelectedIndex() == 6) {
                             MyProgressBar pb = new MyProgressBar(false);
                             int pbCnt = 0;
                             for (MyDirectEdge e : edges) {
@@ -561,7 +579,9 @@ implements ActionListener {
                             pb.updateValue(100, 100);
                             pb.dispose();
                         }
-                    } else if (edgeValueExcludeSymbolComboBoxMenu.getSelectedIndex() == 6 && edgeStrValue.contains(",")) {
+                        MyDirectGraphVars.getDirectGraphViewer().revalidate();
+                        MyDirectGraphVars.getDirectGraphViewer().repaint();
+                    } else if (edgeValueExcludeSymbolComboBoxMenu.getSelectedIndex() == 7 && edgeStrValue.contains(",")) {
                         String strValue1 = "";
                         String strValue2 = "";
                         strValue1 = edgeStrValue.split(",")[0];
@@ -764,10 +784,20 @@ implements ActionListener {
 
                     if (allPassed) {
                         MyDirectGraphVars.app.getDirectGraphDashBoard().txtStatistics.setTextStatistics();
+                        long updatedNonZeroNodes = MyDirectGraphVars.directGraph.getVertexCount() - MyDirectGraphVars.directGraph.getNonZeroNodes();
+                        long updatedNonZeroEdges = MyDirectGraphVars.directGraph.getEdgeCount() - MyDirectGraphVars.directGraph.getNonZeroEdges();
+
+                        MyMessageUtil.showInfoMsg(
+                            MyDirectGraphMathUtil.getCommaSeperatedNumber(updatedNonZeroNodes) + "[" +
+                            MyDirectGraphMathUtil.twoDecimalPercent((float) updatedNonZeroNodes/MyDirectGraphVars.directGraph.getVertexCount()) + "]" +
+                            " nodes got removed and " +
+                            MyDirectGraphMathUtil.getCommaSeperatedNumber(updatedNonZeroEdges) + "[" +
+                            MyDirectGraphMathUtil.twoDecimalPercent((float) updatedNonZeroEdges/MyDirectGraphVars.directGraph.getEdgeCount()) + "]" +
+                            " edges got removed. ");
+
                         MyDirectGraphVars.getDirectGraphViewer().revalidate();
                         MyDirectGraphVars.getDirectGraphViewer().repaint();
-                        MyMessageUtil.showInfoMsg(MyDirectGraphMathUtil.getCommaSeperatedNumber(MyDirectGraphVars.directGraph.getNonZeroEdges()) + "[" + MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat((MyDirectGraphVars.directGraph.getNonZeroEdges() / MyDirectGraphVars.directGraph.getEdgeCount()) * 100)) + "%] edges and " +
-                                MyDirectGraphMathUtil.getCommaSeperatedNumber(MyDirectGraphVars.directGraph.getNonZeroNodes()) + "[" + MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat((MyDirectGraphVars.directGraph.getNonZeroNodes() / MyDirectGraphVars.directGraph.getVertexCount()) * 100)) + "%] nodes are remaining.");
+                        MyDirectGraphVars.getDirectGraphViewer().isExcludeBtnOn = true;
                     }
                 } else if (ae.getSource() == edgeValueComboBoxMenu) {
                     if (edgeValueComboBoxMenu.getSelectedIndex() == 0) {
@@ -812,24 +842,22 @@ implements ActionListener {
                             pb.dispose();
                         }
                     } else if (edgeValueComboBoxMenu.getSelectedIndex() == 2) {
+                        MyProgressBar pb = new MyProgressBar(false);
                         try {
                             float max = 0f;
-                            MyDirectGraphEdgeBetweennessComputer edgeBetweennessComputer = new MyDirectGraphEdgeBetweennessComputer();
-                            edgeBetweennessComputer.compute();
-                            Collection<MyDirectEdge> edges = MyDirectGraphVars.directGraph.getEdges();
-                            for (MyDirectEdge e : edges) {
+                            for (MyDirectEdge e : MyDirectGraphVars.directGraph.getEdges()) {
                                 if (e.getCurrentValue() == 0) continue;
-                                if (e.betweeness > max) {
-                                    max = e.betweeness;
-                                }
-                            }
-                            MyDirectGraphVars.directGraph.maxEdgeValue = max;
-                            for (MyDirectEdge e : edges) {
-                                if (e.getCurrentValue() == 0) continue;
+                                if (e.betweeness > max) max = e.betweeness;
                                 e.setCurrentValue(e.betweeness);
                             }
+
+                            MyDirectGraphVars.directGraph.maxEdgeValue = max;
+                            pb.updateValue(100, 100);
+                            pb.dispose();
                         } catch (Exception ex) {
                             ex.printStackTrace();
+                            pb.updateValue(100, 100);
+                            pb.dispose();
                         }
                     }
                     MyDirectGraphVars.getDirectGraphViewer().getRenderContext().setEdgeStrokeTransformer(MyDirectGraphVars.getDirectGraphViewer().weightedEdgeStroker);

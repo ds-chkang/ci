@@ -8,7 +8,7 @@ import org.apache.commons.collections15.buffer.UnboundedFifoBuffer;
 import java.util.*;
 
 
-public class MyDirectGraphNodeBetweennessCentrality<V,E> extends AbstractRanker<V,E> {
+public class MyDirectGraphEdgeBetweennessCentrality<V,E> extends AbstractRanker<V,E> {
 
     public static final String CENTRALITY = "centrality.BetweennessCentrality";
 
@@ -16,15 +16,15 @@ public class MyDirectGraphNodeBetweennessCentrality<V,E> extends AbstractRanker<
      * Constructor which initializes the algorithm
      * @param g the graph whose nodes are to be analyzed
      */
-    public MyDirectGraphNodeBetweennessCentrality(Graph<V,E> g) {
+    public MyDirectGraphEdgeBetweennessCentrality(Graph<V,E> g) {
         initialize(g, true, true);
     }
 
-    public MyDirectGraphNodeBetweennessCentrality(Graph<V,E> g, boolean rankNodes) {
+    public MyDirectGraphEdgeBetweennessCentrality(Graph<V,E> g, boolean rankNodes) {
         initialize(g, rankNodes, true);
     }
 
-    public MyDirectGraphNodeBetweennessCentrality(Graph<V,E> g, boolean rankNodes, boolean rankEdges)
+    public MyDirectGraphEdgeBetweennessCentrality(Graph<V,E> g, boolean rankNodes, boolean rankEdges)
     {
         initialize(g, rankNodes, rankEdges);
     }

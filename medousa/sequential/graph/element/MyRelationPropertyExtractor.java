@@ -68,6 +68,7 @@ extends MyRealtionPropertyExtractionJobDoneNotifier {
         try {
             this.nodeFile = new File(MySequentialGraphVars.outputDir + this.prefix);
             if (!this.nodeFile.exists()) {
+                //System.out.println(this.nodeFile.getAbsolutePath());
                 this.nodeFile.createNewFile();
             } else {
                 this.nodeFile.delete();

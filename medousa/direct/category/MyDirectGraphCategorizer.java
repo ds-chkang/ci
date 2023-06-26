@@ -10,13 +10,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
-public class MyDirectGraphDirectGraphDirectGraphCategorizer
+public class MyDirectGraphCategorizer
 extends MyDirectGraphDirectGraphDataLoader {
 
     private MyDirectGraphCategoryList categoryList;
 
-    public MyDirectGraphDirectGraphDirectGraphCategorizer() { super(); }
-    public MyDirectGraphDirectGraphDirectGraphCategorizer(final File [] inFiles) {
+    public MyDirectGraphCategorizer() { super(); }
+    public MyDirectGraphCategorizer(final File [] inFiles) {
         super(inFiles);
         categoryList = new MyDirectGraphCategoryList();
     }
@@ -113,9 +113,12 @@ extends MyDirectGraphDirectGraphDataLoader {
         return retVal;
     }
 
+
     // Create categorization intervals.
     private void createIntervals() {
-        for (MyDirectGraphCategory category : categoryList) {category.setCategoryIntervals();}
+        for (MyDirectGraphCategory category : categoryList) {
+            category.setCategoryIntervals();
+        }
     }
 
     private int getHeadIndex(String categoryName) {

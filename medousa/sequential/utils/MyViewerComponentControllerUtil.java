@@ -746,12 +746,7 @@ public class MyViewerComponentControllerUtil {
         } else if (MySequentialGraphVars.getSequentialGraphViewer().vc.nodeLabelSelecter.getSelectedIndex() == 1) {
             MySequentialGraphVars.getSequentialGraphViewer().getRenderContext().setVertexLabelTransformer(new Transformer<MyNode, String>() {@Override
             public String transform(MyNode n) {
-                String name = "";
-                if (n.getName().contains("x")) {
-                    name = MySequentialGraphSysUtil.getDecodeVariableNodeName(n.getName());
-                } else {
-                    name = MySequentialGraphSysUtil.decodeNodeName(n.getName());
-                }
+                String name = MySequentialGraphSysUtil.getNodeName(n.getName());
                 if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes != null && MySequentialGraphVars.getSequentialGraphViewer().multiNodes.size() > 0) {
                     if (MySequentialGraphVars.getSequentialGraphViewer().multiNodes.contains(n) || MySequentialGraphVars.getSequentialGraphViewer().multiNodeSuccessors.contains(n) || MySequentialGraphVars.getSequentialGraphViewer().multiNodePredecessors.contains(n)) {
                         return name;

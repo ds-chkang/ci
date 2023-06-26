@@ -49,20 +49,20 @@ implements ActionListener {
                 chartPanel.getChart().getCategoryPlot().setRangeGridlinePaint(Color.DARK_GRAY);
                 chartPanel.getChart().getCategoryPlot().setDomainGridlinePaint(Color.DARK_GRAY);
                 chartPanel.getChart().getCategoryPlot().setBackgroundPaint(Color.WHITE);
-                chartPanel.getChart().getCategoryPlot().getDomainAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont11);
-                chartPanel.getChart().getCategoryPlot().getDomainAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont11);
-                chartPanel.getChart().getCategoryPlot().getRangeAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont11);
-                chartPanel.getChart().getCategoryPlot().getRangeAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont11);
+                chartPanel.getChart().getCategoryPlot().getDomainAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont10);
+                chartPanel.getChart().getCategoryPlot().getDomainAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont10);
+                chartPanel.getChart().getCategoryPlot().getRangeAxis().setTickLabelFont(MyDirectGraphVars.tahomaPlainFont10);
+                chartPanel.getChart().getCategoryPlot().getRangeAxis().setLabelFont(MyDirectGraphVars.tahomaPlainFont10);
 
                 CategoryAxis domainAxis = chartPanel.getChart().getCategoryPlot().getDomainAxis();
                 domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_90);
 
                 BarRenderer barRenderer = (BarRenderer) chartPanel.getChart().getCategoryPlot().getRenderer();
-                barRenderer.setSeriesPaint(0, new Color(0, 0, 0, 0.25f));//Color.LIGHT_GRAY);//Color.decode("#2084FE"));
+                barRenderer.setSeriesPaint(0, new Color(0, 0, 0, 0.3f));
                 barRenderer.setShadowPaint(Color.WHITE);
                 barRenderer.setBaseFillPaint(Color.decode("#07CF61"));
                 barRenderer.setBarPainter(new StandardBarPainter());
-                barRenderer.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont11);
+                barRenderer.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont10);
 
                 JLabel titleLabel = new JLabel(" N. V.");
                 titleLabel.setToolTipText("NODE VALUE DISTRIBUTION");
@@ -103,7 +103,7 @@ implements ActionListener {
 
                 add(chartPanel, BorderLayout.CENTER);
                 add(topPanel, BorderLayout.NORTH);
-                //chartPanel.getChart().removeLegend();
+                chartPanel.getChart().removeLegend();
                 revalidate();
                 repaint();
             }
@@ -111,121 +111,127 @@ implements ActionListener {
     }
 
     public void enlarge() {
-            MyProgressBar pb = new MyProgressBar(false);
-            try {
-                MyDirectGraphTopLevelNodeValueDistribution nodeValueDistribution = new MyDirectGraphTopLevelNodeValueDistribution();
-                nodeValueDistribution.MAXIMIZED = true;
+        MyProgressBar pb = new MyProgressBar(false);
+        try {
+            MyDirectGraphTopLevelNodeValueDistribution nodeValueDistribution = new MyDirectGraphTopLevelNodeValueDistribution();
+            nodeValueDistribution.MAXIMIZED = true;
 
-                String[] statTableColumns = {"PROPERTY", "VALUE"};
-                String[][] statTableData = {
-                        {"MAX. VALUE", MyDirectGraphMathUtil.twoDecimalFormat(maxValue)},
-                        {"NIN. VALUE", MyDirectGraphMathUtil.twoDecimalFormat(minValue)},
-                        {"AVG. VALUE", MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat(avgValue))},
-                        {"STD. VALUE", MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat(stdValue))}
-                };
+            String[] statTableColumns = {"PROPERTY", "VALUE"};
+            String[][] statTableData = {
+                {"MAX. VALUE", MyDirectGraphMathUtil.twoDecimalFormat(maxValue)},
+                {"NIN. VALUE", MyDirectGraphMathUtil.twoDecimalFormat(minValue)},
+                {"AVG. VALUE", MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat(avgValue))},
+                {"STD. VALUE", MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat(stdValue))}
+            };
 
-                DefaultTableModel statTableModel = new DefaultTableModel(statTableData, statTableColumns);
-                JTable statTable = new JTable(statTableModel);
-                statTable.setBackground(Color.WHITE);
-                statTable.setFont(MyDirectGraphVars.tahomaPlainFont12);
-                statTable.setRowHeight(22);
-                statTable.getTableHeader().setFont(MyDirectGraphVars.tahomaBoldFont11);
-                statTable.getTableHeader().setOpaque(false);
-                statTable.getTableHeader().setBackground(new Color(0, 0, 0, 0));
-                statTable.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(100);
+            DefaultTableModel statTableModel = new DefaultTableModel(statTableData, statTableColumns);
+            JTable statTable = new JTable(statTableModel);
+            statTable.setBackground(Color.WHITE);
+            statTable.setFont(MyDirectGraphVars.tahomaPlainFont12);
+            statTable.setRowHeight(22);
+            statTable.getTableHeader().setFont(MyDirectGraphVars.tahomaBoldFont11);
+            statTable.getTableHeader().setOpaque(false);
+            statTable.getTableHeader().setBackground(new Color(0, 0, 0, 0));
+            statTable.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(100);
 
-                JScrollPane statTableScrollPane = new JScrollPane(statTable);
-                statTableScrollPane.setBackground(Color.WHITE);
+            JScrollPane statTableScrollPane = new JScrollPane(statTable);
+            statTableScrollPane.setBackground(Color.WHITE);
 
-                String[] nodeTableColumns = {"NO.", "NODE", "V.", "V. R."};
-                String[][] nodeTableData = {};
-                DefaultTableModel nodeTableModel = new DefaultTableModel(nodeTableData, nodeTableColumns);
-                JTable nodeTable = new JTable(nodeTableModel);
-                nodeTable.setBackground(Color.WHITE);
-                nodeTable.setFont(MyDirectGraphVars.f_pln_12);
-                nodeTable.setRowHeight(22);
-                nodeTable.getTableHeader().setFont(MyDirectGraphVars.tahomaBoldFont11);
-                nodeTable.getTableHeader().setOpaque(false);
-                nodeTable.getTableHeader().setBackground(new Color(0, 0, 0, 0));
-                nodeTable.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(25);
-                nodeTable.getTableHeader().getColumnModel().getColumn(2).setPreferredWidth(25);
-                nodeTable.getTableHeader().getColumnModel().getColumn(3).setPreferredWidth(25);
+            String[] nodeTableColumns = {"NO.", "NODE", "V.", "V. R."};
+            String[][] nodeTableData = {};
+            DefaultTableModel nodeTableModel = new DefaultTableModel(nodeTableData, nodeTableColumns);
+            JTable nodeTable = new JTable(nodeTableModel);
+            nodeTable.setBackground(Color.WHITE);
+            nodeTable.setFont(MyDirectGraphVars.f_pln_12);
+            nodeTable.setRowHeight(22);
+            nodeTable.getTableHeader().setFont(MyDirectGraphVars.tahomaBoldFont11);
+            nodeTable.getTableHeader().setOpaque(false);
+            nodeTable.getTableHeader().setBackground(new Color(0, 0, 0, 0));
+            nodeTable.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(25);
+            nodeTable.getTableHeader().getColumnModel().getColumn(2).setPreferredWidth(25);
+            nodeTable.getTableHeader().getColumnModel().getColumn(3).setPreferredWidth(25);
 
-                int i = 0;
-                Collection<MyDirectNode> nodes = MyDirectGraphVars.directGraph.getVertices();
-                LinkedHashMap<String, Long> valueMap = new LinkedHashMap();
-                for (MyDirectNode n : nodes) {
-                    valueMap.put(n.getName(), (long) MyDirectGraphVars.directGraph.getSuccessorCount(n));
-                }
-                valueMap = MyDirectGraphSysUtil.sortMapByLongValue(valueMap);
+            int i = 0;
+            Collection<MyDirectNode> nodes = MyDirectGraphVars.directGraph.getVertices();
+            LinkedHashMap<String, Long> valueMap = new LinkedHashMap();
+            for (MyDirectNode n : nodes) {
+                valueMap.put(n.getName(), (long) n.getCurrentValue());
+            }
+            valueMap = MyDirectGraphSysUtil.sortMapByLongValue(valueMap);
 
-                for (String n : valueMap.keySet()) {
-                    String pr = MyDirectGraphMathUtil.twoDecimalFormat((double) valueMap.get(n) / MyDirectGraphVars.directGraph.maxNodeValue);
-                    nodeTableModel.addRow(new String[]{"" + (++i), n, MyDirectGraphMathUtil.getCommaSeperatedNumber(valueMap.get(n)), pr});
-                }
-
-                JScrollPane nodeTableScrollPane = new JScrollPane(nodeTable);
-                nodeTableScrollPane.setBackground(Color.WHITE);
-
-                JTextField nodeSearchTxt = new JTextField();
-                JButton nodeSelectBtn = new JButton("SEL.");
-                nodeSelectBtn.setFont(MyDirectGraphVars.tahomaPlainFont12);
-                nodeSelectBtn.setFocusable(false);
-                nodeSearchTxt.setBackground(Color.WHITE);
-                nodeSearchTxt.setBorder(BorderFactory.createLoweredSoftBevelBorder());
-                JPanel nodeTableSearchPanel = MyTableUtil.searchAndSaveDataPanelForJTable2(nodeValueDistribution, nodeSearchTxt, nodeSelectBtn, nodeTableModel, nodeTable);
-                nodeSearchTxt.setFont(MyDirectGraphVars.f_bold_12);
-                nodeSearchTxt.setToolTipText("TYPE A NODE NAME TO SEARCH");
-                nodeSearchTxt.setPreferredSize(new Dimension(90, 19));
-                nodeSelectBtn.setPreferredSize(new Dimension(54, 19));
-                nodeTableSearchPanel.remove(nodeSelectBtn);
-
-                JPanel nodeTablePanel = new JPanel();
-                nodeTablePanel.setBackground(Color.WHITE);
-                nodeTablePanel.setLayout(new BorderLayout(2, 2));
-                nodeTablePanel.add(nodeTableScrollPane, BorderLayout.CENTER);
-                nodeTablePanel.add(nodeTableSearchPanel, BorderLayout.SOUTH);
-
-                JFrame f = new JFrame(" NODE VALUE DISTRIBUTION");
-                f.setBackground(Color.WHITE);
-                f.setPreferredSize(new Dimension(550, 450));
-                f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-                JSplitPane tableSplitPane = new JSplitPane();
-                tableSplitPane.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
-                tableSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-                tableSplitPane.setTopComponent(statTableScrollPane);
-                tableSplitPane.setBottomComponent(nodeTablePanel);
-                tableSplitPane.getRightComponent().setBackground(Color.WHITE);
-                tableSplitPane.setDividerSize(5);
-
-                JSplitPane contentPane = new JSplitPane();
-                contentPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
-                contentPane.setLeftComponent(nodeValueDistribution);
-                contentPane.setRightComponent(tableSplitPane);
-                contentPane.getRightComponent().setBackground(Color.WHITE);
-                contentPane.setDividerSize(5);
-
-                f.setLayout(new BorderLayout(2, 2));
-                f.getContentPane().add(contentPane, BorderLayout.CENTER);
-                f.pack();
-                f.addComponentListener(new ComponentAdapter() {
-                    @Override public void componentResized(ComponentEvent e) {
-                        super.componentResized(e);
-                        contentPane.setDividerLocation(0.86);
-                        tableSplitPane.setDividerLocation(0.20);
-                    }
+            for (String n : valueMap.keySet()) {
+                String pr = MyDirectGraphMathUtil.twoDecimalFormat((double) valueMap.get(n) /
+                    MyDirectGraphVars.directGraph.maxNodeValue);
+                nodeTableModel.addRow(new String[]{
+                    "" + (++i),
+                    n,
+                    MyDirectGraphMathUtil.getCommaSeperatedNumber(valueMap.get(n)),
+                    pr
                 });
-
-                pb.updateValue(100, 100);
-                pb.dispose();
-
-                f.setVisible(true);
-            } catch (Exception ex) {
-                pb.updateValue(100, 100);
-                pb.dispose();
             }
 
+            JScrollPane nodeTableScrollPane = new JScrollPane(nodeTable);
+            nodeTableScrollPane.setBackground(Color.WHITE);
+
+            JTextField nodeSearchTxt = new JTextField();
+            JButton nodeSelectBtn = new JButton("SEL.");
+            nodeSelectBtn.setFont(MyDirectGraphVars.tahomaPlainFont12);
+            nodeSelectBtn.setFocusable(false);
+            nodeSearchTxt.setBackground(Color.WHITE);
+            nodeSearchTxt.setBorder(BorderFactory.createLoweredSoftBevelBorder());
+            JPanel nodeTableSearchPanel = MyTableUtil.searchAndSaveDataPanelForJTable2(nodeValueDistribution, nodeSearchTxt, nodeSelectBtn, nodeTableModel, nodeTable);
+            nodeSearchTxt.setFont(MyDirectGraphVars.f_bold_12);
+            nodeSearchTxt.setToolTipText("TYPE A NODE NAME TO SEARCH");
+            nodeSearchTxt.setPreferredSize(new Dimension(90, 19));
+            nodeSelectBtn.setPreferredSize(new Dimension(54, 19));
+            nodeTableSearchPanel.remove(nodeSelectBtn);
+
+            JPanel nodeTablePanel = new JPanel();
+            nodeTablePanel.setBackground(Color.WHITE);
+            nodeTablePanel.setLayout(new BorderLayout(2, 2));
+            nodeTablePanel.add(nodeTableScrollPane, BorderLayout.CENTER);
+            nodeTablePanel.add(nodeTableSearchPanel, BorderLayout.SOUTH);
+
+            JFrame f = new JFrame(" NODE VALUE DISTRIBUTION");
+            f.setBackground(Color.WHITE);
+            f.setPreferredSize(new Dimension(550, 450));
+            f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+            JSplitPane tableSplitPane = new JSplitPane();
+            tableSplitPane.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+            tableSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+            tableSplitPane.setTopComponent(statTableScrollPane);
+            tableSplitPane.setBottomComponent(nodeTablePanel);
+            tableSplitPane.getRightComponent().setBackground(Color.WHITE);
+            tableSplitPane.setDividerSize(5);
+
+            JSplitPane contentPane = new JSplitPane();
+            contentPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
+            contentPane.setLeftComponent(nodeValueDistribution);
+            contentPane.setRightComponent(tableSplitPane);
+            contentPane.getRightComponent().setBackground(Color.WHITE);
+            contentPane.setDividerSize(5);
+
+            f.setLayout(new BorderLayout(2, 2));
+            f.getContentPane().add(contentPane, BorderLayout.CENTER);
+            f.pack();
+            f.addComponentListener(new ComponentAdapter() {
+                @Override
+                public void componentResized(ComponentEvent e) {
+                    super.componentResized(e);
+                    contentPane.setDividerLocation(0.86);
+                    tableSplitPane.setDividerLocation(0.20);
+                }
+            });
+
+            pb.updateValue(100, 100);
+            pb.dispose();
+
+            f.setVisible(true);
+        } catch (Exception ex) {
+            pb.updateValue(100, 100);
+            pb.dispose();
+        }
     }
 
     private JFreeChart setValueChart() {
@@ -263,7 +269,7 @@ implements ActionListener {
         this.stdValue = getNodeValueStandardDeviation(valueMap);
 
         String plotTitle = "";
-        String xaxis = "NODE VALUE DISTRIBUTION";
+        String xaxis = "";
         String yaxis = "";
         PlotOrientation orientation = PlotOrientation.VERTICAL;
         boolean show = false;

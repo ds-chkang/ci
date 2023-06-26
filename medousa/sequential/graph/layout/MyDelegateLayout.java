@@ -36,7 +36,7 @@ implements IterativeContext {
 
     private double attraction_multiplier = 1.8;
     private double attraction_constant;
-    private double repulsion_multiplier = 0.75; // from 0.55
+    private double repulsion_multiplier = 0.55; // from 0.55
     private double repulsion_constant;
     private double max_dimension;
 

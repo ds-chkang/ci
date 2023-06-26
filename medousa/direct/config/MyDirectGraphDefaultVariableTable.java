@@ -8,7 +8,8 @@ import java.awt.*;
 import java.io.Serializable;
 
 public class MyDirectGraphDefaultVariableTable
-extends MyDirectGraphTable implements Serializable {
+extends MyDirectGraphTable
+implements Serializable {
 
     private Object columns[] = {" DEFAULT VARIABLE", " DATA VARIABLE", " DATA TYPE"};
     private Object data[][] = {

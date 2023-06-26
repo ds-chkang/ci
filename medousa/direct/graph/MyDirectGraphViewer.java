@@ -28,7 +28,7 @@ extends VisualizationViewer<MyDirectNode, MyDirectEdge>
 implements Serializable {
 
     private ScalingControl viewScaler;
-    private float defaultNodeSize = 25.0f;
+    private float defaultNodeSize = 20.0f;
     private final float MAX_NODE_SIZE = 80.0f;
     public final float MIN_EDGE_STROKE = 1.5f;
     private final float MAX_EDGE_STROKE = 50.0f;
@@ -153,20 +153,17 @@ implements Serializable {
             this.getRenderContext().setVertexLabelTransformer(this.nodeLabeller);
             this.getRenderContext().setVertexStrokeTransformer(this.nodeStroker);
             this.getRenderContext().setVertexFontTransformer(new Transformer<MyDirectNode, Font>() {
-                @Override
-                public Font transform(MyDirectNode node) {
+                @Override public Font transform(MyDirectNode node) {
                     return new Font("Noto Sans", Font.PLAIN, 0);
                 }
             });
             this.getRenderContext().setEdgeFontTransformer(new Transformer<MyDirectEdge, Font>() {
-                @Override
-                public Font transform(MyDirectEdge e) {
+                @Override public Font transform(MyDirectEdge e) {
                     return new Font("Noto Sans", Font.PLAIN, 0);
                 }
             });
             this.getRenderContext().setEdgeLabelTransformer(new Transformer<MyDirectEdge, String>() {
-                @Override
-                public String transform(MyDirectEdge e) {
+                @Override public String transform(MyDirectEdge e) {
                     String edgeLabel = MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat(e.getCurrentValue()));
                     if (edgeLabel.endsWith(".00")) {
                         return edgeLabel.substring(0, edgeLabel.indexOf(".00"));
@@ -177,8 +174,7 @@ implements Serializable {
             });
 
             this.getRenderContext().setVertexDrawPaintTransformer(new Transformer<MyDirectNode, Paint>() {
-                @Override
-                public Paint transform(MyDirectNode n) {
+                @Override public Paint transform(MyDirectNode n) {
                     if (MyDirectGraphVars.getDirectGraphViewer().vc.mouseHoverCheckBox.isSelected() && graphMouseMotionListener.neighborNodeSet != null) {
                         if (!graphMouseMotionListener.neighborNodeSet.contains(n)) {
                             return new Color(0, 0, 0, 0f);
@@ -196,8 +192,7 @@ implements Serializable {
             });
 
             this.getRenderContext().setEdgeArrowStrokeTransformer(new Transformer<MyDirectEdge, Stroke>() {
-                @Override
-                public Stroke transform(MyDirectEdge myDirectEdge) {
+                @Override public Stroke transform(MyDirectEdge myDirectEdge) {
                     return new BasicStroke(5f);
                 }
             });
@@ -228,16 +223,16 @@ implements Serializable {
         @Override public Stroke transform(MyDirectNode n) {
             if (MyDirectGraphVars.getDirectGraphViewer().vc.mouseHoverCheckBox.isSelected() && graphMouseMotionListener.neighborNodeSet != null) {
                 if (!graphMouseMotionListener.neighborNodeSet.contains(n)) {
-                    return new BasicStroke(1.5f);
+                    return new BasicStroke(3.5f);
                 } else {
-                    return new BasicStroke(0f);
+                    return new BasicStroke(3.5f);
                 }
             } else if (selectedSingleNode != null && n == selectedSingleNode) {
                 return new BasicStroke(28f);
             } else if (multiNodes != null && multiNodes.contains(n)) {
                 return new BasicStroke(28f);
             } else {
-                return new BasicStroke(1.5f);
+                return new BasicStroke(3.5f);
             }
         }
     };
@@ -507,11 +502,11 @@ implements Serializable {
                 if (n.getInContribution() == 0 && n.getOutContribution() == 0) {
                     return new Color(0, 0, 0, 1f);
                 } else if (n.getInContribution() > 0 && n.getOutContribution() > 0) {
-                    return new Color(0.0f, 0f, 1.0f, 0.8f);
+                    return new Color(0.0f, 0f, 1.0f, 0.7f);
                 } else if (n.getInContribution() > 0 && n.getOutContribution() == 0) {
-                    return new Color(0.0f, 1.0f, 0f, 0.8f);
+                    return new Color(0.0f, 1.0f, 0f, 1.0f);
                 } else if (n.getInContribution() == 0 && n.getOutContribution() > 0) {
-                    return new Color(1.0f, 0.0f, 0.0f, 0.8f);
+                    return new Color(1.0f, 0.0f, 0.0f, 0.7f);
                 } else {
                     return Color.BLACK;
                 }
@@ -520,20 +515,20 @@ implements Serializable {
             return Color.ORANGE;
         } else if (selectedSingleNode != null && n == selectedSingleNode) {
             if (n.getInContribution() > 0 && n.getOutContribution() > 0) {
-                return new Color(0.0f, 0f, 1.0f, 0.8f);
+                return new Color(0.0f, 0f, 1.0f, 0.7f);
             } else if (n.getInContribution() > 0 && n.getOutContribution() == 0) {
-                return new Color(0.0f, 1.0f, 0f, 0.8f);
+                return new Color(0.0f, 1.0f, 0f, 1.0f);
             } else if (n.getInContribution() == 0 && n.getOutContribution() > 0) {
-                return new Color(1.0f, 0.0f, 0.0f, 0.8f);
+                return new Color(1.0f, 0.0f, 0.0f, 0.7f);
             } else {
                 return Color.BLACK;
             }
         } else if (n.getInContribution() > 0 && n.getOutContribution() > 0) {
-            return new Color(0.0f, 0f, 1.0f, 0.8f);
+            return new Color(0.0f, 0f, 1.0f, 0.7f);
         } else if (n.getInContribution() > 0 && n.getOutContribution() == 0) {
-            return new Color(0.0f, 1.0f, 0f, 0.8f);
+            return new Color(0.0f, 1.0f, 0f, 1.0f);
         } else if (n.getInContribution() == 0 && n.getOutContribution() > 0) {
-            return new Color(1.0f, 0.0f, 0.0f, 0.8f);
+            return new Color(1.0f, 0.0f, 0.0f, 0.7f);
         } else {
             return Color.BLACK;
         }
@@ -544,61 +539,115 @@ implements Serializable {
             float nodeSize = (this.defaultNodeSize)/2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
         } else if (nodeWeight > 0.05 && nodeWeight <= 0.1) {
-            float nodeSize = (this.defaultNodeSize + 5) / 2;
+            float nodeSize = (this.defaultNodeSize + 3) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.05 && nodeWeight <= 0.125) {
+            float nodeSize = (this.defaultNodeSize + 9) / 2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
         } else if (nodeWeight > 0.1 && nodeWeight <= 0.15) {
-            float nodeSize = (this.defaultNodeSize + 10) / 2;
+            float nodeSize = (this.defaultNodeSize + 16) / 2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
-        } else if (nodeWeight > 0.15 && nodeWeight <= 0.2) {
-            float nodeSize = (this.defaultNodeSize + 15) / 2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
-        } else if (nodeWeight > 0.2 && nodeWeight <= 0.25) {
+        } else if (nodeWeight > 0.1 && nodeWeight <= 0.175) {
             float nodeSize = (this.defaultNodeSize + 20) / 2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
-        } else if (nodeWeight > 0.25 && nodeWeight <= 0.3) {
-            float nodeSize = (this.defaultNodeSize + 26) / 2;
+        } else if (nodeWeight > 0.15 && nodeWeight <= 0.2) {
+            float nodeSize = (this.defaultNodeSize + 28) / 2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
-        } else if (nodeWeight > 0.3 && nodeWeight <= 0.35) {
-            float nodeSize = (this.defaultNodeSize + 32) / 2;
+        } else if (nodeWeight > 0.2 && nodeWeight <= 0.225) {
+            float nodeSize = (this.defaultNodeSize + 36) / 2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
-        } else if (nodeWeight > 0.35 && nodeWeight <= 0.40) {
-            float nodeSize = (this.defaultNodeSize + 38) / 2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
-        } else if (nodeWeight > 0.4 && nodeWeight <= 0.45) {
+        } else if (nodeWeight > 0.2 && nodeWeight <= 0.25) {
             float nodeSize = (this.defaultNodeSize + 44) / 2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
-        } else if (nodeWeight > 0.45 && nodeWeight <= 0.50) {
-            float nodeSize = (this.defaultNodeSize + 50) / 2;
+        } else if (nodeWeight > 0.2 && nodeWeight <= 0.275) {
+            float nodeSize = (this.defaultNodeSize + 52) / 2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
-        } else if (nodeWeight > 0.5 && nodeWeight <= 0.55) {
-            float nodeSize = (this.defaultNodeSize + 56) / 2;
+        } else if (nodeWeight > 0.25 && nodeWeight <= 0.3) {
+            float nodeSize = (this.defaultNodeSize + 60) / 2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
-        } else if (nodeWeight > 0.55 && nodeWeight <= 0.6) {
-            float nodeSize = (this.defaultNodeSize + 62) / 2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
-        } else if (nodeWeight > 0.6 && nodeWeight <= 0.65) {
+        } else if (nodeWeight > 0.3 && nodeWeight <= 0.325) {
             float nodeSize = (this.defaultNodeSize + 68) / 2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
-        } else if (nodeWeight > 0.65 && nodeWeight <= 0.7) {
-            float nodeSize = (this.defaultNodeSize + 74) / 2;
+        } else if (nodeWeight > 0.3 && nodeWeight <= 0.35) {
+            float nodeSize = (this.defaultNodeSize + 76) / 2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
-        } else if (nodeWeight > 0.7 && nodeWeight <= 0.75) {
-            float nodeSize = (this.defaultNodeSize + 80) / 2;
+        } else if (nodeWeight > 0.3 && nodeWeight <= 0.375) {
+            float nodeSize = (this.defaultNodeSize + 84) / 2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
-        } else if (nodeWeight > 0.75 && nodeWeight <= 0.8) {
-            float nodeSize = (this.defaultNodeSize + 86) / 2;
+        } else if (nodeWeight > 0.35 && nodeWeight <= 0.40) {
+            float nodeSize = (this.defaultNodeSize + 94) / 2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
-        } else if (nodeWeight > 0.8 && nodeWeight <= 0.85) {
-            float nodeSize = (this.defaultNodeSize + 92) / 2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
-        } else if (nodeWeight > 0.85 && nodeWeight <= 0.9) {
-            float nodeSize = (this.defaultNodeSize + 98) / 2;
-            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
-        } else if (nodeWeight > 0.9 && nodeWeight <= 0.95) {
+        } else if (nodeWeight > 0.3 && nodeWeight <= 0.425) {
             float nodeSize = (this.defaultNodeSize + 104) / 2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.3 && nodeWeight <= 0.45) {
+            float nodeSize = (this.defaultNodeSize + 114) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.3 && nodeWeight <= 0.475) {
+            float nodeSize = (this.defaultNodeSize + 124) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.45 && nodeWeight <= 0.50) {
+            float nodeSize = (this.defaultNodeSize + 134) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.5 && nodeWeight <= 0.525) {
+            float nodeSize = (this.defaultNodeSize + 144) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.5 && nodeWeight <= 0.55) {
+            float nodeSize = (this.defaultNodeSize + 154) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.5 && nodeWeight <= 0.575) {
+            float nodeSize = (this.defaultNodeSize + 164) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.55 && nodeWeight <= 0.6) {
+            float nodeSize = (this.defaultNodeSize + 174) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.6 && nodeWeight <= 0.625) {
+            float nodeSize = (this.defaultNodeSize + 184) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.6 && nodeWeight <= 0.65) {
+            float nodeSize = (this.defaultNodeSize + 194) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.6 && nodeWeight <= 0.675) {
+            float nodeSize = (this.defaultNodeSize + 200) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.65 && nodeWeight <= 0.7) {
+            float nodeSize = (this.defaultNodeSize + 214) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.7 && nodeWeight <= 0.725) {
+            float nodeSize = (this.defaultNodeSize + 228) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.7 && nodeWeight <= 0.75) {
+            float nodeSize = (this.defaultNodeSize + 242) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.7 && nodeWeight <= 0.775) {
+            float nodeSize = (this.defaultNodeSize + 246) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.75 && nodeWeight <= 0.8) {
+            float nodeSize = (this.defaultNodeSize + 260) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.8 && nodeWeight <= 0.825) {
+            float nodeSize = (this.defaultNodeSize + 284) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.8 && nodeWeight <= 0.85) {
+            float nodeSize = (this.defaultNodeSize + 304) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.8 && nodeWeight <= 0.875) {
+            float nodeSize = (this.defaultNodeSize + 324) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.85 && nodeWeight <= 0.9) {
+            float nodeSize = (this.defaultNodeSize + 344) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.9 && nodeWeight <= 0.925) {
+            float nodeSize = (this.defaultNodeSize + 364) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.9 && nodeWeight <= 0.95) {
+            float nodeSize = (this.defaultNodeSize + 384) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
+        } else if (nodeWeight > 0.9 && nodeWeight <= 0.975) {
+            float nodeSize = (this.defaultNodeSize + 404) / 2;
+            return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
         } else {
-            float nodeSize = (this.defaultNodeSize + 110) / 2;
+            float nodeSize = (this.defaultNodeSize + 424) / 2;
             return new Ellipse2D.Double(-nodeSize, -nodeSize, nodeSize * 2, nodeSize * 2);
         }
     }

@@ -36,7 +36,7 @@ implements ActionListener{
         this.decorate();
         this.setEdgeContributionStatistics();
         this.frame = new JFrame("EDGE STATISTICS");
-        this.frame.setLayout(new BorderLayout(3,3));
+        this.frame.setLayout(new BorderLayout(2,2));
         this.frame.add(this, BorderLayout.CENTER);
         this.frame.pack();
         this.frame.setLocation(5,5);
@@ -48,7 +48,7 @@ implements ActionListener{
         this.setPreferredSize(new Dimension(500, 550));
         this.setLayout(new BorderLayout(3, 3));
 
-        this.edgeStatPanel.setLayout(new BorderLayout(3, 3));
+        this.edgeStatPanel.setLayout(new BorderLayout(2, 2));
         this.model = new DefaultTableModel(new String[][]{}, new String[]{"NO.", "SOURCE", "DEST", "CONT.", "BETWEENESS"});
         this.table = new JTable(this.model);
 
@@ -66,7 +66,7 @@ implements ActionListener{
         this.edgeStatDataSavePanel.setPreferredSize(new Dimension(100, 26));
 
         JPanel edgeOrderByPanel = new JPanel();
-        edgeOrderByPanel.setLayout(new BorderLayout(3, 3));
+        edgeOrderByPanel.setLayout(new BorderLayout(2, 2));
         edgeOrderByPanel.setPreferredSize(new Dimension(200, 28));
         JLabel edgeOrderByLabel = new JLabel(" ORDER BY: ");
         edgeOrderByLabel.setFont(MyDirectGraphVars.tahomaPlainFont12);
@@ -99,30 +99,31 @@ implements ActionListener{
     private void setEdgeContributionStatistics() {
         if (!this.tableCreated) {
             MyProgressBar pb = new MyProgressBar(false);
-            LinkedHashMap<String, Float> sortedEdgeMap = new LinkedHashMap<>();
+            LinkedHashMap<String, Float> contSortedEdgeMap = new LinkedHashMap<>();
+            LinkedHashMap<String, Float> betweenessSortedEdgeMap = new LinkedHashMap<>();
             Collection<MyDirectEdge> edges = new ArrayList<>(MyDirectGraphVars.directGraph.getEdges());
             for (MyDirectEdge e : edges) {
                 String edge = e.getSource().getName() + "-" + e.getDest().getName();
-                if (edgeOrderByComboBox.getSelectedIndex() == 0) {
-                    sortedEdgeMap.put(edge, (float)e.getContribution());
-                } else if (edgeOrderByComboBox.getSelectedIndex() == 1) {
-                    sortedEdgeMap.put(edge, e.betweeness);
-                }
+                contSortedEdgeMap.put(edge, (float)e.getContribution());
+                betweenessSortedEdgeMap.put(edge, e.betweeness);
             }
-            sortedEdgeMap = MyDirectGraphSysUtil.sortMapByFloatValue(sortedEdgeMap);
+            contSortedEdgeMap = MyDirectGraphSysUtil.sortMapByFloatValue(contSortedEdgeMap);
+            betweenessSortedEdgeMap = MyDirectGraphSysUtil.sortMapByFloatValue(betweenessSortedEdgeMap);
 
-            for (int i = this.table.getRowCount()-1; i >= 0; i--) {
-                ((DefaultTableModel) this.table.getModel()).removeRow(i);
+            int row = this.table.getRowCount();
+            while (row > 0) {
+                ((DefaultTableModel) this.table.getModel()).removeRow(row-1);
+                row = this.table.getRowCount();
             }
 
             int recCnt = 0;
-            for (String edge : sortedEdgeMap.keySet()) {
+            for (String edge : contSortedEdgeMap.keySet()) {
                 this.model.addRow(new String[]{
                     String.valueOf(++recCnt),
                     edge.split("-")[0],
                     edge.split("-")[1],
-                        MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat(sortedEdgeMap.get(edge))).split("\\.")[0],
-                    "0.00"
+                        MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat(contSortedEdgeMap.get(edge))).split("\\.")[0],
+                        MyDirectGraphMathUtil.threeDecimalFormat(betweenessSortedEdgeMap.get(edge))
                 });
                 pb.updateValue(recCnt, edges.size());
             }
@@ -133,13 +134,22 @@ implements ActionListener{
             if (edgeOrderByComboBox.getSelectedIndex() == 0) {
                 MyProgressBar pb = new MyProgressBar(false);
                 LinkedHashMap<String, Float> sortedEdgeMap = new LinkedHashMap<>();
+                LinkedHashMap<String, Float> betweenessSortedEdgeMap = new LinkedHashMap<>();
+
                 Collection<MyDirectEdge> edges = new ArrayList<>(MyDirectGraphVars.directGraph.getEdges());
                 for (MyDirectEdge e : edges) {
                     String edge = e.getSource().getName() + "-" + e.getDest().getName();
                     sortedEdgeMap.put(edge, (float) e.getContribution());
+                    betweenessSortedEdgeMap.put(edge, e.betweeness);
                 }
                 sortedEdgeMap = MyDirectGraphSysUtil.sortMapByFloatValue(sortedEdgeMap);
-                for (int i = this.table.getRowCount()-1; i >= 0; i--) {((DefaultTableModel) this.table.getModel()).removeRow(i);}
+                betweenessSortedEdgeMap = MyDirectGraphSysUtil.sortMapByFloatValue(betweenessSortedEdgeMap);
+
+                int row = this.table.getRowCount();
+                while (row > 0) {
+                    ((DefaultTableModel) this.table.getModel()).removeRow(row-1);
+                    row = this.table.getRowCount();
+                }
 
                 int recCnt = 0;
                 for (String edge : sortedEdgeMap.keySet()) {
@@ -147,17 +157,28 @@ implements ActionListener{
                         String.valueOf(++recCnt),
                         edge.split("-")[0],
                         edge.split("-")[1],
-                        MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat(sortedEdgeMap.get(edge))).split("\\.")[0],
-                        "0.00"
+                        MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat(sortedEdgeMap.get(edge))).split("\\.")[0],
+                        MyDirectGraphMathUtil.threeDecimalFormat(betweenessSortedEdgeMap.get(edge))
                     });
                     pb.updateValue(recCnt, edges.size());
                 }
+
                 pb.updateValue(100, 100);
                 pb.dispose();
             } else if (edgeOrderByComboBox.getSelectedIndex() == 1) {
-                MyDirectGraphEdgeBetweennessComputer edgeBetweennessComputer = new MyDirectGraphEdgeBetweennessComputer();
-                LinkedHashMap<String, Float> sortedEdgeMap = edgeBetweennessComputer.getRankedEdgeBetweeness();
-                for (int i = this.table.getRowCount()-1; i >= 0; i--) {((DefaultTableModel) this.table.getModel()).removeRow(i);}
+                int row = this.table.getRowCount();
+                while (row > 0) {
+                    ((DefaultTableModel) this.table.getModel()).removeRow(row-1);
+                    row = this.table.getRowCount();
+                }
+
+                LinkedHashMap<String, Float> sortedEdgeMap = new LinkedHashMap<>();
+                Collection<MyDirectEdge> edges = MyDirectGraphVars.directGraph.getEdges();
+                for (MyDirectEdge e : edges) {
+                    String edgeName = e.getSource().getName() + "-" + e.getDest().getName();
+                    sortedEdgeMap.put(edgeName, e.betweeness);
+                }
+                sortedEdgeMap = MyDirectGraphSysUtil.sortMapByFloatValue(sortedEdgeMap);
 
                 int recCnt = 0;
                 for (String edge : sortedEdgeMap.keySet()) {
@@ -165,19 +186,17 @@ implements ActionListener{
                         String.valueOf(++recCnt),
                         edge.split("-")[0],
                         edge.split("-")[1],
-                        MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat(sortedEdgeMap.get(edge))).split("\\.")[0],
-                        MyDirectGraphMathUtil.twoDecimalFormat(sortedEdgeMap.get(edge))
+                        MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat(sortedEdgeMap.get(edge))).split("\\.")[0],
+                        MyDirectGraphMathUtil.threeDecimalFormat(sortedEdgeMap.get(edge))
                     });
                 }
             }
         }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
+    @Override public void actionPerformed(ActionEvent e) {
         new Thread(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 JFileChooser fc = new JFileChooser();
                 BufferedWriter bw = null;
                 MyProgressBar pb = null;

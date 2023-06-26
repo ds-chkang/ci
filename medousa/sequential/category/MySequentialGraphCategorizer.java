@@ -83,8 +83,8 @@ extends MyDataLoader {
                 for (int i=0; i < categoryList.size(); i++) {
                     MySequentialGraphCategory category = categoryList.getCategory(i);
                     int categoryHeaderIndex = category.getHeaderIndex();
-                    category.setMin(Integer.valueOf(splitedInputDataLine[categoryHeaderIndex]));
-                    category.setMax(Integer.valueOf(splitedInputDataLine[categoryHeaderIndex]));
+                    category.setMin(Float.valueOf(splitedInputDataLine[categoryHeaderIndex]));
+                    category.setMax(Float.valueOf(splitedInputDataLine[categoryHeaderIndex]));
                 }
                 recordCount++;
                 bytesRead += inputDataLine.length();

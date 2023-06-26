@@ -16,27 +16,28 @@ extends MyDirectGraphEngineBroker {
     }
 
     public MyDirectGraph<MyDirectNode, MyDirectEdge> createDirectGraph() {
-        MyDirectGraphBuilder directMarkovChainBuilder = new MyDirectGraphBuilder();
-        MyDirectGraph directMarkovChain = directMarkovChainBuilder.createDirectMarkovChain(getRawData());
-        directMarkovChain.setMaxNodeContribution();
-        directMarkovChain.setMinNodeContribution();
-        directMarkovChain.setMaxEdgeContribution();
-        directMarkovChain.setMinEdgeContribution();
-        directMarkovChain.setTotalNodeContribution();
-        directMarkovChain.setTotalEdgeContribution();
-        directMarkovChain.setDefaultNodeValues();
-        directMarkovChain.setMaxNodeValue();
-        directMarkovChain.setNodeClosenessCentrality();
-        directMarkovChain.setNodeBetweenessCentrality();
-        directMarkovChain.setNodeEigenVectorCentrality();
-        directMarkovChain.setPageRankScore();
-        directMarkovChain.setConnectedNetworkComponentCountByGraph();
-        directMarkovChainBuilder.addNodeValues();
-        directMarkovChainBuilder.addNodeLabels();
-        directMarkovChainBuilder.setAverageShortestOutDistance(MyDirectGraphVars.directGraph);
-        directMarkovChainBuilder.setAverageShortestInDistance(MyDirectGraphVars.directGraph);
-        directMarkovChain.edRefs = null;
-        directMarkovChain.directMarkovChainEdgeRefMap = null;
+        MyDirectGraphBuilder directGraphBuilder = new MyDirectGraphBuilder();
+        MyDirectGraph directGraph = directGraphBuilder.createDirectGraph(getRawData());
+        directGraph.setMaxNodeContribution();
+        directGraph.setMinNodeContribution();
+        directGraph.setMaxEdgeContribution();
+        directGraph.setMinEdgeContribution();
+        directGraph.setTotalNodeContribution();
+        directGraph.setTotalEdgeContribution();
+        directGraph.setDefaultNodeValues();
+        directGraph.setMaxNodeValue();
+        directGraph.setNodeClosenessCentrality();
+        directGraph.setNodeBetweenessCentrality();
+        directGraph.setNodeEigenVectorCentrality();
+        directGraph.setPageRankScore();
+        directGraph.setEdgeBetweeness();
+        directGraph.setConnectedNetworkComponentCountByGraph();
+        directGraphBuilder.addNodeValues();
+        directGraphBuilder.addNodeLabels();
+        directGraphBuilder.setAverageShortestOutDistance(MyDirectGraphVars.directGraph);
+        //directGraphBuilder.setAverageShortestInDistance(MyDirectGraphVars.directGraph);
+        directGraph.edRefs = null;
+        directGraph.directGraphEdgeRefMap = null;
         return MyDirectGraphVars.directGraph;
     }
 

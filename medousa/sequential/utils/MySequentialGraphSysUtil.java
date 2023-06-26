@@ -56,7 +56,11 @@ public class MySequentialGraphSysUtil {
     }
 
     public static String getDecodedNodeName(String encodedNodeName) {
-        return (encodedNodeName.contains("x") ? getDecodeVariableNodeName(encodedNodeName) : decodeNodeName(encodedNodeName));
+        try {
+            return getDecodeVariableNodeName(encodedNodeName);
+        } catch (Exception ex) {
+            return decodeNodeName(encodedNodeName);
+        }
     }
     public static String formatAverageValue(String avgrageValueStr) {
         String avgValueHeader = "";
@@ -75,14 +79,14 @@ public class MySequentialGraphSysUtil {
     }
 
     public static String decodeNodeName(String nodeName) {
-        if (nodeName.contains("x")) {
+        try {
             String decodedVariableSet = "";
             for (String name : nodeName.split(MySequentialGraphVars.commaDelimeter)) {
                 if (decodedVariableSet.length() == 0) {decodedVariableSet = decodeVariableSet(name);
                 } else {decodedVariableSet += "," + decodeVariableSet(name);}
             }
             return decodedVariableSet;
-        } else {
+        } catch (Exception ex){
             String decodedItemSet = "";
             for (String name : nodeName.split(MySequentialGraphVars.commaDelimeter)) {
                 if (decodedItemSet.length() == 0) {decodedItemSet = decodeItemSet(name);
@@ -200,17 +204,60 @@ public class MySequentialGraphSysUtil {
 
     public static String getTimeDifference(String fromDate, String toDate) {
         try {
-            if (fromDate.indexOf(' ') == -1) {fromDate = fromDate + " " + "00:00:00";}
-            if (toDate.indexOf(' ') == -1) {toDate = toDate + " " + "00:00:00";}
+            if (fromDate.indexOf(' ') == -1) {
+                fromDate = fromDate + " " + "00:00:00";
+            } else {
+                String [] hms = fromDate.split(" ")[1].split(":");
+                String time = "";
+                for (int i=0; i < hms.length; i++) {
+                    if (hms[i].length() == 1) {
+                        if (time.length() == 0) {
+                            time = "0" + hms[i];
+                        } else {
+                            time += ":" + "0" + hms[i];
+                        }
+                    } else if (time.length() == 0) {
+                        time = hms[i];
+                    } else {
+                        time += ":" + hms[i];
+                    }
+                }
+                fromDate = fromDate.substring(0, fromDate.indexOf(" ")) + " " + time;
+            }
+
+            if (toDate.indexOf(' ') == -1) {
+                toDate = toDate + " " + "00:00:00";
+            } else {
+                String [] hms = toDate.split(" ")[1].split(":");
+                String time = "";
+                for (int i=0; i < hms.length; i++) {
+                    if (hms[i].length() == 1) {
+                        if (time.length() == 0) {
+                            time = "0" + hms[i];
+                        } else {
+                            time += ":" + "0" + hms[i];
+                        }
+                    } else if (time.length() == 0) {
+                        time = hms[i];
+                    } else {
+                        time += ":" + hms[i];
+                    }
+                }
+                toDate = toDate.substring(0, toDate.indexOf(" ")) + " " + time;
+            }
+
             LocalDateTime d1 = LocalDateTime.parse(fromDate, DateTimeFormatter.ofPattern(MySequentialGraphVars.DATE_TIME_FORMAT));
             LocalDateTime d2 = LocalDateTime.parse(toDate, DateTimeFormatter.ofPattern(MySequentialGraphVars.DATE_TIME_FORMAT));
+
             Duration d = Duration.between(d1, d2);
             long diff = d.getSeconds();
+
             return String.valueOf(Math.abs(diff));
         } catch (Exception ex) {
             ex.printStackTrace();
-            return "";
+            System.exit(0);
         }
+        return "";
     }
 
     public static void initVariables() {
@@ -231,7 +278,6 @@ public class MySequentialGraphSysUtil {
         MySequentialGraphVars.nodeOrderByComboBoxIdx = -1;
         MySequentialGraphVars.currentGraphDepth = 0;
         MySequentialGraphVars.itemToIdMap = null;
-        MySequentialGraphVars.years = null;
 
         MySequentialGraphVars.userDefinedNodeLabelSet = new HashSet<>();
         MySequentialGraphVars.userDefinedNodeValueMap = new HashMap<>();
@@ -245,7 +291,7 @@ public class MySequentialGraphSysUtil {
     public static void setNodeNameMap() {
         Collection<MyNode> nodes = MySequentialGraphVars.g.getVertices();
         for (MyNode n : nodes) {
-            MySequentialGraphVars.nodeNameMap.put(getDecodedNodeName(n.getName()), n.getName());
+            MySequentialGraphVars.nodeNameMap.put(getNodeName(n.getName()), n.getName());
         }
     }
 
@@ -333,23 +379,15 @@ public class MySequentialGraphSysUtil {
     }
 
     public static String getNodeName(String encodedNodeName) {
-        if (encodedNodeName.contains("x")) {
-            return getDecodeVariableNodeName(encodedNodeName);
-        } else {
-            return getDecodedNodeName(encodedNodeName);
+        try {
+            return MySequentialGraphVars.nodeNameMap.get(encodedNodeName);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
+        return null;
     }
 
-    public static int getMaxYear() {
-        int max = 0;
-        for (String year : MySequentialGraphVars.years) {
-            int intYear = Integer.parseInt(year.split("-")[0]);
-            if (max < intYear) {
-                max = intYear;
-            }
-        }
-        return max;
-    }
+
 
     public static boolean isDateTimeFeatureExists() {
         File f = new File(MySequentialGraphSysUtil.getWorkingDir()+
@@ -388,15 +426,6 @@ public class MySequentialGraphSysUtil {
         }
     }
 
-    public static int getMinYear() {
-        int min = 1000000000;
-        for (String year : MySequentialGraphVars.years) {
-            int intYear = Integer.parseInt(year.split("-")[0]);
-            if (min > intYear) {
-                min = intYear;
-            }
-        }
-        return min;
-    }
+
 
 }
