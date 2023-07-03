@@ -12,18 +12,18 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class MyDataCorrelationPreviewControl
+public class MyCorrelationPreview
 extends JPanel {
 
     private JTable dataTbl;
-    private MyDataPreviewChart dataPreviewChart;
+    private MyChartPreviewer dataPreviewChart;
     private JComboBox xVariable;
     private JComboBox yVariable;
     private JLabel result = new JLabel();
 
     private JButton showBtn = new JButton("SHOW");
 
-    public MyDataCorrelationPreviewControl() {}
+    public MyCorrelationPreview() {}
 
     public void showCorrelation(int x, int y) {
         double [] xData = new double[dataTbl.getRowCount()];

@@ -24,7 +24,7 @@ extends JPanel {
 
     public void decorate() {
         this.setBackground(Color.WHITE);
-        this.setLayout(new BorderLayout(3,3));
+        this.setLayout(new BorderLayout(1,1));
 
         String [] columns = {"PROPERTY", "VALUE"};
         String [][] data = {

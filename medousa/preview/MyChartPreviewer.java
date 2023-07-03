@@ -5,12 +5,12 @@ import medousa.direct.utils.MyDirectGraphMathUtil;
 import medousa.direct.utils.MyDirectGraphSysUtil;
 import medousa.direct.utils.MyDirectGraphVars;
 import medousa.message.MyMessageUtil;
+import medousa.sequential.category.MySequentialGraphCategory;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.CategoryLabelPositions;
-import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.StandardBarPainter;
@@ -23,23 +23,26 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-public class MyDataPreviewChart
+public class MyChartPreviewer
 extends JPanel {
 
     private int selectedChart = 0;
-    private int numberOfTopValues = 100;
+    private int numberOfTopValues = 150;
     private float numericFromValue = 0f;
     private float numericToValue = 0f;
     private String fromStringValue;
     private String toStringValue;
     private JTable dataTbl;
-    private JTable columnDataDistributionTbl;
+    public String [] columns;
+    public JTable columnDistributionTbl;
     private JTextField topValueTxt;
     private JTextField fromValueTxt;
     private JTextField toValueTxt;
-    private String [] columns;
+    private JTextField quantizationTxt;
+    private int quantizationValue;
     private JLabel fromValueLabel = new JLabel("BETWEEN ");
     private JLabel toValueLabel = new JLabel(" AND ");
     private String avg;
@@ -48,38 +51,44 @@ extends JPanel {
     private String max;
     private String maxCategoryValue;
     private String std;
-    private MyColumnPropertyTable inputDataColumnValuePropertyTable = new MyColumnPropertyTable();
-    private MyDataPivotPreviewControl pivotDataPreviewControl = new MyDataPivotPreviewControl();
-    private MyDataCorrelationPreviewControl correlationPreviewControl = new MyDataCorrelationPreviewControl();
-    private MyDataTimeIntervalPreviewControl timeIntervalPreviewControl = new MyDataTimeIntervalPreviewControl();
-    private MyColumnQuantizer columnQuantizer = new MyColumnQuantizer();
 
-    public MyDataPreviewChart() {}
+    public MyChartPreviewer() {}
 
-    public void decorate(String [] columns, JTable dataTable, JTable columnDataDistributionTable) {
+    public void decorate(JTable dataTable, JTable columnDataDistributionTable) {
         try {
             removeAll();
-            //setBackground(Color.WHITE);
-            setLayout(new BorderLayout(3, 3));
+            setLayout(new BorderLayout(1, 1));
 
             if (this.columns == null) {
-                this.columns = columns;
+                this.columns = MyDirectGraphVars.app.getDirectGraphMsgBroker().getHeaders();
                 this.dataTbl = dataTable;
-                this.columnDataDistributionTbl = columnDataDistributionTable;
+                this.columnDistributionTbl = columnDataDistributionTable;
             }
 
             JLabel topValueLabel = new JLabel("NO. OF TOP VALUES: ");
             topValueLabel.setFont(MyDirectGraphVars.tahomaPlainFont12);
             topValueTxt = new JTextField();
-            if (numericToValue == 100) {
-                topValueTxt.setText("100");
-            } else {
-                topValueTxt.setText(MyDirectGraphMathUtil.getCommaSeperatedNumber(numberOfTopValues));
-            }
+            topValueTxt.setText(MyDirectGraphMathUtil.getCommaSeperatedNumber(numberOfTopValues));
             topValueTxt.setHorizontalAlignment(JTextField.CENTER);
             topValueTxt.setPreferredSize(new Dimension(100, 23));
             topValueTxt.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
             topValueTxt.setFont(MyDirectGraphVars.tahomaPlainFont12);
+
+            JLabel quantizationLabel = new JLabel(" NO. OF QUANTIZATIONS: ");
+            quantizationLabel.setFont(MyDirectGraphVars.tahomaPlainFont12);
+
+            quantizationTxt = new JTextField();
+            quantizationTxt.setText("0");
+            quantizationTxt.setText(MyDirectGraphMathUtil.getCommaSeperatedNumber(quantizationValue));
+            quantizationTxt.setHorizontalAlignment(JTextField.CENTER);
+            quantizationTxt.setPreferredSize(new Dimension(100, 23));
+            quantizationTxt.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+            quantizationTxt.setFont(MyDirectGraphVars.tahomaPlainFont12);
+
+            JPanel topLeftPanel = new JPanel();
+            topLeftPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 1,1));
+            topLeftPanel.add(quantizationLabel);
+            topLeftPanel.add(quantizationTxt);
 
             fromValueLabel.setFont(MyDirectGraphVars.tahomaPlainFont12);
 
@@ -98,8 +107,7 @@ extends JPanel {
             fromValueTxt.setFont(MyDirectGraphVars.tahomaPlainFont12);
 
             JPanel topPanel = new JPanel();
-            //topPanel.setBackground(Color.WHITE);
-            topPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 2, 2));
+            topPanel.setLayout(new BorderLayout( 1, 1));
 
             JComboBox columnsOptions = new JComboBox();
             columnsOptions.setBackground(Color.WHITE);
@@ -115,7 +123,11 @@ extends JPanel {
                         @Override public void run() {
                             selectedChart = columnsOptions.getSelectedIndex();
                             String topValueContraint = topValueTxt.getText().replaceAll(" ", "").replaceAll(",", "");
-                            numberOfTopValues = (topValueContraint.length() == 0 ? 100 : Integer.parseInt(topValueContraint));
+                            numberOfTopValues = (topValueContraint.length() == 0 ? 150 : Integer.parseInt(topValueContraint));
+                            if (quantizationTxt.getText().length() > 0 && Integer.parseInt(quantizationTxt.getText()) > 0) {
+                                quantizationValue = Integer.parseInt(quantizationTxt.getText());
+                            }
+
 
                             String fromValueStr = fromValueTxt.getText().trim();
                             String toValueStr = toValueTxt.getText().trim();
@@ -135,7 +147,7 @@ extends JPanel {
                                     toStringValue = toValueStr.toLowerCase();
                                 }
                             } else if ((fromValueStr.trim().length() == 0 && toValueStr.trim().length() > 0) ||
-                                    (fromValueStr.trim().length() > 0 && toValueStr.trim().length() == 0)) {
+                                (fromValueStr.trim().length() > 0 && toValueStr.trim().length() == 0)) {
                                 MyMessageUtil.showInfoMsg("Check the between values.");
                                 return;
                             }
@@ -144,7 +156,7 @@ extends JPanel {
                             max = "";
                             min = "";
                             std = "";
-                            decorate(columns, dataTbl, columnDataDistributionTbl);
+                            decorate(dataTbl, columnDistributionTbl);
                         }
                     }).start();
                 }
@@ -154,6 +166,9 @@ extends JPanel {
             emptyLabel.setFont(MyDirectGraphVars.tahomaPlainFont12);
 
             JLabel emptyLabel2 = new JLabel("  ");
+            emptyLabel2.setFont(MyDirectGraphVars.tahomaPlainFont12);
+
+            JLabel emptyLabel3 = new JLabel("  ");
             emptyLabel2.setFont(MyDirectGraphVars.tahomaPlainFont12);
 
             JButton enlargeBtn = new JButton("+");
@@ -169,17 +184,21 @@ extends JPanel {
                 }
             });
 
-            topPanel.add(fromValueLabel);
-            topPanel.add(fromValueTxt);
-            topPanel.add(toValueLabel);
-            topPanel.add(toValueTxt);
-            topPanel.add(emptyLabel2);
-            topPanel.add(topValueLabel);
-            topPanel.add(topValueTxt);
-            topPanel.add(emptyLabel);
-            topPanel.add(columnsOptions);
-            topPanel.add(enlargeBtn);
-            //add(topPanel, BorderLayout.NORTH);
+            JPanel topRightPanel = new JPanel();
+            topRightPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 1,1));
+            topRightPanel.add(fromValueLabel);
+            topRightPanel.add(fromValueTxt);
+            topRightPanel.add(toValueLabel);
+            topRightPanel.add(toValueTxt);
+            topRightPanel.add(emptyLabel2);
+            topRightPanel.add(topValueLabel);
+            topRightPanel.add(topValueTxt);
+            topRightPanel.add(emptyLabel);
+            topRightPanel.add(columnsOptions);
+            topRightPanel.add(enlargeBtn);
+
+            topPanel.add(topRightPanel, BorderLayout.CENTER);
+            topPanel.add(topLeftPanel, BorderLayout.WEST);
 
             ChartPanel chartPanel = new ChartPanel(setChart());
             chartPanel.getChart().getCategoryPlot().setRangeGridlinePaint(Color.DARK_GRAY);
@@ -189,7 +208,6 @@ extends JPanel {
             chartPanel.getChart().getCategoryPlot().getDomainAxis().setLabelFont(MyDirectGraphVars.f_pln_8);
             chartPanel.getChart().getCategoryPlot().getRangeAxis().setTickLabelFont(MyDirectGraphVars.f_pln_11);
             chartPanel.getChart().getCategoryPlot().getRangeAxis().setLabelFont(MyDirectGraphVars.f_pln_8);
-            //chartPanel.getChart().getCategoryPlot().getDomainAxis().setTickLabelPaint(Color.LIGHT_GRAY);
 
             CategoryAxis domainAxis = chartPanel.getChart().getCategoryPlot().getDomainAxis();
             domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_90);
@@ -202,78 +220,41 @@ extends JPanel {
             barRenderer.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont10);
 
             chartPanel.getChart().removeLegend();
-            chartPanel.setBorder(BorderFactory.createLoweredBevelBorder());
-            inputDataColumnValuePropertyTable.decorate(
-                MyDirectGraphMathUtil.getCommaSeperatedNumber(dataTbl.getRowCount()),
-                max,
-                maxCategoryValue,
-                min,
-                minCategoryValue,
-                avg,
-                std
-            );
+            //chartPanel.setBorder(BorderFactory.createLoweredBevelBorder());
 
-            JPanel chartTopPanel = new JPanel();
-            chartTopPanel.setLayout(new BorderLayout(1,1));
-            chartTopPanel.add(topPanel, BorderLayout.NORTH);
-            chartTopPanel.add(chartPanel, BorderLayout.CENTER);
+            JPanel statPanel = new JPanel();
+            statPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
-            pivotDataPreviewControl.decorate(this.columns, this.dataTbl);
-            correlationPreviewControl.decorate(this.columns, this.dataTbl);
-            timeIntervalPreviewControl.decorate(this.columns, this.dataTbl);
-            columnQuantizer.decorate(this.columns, this.dataTbl);
+            JLabel valueLabel = new JLabel("VALUES: " + MyDirectGraphMathUtil.getCommaSeperatedNumber(dataTbl.getRowCount()) + "    ");
+            valueLabel.setFont(MyDirectGraphVars.tahomaBoldFont12);
 
-            JSplitPane columnValuePropertyQuantizationControlSplitpane = new JSplitPane();
-            columnValuePropertyQuantizationControlSplitpane.setDividerLocation(0.38);
-            columnValuePropertyQuantizationControlSplitpane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-            columnValuePropertyQuantizationControlSplitpane.setTopComponent(inputDataColumnValuePropertyTable);
-            columnValuePropertyQuantizationControlSplitpane.setBottomComponent(columnQuantizer);
-            columnValuePropertyQuantizationControlSplitpane.addComponentListener(new ComponentAdapter() {
-                @Override public void componentResized(ComponentEvent e) {
-                    super.componentResized(e);
-                    columnValuePropertyQuantizationControlSplitpane.setDividerLocation(0.38);
-                }
-            });
+            JLabel maxLabel = new JLabel("MAX.: " + (std == null ? maxCategoryValue : max) + "     ");
+            maxLabel.setFont(MyDirectGraphVars.tahomaBoldFont12);
 
-            JSplitPane pivotCorrelationPreviewControlSplitpane = new JSplitPane();
-            pivotCorrelationPreviewControlSplitpane.setDividerLocation(0.58);
-            pivotCorrelationPreviewControlSplitpane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-            pivotCorrelationPreviewControlSplitpane.setTopComponent(pivotDataPreviewControl);
-            pivotCorrelationPreviewControlSplitpane.setBottomComponent(correlationPreviewControl);
-            pivotCorrelationPreviewControlSplitpane.addComponentListener(new ComponentAdapter() {
-                @Override public void componentResized(ComponentEvent e) {
-                    super.componentResized(e);
-                    pivotCorrelationPreviewControlSplitpane.setDividerLocation(0.58);
-                }
-            });
+            JLabel minLabel = new JLabel("MIN.: " + (std == null ? minCategoryValue : min) + "    ");
+            minLabel.setFont(MyDirectGraphVars.tahomaBoldFont12);
 
-            JSplitPane propertyDataPreviewControlSplitPane = new JSplitPane();
-            propertyDataPreviewControlSplitPane.setDividerLocation(0.48);
-            propertyDataPreviewControlSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-            propertyDataPreviewControlSplitPane.setTopComponent(columnValuePropertyQuantizationControlSplitpane);
-            propertyDataPreviewControlSplitPane.setBottomComponent(pivotCorrelationPreviewControlSplitpane);
-            propertyDataPreviewControlSplitPane.addComponentListener(new ComponentAdapter() {
-                @Override public void componentResized(ComponentEvent e) {
-                    super.componentResized(e);
-                    propertyDataPreviewControlSplitPane.setDividerLocation(0.48);
-                }
-            });
+            JLabel avgLabel = new JLabel("AVG.: " + avg + "    ");
+            avgLabel.setFont(MyDirectGraphVars.tahomaBoldFont12);
 
-            JSplitPane chartColumnValueStatisticsSplitPane = new JSplitPane();
-            chartColumnValueStatisticsSplitPane.setDividerLocation((int)(0.17*getWidth()));
-            chartColumnValueStatisticsSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
-            chartColumnValueStatisticsSplitPane.setLeftComponent(propertyDataPreviewControlSplitPane);
-            chartColumnValueStatisticsSplitPane.setRightComponent(chartTopPanel);
-            chartColumnValueStatisticsSplitPane.addComponentListener(new ComponentAdapter() {
-                @Override public void componentResized(ComponentEvent e) {
-                    super.componentResized(e);
-                    chartColumnValueStatisticsSplitPane.setDividerLocation((int)(0.17*getWidth()));
-                }
-            });
-            chartColumnValueStatisticsSplitPane.setBorder(BorderFactory.createLoweredSoftBevelBorder());
+            JLabel stdLabel = new JLabel("STD.: " + (std == null ? "" : std));
+            stdLabel.setFont(MyDirectGraphVars.tahomaBoldFont12);
 
-            add(chartColumnValueStatisticsSplitPane, BorderLayout.CENTER);
-            setBorder(BorderFactory.createLoweredBevelBorder());
+            statPanel.add(valueLabel);
+            statPanel.add(maxLabel);
+            statPanel.add(minLabel);
+            statPanel.add(avgLabel);
+            statPanel.add(stdLabel);
+
+            JPanel chart = new JPanel();
+            chart.setLayout(new BorderLayout(1,1));
+            chart.add(topPanel, BorderLayout.NORTH);
+            chart.add(chartPanel, BorderLayout.CENTER);
+            chart.add(statPanel, BorderLayout.SOUTH);
+            //chart.setBorder(BorderFactory.createLoweredSoftBevelBorder());
+
+            add(chart, BorderLayout.CENTER);
+            //setBorder(BorderFactory.createLoweredBevelBorder());
             revalidate();
             repaint();
         } catch (Exception ex) {
@@ -282,20 +263,33 @@ extends JPanel {
     }
 
     private void enlarge() {
-        MyDataPreviewChart dataPreviewChart = new MyDataPreviewChart();
-        dataPreviewChart.decorate(columns, dataTbl, columnDataDistributionTbl);
+        MyChartPreviewer dataPreviewChart = new MyChartPreviewer();
+        dataPreviewChart.decorate(dataTbl, columnDistributionTbl);
 
         JFrame f = new JFrame();
-        f.setLayout(new BorderLayout(3,3));
+        f.setLayout(new BorderLayout(1,1));
         f.getContentPane().add(dataPreviewChart, BorderLayout.CENTER);
         f.pack();
         f.setVisible(true);
     }
 
     private JFreeChart setChart() {
-        if (dataTbl.getValueAt(0, selectedChart+1).toString().matches("\\d+(\\.\\d+)?")) {
+        int row = dataTbl.getRowCount();
+        boolean isNumericColumn = true;
+        for (; row > 0; row--) {
+            String value = dataTbl.getValueAt(row-1, selectedChart + 1).toString().split("\\.")[0];
+            if (!value.matches("\\d+(\\.\\d+)?")) {
+                isNumericColumn = false;
+                break;
+            }
+        }
+
+        if (isNumericColumn) {
             return setNumericDataChart();
         } else {
+            if (quantizationTxt.getText().length() > 0 && Integer.parseInt(quantizationTxt.getText()) > 0) {
+                quantizationTxt.setText("0");
+            }
             return setStringDataChart();
         }
     }
@@ -303,6 +297,7 @@ extends JPanel {
     private JFreeChart setStringDataChart() {
         MyProgressBar pb = new MyProgressBar(false);
         try {
+            int totalRows = dataTbl.getRowCount();
             LinkedHashMap<String, Long> valueMap = new LinkedHashMap<>();
             int row = dataTbl.getRowCount() - 1;
             while (row > -1) {
@@ -325,11 +320,11 @@ extends JPanel {
                     if (fromStringValue.equals(key)) {
                         fromValueFound = true;
                         max = key;
-                        maxCategoryValue = MyDirectGraphMathUtil.getCommaSeperatedNumber(valueMap.get(key));
+                        maxCategoryValue = "" + valueMap.get(key);
                         dataset.addValue(valueMap.get(key), "", key);
                     } else if (toStringValue.equals(key)) {
                         min = key;
-                        minCategoryValue = MyDirectGraphMathUtil.getCommaSeperatedNumber(valueMap.get(key));
+                        minCategoryValue = "" + valueMap.get(key);
                         dataset.addValue(valueMap.get(key), "", key);
                         break;
                     } else if (fromValueFound) {
@@ -339,7 +334,7 @@ extends JPanel {
                     if (numberOfTopValues > 0 && i == numberOfTopValues) {
                         if (i == valueMap.size()) {
                             min = key;
-                            minCategoryValue = MyDirectGraphMathUtil.getCommaSeperatedNumber(valueMap.get(key));
+                            minCategoryValue = "" + valueMap.get(key);
                         }
                         break;
                     }
@@ -351,17 +346,17 @@ extends JPanel {
                     i++;
                     if (i == 1) {
                         max = key;
-                        maxCategoryValue = MyDirectGraphMathUtil.getCommaSeperatedNumber(valueMap.get(key));
+                        maxCategoryValue = "" + valueMap.get(key);
                     }
 
                     if (i == valueMap.size()) {
                         min = key;
-                        minCategoryValue = MyDirectGraphMathUtil.getCommaSeperatedNumber(valueMap.get(key));
+                        minCategoryValue = "" + valueMap.get(key);
                     }
 
                     if (numberOfTopValues > 0 && i == numberOfTopValues) {
                         min = key;
-                        minCategoryValue = MyDirectGraphMathUtil.getCommaSeperatedNumber(valueMap.get(key));
+                        minCategoryValue = "" + valueMap.get(key);
                         break;
                     }
                 }
@@ -369,18 +364,20 @@ extends JPanel {
 
             pb.updateValue(80, 100);
 
-            row = columnDataDistributionTbl.getRowCount();
+            row = columnDistributionTbl.getRowCount();
             while (row > 0) {
-                ((DefaultTableModel) columnDataDistributionTbl.getModel()).removeRow(row-1);
-                row = columnDataDistributionTbl.getRowCount();
+                ((DefaultTableModel) columnDistributionTbl.getModel()).removeRow(row-1);
+                row = columnDistributionTbl.getRowCount();
             }
 
             i = 0;
             for (String value : valueMap.keySet()){
-                ((DefaultTableModel)columnDataDistributionTbl.getModel()).addRow(new String[]{
-                        ("" + (++i)),
-                        "" + value,
-                        "" + valueMap.get(value)
+                ((DefaultTableModel) columnDistributionTbl.getModel()).addRow(new String[]{
+                   ("" + (++i)),
+                    "" + value,
+                    "" + valueMap.get(value),
+                    MyDirectGraphMathUtil.threeDecimalFormat((double)valueMap.get(value)/Long.parseLong(maxCategoryValue)),
+                    MyDirectGraphMathUtil.threeDecimalPercent((double) valueMap.get(value)/totalRows)
                 });
             }
 
@@ -390,8 +387,8 @@ extends JPanel {
             }
             avg = MyDirectGraphMathUtil.threeDecimalFormat(total/valueMap.size());
 
-            columnDataDistributionTbl.revalidate();
-            columnDataDistributionTbl.repaint();
+            columnDistributionTbl.revalidate();
+            columnDistributionTbl.repaint();
 
             String plotTitle = "";
             String xaxis = "";
@@ -411,20 +408,67 @@ extends JPanel {
         return null;
     }
 
+    private java.util.List<Integer> getQutizations() {
+        java.util.List<Long> columnsValues = new ArrayList<>();
+        int row = dataTbl.getRowCount();
+        long max = 0;
+        long min = 100000000000L;
+        while (row > 0) {
+            long value = (long) Float.parseFloat(dataTbl.getValueAt(row-1, selectedChart + 1).toString());
+            if (max < value) {
+                max = value;
+            }
+            if (min > value) {
+                min = value;
+            }
+            columnsValues.add(value);
+            row--;
+        }
+
+
+        int categories = Integer.parseInt(quantizationTxt.getText());
+        MySequentialGraphCategory quantizer = new MySequentialGraphCategory(min, max, categories);
+        quantizer.setCategoryIntervals(columnsValues);
+        java.util.List<Integer> quantizations = quantizer.getCategoryIntervals();
+
+        return quantizations;
+    }
+
     private JFreeChart setNumericDataChart() {
         MyProgressBar pb = new MyProgressBar(false);
         try {
-            long total = 0L;
             LinkedHashMap<Long, Long> valueMap = new LinkedHashMap<>();
-            int row = dataTbl.getRowCount() - 1;
-            while (row > -1) {
-                long value = Long.parseLong(dataTbl.getValueAt(row, selectedChart + 1).toString().trim().split("\\.")[0]);
-                if (valueMap.containsKey(value)) {
-                    valueMap.put(value, valueMap.get(value) + 1);
-                } else {
-                    valueMap.put(value, 1L);
+            long total = 0L;
+            int totalRows = dataTbl.getRowCount();
+            if (quantizationTxt.getText().length() > 0 && Integer.parseInt(quantizationTxt.getText()) > 0) {
+                java.util.List<Integer> quantizations = getQutizations();
+                System.out.println(quantizations);
+                int row = dataTbl.getRowCount() - 1;
+                while (row > -1) {
+                    long value = Long.parseLong(dataTbl.getValueAt(row, selectedChart + 1).toString().trim().split("\\.")[0]);
+                    for (int quantization : quantizations) {
+                        if (value < quantization) {
+                            if (valueMap.containsKey((long) quantization)) {
+                                valueMap.put((long) quantization, valueMap.get((long) quantization) + 1);
+                            } else {
+                                valueMap.put((long) quantization, 1L);
+                            }
+                            break;
+                        }
+                    }
+                    row--;
                 }
-                row--;
+            } else {
+                int row = dataTbl.getRowCount() - 1;
+                while (row > -1) {
+                    long value = Long.parseLong(dataTbl.getValueAt(row, selectedChart + 1).toString().trim().split("\\.")[0]);
+                    if (valueMap.containsKey(value)) {
+                        valueMap.put(value, valueMap.get(value) + 1);
+                    } else {
+                        valueMap.put(value, 1L);
+                    }
+                    row--;
+                }
             }
             valueMap = MyDirectGraphSysUtil.sortMapByLongKeyByLongValue(valueMap);
             pb.updateValue(50, 100);
@@ -433,18 +477,17 @@ extends JPanel {
             DefaultCategoryDataset dataset = new DefaultCategoryDataset();
             if (numericToValue > 0) {
                 for (Long key : valueMap.keySet()) {
-                    long valueToCheck = key;
-                    if (numericFromValue <= valueToCheck && numericToValue >= valueToCheck) {
-                        if (valueToCheck >= numericToValue) {
-                            max = MyDirectGraphMathUtil.getCommaSeperatedNumber(valueToCheck);
-                        } else if (valueToCheck == numericToValue) {
-                            min = MyDirectGraphMathUtil.getCommaSeperatedNumber(valueToCheck);
+                    if (numericFromValue <= key && numericToValue >= key) {
+                        if (key >= numericToValue) {
+                            max = String.valueOf(valueMap.get(key));
+                        } else if (key == numericToValue) {
+                            min = String.valueOf(valueMap.get(key));
                         }
                         dataset.addValue(valueMap.get(key), "", key);
                         total += valueMap.get(key);
                         i++;
                         if (numberOfTopValues > 0 && i == numberOfTopValues) {
-                            min = MyDirectGraphMathUtil.getCommaSeperatedNumber(valueToCheck);
+                            min = String.valueOf(valueMap.get(key));
                             break;
                         }
                     }
@@ -457,15 +500,15 @@ extends JPanel {
 
                     i++;
                     if (i == 1) {
-                        max = MyDirectGraphMathUtil.getCommaSeperatedNumber(key);
+                        max = String.valueOf(valueMap.get(key));
                     }
 
                     if (i == valueMap.size()) {
-                        min = MyDirectGraphMathUtil.getCommaSeperatedNumber(key);
+                        min = String.valueOf(valueMap.get(key));
                     }
 
                     if (numberOfTopValues > 0 && i == numberOfTopValues) {
-                        min = MyDirectGraphMathUtil.getCommaSeperatedNumber(key);
+                        min = String.valueOf(valueMap.get(key));
                         break;
                     }
                 }
@@ -473,25 +516,27 @@ extends JPanel {
             avg = MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.twoDecimalFormat((float)total/i));
             pb.updateValue(80, 100);
 
-            row = columnDataDistributionTbl.getRowCount();
+            int row = columnDistributionTbl.getRowCount();
             while (row > 0) {
-                ((DefaultTableModel) columnDataDistributionTbl.getModel()).removeRow(row-1);
-                row = columnDataDistributionTbl.getRowCount();
+                ((DefaultTableModel) columnDistributionTbl.getModel()).removeRow(row-1);
+                row = columnDistributionTbl.getRowCount();
             }
 
             i = 0;
             for (Long value : valueMap.keySet()){
-                ((DefaultTableModel)columnDataDistributionTbl.getModel()).addRow(new String[]{
+                ((DefaultTableModel) columnDistributionTbl.getModel()).addRow(new String[]{
                     ("" + (++i)),
                      "" + value,
-                     "" + valueMap.get(value)
+                     "" + valueMap.get(value),
+                     MyDirectGraphMathUtil.threeDecimalFormat((double) valueMap.get(value)/Double.parseDouble(max)),
+                     MyDirectGraphMathUtil.threeDecimalPercent((double) valueMap.get(value)/totalRows)
                 });
             }
 
-            std = MyDirectGraphMathUtil.twoDecimalFormat(getColumnNumericValueStandardDeviation(valueMap));
+            std = MyDirectGraphMathUtil.threeDecimalFormat(getColumnNumericValueStandardDeviation(valueMap));
 
-            columnDataDistributionTbl.revalidate();
-            columnDataDistributionTbl.repaint();
+            columnDistributionTbl.revalidate();
+            columnDistributionTbl.repaint();
 
             String plotTitle = "";
             String xaxis = "";
@@ -514,15 +559,19 @@ extends JPanel {
 
     public float getColumnNumericValueStandardDeviation(LinkedHashMap<Long, Long> valueMap) {
         float sum = 0.00f;
+        int data = 0;
         for (long n : valueMap.keySet()) {
-            sum += n;
+            for (int i=0; i < n*valueMap.get(n); i++) {
+                sum += n;
+                data++;
+            }
         }
-        double mean = sum / valueMap.size();
+        double mean = sum / data;
         sum = 0f;
         for (long n : valueMap.keySet()) {
             sum += Math.pow(n - mean, 2);
         }
-        return (sum == 0.00f ? 0.00f : (float) Math.sqrt(sum / valueMap.size()));
+        return (sum == 0.00f ? 0.00f : (float) Math.sqrt(sum / data));
     }
 
 }

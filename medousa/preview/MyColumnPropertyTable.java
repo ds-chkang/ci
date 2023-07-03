@@ -11,7 +11,6 @@ extends JPanel {
 
     public JTable table;
     public DefaultTableModel tableModel;
-    public int numberOfColumns = 0;
 
     public MyColumnPropertyTable() {
         SwingUtilities.invokeLater(new Runnable() {
@@ -37,8 +36,8 @@ extends JPanel {
         String [] columns = {"PROPERTY", "VALUE"};
         String [][] data = {
             {"VALUES", values},
-            {"MAX.", max + "(" + maxCategoryValue + ")"},
-            {"MIN.", min + "(" + minCategoryValue + ")"},
+            {"MAX.", (maxCategoryValue == null ? max : maxCategoryValue)},
+            {"MIN.", (minCategoryValue == null ? min : minCategoryValue)},
             {"AVG.", avg},
             {"STD.", std},
         };

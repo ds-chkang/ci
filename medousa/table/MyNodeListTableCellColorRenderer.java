@@ -5,7 +5,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
 public class MyNodeListTableCellColorRenderer
-        extends DefaultTableCellRenderer {
+extends DefaultTableCellRenderer {
 
     private JTextField nodeSearchTxt;
 

@@ -79,7 +79,9 @@ public class MySequentialGraphCategory {
         return null;
     }
 
-    public ArrayList<Integer> getCategoryIntervals() {return categoryIntervals;}
+    public ArrayList<Integer> getCategoryIntervals() {
+        return categoryIntervals;
+    }
 
     public void display() {
         System.out.println("Category name: " + this.name);

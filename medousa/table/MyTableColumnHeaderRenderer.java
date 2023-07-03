@@ -1,5 +1,7 @@
 package medousa.table;
 
+import medousa.direct.utils.MyDirectGraphVars;
+
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
@@ -35,22 +37,21 @@ implements TableCellRenderer, Serializable {
         return this;
     }
 
-    /**
-     @Override
-     public void paintComponent(Graphics datamining.spm.edu.uci.ics.jung.graph) {
-     Graphics2D g2d = (Graphics2D)datamining.spm.edu.uci.ics.jung.graph;
-     int x = 0;
-     int y = 0;
-     int w = getWidth();
-     int h = getHeight();
-     g2d.setColor(Color.decode("#E4E4E4"));
-     g2d.fillRect(x, y, w, h);
-     g2d.draw3DRect(x, y, w, h, true);
-     //g2d.setPaint(Color.decode("#E1E3E7"));
-     //g2d.setColor(Color.BLACK);
-     //g2d.setFont(MyGlobalVariable.fontBold11);
-     // g2d.drawString(this.val, 5, 14);
-     }*/
+    @Override
+    public void paintComponent(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+        int x = 0;
+        int y = 0;
+        int w = getWidth();
+        int h = getHeight();
+        g2d.setColor(Color.decode("#E4E4E4"));
+        g2d.fillRect(x, y, w, h);
+        g2d.draw3DRect(x, y, w, h, true);
+        g2d.setPaint(Color.decode("#E1E3E7"));
+        g2d.setColor(Color.BLACK);
+        g2d.setFont(MyDirectGraphVars.f_bold_12);
+        g2d.drawString("", 5, 14);
+    }
 
     // The following methods override the defaults for performance reasons
     public void validate() {}

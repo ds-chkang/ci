@@ -1,10 +1,12 @@
 package medousa.preview;
 
 import medousa.MyProgressBar;
+import medousa.direct.utils.MyDirectGraphMathUtil;
 import medousa.direct.utils.MyDirectGraphSysUtil;
 import medousa.direct.utils.MyDirectGraphVars;
 import medousa.message.MyMessageUtil;
 import medousa.sequential.category.MySequentialGraphCategory;
+import medousa.table.MyTableCellRenderer;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.axis.CategoryAxis;
@@ -23,11 +25,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.Stack;
 
-public class MyColumnQuantizer
+public class MyVariableQuantizer
 extends JPanel
 implements ActionListener {
+    private JComboBox searchColumnSelecter;
 
     private JComboBox variable;
     private JTextField number;
@@ -37,18 +39,18 @@ implements ActionListener {
     private TableRowSorter<TableModel> sorter;
     private JCheckBox orderBy;
 
-    public MyColumnQuantizer() {}
+    public MyVariableQuantizer() {}
 
     public void decorate(String [] columns, JTable dataTable) {
         removeAll();
-        setLayout(new FlowLayout(FlowLayout.LEFT, 2,2));
+        setLayout(new FlowLayout(FlowLayout.LEFT, 1,1));
 
         this.dataTbl = dataTable;
 
         JPanel variablePanel = new JPanel();
-        variablePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 2,2));
+        variablePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 1,1));
 
-        JLabel variableLabel = new JLabel("TARGET  ");
+        JLabel variableLabel = new JLabel("X: ");
         variableLabel.setFont(MyDirectGraphVars.tahomaPlainFont12);
 
         variable = new JComboBox();
@@ -62,7 +64,7 @@ implements ActionListener {
         }
         variable.addActionListener(this);
 
-        JLabel numberLabel = new JLabel("NO. OF Q.");
+        JLabel numberLabel = new JLabel("Q.: ");
         numberLabel.setFont(MyDirectGraphVars.tahomaPlainFont12);
 
         number = new JTextField();
@@ -71,7 +73,7 @@ implements ActionListener {
         number.setBorder(BorderFactory.createEtchedBorder());
 
         JPanel qPanel = new JPanel();
-        qPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 2,2));
+        qPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 1,1));
         qPanel.add(numberLabel);
         qPanel.add(number);
 
@@ -97,53 +99,94 @@ implements ActionListener {
         add(qPanel);
         add(orderBy);
         add(showBtn);
-
     }
 
+    private void searchButtonActionPerformed(ActionEvent e) {
+        try {
+            String searchValue = searchTxt.getText();
+            searchTable(searchValue);
 
-    @Override public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == variable) {
-            String variableValue = dataTbl.getValueAt(0, variable.getSelectedIndex()).toString();
-            if (!variableValue.matches("\\d+(\\.\\d+)?")) {
-                MyMessageUtil.showInfoMsg("Select a numeric column.");
-            }
-        } else if (e.getSource() == showBtn) {
-            if (number.getText().length() == 0 ||
-                !number.getText().matches("\\d+(\\.\\d+)?")) {
-                MyMessageUtil.showInfoMsg("Check the number of quantization");
-                return;
-            }
-
-            MyProgressBar pb = new MyProgressBar(false);
-            long max = 0L;
-            long min = 10000000000L;
-            int categories = Integer.parseInt(number.getText());
-
-            java.util.List<Long> columnsValues = new ArrayList<>();
-            int row = dataTbl.getRowCount();
-            while (row > 0) {
-                long value = (long) Float.parseFloat(dataTbl.getValueAt(row-1, variable.getSelectedIndex()).toString());
-
-                if (max < value) {
-                    max = value;
-                }
-
-                if (min > value) {
-                    min = value;
-                }
-                columnsValues.add(value);
-                row--;
-            }
-
-            MySequentialGraphCategory quantizer = new MySequentialGraphCategory(min, max, categories);
-            quantizer.setCategoryIntervals(columnsValues);
-            java.util.List<Integer> quantizations = quantizer.getCategoryIntervals();
-            showChart(quantizations, pb);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
+    private void searchTable(String searchValue) {
+        try {
+            if (this.searchColumnSelecter.getSelectedIndex() == 0) {
+                RowFilter<TableModel, Object> rowFilter = RowFilter.regexFilter(searchValue);
+                this.sorter.setRowFilter(rowFilter);
+            } else {
+                RowFilter<TableModel, Object> rowFilter = RowFilter.regexFilter(searchValue, this.searchColumnSelecter.getSelectedIndex());
+                this.sorter.setRowFilter(rowFilter);
+            }
+        } catch (Exception ex) {
+
+        }
+    }
+
+    @Override public void actionPerformed(ActionEvent e) {
+        new Thread(new Runnable() {
+            @Override public void run() {
+                if (e.getSource() == showBtn) {
+                    if (number.getText().length() == 0 ||
+                        !number.getText().matches("\\d+(\\.\\d+)?")) {
+                        MyMessageUtil.showInfoMsg("Check the number of quantizations");
+                        return;
+                    }
+
+                    MyProgressBar pb = new MyProgressBar(false);
+                    try {
+                        int pbCnt = 0;
+                        int totalRow = dataTbl.getRowCount();
+                        double workFraction = 50/totalRow;
+                        double totalWork = 0;
+                        int row = totalRow;
+                        while (row > 0) {
+                            Float.parseFloat(dataTbl.getValueAt(row - 1, variable.getSelectedIndex()).toString());
+                            row--;
+                            pb.updateValue(++pbCnt, totalRow);
+                        }
+                        totalWork += workFraction;
+                        pb.updateValue((int) totalWork, 100);
+                        pb.dispose();
+                    } catch (Exception ex) {
+                        pb.updateValue(100, 100);
+                        pb.dispose();
+                        MyMessageUtil.showInfoMsg("Select a numeric variable.");
+                    }
+
+                    long max = 0L;
+                    long min = 10000000000L;
+                    int categories = Integer.parseInt(number.getText());
+
+                    java.util.List<Long> columnsValues = new ArrayList<>();
+                    int row = dataTbl.getRowCount();
+                    while (row > 0) {
+                        long value = (long) Float.parseFloat(dataTbl.getValueAt(row-1, variable.getSelectedIndex()).toString());
+
+                        if (max < value) {
+                            max = value;
+                        }
+
+                        if (min > value) {
+                            min = value;
+                        }
+                        columnsValues.add(value);
+                        row--;
+                    }
+
+                    MySequentialGraphCategory quantizer = new MySequentialGraphCategory(min, max, categories);
+                    quantizer.setCategoryIntervals(columnsValues);
+                    java.util.List<Integer> quantizations = quantizer.getCategoryIntervals();
+                    showChart(quantizations, pb);
+                }
+            }
+        }).start();
+    }
+
     private void showChart(java.util.List<Integer> quantizations, MyProgressBar pb) {
-        //System.out.println(quantizations);
+        double max = 0;
         LinkedHashMap<Long, Long> valueMap = new LinkedHashMap<>();
         for (int quantization : quantizations) {
             valueMap.put((long) quantization, 0L);
@@ -159,6 +202,11 @@ implements ActionListener {
                     } else {
                         valueMap.put((long) quantization, 1L);
                     }
+
+                    if (valueMap.get((long) quantization) > max) {
+                        max = valueMap.get((long) quantization);
+                    }
+
                     break;
                 }
             }
@@ -202,21 +250,26 @@ implements ActionListener {
         barRenderer.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont10);
 
         chartPanel.getChart().removeLegend();
-        chartPanel.setBorder(BorderFactory.createLoweredBevelBorder());
+        //chartPanel.setBorder(BorderFactory.createLoweredBevelBorder());
 
-        String [] columns = {"NO.", "NAME", "VALUE"};
+        String [] columns = {"NO.", "NAME", "VALUE", "RATIO"};
         String [][] data = {};
 
         DefaultTableModel model = new DefaultTableModel(data, columns);
         JTable distributionTable = new JTable(model);
         distributionTable.setRowHeight(24);
         distributionTable.setFont(MyDirectGraphVars.f_pln_12);
+        distributionTable.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(55);
+        distributionTable.getTableHeader().getColumnModel().getColumn(1).setPreferredWidth(120);
+        distributionTable.getTableHeader().getColumnModel().getColumn(2).setPreferredWidth(75);
+        distributionTable.getTableHeader().getColumnModel().getColumn(3).setPreferredWidth(80);
         distributionTable.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(70);
         distributionTable.setBackground(Color.WHITE);
         distributionTable.setFocusable(false);
         distributionTable.getTableHeader().setBackground(new Color(0,0,0,0));
         distributionTable.getTableHeader().setOpaque(false);
         distributionTable.getTableHeader().setFont(MyDirectGraphVars.tahomaBoldFont12);
+        distributionTable.getColumnModel().getColumn(3).setCellRenderer(new MyTableCellRenderer());
         this.sorter = new TableRowSorter<>(distributionTable.getModel());
         distributionTable.setRowSorter(this.sorter);
 
@@ -225,8 +278,18 @@ implements ActionListener {
             model.addRow(new String[]{
                 "" + (i++),
                 "" + key,
-                "" + valueMap.get(key)
+                "" + valueMap.get(key),
+                "" + MyDirectGraphMathUtil.threeDecimalFormat((double)valueMap.get(key)/max)
             });
+        }
+
+        this.searchColumnSelecter = new JComboBox();
+        this.searchColumnSelecter.setFont(MyDirectGraphVars.tahomaPlainFont12);
+        this.searchColumnSelecter.setFocusable(false);
+        this.searchColumnSelecter.setBackground(Color.WHITE);
+        this.searchColumnSelecter.addItem("");
+        for (String column : columns) {
+            this.searchColumnSelecter.addItem(column);
         }
 
         JButton searchBtn = new JButton("SEARCH");
@@ -239,22 +302,27 @@ implements ActionListener {
                 e.setKeyChar(Character.toUpperCase(keyChar));
             }
         });
+
         JPanel dataSearchPanel = new JPanel();
         dataSearchPanel.setLayout(new BorderLayout(1,1));
         dataSearchPanel.add(this.searchTxt, BorderLayout.CENTER);
         dataSearchPanel.add(searchBtn, BorderLayout.EAST);
-        dataSearchPanel.setBorder(BorderFactory.createLoweredSoftBevelBorder());
         searchBtn.addActionListener(this::searchButtonActionPerformed);
 
+        JPanel dataTableSearchPanel = new JPanel();
+        dataTableSearchPanel.setLayout(new BorderLayout(1,1));
+        dataTableSearchPanel.add(new JScrollPane(distributionTable), BorderLayout.CENTER);
+        dataTableSearchPanel.add(dataSearchPanel, BorderLayout.SOUTH);
+
         JSplitPane splitPane = new JSplitPane();
-        splitPane.setLeftComponent(new JScrollPane(distributionTable));
+        splitPane.setLeftComponent(dataTableSearchPanel);
         splitPane.setRightComponent(chartPanel);
-        splitPane.setDividerLocation(0.17);
+        splitPane.setDividerLocation(0.18);
         splitPane.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 super.componentResized(e);
-                splitPane.setDividerLocation(0.17);
+                splitPane.setDividerLocation(0.18);
             }
         });
 
@@ -283,13 +351,4 @@ implements ActionListener {
         f.setVisible(true);
     }
 
-    private void searchButtonActionPerformed(ActionEvent e) {
-        String searchValue = searchTxt.getText();
-        searchTable(searchValue);
-    }
-
-    private void searchTable(String searchValue) {
-        RowFilter<TableModel, Object> rowFilter = RowFilter.regexFilter(searchValue);
-        this.sorter.setRowFilter(rowFilter);
-    }
 }
