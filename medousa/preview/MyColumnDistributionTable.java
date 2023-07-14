@@ -99,6 +99,7 @@ extends JPanel {
         }
     }
 
+
     private class TableMouseListener
             implements MouseListener {
         @Override public void mouseClicked(MouseEvent e) {

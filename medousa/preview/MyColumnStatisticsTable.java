@@ -1,17 +1,14 @@
 package medousa.preview;
 
+import medousa.MyProgressBar;
 import medousa.direct.utils.MyDirectGraphMathUtil;
 import medousa.direct.utils.MyDirectGraphSysUtil;
 import medousa.direct.utils.MyDirectGraphVars;
-import medousa.table.MyHeaderColumnButtonRenderer;
 import medousa.table.MyTableCellColumnRenderer;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 import java.util.*;
 
@@ -20,6 +17,7 @@ extends JPanel {
 
     private JTable columnStatTable;
     private JPopupMenu popupMenu;
+    private static JFrame f;
 
     public MyColumnStatisticsTable() {}
 
@@ -93,21 +91,48 @@ extends JPanel {
         popupMenu = new JPopupMenu();
         JMenuItem deleteItem = new JMenuItem("ENLARGE");
         deleteItem.addActionListener(e -> {
-            System.out.println("Hello, the world!");
+            new Thread(new Runnable() {
+                @Override public void run() {
+                    MyProgressBar pb = new MyProgressBar(false);
+                    enlarge(dataColumns, dataTable);
+                    pb.updateValue(100, 100);
+                    pb.dispose();
+                }
+            }).start();
         });
         popupMenu.add(deleteItem);
         // Add the MouseListener to the JTable
         columnStatTable.addMouseListener(new TableMouseListener());
 
         JScrollPane tableScrollPane = new JScrollPane(columnStatTable);
-        tableScrollPane.setBorder(BorderFactory.createTitledBorder("COLUMN STATISTICS"));
+        tableScrollPane.setBorder(BorderFactory.createTitledBorder("COLUMN PROPERTIES"));
         add(tableScrollPane, BorderLayout.CENTER);
+    }
+
+    private void enlarge(String [] dataColumns, JTable dataTable) {
+        MyColumnStatisticsTable columnStatisticsTable = new MyColumnStatisticsTable();
+        columnStatisticsTable.decorate(dataColumns, dataTable);
+
+        f = new JFrame("COLUMN PROPERTIES");
+        f.setLayout(new BorderLayout(1,1));
+        f.getContentPane().add(columnStatisticsTable, BorderLayout.CENTER);
+        f.setPreferredSize(new Dimension(700, 400));
+        f.pack();
+        f.addWindowListener(new WindowAdapter() {
+            @Override public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                f = null;
+            }
+        });
+        f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        f.setVisible(true);
     }
 
     private class TableMouseListener
     implements MouseListener {
         @Override public void mouseClicked(MouseEvent e) {
             if (SwingUtilities.isRightMouseButton(e)) {
+                if (f != null) return;
                 int row = columnStatTable.rowAtPoint(e.getPoint());
                 int column = columnStatTable.columnAtPoint(e.getPoint());
 
