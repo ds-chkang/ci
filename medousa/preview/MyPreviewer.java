@@ -13,7 +13,6 @@ implements ActionListener {
     public MyDataTablePanel dataTablePanel = new MyDataTablePanel();
     public MyColumnDistributionTable columnDistributionTable = new MyColumnDistributionTable();
 
-
     public MyPreviewer() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
@@ -30,11 +29,11 @@ implements ActionListener {
             this.dataTablePanel.decorate();
             this.controlPanel.decorate(this.dataTablePanel.dataTable);
             this.columnDistributionTable.decorate();
-            this.dataPreviewChart.decorate(this.dataTablePanel.dataTable, columnDistributionTable.table);
+            this.dataPreviewChart.decorate(this.dataTablePanel.dataTable, columnDistributionTable.columnDistributionTable);
 
             JSplitPane dataDistributionTableChartSplitPane = new JSplitPane();
             dataDistributionTableChartSplitPane.setOneTouchExpandable(false);
-            dataDistributionTableChartSplitPane.setDividerLocation(0.23);
+            dataDistributionTableChartSplitPane.setDividerLocation(0.25);
             dataDistributionTableChartSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
             dataDistributionTableChartSplitPane.setLeftComponent(this.columnDistributionTable);
             dataDistributionTableChartSplitPane.setRightComponent(dataPreviewChart);
@@ -42,13 +41,13 @@ implements ActionListener {
                 @Override
                 public void componentResized(ComponentEvent e) {
                     super.componentResized(e);
-                    dataDistributionTableChartSplitPane.setDividerLocation(0.23);
+                    dataDistributionTableChartSplitPane.setDividerLocation(0.25);
                 }
             });
 
             JSplitPane dataTableChartSplitPane = new JSplitPane();
             dataTableChartSplitPane.setOneTouchExpandable(false);
-            dataTableChartSplitPane.setDividerLocation(0.6);
+            dataTableChartSplitPane.setDividerLocation(0.685);
             dataTableChartSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
             dataTableChartSplitPane.setTopComponent(dataDistributionTableChartSplitPane);
             dataTableChartSplitPane.setBottomComponent(this.dataTablePanel);
@@ -56,13 +55,13 @@ implements ActionListener {
                 @Override
                 public void componentResized(ComponentEvent e) {
                     super.componentResized(e);
-                    dataTableChartSplitPane.setDividerLocation(0.7);
+                    dataTableChartSplitPane.setDividerLocation(0.685);
                 }
             });
 
             JSplitPane dataPropertyPreviewControlChartSplitPane = new JSplitPane();
             dataPropertyPreviewControlChartSplitPane.setOneTouchExpandable(false);
-            dataPropertyPreviewControlChartSplitPane.setDividerLocation(0.31);
+            dataPropertyPreviewControlChartSplitPane.setDividerLocation(0.33);
             dataPropertyPreviewControlChartSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
             dataPropertyPreviewControlChartSplitPane.setLeftComponent(this.controlPanel);
             dataPropertyPreviewControlChartSplitPane.setRightComponent(dataTableChartSplitPane);
@@ -70,7 +69,7 @@ implements ActionListener {
                 @Override
                 public void componentResized(ComponentEvent e) {
                     super.componentResized(e);
-                    dataPropertyPreviewControlChartSplitPane.setDividerLocation(0.31);
+                    dataPropertyPreviewControlChartSplitPane.setDividerLocation(0.33);
                 }
             });
 

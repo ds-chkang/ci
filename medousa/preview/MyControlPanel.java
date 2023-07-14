@@ -11,11 +11,15 @@ public class MyControlPanel
 extends JPanel {
 
     private MyPivotPreview pivotDataPreviewControl = new MyPivotPreview();
-    private MyCorrelationPreview correlationPreviewControl = new MyCorrelationPreview();
+    private MyRealRealCorrelationPreview realRealCorrelationPreview = new MyRealRealCorrelationPreview();
     private MyVariableQuantizer columnQuantizer = new MyVariableQuantizer();
     private MyYearMonthDayPreviewer yearMonthDayPreviewer = new MyYearMonthDayPreviewer();
     private MySequenceIntervalPreviewer intervalPreviewer = new MySequenceIntervalPreviewer();
     private MyDurationPreview durationPreview = new MyDurationPreview();
+    public MyColumnStatisticsTable columnStatisticsTable = new MyColumnStatisticsTable();
+    public MyCategoryRealCorrelationPreview categoryRealCorrelationPreview = new MyCategoryRealCorrelationPreview();
+    public MyRealValueBoxPlotPreview realValueBoxPlotPreview = new MyRealValueBoxPlotPreview();
+
     public MyControlPanel() {}
 
     public void decorate(JTable dataTbl) {
@@ -24,94 +28,122 @@ extends JPanel {
             setLayout(new BorderLayout(1, 1));
 
             pivotDataPreviewControl.decorate(MyDirectGraphVars.app.getDirectGraphMsgBroker().getHeaders(), dataTbl);
-            correlationPreviewControl.decorate(MyDirectGraphVars.app.getDirectGraphMsgBroker().getHeaders(), dataTbl);
+            realRealCorrelationPreview.decorate(MyDirectGraphVars.app.getDirectGraphMsgBroker().getHeaders(), dataTbl);
             yearMonthDayPreviewer.decorate(MyDirectGraphVars.app.getDirectGraphMsgBroker().getHeaders(), dataTbl);
             columnQuantizer.decorate(MyDirectGraphVars.app.getDirectGraphMsgBroker().getHeaders(), dataTbl);
             intervalPreviewer.decorate(MyDirectGraphVars.app.getDirectGraphMsgBroker().getHeaders(), dataTbl);
             durationPreview.decorate(MyDirectGraphVars.app.getDirectGraphMsgBroker().getHeaders(), dataTbl);
+            categoryRealCorrelationPreview.decorate(MyDirectGraphVars.app.getDirectGraphMsgBroker().getHeaders(), dataTbl);
+            realValueBoxPlotPreview.decorate(MyDirectGraphVars.app.getDirectGraphMsgBroker().getHeaders(), dataTbl);
 
             JSplitPane pivotQuantizerSplitpane = new JSplitPane();
             pivotQuantizerSplitpane.setOneTouchExpandable(false);
-            pivotQuantizerSplitpane.setDividerLocation(0.5);
+            pivotQuantizerSplitpane.setDividerLocation(0.55);
             pivotQuantizerSplitpane.setOrientation(JSplitPane.VERTICAL_SPLIT);
             pivotQuantizerSplitpane.setTopComponent(pivotDataPreviewControl);
             pivotQuantizerSplitpane.setBottomComponent(columnQuantizer);
             pivotQuantizerSplitpane.addComponentListener(new ComponentAdapter() {
                 @Override public void componentResized(ComponentEvent e) {
                     super.componentResized(e);
-                    pivotQuantizerSplitpane.setDividerLocation(0.5);
+                    pivotQuantizerSplitpane.setDividerLocation(0.55);
                 }
             });
 
-            JSplitPane propertyDataPreviewControlSplitPane = new JSplitPane();
-            propertyDataPreviewControlSplitPane.setDividerLocation(.5);
-            propertyDataPreviewControlSplitPane.setOneTouchExpandable(false);
-            propertyDataPreviewControlSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-            propertyDataPreviewControlSplitPane.setTopComponent(yearMonthDayPreviewer);
-            propertyDataPreviewControlSplitPane.setBottomComponent(correlationPreviewControl);
-            propertyDataPreviewControlSplitPane.addComponentListener(new ComponentAdapter() {
+            JSplitPane yearMonthRealRealCorrelationSplitPane = new JSplitPane();
+            yearMonthRealRealCorrelationSplitPane.setOneTouchExpandable(false);
+            yearMonthRealRealCorrelationSplitPane.setDividerLocation(0.45);
+            yearMonthRealRealCorrelationSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+            yearMonthRealRealCorrelationSplitPane.setTopComponent(realRealCorrelationPreview);
+            yearMonthRealRealCorrelationSplitPane.setBottomComponent(yearMonthDayPreviewer);
+            yearMonthRealRealCorrelationSplitPane.addComponentListener(new ComponentAdapter() {
                 @Override public void componentResized(ComponentEvent e) {
                     super.componentResized(e);
-                    propertyDataPreviewControlSplitPane.setDividerLocation(.5);
+                    yearMonthRealRealCorrelationSplitPane.setDividerLocation(0.45);
                 }
             });
 
-            JSplitPane topFourControlSplitPane = new JSplitPane();
-            topFourControlSplitPane.setOneTouchExpandable(false);
-            topFourControlSplitPane.setDividerLocation(0.5);
-            topFourControlSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-            topFourControlSplitPane.setTopComponent(pivotQuantizerSplitpane);
-            topFourControlSplitPane.setBottomComponent(propertyDataPreviewControlSplitPane);
-            topFourControlSplitPane.addComponentListener(new ComponentAdapter() {
+            JSplitPane rightTopSplitPane = new JSplitPane();
+            rightTopSplitPane.setOneTouchExpandable(false);
+            rightTopSplitPane.setDividerLocation(0.55);
+            rightTopSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+            rightTopSplitPane.setTopComponent(pivotQuantizerSplitpane);
+            rightTopSplitPane.setBottomComponent(yearMonthRealRealCorrelationSplitPane);
+            rightTopSplitPane.addComponentListener(new ComponentAdapter() {
                 @Override public void componentResized(ComponentEvent e) {
                     super.componentResized(e);
-                    topFourControlSplitPane.setDividerLocation(0.5);
+                    rightTopSplitPane.setDividerLocation(0.55);
                 }
             });
 
-            JSplitPane rightSplitPane = new JSplitPane();
-            rightSplitPane.setOneTouchExpandable(false);
-            rightSplitPane.setDividerLocation(0.8);
-            rightSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-            rightSplitPane.setTopComponent(topFourControlSplitPane);
-            rightSplitPane.setBottomComponent(durationPreview);
-            rightSplitPane.addComponentListener(new ComponentAdapter() {
+            JSplitPane intervalDurationSplitPane = new JSplitPane();
+            intervalDurationSplitPane.setOneTouchExpandable(false);
+            intervalDurationSplitPane.setDividerLocation(0.65);
+            intervalDurationSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+            intervalDurationSplitPane.setTopComponent(intervalPreviewer);
+            intervalDurationSplitPane.setBottomComponent(durationPreview);
+            intervalDurationSplitPane.addComponentListener(new ComponentAdapter() {
                 @Override public void componentResized(ComponentEvent e) {
                     super.componentResized(e);
-                    rightSplitPane.setDividerLocation(0.8);
+                    intervalDurationSplitPane.setDividerLocation(0.65);
                 }
             });
 
-            JSplitPane intervalSplitPane = new JSplitPane();
-            intervalSplitPane.setOneTouchExpandable(false);
-            intervalSplitPane.setDividerLocation(0.5);
-            intervalSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-            intervalSplitPane.setTopComponent(intervalPreviewer);
-            intervalSplitPane.setBottomComponent(new JPanel());
-            intervalSplitPane.addComponentListener(new ComponentAdapter() {
+            JSplitPane categoryRealRealBoxPlotSplitPane = new JSplitPane();
+            categoryRealRealBoxPlotSplitPane.setOneTouchExpandable(false);
+            categoryRealRealBoxPlotSplitPane.setDividerLocation(0.6);
+            categoryRealRealBoxPlotSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+            categoryRealRealBoxPlotSplitPane.setTopComponent(categoryRealCorrelationPreview);
+            categoryRealRealBoxPlotSplitPane.setBottomComponent(realValueBoxPlotPreview);
+            categoryRealRealBoxPlotSplitPane.addComponentListener(new ComponentAdapter() {
                 @Override public void componentResized(ComponentEvent e) {
                     super.componentResized(e);
-                    intervalSplitPane.setDividerLocation(0.5);
+                    categoryRealRealBoxPlotSplitPane.setDividerLocation(0.6);
                 }
             });
+
+
+            JSplitPane leftTopSplitPane = new JSplitPane();
+            leftTopSplitPane.setOneTouchExpandable(false);
+            leftTopSplitPane.setDividerLocation(0.65);
+            leftTopSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+            leftTopSplitPane.setTopComponent(intervalDurationSplitPane);
+            leftTopSplitPane.setBottomComponent(categoryRealRealBoxPlotSplitPane);
+            leftTopSplitPane.addComponentListener(new ComponentAdapter() {
+                @Override public void componentResized(ComponentEvent e) {
+                    super.componentResized(e);
+                    leftTopSplitPane.setDividerLocation(0.65);
+                }
+            });
+
+            JSplitPane topSplitPane = new JSplitPane();
+            topSplitPane.setOneTouchExpandable(false);
+            topSplitPane.setDividerLocation(0.51);
+            topSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
+            topSplitPane.setLeftComponent(leftTopSplitPane);
+            topSplitPane.setRightComponent(rightTopSplitPane);
+            topSplitPane.addComponentListener(new ComponentAdapter() {
+                @Override public void componentResized(ComponentEvent e) {
+                    super.componentResized(e);
+                    topSplitPane.setDividerLocation(0.51);
+                }
+            });
+
+            this.columnStatisticsTable.decorate(MyDirectGraphVars.app.getDirectGraphMsgBroker().getHeaders(), dataTbl);
 
             JSplitPane controlSplitPane = new JSplitPane();
             controlSplitPane.setOneTouchExpandable(false);
-            controlSplitPane.setDividerLocation(0.51);
-            controlSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
-            controlSplitPane.setLeftComponent(intervalSplitPane);
-            controlSplitPane.setRightComponent(rightSplitPane);
+            controlSplitPane.setDividerLocation(0.76);
+            controlSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+            controlSplitPane.setTopComponent(topSplitPane);
+            controlSplitPane.setBottomComponent(this.columnStatisticsTable);
             controlSplitPane.addComponentListener(new ComponentAdapter() {
                 @Override public void componentResized(ComponentEvent e) {
                     super.componentResized(e);
-                    controlSplitPane.setDividerLocation(0.51);
+                    controlSplitPane.setDividerLocation(0.76);
                 }
             });
 
             add(controlSplitPane, BorderLayout.CENTER);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        } catch (Exception ex) {ex.printStackTrace();}
     }
-
 }

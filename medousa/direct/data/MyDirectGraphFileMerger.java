@@ -16,14 +16,24 @@ public class MyDirectGraphFileMerger {
                 String aLine = "";
                 while ((aLine = in.readLine()) != null) {
                     String [] dataColumnValues = aLine.split(MyDirectGraphVars.commaDelimeter);
-                    dataColumnValues[MyDirectGraphVars.app.getDirectGraphMsgBroker().getHeaderIndex("ITEM ID")] =
-                        String.valueOf(dataColumnValues[MyDirectGraphVars.app.getDirectGraphMsgBroker().getHeaderIndex("ITEM ID")]);
-                    aLine = dataColumnValues[0];
-                    for (int i = 1; i < dataColumnValues.length; i++) {
-                        aLine = aLine + MyDirectGraphVars.commaDelimeter + dataColumnValues[i];
+
+                    boolean allIsFine = true;
+                    for (String column : dataColumnValues) {
+                        column = column.replaceAll(" ", "");
+                        if (column.length() == 0) {
+                            allIsFine = false;
+                            break;
+                        }
                     }
-                    //System.out.println("After: " + aLine);
-                    out.write(aLine + "\n");
+
+                    if (allIsFine) {
+                         aLine = dataColumnValues[0];
+                        for (int i = 1; i < dataColumnValues.length; i++) {
+                            aLine = aLine + MyDirectGraphVars.commaDelimeter + dataColumnValues[i];
+                        }
+                        System.out.println("After: " + aLine);
+                        out.write(aLine + "\n");
+                    }
                 }
                 in.close();
             }

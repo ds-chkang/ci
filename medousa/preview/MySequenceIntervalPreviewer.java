@@ -4,7 +4,8 @@ import medousa.MyProgressBar;
 import medousa.direct.utils.MyDirectGraphMathUtil;
 import medousa.direct.utils.MyDirectGraphVars;
 import medousa.message.MyMessageUtil;
-import medousa.table.MyTableCellRenderer;
+import medousa.table.MyTableCellBarChartRenderer;
+import medousa.table.MyTableUtil;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -55,6 +56,8 @@ implements ActionListener {
     private LinkedHashMap<Long, Integer> valueWithTargetValueMap;
     private LinkedHashMap<String, Integer> countWithNoSourceValueMap;
     private LinkedHashMap<String, Integer> countWithNoTargetValueMap;
+    private JButton xv1SearchBtn;
+    private JButton xv2SearchBtn;
 
     public MySequenceIntervalPreviewer() {}
 
@@ -94,7 +97,7 @@ implements ActionListener {
             valueTypePanel.add(valueTypeLabel);
             valueTypePanel.add(valueType);
 
-            JLabel value1Label = new JLabel("XV1:");
+            JLabel value1Label = new JLabel("WV1:");
             value1Label.setToolTipText("Set the first event value.");
             value1Label.setFont(MyDirectGraphVars.tahomaPlainFont12);
 
@@ -138,7 +141,6 @@ implements ActionListener {
             JLabel variable3Label = new JLabel("Y:");
             variable3Label.setToolTipText("Set a datetime column for the corresponding event.");
             variable3Label.setFont(MyDirectGraphVars.tahomaPlainFont12);
-            variable3Label.setVisible(false);
 
             variable3 = new JComboBox();
             variable3.addItem("");
@@ -174,7 +176,7 @@ implements ActionListener {
             variable4Panel.add(variable4Label);
             variable4Panel.add(variable4);
 
-            JLabel value2Label = new JLabel("XV2:");
+            JLabel value2Label = new JLabel("WV2:");
             value2Label.setToolTipText("Set the second event value.");
             value2Label.setFont(MyDirectGraphVars.tahomaPlainFont12);
 
@@ -194,12 +196,28 @@ implements ActionListener {
             showBtn.setBackground(Color.WHITE);
             showBtn.addActionListener(this);
 
+            xv1SearchBtn = new JButton("S. V.");
+            xv1SearchBtn.setToolTipText("SEARCH THE FIRST VALUE OF VARIABLE W.");
+            xv1SearchBtn.setBackground(Color.WHITE);
+            xv1SearchBtn.setFont(MyDirectGraphVars.tahomaPlainFont12);
+            xv1SearchBtn.setFocusable(false);
+            xv1SearchBtn.addActionListener(this);
+
+            xv2SearchBtn = new JButton("S. V.");
+            xv2SearchBtn.setToolTipText("SEARCH THE SECOND VALUE OF VARIABLE W.");
+            xv2SearchBtn.setBackground(Color.WHITE);
+            xv2SearchBtn.setFont(MyDirectGraphVars.tahomaPlainFont12);
+            xv2SearchBtn.setFocusable(false);
+            xv2SearchBtn.addActionListener(this);
+
             JPanel controlPanel = new JPanel();
             controlPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 1,1));
             controlPanel.add(valueTypePanel);
             controlPanel.add(variable1Panel);
             controlPanel.add(value1Panel);
+            controlPanel.add(xv1SearchBtn);
             controlPanel.add(value2Panel);
+            controlPanel.add(xv2SearchBtn);
             controlPanel.add(variable2Panel);
             controlPanel.add(variable3Panel);
             controlPanel.add(variable4Panel);
@@ -250,7 +268,7 @@ implements ActionListener {
         distributionTable.getTableHeader().setBackground(new Color(0,0,0,0));
         distributionTable.getTableHeader().setOpaque(false);
         distributionTable.getTableHeader().setFont(MyDirectGraphVars.tahomaBoldFont12);
-        distributionTable.getColumnModel().getColumn(3).setCellRenderer(new MyTableCellRenderer());
+        distributionTable.getColumnModel().getColumn(3).setCellRenderer(new MyTableCellBarChartRenderer());
         sorter = new TableRowSorter<>(distributionTable.getModel());
         distributionTable.setRowSorter(sorter);
 
@@ -545,6 +563,7 @@ implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        final MySequenceIntervalPreviewer sequenceIntervalPreviewer = this;
         new Thread(new Runnable() {
             @Override public void run() {
                 if (e.getSource() == variable1) {
@@ -561,7 +580,7 @@ implements ActionListener {
                         value1.removeAllItems();
                         value1.addItem("");
                         for (String value : columnValues) {
-                            if (value.matches("\\d+(\\.\\d+)?")) {
+                            if (value.matches("-?\\d+(\\.\\d+)?")) {
                                 value1.addItem((long) Float.parseFloat(value));
                             } else {
                                 value1.addItem(value);
@@ -571,7 +590,7 @@ implements ActionListener {
                         value2.removeAllItems();
                         value2.addItem("");
                         for (String value : columnValues) {
-                            if (value.matches("\\d+(\\.\\d+)?")) {
+                            if (value.matches("-?\\d+(\\.\\d+)?")) {
                                 value2.addItem((long) Float.parseFloat(value));
                             } else {
                                 value2.addItem(value);
@@ -582,6 +601,142 @@ implements ActionListener {
                     } catch (Exception ex) {
                         pb.updateValue(100, 100);
                         pb.dispose();
+                    }
+                } else if (e.getSource() == xv1SearchBtn) {
+                    if (variable1.getSelectedIndex() > 0) {
+                        JFrame f = new JFrame("SEARCH VALUE");
+
+                        String [] columns = {"NO.", variable1.getSelectedItem().toString()};
+                        String [][] data = {};
+                        DefaultTableModel model = new DefaultTableModel(data, columns);
+                        Set<String> values = new HashSet<>();
+                        int row = 0;
+                        int i = 0;
+                        while (row < dataTbl.getRowCount()) {
+                            String value = dataTbl.getValueAt(row, variable1.getSelectedIndex()).toString();
+                            if (!values.contains(value)) {
+                                model.addRow(new String[]{"" + (++i), value.toUpperCase()});
+                                values.add(value);
+                            }
+                            row++;
+                        }
+
+                        JTable table = new JTable(model);
+                        table.setFont(MyDirectGraphVars.tahomaPlainFont12);
+                        table.setBackground(Color.WHITE);
+                        table.setFocusable(false);
+                        table.setRowHeight(24);
+                        table.getColumnModel().getColumn(0).setPreferredWidth(70);
+                        table.getColumnModel().getColumn(0).setMaxWidth(70);
+                        table.getColumnModel().getColumn(1).setPreferredWidth(140);
+                        table.getTableHeader().setFont(MyDirectGraphVars.tahomaBoldFont12);
+                        table.getTableHeader().setOpaque(false);
+                        table.getTableHeader().setBackground(new Color(0,0,0,0));
+                        table.addComponentListener(new ComponentAdapter() {
+                            @Override
+                            public void componentResized(ComponentEvent e) {
+                                super.componentResized(e);
+                                table.getColumnModel().getColumn(0).setPreferredWidth(70);
+                                table.getColumnModel().getColumn(0).setMaxWidth(70);
+                                table.getColumnModel().getColumn(1).setPreferredWidth(140);
+                            }
+                        });
+
+                        JButton selectBtn = new JButton("SELECT");
+                        selectBtn.setFocusable(false);
+                        selectBtn.setBackground(Color.WHITE);
+                        selectBtn.addActionListener(new ActionListener() {
+                            @Override public void actionPerformed(ActionEvent e) {
+                                String selectedValue = table.getValueAt(table.getSelectedRow(), 1).toString();
+                                for (int i=1; i < value1.getItemCount(); i++) {
+                                    if (value1.getItemAt(i).toString().equals(selectedValue)) {
+                                        value1.setSelectedIndex(i);
+                                        break;
+                                    }
+                                }
+                                f.dispose();
+                            }
+                        });
+
+                        JTextField searchTxt = new JTextField();
+                        searchTxt.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+                        JPanel searchPanel = MyTableUtil.searchTablePanel(sequenceIntervalPreviewer, searchTxt, selectBtn, model, table);
+
+                        f.setLayout(new BorderLayout(1,1));
+                        f.getContentPane().add(new JScrollPane(table), BorderLayout.CENTER);
+                        f.getContentPane().add(searchPanel, BorderLayout.SOUTH);
+                        f.pack();
+                        f.setPreferredSize(new Dimension(120, 500));
+                        f.setVisible(true);
+
+                    }
+                } else if (xv2SearchBtn == e.getSource()) {
+                    if (variable1.getSelectedIndex() > 0) {
+                        JFrame f = new JFrame("SEARCH VALUE");
+
+                        String [] columns = {"NO.", variable1.getSelectedItem().toString()};
+                        String [][] data = {};
+                        DefaultTableModel model = new DefaultTableModel(data, columns);
+                        Set<String> values = new HashSet<>();
+                        int row = 0;
+                        int i = 0;
+                        while (row < dataTbl.getRowCount()) {
+                            String value = dataTbl.getValueAt(row, variable1.getSelectedIndex()).toString();
+                            if (!values.contains(value)) {
+                                model.addRow(new String[]{"" + (++i), value.toUpperCase()});
+                                values.add(value);
+                            }
+                            row++;
+                        }
+
+                        JTable table = new JTable(model);
+                        table.setFont(MyDirectGraphVars.tahomaPlainFont12);
+                        table.setBackground(Color.WHITE);
+                        table.setFocusable(false);
+                        table.setRowHeight(24);
+                        table.getColumnModel().getColumn(0).setPreferredWidth(70);
+                        table.getColumnModel().getColumn(0).setMaxWidth(70);
+                        table.getColumnModel().getColumn(1).setPreferredWidth(140);
+                        table.getTableHeader().setFont(MyDirectGraphVars.tahomaBoldFont12);
+                        table.getTableHeader().setOpaque(false);
+                        table.getTableHeader().setBackground(new Color(0,0,0,0));
+                        table.addComponentListener(new ComponentAdapter() {
+                            @Override
+                            public void componentResized(ComponentEvent e) {
+                                super.componentResized(e);
+                                table.getColumnModel().getColumn(0).setPreferredWidth(70);
+                                table.getColumnModel().getColumn(0).setMaxWidth(70);
+                                table.getColumnModel().getColumn(1).setPreferredWidth(140);
+                            }
+                        });
+
+                        JButton selectBtn = new JButton("SELECT");
+                        selectBtn.setFocusable(false);
+                        selectBtn.setBackground(Color.WHITE);
+                        selectBtn.addActionListener(new ActionListener() {
+                            @Override public void actionPerformed(ActionEvent e) {
+                                String selectedValue = table.getValueAt(table.getSelectedRow(), 1).toString();
+                                for (int i=1; i < value2.getItemCount(); i++) {
+                                    if (value2.getItemAt(i).toString().equals(selectedValue)) {
+                                        value2.setSelectedIndex(i);
+                                        break;
+                                    }
+                                }
+                                f.dispose();
+                            }
+                        });
+
+                        JTextField searchTxt = new JTextField();
+                        searchTxt.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+                        JPanel searchPanel = MyTableUtil.searchTablePanel(sequenceIntervalPreviewer, searchTxt, selectBtn, model, table);
+
+                        f.setLayout(new BorderLayout(1,1));
+                        f.getContentPane().add(new JScrollPane(table), BorderLayout.CENTER);
+                        f.getContentPane().add(searchPanel, BorderLayout.SOUTH);
+                        f.pack();
+                        f.setPreferredSize(new Dimension(120, 500));
+                        f.setVisible(true);
+
                     }
                 } else if (e.getSource() == showBtn) {
                     valueWithTargetValueMap = new LinkedHashMap<>();
@@ -695,20 +850,20 @@ implements ActionListener {
     }
 
     public float getStandardDeviation(LinkedHashMap<Long, Long> valueMap) {
-        float sum = 0.00f;
-        int data = 0;
-        for (long n : valueMap.keySet()) {
-            for (int i=0; i < n*valueMap.get(n); i++) {
-                sum += n;
-                data++;
+        try {
+            int data = 0;
+            float sum = 0f;
+            for (long n : valueMap.keySet()) {
+                for (int i=0; i < n * valueMap.get(n); i++) {
+                    sum += Math.pow(n - avg, 2);
+                    data++;
+                }
             }
+            return (sum == 0.00f ? 0.00f : (float) Math.sqrt(sum / data));
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-        double mean = sum / data;
-        sum = 0f;
-        for (long n : valueMap.keySet()) {
-            sum += Math.pow(n - mean, 2);
-        }
-        return (sum == 0.00f ? 0.00f : (float) Math.sqrt(sum / data));
+        return 0;
     }
 
 }

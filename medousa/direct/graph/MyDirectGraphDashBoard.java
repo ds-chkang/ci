@@ -1097,10 +1097,10 @@ implements ActionListener {
             bottomTablePanel.setLayout(new BorderLayout(3, 3));
             bottomTablePanel.setBackground(Color.WHITE);
 
-            String[] bottomTableColumns = {"NO.", "NODE", "V."};
-            String[][] bottomTableData = {};
+            String[] nodeListTableColumns = {"NO.", "NODE", "V."};
+            String[][] nodeListTableData = {};
 
-            DefaultTableModel bottomTableModel = new DefaultTableModel(bottomTableData, bottomTableColumns);
+            DefaultTableModel bottomTableModel = new DefaultTableModel(nodeListTableData, nodeListTableColumns);
             this.nodeListTable = new JTable(bottomTableModel) {
                 public String getToolTipText(MouseEvent e) {
                     String tip = null;
@@ -1118,21 +1118,20 @@ implements ActionListener {
             tooltipHeader.setToolTipStrings(toolTips);
             this.nodeListTable.setTableHeader(tooltipHeader);
 
-            Collection<MyDirectNode> bottomTableNodes = MyDirectGraphVars.directGraph.getVertices();
-            LinkedHashMap<String, Float> bottomTableSortedNodes = new LinkedHashMap<>();
-            for (MyDirectNode n : bottomTableNodes) {
-                bottomTableSortedNodes.put(n.getName(), n.getCurrentValue());
+            Collection<MyDirectNode> nodeListTableNodes = MyDirectGraphVars.directGraph.getVertices();
+            LinkedHashMap<String, Float> nodeListTableSortedNodes = new LinkedHashMap<>();
+            for (MyDirectNode n : nodeListTableNodes) {
+                nodeListTableSortedNodes.put(n.getName(), n.getCurrentValue());
             }
-            bottomTableSortedNodes = MyDirectGraphSysUtil.sortMapByFloatValue(bottomTableSortedNodes);
-            int i = -0;
-            for (String n : bottomTableSortedNodes.keySet()) {
-                bottomTableModel.addRow(
-                        new String[]{
-                                String.valueOf(++i),
-                                n,
-                                MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.oneDecimalFormat(bottomTableSortedNodes.get(n))).split("\\.")[0]
-                        }
-                );
+            nodeListTableSortedNodes = MyDirectGraphSysUtil.sortMapByFloatValue(nodeListTableSortedNodes);
+
+            int i = 0;
+            for (String n : nodeListTableSortedNodes.keySet()) {
+                bottomTableModel.addRow(new String[]{
+                    String.valueOf(++i),
+                    n,
+                    MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.oneDecimalFormat(nodeListTableSortedNodes.get(n))).split("\\.")[0]
+                });
             }
 
             this.nodeListTable.setRowHeight(20);
@@ -1182,7 +1181,7 @@ implements ActionListener {
                         @Override public void run() {
                             try {
                                 if (nodeListTable.getSelectedRow() >= 0) {
-                                    MyDirectNode n = (MyDirectNode) MyDirectGraphVars.directGraph.vRefs.get(nodeListTable.getValueAt(nodeListTable.getSelectedRow(), 1));
+                                    MyDirectNode n = MyDirectGraphVars.directGraph.vRefs.get(nodeListTable.getValueAt(nodeListTable.getSelectedRow(), 1));
                                     if (n != MyDirectGraphVars.getDirectGraphViewer().selectedSingleNode) {
                                         MyDirectGraphNodeSelecter graphNodeSearcher = new MyDirectGraphNodeSelecter();
                                         graphNodeSearcher.setSelectedNode(n);
@@ -1240,7 +1239,7 @@ implements ActionListener {
             }
 
             topTableSortedNodes = MyDirectGraphSysUtil.sortMapByFloatValue(topTableSortedNodes);
-            int k = -0;
+            int k = 0;
             for (String n : topTableSortedNodes.keySet()) {
                 topTableModel.addRow(
                     new String[]{
@@ -1353,17 +1352,22 @@ implements ActionListener {
         sortedEdges = MyDirectGraphSysUtil.sortMapByFloatValue(sortedEdges);
         int i=-0;
         for (String e : sortedEdges.keySet()) {
-            String source = e.split("-")[0];
-            String dest = e.split("-")[1];
-            edgeTableModel.addRow(
+            String [] nodes = e.split("-");
+            if (nodes.length == 2 && nodes[0].length() > 0 && nodes[1].length() > 0) {
+                String source = e.split("-")[0];
+                String dest = e.split("-")[1];
+                edgeTableModel.addRow(
                     new String[]{
-                            "" + (++i),
-                            source,
-                            dest,
-                            (MyDirectGraphVars.getDirectGraphViewer().vc.edgeValueComboBoxMenu.getSelectedIndex() == 0 ?
-                                    "0" : (MyDirectGraphVars.getDirectGraphViewer().vc.edgeValueComboBoxMenu.getSelectedIndex() == 1 ?
-                                    MyDirectGraphMathUtil.getCommaSeperatedNumber((long) (float)sortedEdges.get(e)) : MyDirectGraphMathUtil.threeDecimalFormat(sortedEdges.get(e))))
+                        "" + (++i),
+                        source,
+                        dest,
+                        (MyDirectGraphVars.getDirectGraphViewer().vc.edgeValueComboBoxMenu.getSelectedIndex() == 0 ?
+                            "0" : (MyDirectGraphVars.getDirectGraphViewer().vc.edgeValueComboBoxMenu.getSelectedIndex() == 1 ?
+                            MyDirectGraphMathUtil.getCommaSeperatedNumber((long) (float) sortedEdges.get(e)) : MyDirectGraphMathUtil.threeDecimalFormat(sortedEdges.get(e))))
                     });
+            } else {
+                //System.out.println(e);
+            }
         }
 
         edgeTable.setRowHeight(20);
@@ -2074,14 +2078,16 @@ implements ActionListener {
             int i = 0;
             for (String e : sortedEdges.keySet()) {
                 String [] edgePair = e.split("-");
-                ((DefaultTableModel) edgeTable.getModel()).addRow(
-                    new String[]{
-                        "" + (++i),
-                        edgePair[0],
-                        edgePair[1],
-                        (MyDirectGraphVars.getDirectGraphViewer().vc.edgeValueComboBoxMenu.getSelectedIndex() == 0 ?
-                        "0" : (MyDirectGraphVars.getDirectGraphViewer().vc.edgeValueComboBoxMenu.getSelectedIndex() == 1 ?
-                        MyDirectGraphMathUtil.getCommaSeperatedNumber((long) (float)sortedEdges.get(e)) : MyDirectGraphMathUtil.threeDecimalFormat(sortedEdges.get(e))))});
+                if (edgePair.length == 2 && edgePair[0].length() > 0 && edgePair[1].length() > 0) {
+                    ((DefaultTableModel) edgeTable.getModel()).addRow(
+                            new String[]{
+                                    "" + (++i),
+                                    edgePair[0],
+                                    edgePair[1],
+                                    (MyDirectGraphVars.getDirectGraphViewer().vc.edgeValueComboBoxMenu.getSelectedIndex() == 0 ?
+                                            "0" : (MyDirectGraphVars.getDirectGraphViewer().vc.edgeValueComboBoxMenu.getSelectedIndex() == 1 ?
+                                            MyDirectGraphMathUtil.getCommaSeperatedNumber((long) (float) sortedEdges.get(e)) : MyDirectGraphMathUtil.threeDecimalFormat(sortedEdges.get(e))))});
+                }
             }
         } else if (MyDirectGraphVars.getDirectGraphViewer().multiNodes != null) {
             LinkedHashMap<String, Float> edgeMap = new LinkedHashMap<>();
@@ -2109,7 +2115,8 @@ implements ActionListener {
             int i = 0;
             for (String e : edgeMap.keySet()) {
                 String [] edgePair = e.split("-");
-                float edgeValue = edgeMap.get(e);
+                if (edgePair.length == 2 && edgePair[0].length() > 0 && edgePair[1].length() > 0) {
+                    float edgeValue = edgeMap.get(e);
                 ((DefaultTableModel) edgeTable.getModel()).addRow(
                         new String[]{
                                 "" + (++i),
@@ -2118,6 +2125,7 @@ implements ActionListener {
                                 (MyDirectGraphVars.getDirectGraphViewer().vc.edgeValueComboBoxMenu.getSelectedIndex() == 0 ?
                                         "0" : (MyDirectGraphVars.getDirectGraphViewer().vc.edgeValueComboBoxMenu.getSelectedIndex() == 1 ?
                                         MyDirectGraphMathUtil.getCommaSeperatedNumber((long) edgeValue) : MyDirectGraphMathUtil.threeDecimalFormat(edgeValue)))});
+                }
             }
         } else {
             LinkedHashMap<String, Float> edgeMap = new LinkedHashMap<>();
@@ -2134,15 +2142,17 @@ implements ActionListener {
             int i = 0;
             for (String edgeName : edgeMap.keySet()) {
                 String [] edgePair = edgeName.split("-");
-                float edgeValue = edgeMap.get(edgeName);
-                ((DefaultTableModel) edgeTable.getModel()).addRow(
-                        new String[]{
-                                "" + (++i),
-                                edgePair[0],
-                                edgePair[1],
-                                (MyDirectGraphVars.getDirectGraphViewer().vc.edgeValueComboBoxMenu.getSelectedIndex() == 0 ?
-                                        "0" : (MyDirectGraphVars.getDirectGraphViewer().vc.edgeValueComboBoxMenu.getSelectedIndex() == 1 ?
-                                        MyDirectGraphMathUtil.getCommaSeperatedNumber((long) edgeValue) : MyDirectGraphMathUtil.threeDecimalFormat(edgeValue)))});
+                if (edgePair.length == 2 && edgePair[0].length() > 0 && edgePair[1].length() > 0) {
+                    float edgeValue = edgeMap.get(edgeName);
+                    ((DefaultTableModel) edgeTable.getModel()).addRow(
+                            new String[]{
+                                    "" + (++i),
+                                    edgePair[0],
+                                    edgePair[1],
+                                    (MyDirectGraphVars.getDirectGraphViewer().vc.edgeValueComboBoxMenu.getSelectedIndex() == 0 ?
+                                            "0" : (MyDirectGraphVars.getDirectGraphViewer().vc.edgeValueComboBoxMenu.getSelectedIndex() == 1 ?
+                                            MyDirectGraphMathUtil.getCommaSeperatedNumber((long) edgeValue) : MyDirectGraphMathUtil.threeDecimalFormat(edgeValue)))});
+                }
             }
         }
         edgeTable.revalidate();

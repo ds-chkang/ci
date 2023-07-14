@@ -1,56 +1,99 @@
 package medousa.preview;
 
 import medousa.MyProgressBar;
-import medousa.direct.utils.MyDirectGraphMathUtil;
 import medousa.direct.utils.MyDirectGraphVars;
-import medousa.message.MyMessageUtil;
-import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.labels.BoxAndWhiskerToolTipGenerator;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer;
+import org.jfree.data.statistics.*;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.*;
+import java.util.List;
 
-public class MyCorrelationPreview
+public class MyCategoryRealCorrelationPreview
 extends JPanel {
 
     private JTable dataTbl;
-    private MyChartPreviewer dataPreviewChart;
     private JComboBox xVariable;
     private JComboBox yVariable;
     private JLabel result = new JLabel();
 
     private JButton showBtn = new JButton("SHOW");
 
-    public MyCorrelationPreview() {}
+    public MyCategoryRealCorrelationPreview() {}
 
-    public void showCorrelation(int x, int y) {
-        double [] xData = new double[dataTbl.getRowCount()];
-        double [] yData = new double[dataTbl.getRowCount()];
+    private void showChart() {
+        final BoxAndWhiskerCategoryDataset dataset = createDataset();
+        final CategoryAxis xAxis = new CategoryAxis(xVariable.getSelectedItem().toString());
+        final NumberAxis yAxis = new NumberAxis(yVariable.getSelectedItem().toString());
+        yAxis.setAutoRangeIncludesZero(false);
+        final BoxAndWhiskerRenderer renderer = new BoxAndWhiskerRenderer();
+        renderer.setFillBox(false);
+        renderer.setToolTipGenerator(new BoxAndWhiskerToolTipGenerator());
+        final CategoryPlot plot = new CategoryPlot(dataset, xAxis, yAxis, renderer);
 
+        final JFreeChart chart = new JFreeChart(
+                xVariable.getSelectedItem().toString() + "   VS   " + yVariable.getSelectedItem().toString(),
+                new Font("SansSerif", Font.BOLD, 14),
+                plot,
+                true
+        );
+        chart.removeLegend();
+        final ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new java.awt.Dimension(450, 270));
+
+        JFrame f = new JFrame("CATEGORY  VS  REAL CORRELATION");
+        f.setLayout(new BorderLayout(1,1));
+        f.getContentPane().add(chartPanel);
+        f.setPreferredSize(new Dimension(650, 800));
+        f.pack();
+        f.setVisible(true);
+    }
+
+    private BoxAndWhiskerCategoryDataset createDataset() {
         int row = 0;
+        Set<String> categorySet = new HashSet<>();
         while (row < dataTbl.getRowCount()) {
-            xData[row] = Double.parseDouble((dataTbl.getModel()).getValueAt(row, x).toString());
-            yData[row] = Double.parseDouble((dataTbl.getModel()).getValueAt(row, y).toString());
+            String value = dataTbl.getValueAt(row, xVariable.getSelectedIndex()).toString();
+            categorySet.add(value);
             row++;
         }
 
-        PearsonsCorrelation correlation = new PearsonsCorrelation();
-        double correlationCoefficient = correlation.correlation(xData, yData);
-
-        result.setText("");
-        result.setText(" CORR.: " + MyDirectGraphMathUtil.fourDecimalFormat(correlationCoefficient));
+        final DefaultBoxAndWhiskerCategoryDataset dataset = new DefaultBoxAndWhiskerCategoryDataset();
+        int i = 1;
+        for (String category : categorySet) {
+            List<Double> yValues = new ArrayList();
+            int yRow = 0;
+            while (yRow < dataTbl.getRowCount()) {
+                String xValue = dataTbl.getValueAt(yRow, xVariable.getSelectedIndex()).toString();
+                if (xValue.equals(category)) {
+                    String yValue = dataTbl.getValueAt(yRow, yVariable.getSelectedIndex()).toString();
+                    yValues.add(Double.parseDouble(yValue));
+                }
+                yRow++;
+            }
+            i++;
+            dataset.add(yValues, "Series" + i,  category);
+        }
+        return dataset;
     }
-
 
     public void decorate(String [] columns, JTable dataTable) {
         try {
             removeAll();
-            setLayout(new BorderLayout(3,3));
+            setLayout(new BorderLayout(1,1));
 
             if (dataTbl == null) {dataTbl = dataTable;}
-            if (this.dataPreviewChart == null) {this.dataPreviewChart = dataPreviewChart;}
 
             showBtn.setFont(MyDirectGraphVars.tahomaPlainFont12);
             showBtn.setFocusable(false);
@@ -60,7 +103,7 @@ extends JPanel {
                     new Thread(new Runnable() {
                         @Override public void run() {
                             MyProgressBar pb = new MyProgressBar(false);
-                            showCorrelation(xVariable.getSelectedIndex(), yVariable.getSelectedIndex());
+                            showChart();
                             pb.updateValue(100, 100);
                             pb.dispose();
                         }
@@ -80,16 +123,6 @@ extends JPanel {
                 @Override public void actionPerformed(ActionEvent e) {
                     new Thread(new Runnable() {
                         @Override public void run() {
-                            try {
-                                if (xVariable.getSelectedIndex() == 0) {
-                                    return;
-                                }
-                                if (dataTable.getRowCount() > 0 && !dataTable.getValueAt(0, xVariable.getSelectedIndex()).toString().trim().matches("\\d+(\\.\\d+)?")) {
-                                    MyMessageUtil.showInfoMsg("Select a numerical variable.");
-                                }
-                            } catch (Exception ex) {
-
-                            }
                         }
                     }).start();
                 }
@@ -107,32 +140,20 @@ extends JPanel {
                 @Override public void actionPerformed(ActionEvent e) {
                     new Thread(new Runnable() {
                         @Override public void run() {
-                            try {
-                                if (yVariable.getSelectedIndex() == 0) return;
-
-                                if (dataTable.getRowCount() > 0 && !dataTable.getValueAt(0, yVariable.getSelectedIndex()).toString().trim().matches("\\d+(\\.\\d+)?")) {
-                                    MyMessageUtil.showInfoMsg("Select a numerical variable.");
-                                    yVariable.setSelectedIndex(0);
-                                } else {
-
-                                }
-                            } catch (Exception ex) {
-
-                            }
                         }
                     }).start();
                 }
             });
 
             JPanel xPanel = new JPanel();
-            xPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 2,2));
+            xPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 1,1));
             JLabel variableLabel1 = new JLabel("X:");
             variableLabel1.setFont(MyDirectGraphVars.tahomaPlainFont12);
             xPanel.add(variableLabel1);
             xPanel.add(xVariable);
 
             JPanel yPanel = new JPanel();
-            yPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 2,2));
+            yPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 1,1));
             JLabel variableLabel2 = new JLabel("Y:");
             variableLabel2.setFont(MyDirectGraphVars.tahomaPlainFont12);
             yPanel.add(variableLabel2);
@@ -144,14 +165,14 @@ extends JPanel {
             result.setFont(MyDirectGraphVars.tahomaBoldFont12);
 
             JPanel controlPanel = new JPanel();
-            controlPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 3,3));
+            controlPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 1,1));
             controlPanel.add(xPanel);
             controlPanel.add(emptyLabel);
             controlPanel.add(yPanel);
             controlPanel.add(showBtn);
             controlPanel.add(result);
 
-            TitledBorder border = BorderFactory.createTitledBorder("CORRELATION PREVIEW");
+            TitledBorder border = BorderFactory.createTitledBorder("CATEGORY VS REAL CORRELATION PREVIEW");
             border.setTitleFont(MyDirectGraphVars.tahomaBoldFont12);
             setBorder(BorderFactory.createTitledBorder(border, "", TitledBorder.LEFT, TitledBorder.TOP));
 

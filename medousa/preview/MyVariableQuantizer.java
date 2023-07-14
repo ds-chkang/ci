@@ -6,7 +6,7 @@ import medousa.direct.utils.MyDirectGraphSysUtil;
 import medousa.direct.utils.MyDirectGraphVars;
 import medousa.message.MyMessageUtil;
 import medousa.sequential.category.MySequentialGraphCategory;
-import medousa.table.MyTableCellRenderer;
+import medousa.table.MyTableCellBarChartRenderer;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.axis.CategoryAxis;
@@ -50,7 +50,7 @@ implements ActionListener {
         JPanel variablePanel = new JPanel();
         variablePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 1,1));
 
-        JLabel variableLabel = new JLabel("X: ");
+        JLabel variableLabel = new JLabel("X:");
         variableLabel.setFont(MyDirectGraphVars.tahomaPlainFont12);
 
         variable = new JComboBox();
@@ -64,12 +64,12 @@ implements ActionListener {
         }
         variable.addActionListener(this);
 
-        JLabel numberLabel = new JLabel("Q.: ");
+        JLabel numberLabel = new JLabel("Q.:");
         numberLabel.setFont(MyDirectGraphVars.tahomaPlainFont12);
 
         number = new JTextField();
         number.setFont(MyDirectGraphVars.tahomaPlainFont12);
-        number.setPreferredSize(new Dimension(130, 24));
+        number.setPreferredSize(new Dimension(130, 23));
         number.setBorder(BorderFactory.createEtchedBorder());
 
         JPanel qPanel = new JPanel();
@@ -80,7 +80,7 @@ implements ActionListener {
         variablePanel.add(variableLabel);
         variablePanel.add(variable);
 
-        orderBy = new JCheckBox("ORDER BY VALUE ");
+        orderBy = new JCheckBox("ORDER BY ");
         orderBy.setFont(MyDirectGraphVars.tahomaPlainFont12);
         orderBy.setFocusable(false);
         orderBy.setSelected(false);
@@ -95,10 +95,12 @@ implements ActionListener {
         border.setTitleFont(MyDirectGraphVars.tahomaBoldFont12);
         setBorder(BorderFactory.createTitledBorder(border, "", TitledBorder.LEFT, TitledBorder.TOP));
 
+
         add(variablePanel);
         add(qPanel);
         add(orderBy);
         add(showBtn);
+
     }
 
     private void searchButtonActionPerformed(ActionEvent e) {
@@ -130,7 +132,7 @@ implements ActionListener {
             @Override public void run() {
                 if (e.getSource() == showBtn) {
                     if (number.getText().length() == 0 ||
-                        !number.getText().matches("\\d+(\\.\\d+)?")) {
+                        !number.getText().matches("-?\\d+(\\.\\d+)?")) {
                         MyMessageUtil.showInfoMsg("Check the number of quantizations");
                         return;
                     }
@@ -269,7 +271,7 @@ implements ActionListener {
         distributionTable.getTableHeader().setBackground(new Color(0,0,0,0));
         distributionTable.getTableHeader().setOpaque(false);
         distributionTable.getTableHeader().setFont(MyDirectGraphVars.tahomaBoldFont12);
-        distributionTable.getColumnModel().getColumn(3).setCellRenderer(new MyTableCellRenderer());
+        distributionTable.getColumnModel().getColumn(3).setCellRenderer(new MyTableCellBarChartRenderer());
         this.sorter = new TableRowSorter<>(distributionTable.getModel());
         distributionTable.setRowSorter(this.sorter);
 

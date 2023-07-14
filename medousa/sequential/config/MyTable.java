@@ -1,7 +1,7 @@
 package medousa.sequential.config;
 
 import medousa.sequential.utils.MySequentialGraphVars;
-import medousa.table.MyTableCellRenderer;
+import medousa.table.MyTableCellBarChartRenderer;
 import medousa.table.MyTableUtil;
 
 import javax.swing.*;
@@ -33,7 +33,7 @@ implements Serializable {
      * @param columnIndex
      */
     public void setColumnCellRenderer(int columnIndex) {
-        getColumnModel().getColumn(columnIndex).setCellRenderer(new MyTableCellRenderer());
+        getColumnModel().getColumn(columnIndex).setCellRenderer(new MyTableCellBarChartRenderer());
     }
 
     /**

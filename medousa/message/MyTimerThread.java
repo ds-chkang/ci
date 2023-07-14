@@ -14,9 +14,9 @@ extends Thread {
     protected JLabel timeLabel;
 
     protected SimpleDateFormat dateFormat = 
-            new SimpleDateFormat("yyyy/MM/d");
+            new SimpleDateFormat("yyyy/MM/dd");
     protected SimpleDateFormat timeFormat =
-            new SimpleDateFormat("h:mm:ss");
+            new SimpleDateFormat("hh:mm:ss");
 
     public MyTimerThread(JLabel dateLabel, JLabel timeLabel) {
         this.dateLabel = dateLabel;

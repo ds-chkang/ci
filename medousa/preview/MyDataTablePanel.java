@@ -52,6 +52,9 @@ extends JPanel {
             this.dataPropertyTable.numberOfColumns = this.dataTableColumns.length;
             this.dataPropertyTable.decorate();
 
+            JScrollPane dataTableScrollPane = new JScrollPane(this.dataTable);
+            dataTableScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+
             loadDataToTable();
 
             this.searchColumnSelecter = new JComboBox();
@@ -102,26 +105,60 @@ extends JPanel {
 
             JPanel dataTableSearchPanel = new JPanel();
             dataTableSearchPanel.setLayout(new BorderLayout(1,1));
-            dataTableSearchPanel.add(new JScrollPane(dataTable), BorderLayout.CENTER);
+            dataTableSearchPanel.add(dataTableScrollPane, BorderLayout.CENTER);
             dataTableSearchPanel.add(dataSearchPanel, BorderLayout.SOUTH);
 
-            JSplitPane dataPropertyDataTableSplitPane = new JSplitPane();
-            dataPropertyDataTableSplitPane.setOneTouchExpandable(false);
-            dataPropertyDataTableSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
-            dataPropertyDataTableSplitPane.setLeftComponent(new JScrollPane(this.dataPropertyTable));
-            dataPropertyDataTableSplitPane.setRightComponent(dataTableSearchPanel);
-            dataPropertyDataTableSplitPane.setDividerLocation(0.23);
-            dataPropertyDataTableSplitPane.addComponentListener(new ComponentAdapter() {
+            JSplitPane dataTablePropertySplitPane = new JSplitPane();
+            dataTablePropertySplitPane.setOneTouchExpandable(false);
+            dataTablePropertySplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
+            dataTablePropertySplitPane.setLeftComponent(this.dataPropertyTable);
+            dataTablePropertySplitPane.setRightComponent(dataTableSearchPanel);
+            dataTablePropertySplitPane.setDividerLocation(0.23);
+            dataTablePropertySplitPane.addComponentListener(new ComponentAdapter() {
                 @Override
                 public void componentResized(ComponentEvent e) {
                     super.componentResized(e);
-                    dataPropertyDataTableSplitPane.setDividerLocation(0.23);
+                    dataTablePropertySplitPane.setDividerLocation(0.23);
                 }
             });
 
-            add(dataPropertyDataTableSplitPane, BorderLayout.CENTER);
+            dataTable.addMouseListener(new TableMouseListener());
+
+
+            add(dataTableSearchPanel, BorderLayout.CENTER);
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+    }
+
+    private class TableMouseListener
+            implements MouseListener {
+        @Override public void mouseClicked(MouseEvent e) {
+            if (SwingUtilities.isRightMouseButton(e)) {
+                int row = dataTable.rowAtPoint(e.getPoint());
+                int column = dataTable.columnAtPoint(e.getPoint());
+
+                if (row >= 0 && row < dataTable.getRowCount()) {
+                    //columnStatTable.setRowSelectionInterval(row, row);
+                    //columnStatTable.setColumnSelectionInterval(column, column);
+                    dataTable.setSelectionBackground(Color.WHITE);
+                    dataTable.setSelectionForeground(Color.BLACK);
+                }
+            } else {
+                dataTable.setSelectionBackground(Color.ORANGE);
+                dataTable.setSelectionForeground(Color.BLACK);
+            }
+        }
+
+        @Override public void mousePressed(MouseEvent e) {}
+        @Override public void mouseReleased(MouseEvent e) {}
+        @Override public void mouseEntered(MouseEvent e) {
+            dataTable.setSelectionBackground(Color.WHITE);
+            dataTable.setSelectionForeground(Color.BLACK);
+        }
+        @Override public void mouseExited(MouseEvent e) {
+            dataTable.setSelectionBackground(Color.WHITE);
+            dataTable.setSelectionForeground(Color.BLACK);
         }
     }
 
@@ -137,7 +174,7 @@ extends JPanel {
 
     private void searchButtonActionPerformed(ActionEvent e) {
         try {
-            String searchValue = searchTxt.getText();
+            String searchValue = searchTxt.getText().toUpperCase();
             searchTable(searchValue);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -158,7 +195,6 @@ extends JPanel {
 
     public boolean loadDataToTable() {
         try {
-            int i = 0;
             int numericColumns = 0;
             int fineData = 0;
             for (File f : MyDirectGraphVars.app.getDirectGraphMsgBroker().getInputFiles()) {
@@ -172,7 +208,7 @@ extends JPanel {
 
                     boolean isEmptyColumnExist = false;
                     int columnCnt = 1;
-                    record[0] = "" + (++i);
+                    record[0] = "" + (this.dataTable.getRowCount()+1);
 
                     for (int col=1; col < rawData.length; col++) {
                         if (rawData[col].trim().length() == 0) {
@@ -180,7 +216,7 @@ extends JPanel {
                             break;
                         }
 
-                        if (!rawData[col].trim().matches("\\d+(\\.\\d+)?")) {
+                        if (!rawData[col].trim().matches("-?\\d+(\\.\\d+)?")) {
                             if (!checkIfDateTimeColumn(rawData[col]).equals("")) {
                                 String [] dateTime = rawData[col].split(" ");
                                 if (dateTime.length > 2) {
@@ -199,7 +235,7 @@ extends JPanel {
                     if (isEmptyColumnExist) {continue;}
                     else if (!isEmptyColumnExist && numericColumns == 0) {
                         for (int col=1; col < rawData.length; col++) {
-                            if (rawData[col].trim().matches("\\d+(\\.\\d+)?")) {
+                            if (rawData[col].trim().matches("-?\\d+(\\.\\d+)?")) {
                                 numericColumns++;
                             }
                         }
@@ -218,8 +254,8 @@ extends JPanel {
 
             this.dataPropertyTable.tableModel.addRow(new String[]{"INPUT FILES", MyDirectGraphMathUtil.getCommaSeperatedNumber(MyDirectGraphVars.app.getDirectGraphMsgBroker().getInputFiles().length)});
             this.dataPropertyTable.tableModel.addRow(new String[]{"COLUMNS", MyDirectGraphMathUtil.getCommaSeperatedNumber(this.dataTableColumns.length)});
-            this.dataPropertyTable.tableModel.addRow(new String[]{"DATA", MyDirectGraphMathUtil.getCommaSeperatedNumber(i)});
-            this.dataPropertyTable.tableModel.addRow(new String[]{"LOADED DATA", MyDirectGraphMathUtil.getCommaSeperatedNumber(fineData) + "(" + MyDirectGraphMathUtil.twoDecimalFormat((float)fineData/i) + ")"});
+            this.dataPropertyTable.tableModel.addRow(new String[]{"DATA", MyDirectGraphMathUtil.getCommaSeperatedNumber(this.dataTable.getRowCount())});
+            this.dataPropertyTable.tableModel.addRow(new String[]{"LOADED DATA", MyDirectGraphMathUtil.getCommaSeperatedNumber(fineData) + "(" + MyDirectGraphMathUtil.twoDecimalFormat((float)fineData/this.dataTable.getRowCount()) + ")"});
             this.dataPropertyTable.tableModel.addRow(new String[]{"NUMERIC COLUMNS", MyDirectGraphMathUtil.getCommaSeperatedNumber(numericColumns)});
             this.dataPropertyTable.tableModel.addRow(new String[]{"CATEGORY COLUMNS", MyDirectGraphMathUtil.getCommaSeperatedNumber(this.dataTableColumns.length-numericColumns)});
             this.dataPropertyTable.tableModel.addRow(new String[]{"WORKING DIRECTORY", MyDirectGraphSysUtil.getWorkingDir()});

@@ -54,34 +54,38 @@ public class MyDirectGraphBuilder {
 
     public MyDirectGraphBuilder() {
         this.setEdgeValues();
-        System.out.println("setEdgeValues() done.");
         this.setEdgeLabels();
-        System.out.println("setEdgeLabels() done.");
         this.setNodeValues();
-        System.out.println("setNodeValues() done.");
         this.setNodeLabels();
-        System.out.println("setNodeLabels() done.");
         MyDirectGraphVars.directGraph = new MyDirectGraph(EdgeType.DIRECTED);
     }
 
     public MyDirectGraph createDirectGraph(ArrayList<ArrayList<String>> data) {
         try {
-            int i = 0;
+            int fromIndex = MyDirectGraphVars.app.getDirectGraphMsgBroker().getHeaderIndex(
+                MyDirectGraphVars.app.getDirectGraphMsgBroker().getDirectConfigPanel().getDefaultVariableTable().getValueAt(1, 1).toString());
+            int toIndex = MyDirectGraphVars.app.getDirectGraphMsgBroker().getHeaderIndex(
+                MyDirectGraphVars.app.getDirectGraphMsgBroker().getDirectConfigPanel().getDefaultVariableTable().getValueAt(2, 1).toString());
             for (ArrayList<String> row : data) {
-                i++;
-                if (row.size() % i == 1000) {System.out.println(i+1);}
-                String fromItem = row.get(MyDirectGraphVars.app.getDirectGraphMsgBroker().getHeaderIndex("FROM ITEM"));
-                String toItem = row.get(MyDirectGraphVars.app.getDirectGraphMsgBroker().getHeaderIndex("TO ITEM"));
+                String fromItem = row.get(fromIndex).toUpperCase();
+                String toItem = row.get(toIndex).toUpperCase();
+
+                if (fromItem.replaceAll("", "").length() == 0 || toItem.replaceAll(" ", "").length() == 0) {
+                    continue;
+                }
+
                 if (!MyDirectGraphVars.directGraph.vRefs.containsKey(fromItem)) {
                     MyDirectNode n = new MyDirectNode(fromItem);
                     MyDirectGraphVars.directGraph.vRefs.put(fromItem, n);
                     MyDirectGraphVars.directGraph.addVertex(n);
                 }
+
                 if (!MyDirectGraphVars.directGraph.vRefs.containsKey(toItem)) {
                     MyDirectNode n = new MyDirectNode(toItem);
                     MyDirectGraphVars.directGraph.vRefs.put(toItem, n);
                     MyDirectGraphVars.directGraph.addVertex(n);
                 }
+
                 (MyDirectGraphVars.directGraph.vRefs.get(fromItem)).setContribution(1);
                 (MyDirectGraphVars.directGraph.vRefs.get(fromItem)).setOutContribution(1);
                 (MyDirectGraphVars.directGraph.vRefs.get(toItem)).setContribution(1);
@@ -102,11 +106,15 @@ public class MyDirectGraphBuilder {
                 MyDirectEdge edge = new MyDirectEdge(source, dest);
                 MyDirectGraphVars.directGraph.addEdge(edge, source, dest);
                 MyDirectGraphVars.directGraph.directGraphEdgeRefMap.put(edgeRef, edge);
+                edge.setContribution(1);
+                this.addEdgeValues(edge, row);
+                this.addEdgeLabels(edge, row);
+            } else {
+                MyDirectEdge edge = MyDirectGraphVars.directGraph.directGraphEdgeRefMap.get(edgeRef);
+                edge.setContribution(1);
+                this.addEdgeValues(edge, row);
+                this.addEdgeLabels(edge, row);
             }
-            MyDirectEdge edge = ((MyDirectEdge) MyDirectGraphVars.directGraph.directGraphEdgeRefMap.get(edgeRef));
-            edge.setContribution(1);
-            this.addEdgeValues(edge, row);
-            this.addEdgeLabels(edge, row);
         } catch (Exception ex) {ex.printStackTrace();}
     }
 

@@ -1,62 +1,69 @@
 package medousa.test;
 
+import java.awt.*;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Date;
+
+import medousa.direct.utils.MyDirectGraphVars;
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartFrame;
+import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
-import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
 import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer;
-import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset;
+import org.jfree.data.statistics.BoxAndWhiskerCalculator;
+import org.jfree.data.statistics.BoxAndWhiskerXYDataset;
+import org.jfree.data.statistics.DefaultBoxAndWhiskerXYDataset;
+import org.jfree.date.DateUtilities;
+import org.jfree.ui.ApplicationFrame;
+import org.jfree.ui.RefineryUtilities;
 
-import java.awt.Color;
-import java.util.ArrayList;
+public class BoxPlotExample extends ApplicationFrame {
 
-public class BoxPlotExample {
-    public static void main(String[] args) {
+    public BoxPlotExample(String titel) {
+        super(titel);
 
-        // Step 1: Create a DefaultBoxAndWhiskerCategoryDataset and add data
-        DefaultBoxAndWhiskerCategoryDataset dataset = new DefaultBoxAndWhiskerCategoryDataset();
-        java.util.List<Double> values = new ArrayList<>();
-        values.add(1.5);
-        values.add(2.0);
-        values.add(3.6);
-        values.add(2.8);
-        values.add(2.1);
-        dataset.add(values, "Series 1", "Category 1");
+        final BoxAndWhiskerXYDataset dataset = createDataset();
+        final JFreeChart chart = createChart(dataset);
 
-        // Step 2: Create a JFreeChart and configure the plot
+        final ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new java.awt.Dimension(500, 300));
+        setContentPane(chartPanel);
+
+    }
+
+    private BoxAndWhiskerXYDataset createDataset() {
+        final int ENTITY_COUNT = 10;
+
+        DefaultBoxAndWhiskerXYDataset dataset = new
+                DefaultBoxAndWhiskerXYDataset("Test");
+
+        for (int i = 0; i < ENTITY_COUNT; i++) {
+            Date date = DateUtilities.createDate(2003, 7, i + 1, 12, 0);
+            List values = new ArrayList();
+            for (int j = 0; j < 10; j++) {
+                values.add(new Double(10.0 + Math.random() * 10.0));
+            }
+            dataset.add(date,
+                    BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(values));
+        }
+        return dataset;
+    }
+
+    private JFreeChart createChart(final BoxAndWhiskerXYDataset dataset) {
         JFreeChart chart = ChartFactory.createBoxAndWhiskerChart(
-                "Boxplot",      // Chart title
-                "Category",     // X-axis label
-                "Value",        // Y-axis label
-                dataset,        // Dataset
-                true            // Show legend
-        );
+                "Box and Whisker Chart", "Time", "Value", dataset, true);
+        chart.setBackgroundPaint(new Color(249, 231, 236));
 
-        CategoryPlot plot = (CategoryPlot) chart.getPlot();
-        BoxAndWhiskerRenderer renderer = (BoxAndWhiskerRenderer) plot.getRenderer();
+        return chart;
+    }
 
-        // Step 3: Customize the appearance of the boxplot
-        renderer.setFillBox(false);      // Do not fill boxes
-        renderer.setMeanVisible(false);  // Do not show the mean
-        renderer.setMedianVisible(true); // Show the median
-        renderer.setUseOutlinePaintForWhiskers(true); // Use outline paint for whiskers
+    public static void main(final String[] args) {
 
-        // Set custom colors
-        renderer.setSeriesPaint(0, Color.blue);
-        renderer.setSeriesPaint(1, Color.red);
-
-        // Enable tooltips for data points
-        renderer.setToolTipGenerator(new StandardCategoryToolTipGenerator());
-
-        // Show outliers
-        renderer.setUseOutlinePaintForWhiskers(true);
-        renderer.setBaseOutlinePaint(Color.black);
-
-        // Step 4: Create a ChartFrame and display the chart
-        ChartFrame frame = new ChartFrame("Boxplot", chart);
-        frame.pack();
-        frame.setVisible(true);
+        final BoxPlotExample demo = new BoxPlotExample("");
+        demo.pack();
+        RefineryUtilities.centerFrameOnScreen(demo);
+        demo.setVisible(true);
     }
 }

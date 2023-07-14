@@ -1,7 +1,7 @@
 package medousa.direct.config;
 
 import medousa.direct.utils.MyDirectGraphVars;
-import medousa.table.MyTableCellRenderer;
+import medousa.table.MyTableCellBarChartRenderer;
 import medousa.table.MyTableUtil;
 
 import javax.swing.*;
@@ -25,7 +25,7 @@ implements Serializable {
 
 
     public void setColumnCellRenderer(int columnIndex) {
-        getColumnModel().getColumn(columnIndex).setCellRenderer(new MyTableCellRenderer());
+        getColumnModel().getColumn(columnIndex).setCellRenderer(new MyTableCellBarChartRenderer());
     }
 
     public void setTblRowHeight(int rowHeight) {

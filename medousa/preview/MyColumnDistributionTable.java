@@ -1,23 +1,19 @@
 package medousa.preview;
 
-import medousa.direct.utils.MyDirectGraphMathUtil;
 import medousa.direct.utils.MyDirectGraphVars;
-import medousa.table.MyTableCellRenderer;
+import medousa.table.MyTableCellBarChartRenderer;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 
 public class MyColumnDistributionTable
 extends JPanel {
 
-    public JTable table;
+    public JTable columnDistributionTable;
     public DefaultTableModel tableModel;
     private JTextField searchTxt = new JTextField();
     private TableRowSorter<TableModel> sorter;
@@ -39,23 +35,24 @@ extends JPanel {
             String[][] data = {};
 
             tableModel = new DefaultTableModel(data, columns);
-            table = new JTable(tableModel);
-            table.setBackground(Color.WHITE);
-            table.setFont(MyDirectGraphVars.f_pln_12);
-            table.setFocusable(false);
-            table.setRowHeight(25);
-            table.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(55);
-            table.getTableHeader().getColumnModel().getColumn(0).setMaxWidth(60);
-            table.getTableHeader().getColumnModel().getColumn(1).setPreferredWidth(130);
-            table.getTableHeader().getColumnModel().getColumn(2).setPreferredWidth(75);
-            table.getTableHeader().getColumnModel().getColumn(3).setPreferredWidth(70);
-            table.getTableHeader().getColumnModel().getColumn(4).setPreferredWidth(70);
-            table.getTableHeader().setFont(MyDirectGraphVars.tahomaBoldFont12);
-            table.getTableHeader().setBackground(new Color(0, 0, 0, 0));
-            table.getTableHeader().setOpaque(false);
-            table.getColumnModel().getColumn(3).setCellRenderer(new MyTableCellRenderer());
-            this.sorter = new TableRowSorter<>(this.table.getModel());
-            this.table.setRowSorter(this.sorter);
+            columnDistributionTable = new JTable(tableModel);
+            columnDistributionTable.setBackground(Color.WHITE);
+            columnDistributionTable.setFont(MyDirectGraphVars.f_pln_12);
+            columnDistributionTable.setFocusable(false);
+            columnDistributionTable.setRowHeight(25);
+            columnDistributionTable.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(55);
+            columnDistributionTable.getTableHeader().getColumnModel().getColumn(0).setMaxWidth(60);
+            columnDistributionTable.getTableHeader().getColumnModel().getColumn(1).setPreferredWidth(130);
+            columnDistributionTable.getTableHeader().getColumnModel().getColumn(2).setPreferredWidth(75);
+            columnDistributionTable.getTableHeader().getColumnModel().getColumn(3).setPreferredWidth(70);
+            columnDistributionTable.getTableHeader().getColumnModel().getColumn(4).setPreferredWidth(70);
+            columnDistributionTable.getTableHeader().setFont(MyDirectGraphVars.tahomaBoldFont12);
+            columnDistributionTable.getTableHeader().setBackground(new Color(0, 0, 0, 0));
+            columnDistributionTable.getTableHeader().setOpaque(false);
+            columnDistributionTable.getColumnModel().getColumn(3).setCellRenderer(new MyTableCellBarChartRenderer());
+            columnDistributionTable.addMouseListener(new TableMouseListener());
+            this.sorter = new TableRowSorter<>(this.columnDistributionTable.getModel());
+            this.columnDistributionTable.setRowSorter(this.sorter);
 
             JButton searchBtn = new JButton("SEARCH");
             searchBtn.setFocusable(false);
@@ -95,10 +92,41 @@ extends JPanel {
 
             searchBtn.addActionListener(this::searchButtonActionPerformed);
 
-            add(new JScrollPane(table), BorderLayout.CENTER);
+            add(new JScrollPane(columnDistributionTable), BorderLayout.CENTER);
             add(dataSearchPanel, BorderLayout.SOUTH);
         } catch (Exception ex) {
 
+        }
+    }
+
+    private class TableMouseListener
+            implements MouseListener {
+        @Override public void mouseClicked(MouseEvent e) {
+            if (SwingUtilities.isRightMouseButton(e)) {
+                int row = columnDistributionTable.rowAtPoint(e.getPoint());
+                int column = columnDistributionTable.columnAtPoint(e.getPoint());
+
+                if (row >= 0 && row < columnDistributionTable.getRowCount()) {
+                    //columnStatTable.setRowSelectionInterval(row, row);
+                    //columnStatTable.setColumnSelectionInterval(column, column);
+                    columnDistributionTable.setSelectionBackground(Color.WHITE);
+                    columnDistributionTable.setSelectionForeground(Color.BLACK);
+                }
+            } else {
+                columnDistributionTable.setSelectionBackground(Color.ORANGE);
+                columnDistributionTable.setSelectionForeground(Color.BLACK);
+            }
+        }
+
+        @Override public void mousePressed(MouseEvent e) {}
+        @Override public void mouseReleased(MouseEvent e) {}
+        @Override public void mouseEntered(MouseEvent e) {
+            columnDistributionTable.setSelectionBackground(Color.WHITE);
+            columnDistributionTable.setSelectionForeground(Color.BLACK);
+        }
+        @Override public void mouseExited(MouseEvent e) {
+            columnDistributionTable.setSelectionBackground(Color.WHITE);
+            columnDistributionTable.setSelectionForeground(Color.BLACK);
         }
     }
 
@@ -106,14 +134,14 @@ extends JPanel {
         MyColumnDistributionTable dataDistributionTablePanel = new MyColumnDistributionTable();
         dataDistributionTablePanel.decorate();
         int row = 0;
-        while (row < MyDirectGraphVars.app.getToolBar().getPreviewer().columnDistributionTable.table.getRowCount()) {
-            String no = MyDirectGraphVars.app.getToolBar().getPreviewer().columnDistributionTable.table.getValueAt(row, 0).toString();
-            String value = MyDirectGraphVars.app.getToolBar().getPreviewer().columnDistributionTable.table.getValueAt(row, 1).toString();
-            String count = MyDirectGraphVars.app.getToolBar().getPreviewer().columnDistributionTable.table.getValueAt(row, 2).toString();
-            String maxR = MyDirectGraphVars.app.getToolBar().getPreviewer().columnDistributionTable.table.getValueAt(row, 3).toString();
-            String r = MyDirectGraphVars.app.getToolBar().getPreviewer().columnDistributionTable.table.getValueAt(row, 4).toString();
+        while (row < MyDirectGraphVars.app.getToolBar().getPreviewer().columnDistributionTable.columnDistributionTable.getRowCount()) {
+            String no = MyDirectGraphVars.app.getToolBar().getPreviewer().columnDistributionTable.columnDistributionTable.getValueAt(row, 0).toString();
+            String value = MyDirectGraphVars.app.getToolBar().getPreviewer().columnDistributionTable.columnDistributionTable.getValueAt(row, 1).toString();
+            String count = MyDirectGraphVars.app.getToolBar().getPreviewer().columnDistributionTable.columnDistributionTable.getValueAt(row, 2).toString();
+            String maxR = MyDirectGraphVars.app.getToolBar().getPreviewer().columnDistributionTable.columnDistributionTable.getValueAt(row, 3).toString();
+            String r = MyDirectGraphVars.app.getToolBar().getPreviewer().columnDistributionTable.columnDistributionTable.getValueAt(row, 4).toString();
 
-            ((DefaultTableModel) dataDistributionTablePanel.table.getModel()).addRow(new String[]{no, value, count, maxR, r});
+            ((DefaultTableModel) dataDistributionTablePanel.columnDistributionTable.getModel()).addRow(new String[]{no, value, count, maxR, r});
             row++;
         }
         JFrame f = new JFrame("Variable Value Distribution");

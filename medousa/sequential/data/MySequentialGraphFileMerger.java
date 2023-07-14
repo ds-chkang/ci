@@ -25,6 +25,7 @@ public class MySequentialGraphFileMerger {
 
                     boolean allIsFine = true;
                     for (String column : dataColumnValues) {
+                        column = column.replaceAll(" ", "");
                         if (column.length() == 0) {
                             allIsFine = false;
                             break;

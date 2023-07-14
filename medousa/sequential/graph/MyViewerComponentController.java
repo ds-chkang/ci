@@ -1,6 +1,7 @@
 package medousa.sequential.graph;
 
 import medousa.MyProgressBar;
+import medousa.direct.utils.MyDirectGraphVars;
 import medousa.message.MyMessageUtil;
 import medousa.sequential.graph.listener.MyEdgeLabelSelecterListener;
 import medousa.sequential.graph.listener.MyNodeLabelSelecterListener;
@@ -3422,6 +3423,9 @@ implements ActionListener {
                     MySequentialGraphVars.getSequentialGraphViewer().repaint();
                     pb.updateValue(100, 100);
                     pb.dispose();
+
+                    MyDirectGraphVars.getDirectGraphViewer().revalidate();
+                    MyDirectGraphVars.getDirectGraphViewer().repaint();
                 }
             }).start();
         } else if (ae.getSource() == depthSelecter) {

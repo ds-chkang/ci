@@ -6,12 +6,12 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
-public class MyTableCellRenderer
+public class MyTableCellBarChartRenderer
 extends DefaultTableCellRenderer {
 
     int fontSize = 0;
     String value = "";
-    public MyTableCellRenderer() { super(); }
+    public MyTableCellBarChartRenderer() { super(); }
 
 
     public synchronized Component getTableCellRendererComponent(

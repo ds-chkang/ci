@@ -15,7 +15,6 @@ public class MyDirectGraphVars {
     public static Font f_pln_11 = new Font( "Noto Sans", Font.PLAIN, 11);
     public static Font f_pln_12 = new Font( "Noto Sans", Font.PLAIN, 12);
     public static Font f_pln_14 = new Font("Noto Sans", Font.PLAIN, 14);
-    public static Font f_bold_14 = new Font("Noto Sans", Font.BOLD, 14);
     public static Font f_bold_16 = new Font("Noto Sans", Font.BOLD, 16);
     public static Font f_pln_16 = new Font("Noto Sans", Font.PLAIN, 16);
     public static Font f_bold_13 = new Font("Noto Sans", Font.BOLD, 13);
@@ -29,6 +28,7 @@ public class MyDirectGraphVars {
     public final static Font tahomaPlainFont12 = new Font("Tahoma", Font.PLAIN, 12);
     public final static Font tahomaPlainFont13 = new Font("Tahoma", Font.PLAIN, 13);
     public final static Font tahomaPlainFont14 = new Font("Tahoma", Font.PLAIN, 14);
+    public final static Font tahomaPlainFont16 = new Font("Tahoma", Font.PLAIN, 16);
     public final static Font tahomaPlainFont11 = new Font("Tahoma", Font.PLAIN, 11);
     public final static Font tahomaPlainFont10 = new Font("Tahoma", Font.PLAIN, 10);
     public final static Font tahomaPlainFont9 = new Font("Tahoma", Font.PLAIN, 9);

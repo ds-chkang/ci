@@ -5,7 +5,7 @@ import medousa.direct.utils.MyDirectGraphMathUtil;
 import medousa.direct.utils.MyDirectGraphSysUtil;
 import medousa.direct.utils.MyDirectGraphVars;
 import medousa.message.MyMessageUtil;
-import medousa.table.MyTableCellRenderer;
+import medousa.table.MyTableCellBarChartRenderer;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -25,8 +25,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.LinkedHashMap;
 
 public class MyYearMonthDayPreviewer
@@ -45,6 +43,7 @@ extends JPanel {
     private long maxFreq;
     private float avg;
     private float std;
+    private JCheckBox orderBy;
 
 
     private JButton showBtn = new JButton("SHOW");
@@ -171,7 +170,7 @@ extends JPanel {
                             distributionTable.getTableHeader().setBackground(new Color(0,0,0,0));
                             distributionTable.getTableHeader().setOpaque(false);
                             distributionTable.getTableHeader().setFont(MyDirectGraphVars.tahomaBoldFont12);
-                            distributionTable.getColumnModel().getColumn(3).setCellRenderer(new MyTableCellRenderer());
+                            distributionTable.getColumnModel().getColumn(3).setCellRenderer(new MyTableCellBarChartRenderer());
                             sorter = new TableRowSorter<>(distributionTable.getModel());
                             distributionTable.setRowSorter(sorter);
 
@@ -303,11 +302,17 @@ extends JPanel {
 
             result.setFont(MyDirectGraphVars.tahomaBoldFont12);
 
+            orderBy = new JCheckBox("ORDER BY");
+            orderBy.setFont(MyDirectGraphVars.tahomaPlainFont12);
+            orderBy.setFocusable(false);
+            orderBy.setSelected(false);
+
             JPanel controlPanel = new JPanel();
             controlPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 3,3));
             controlPanel.add(xPanel);
             controlPanel.add(emptyLabel);
             controlPanel.add(yPanel);
+            controlPanel.add(orderBy);
             controlPanel.add(showBtn);
             controlPanel.add(result);
 
@@ -361,7 +366,9 @@ extends JPanel {
                 }
                 total += valueMap.get(key);
             }
-            valueMap = MyDirectGraphSysUtil.sortMapByLongValue(valueMap);
+            if (orderBy.isSelected()) {
+                valueMap = MyDirectGraphSysUtil.sortMapByLongValue(valueMap);
+            }
             avg = (float) total/valueMap.size();
 
             ((DefaultTableModel)propertyTable.getModel()).addRow(new String[]{"MIN.", "" + minFreq});

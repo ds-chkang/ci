@@ -371,13 +371,6 @@ implements ActionListener {
                 } else if (evt.getSource() == runBtn) {
                     new Thread(new Runnable() {
                         @Override public void run() {
-                             if (!MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getDefaultVariableTable().getValueAt(0, 1).toString().replaceAll(" ", "").equals("OBJECTID") ||
-                                 !MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getDefaultVariableTable().getValueAt(1, 1).toString().replaceAll(" ", "").equals("TRANSACTIONID") ||
-                                 !MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getDefaultVariableTable().getValueAt(2, 1).toString().replaceAll(" ", "").equals("ITEMID") ||
-                                 !MySequentialGraphVars.app.getSequentialGraphMsgBroker().getConfigPanel().getDefaultVariableTable().getValueAt(3, 1).toString().replaceAll(" ", "").equals("ITEMNAME")) {
-                                MyMessageUtil.showErrorMsg("Please, check the data configuration to create a network.");
-                                return;
-                            }
 
                             MyProgressBar pb = new MyProgressBar(false);
                             try {
@@ -572,11 +565,6 @@ implements ActionListener {
                             try {
                                 if (MyDirectGraphVars.app.getDirectGraphMsgBroker().getInputFiles() == null) {
                                     MyMessageUtil.showErrorMsg("Please, set input data files!");
-                                    return;
-                                } else if (!MyDirectGraphVars.app.getDirectGraphMsgBroker().getDirectConfigPanel().getDefaultVariableTable().getValueAt(0, 1).toString().replaceAll(" ", "").equals("NO.") ||
-                                    !MyDirectGraphVars.app.getDirectGraphMsgBroker().getDirectConfigPanel().getDefaultVariableTable().getValueAt(1, 1).toString().replaceAll(" ", "").equals("FROMITEM") ||
-                                    !MyDirectGraphVars.app.getDirectGraphMsgBroker().getDirectConfigPanel().getDefaultVariableTable().getValueAt(2, 1).toString().replaceAll(" ", "").equals("TOITEM")) {
-                                    MyMessageUtil.showErrorMsg("Please, check the data configuration to create a network.");
                                     return;
                                 }
 

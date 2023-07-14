@@ -5,7 +5,8 @@ import medousa.direct.utils.MyDirectGraphMathUtil;
 import medousa.direct.utils.MyDirectGraphSysUtil;
 import medousa.direct.utils.MyDirectGraphVars;
 import medousa.message.MyMessageUtil;
-import medousa.table.MyTableCellRenderer;
+import medousa.table.MyTableCellBarChartRenderer;
+import medousa.table.MyTableUtil;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -16,6 +17,7 @@ import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.data.category.DefaultCategoryDataset;
 
+import javax.media.j3d.Link;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
@@ -26,6 +28,8 @@ import java.awt.event.*;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MyPivotPreview
 extends JPanel
@@ -33,10 +37,11 @@ implements ActionListener {
 
     private JTable dataTbl;
     private String [] columns;
-    private JComboBox variable1;
-    private JComboBox variable2;
+    private JComboBox xVariable;
+    private JComboBox yVariable;
+    private JButton searchValueBtn;
 
-    private JComboBox variable1Value;
+    private JComboBox xValue;
     private TableRowSorter sorter;
     private JButton showBtn = new JButton("SHOW");
     private JTextField searchTxt = new JTextField();
@@ -60,29 +65,36 @@ implements ActionListener {
                 this.columns = columns;
             }
 
-            variable1 = new JComboBox();
-            variable1.addItem("");
-            for (int i=1; i < columns.length; i++) {
-                variable1.addItem(columns[i]);
-            }
-            variable1.setBackground(Color.WHITE);
-            variable1.setFont(MyDirectGraphVars.tahomaPlainFont11);
-            variable1.setFocusable(false);
-            variable1.addActionListener(this);
+            searchValueBtn = new JButton("S. V.");
+            searchValueBtn.setToolTipText("SEARCH VALUE");
+            searchValueBtn.setBackground(Color.WHITE);
+            searchValueBtn.setFocusable(false);
+            searchValueBtn.setFont(MyDirectGraphVars.tahomaPlainFont12);
+            searchValueBtn.addActionListener(this);
 
-            variable1Value = new JComboBox();
-            variable1Value.setBackground(Color.WHITE);
-            variable1Value.setFont(MyDirectGraphVars.tahomaPlainFont11);
-            variable1Value.setFocusable(false);
-
-            variable2 = new JComboBox();
-            variable2.addItem("");
+            xVariable = new JComboBox();
+            xVariable.addItem("");
             for (int i=1; i < columns.length; i++) {
-                variable2.addItem(columns[i]);
+                xVariable.addItem(columns[i]);
             }
-            variable2.setBackground(Color.WHITE);
-            variable2.setFont(MyDirectGraphVars.tahomaPlainFont11);
-            variable2.setFocusable(false);
+            xVariable.setBackground(Color.WHITE);
+            xVariable.setFont(MyDirectGraphVars.tahomaPlainFont11);
+            xVariable.setFocusable(false);
+            xVariable.addActionListener(this);
+
+            xValue = new JComboBox();
+            xValue.setBackground(Color.WHITE);
+            xValue.setFont(MyDirectGraphVars.tahomaPlainFont11);
+            xValue.setFocusable(false);
+
+            yVariable = new JComboBox();
+            yVariable.addItem("");
+            for (int i=1; i < columns.length; i++) {
+                yVariable.addItem(columns[i]);
+            }
+            yVariable.setBackground(Color.WHITE);
+            yVariable.setFont(MyDirectGraphVars.tahomaPlainFont11);
+            yVariable.setFocusable(false);
 
             JLabel variableLabel1 = new JLabel("X:");
             variableLabel1.setFont(MyDirectGraphVars.tahomaPlainFont12);
@@ -102,13 +114,13 @@ implements ActionListener {
             JPanel variable1Panel = new JPanel();
             variable1Panel.setLayout(new FlowLayout(FlowLayout.LEFT, 1,1));
             variable1Panel.add(variableLabel1);
-            variable1Panel.add(variable1);
+            variable1Panel.add(xVariable);
             variable1Panel.add(variable1EmptyLabel);
 
             JPanel variable2Panel = new JPanel();
             variable2Panel.setLayout(new FlowLayout(FlowLayout.LEFT, 1,1));
             variable2Panel.add(variableLabel2);
-            variable2Panel.add(variable2);
+            variable2Panel.add(yVariable);
 
             JLabel pivotValueLabel = new JLabel("XV:");
             pivotValueLabel.setToolTipText("Select a value of variable X.");
@@ -117,12 +129,13 @@ implements ActionListener {
             JPanel valuePanel = new JPanel();
             valuePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 1,1));
             valuePanel.add(pivotValueLabel);
-            valuePanel.add(variable1Value);
+            valuePanel.add(xValue);
 
             JPanel controlPanel = new JPanel();
             controlPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 1,1));
             controlPanel.add(variable1Panel);
             controlPanel.add(valuePanel);
+            controlPanel.add(searchValueBtn);
             controlPanel.add(variable2Panel);
             controlPanel.add(showBtn);
 
@@ -141,23 +154,89 @@ implements ActionListener {
         final MyPivotPreview pivotPreview = this;
         new Thread(new Runnable() {
             @Override public void run() {
-                if (e.getSource() == variable1) {
+                if (e.getSource() == searchValueBtn) {
+                    if (xVariable.getSelectedIndex() == 0) return;
+                    JFrame f = new JFrame("SEARCH VALUE");
+
+                    String [] columns = {"NO.", xVariable.getSelectedItem().toString()};
+                    String [][] data = {};
+                    DefaultTableModel model = new DefaultTableModel(data, columns);
+                    Set<String> values = new HashSet<>();
+                    int row = 0;
+                    int i = 0;
+                    while (row < dataTbl.getRowCount()) {
+                        String value = dataTbl.getValueAt(row, xVariable.getSelectedIndex()).toString();
+                        if (!values.contains(value)) {
+                            model.addRow(new String[]{"" + (++i), value.toUpperCase()});
+                            values.add(value);
+                        }
+                        row++;
+                    }
+
+                    JTable table = new JTable(model);
+                    table.setFont(MyDirectGraphVars.tahomaPlainFont12);
+                    table.setBackground(Color.WHITE);
+                    table.setFocusable(false);
+                    table.setRowHeight(24);
+                    table.getColumnModel().getColumn(0).setPreferredWidth(70);
+                    table.getColumnModel().getColumn(0).setMaxWidth(70);
+                    table.getColumnModel().getColumn(1).setPreferredWidth(140);
+                    table.getTableHeader().setFont(MyDirectGraphVars.tahomaBoldFont12);
+                    table.getTableHeader().setOpaque(false);
+                    table.getTableHeader().setBackground(new Color(0,0,0,0));
+                    table.addComponentListener(new ComponentAdapter() {
+                        @Override
+                        public void componentResized(ComponentEvent e) {
+                            super.componentResized(e);
+                            table.getColumnModel().getColumn(0).setPreferredWidth(70);
+                            table.getColumnModel().getColumn(0).setMaxWidth(70);
+                            table.getColumnModel().getColumn(1).setPreferredWidth(140);
+                        }
+                    });
+
+                    JButton selectBtn = new JButton("SELECT");
+                    selectBtn.setFocusable(false);
+                    selectBtn.setBackground(Color.WHITE);
+                    selectBtn.addActionListener(new ActionListener() {
+                        @Override public void actionPerformed(ActionEvent e) {
+                            String selectedValue = table.getValueAt(table.getSelectedRow(), 1).toString();
+                            for (int i=1; i < xValue.getItemCount(); i++) {
+                                if (xValue.getItemAt(i).toString().equals(selectedValue)) {
+                                    xValue.setSelectedIndex(i);
+                                    break;
+                                }
+                            }
+                            f.dispose();
+                        }
+                    });
+
+                    JTextField searchTxt = new JTextField();
+                    searchTxt.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+                    JPanel searchPanel = MyTableUtil.searchTablePanel(pivotPreview, searchTxt, selectBtn, model, table);
+
+                    f.setLayout(new BorderLayout(1,1));
+                    f.getContentPane().add(new JScrollPane(table), BorderLayout.CENTER);
+                    f.getContentPane().add(searchPanel, BorderLayout.SOUTH);
+                    f.pack();
+                    f.setPreferredSize(new Dimension(120, 500));
+                    f.setVisible(true);
+                } else if (e.getSource() == xVariable) {
                     MyProgressBar pb = new MyProgressBar(false);
                     try {
-                        if (variable1.getSelectedIndex() == 0) return;
+                        if (xVariable.getSelectedIndex() == 0) return;
                         Set<String> columnValues = new HashSet<>();
-                        int row = dataTbl.getRowCount();
-                        while (row > 0) {
-                            columnValues.add(dataTbl.getValueAt(row - 1, variable1.getSelectedIndex()).toString());
-                            row--;
+                        int row = 0;
+                        while (row < dataTbl.getRowCount()) {
+                            columnValues.add(dataTbl.getValueAt(row, xVariable.getSelectedIndex()).toString());
+                            row++;
                         }
-                        variable1Value.removeAllItems();
-                        variable1Value.addItem("");
+                        xValue.removeAllItems();
+                        xValue.addItem("");
                         for (String columnValue : columnValues) {
-                            if (columnValue.matches("\\d+(\\.\\d+)?")) {
-                                variable1Value.addItem((long) Float.parseFloat(columnValue));
+                            if (columnValue.matches("-?\\d+(\\.\\d+)?")) {
+                                xValue.addItem((long) Float.parseFloat(columnValue));
                             } else {
-                                variable1Value.addItem(columnValue);
+                                xValue.addItem(columnValue);
                             }
                         }
                         pb.updateValue(100, 100);
@@ -167,11 +246,11 @@ implements ActionListener {
                         pb.dispose();
                     }
                 } else if (e.getSource() == showBtn) {
-                    if (variable1.getSelectedItem().toString().trim().equals(variable2.getSelectedItem().toString().trim())) {
+                    if (xVariable.getSelectedItem().toString().equals(yVariable.getSelectedItem().toString())) {
                         MyMessageUtil.showInfoMsg("Choose different variables.");
-                    } else if (variable2.getSelectedIndex() == 0) {
-                        MyMessageUtil.showInfoMsg("Select the target variable.");
-                    } else {
+                    } else if (yVariable.getSelectedIndex() == 0) {
+                        MyMessageUtil.showInfoMsg("Select y variable.");
+                    } else if (xValue.getSelectedIndex() > 0) {
                         searchColumnSelecter = new JComboBox();
                         searchColumnSelecter.setFont(MyDirectGraphVars.tahomaPlainFont12);
                         searchColumnSelecter.setFocusable(false);
@@ -211,7 +290,7 @@ implements ActionListener {
                         distributionTable.getTableHeader().setBackground(new Color(0,0,0,0));
                         distributionTable.getTableHeader().setOpaque(false);
                         distributionTable.getTableHeader().setFont(MyDirectGraphVars.tahomaBoldFont12);
-                        distributionTable.getColumnModel().getColumn(3).setCellRenderer(new MyTableCellRenderer());
+                        distributionTable.getColumnModel().getColumn(3).setCellRenderer(new MyTableCellBarChartRenderer());
                         sorter = new TableRowSorter<>(distributionTable.getModel());
                         distributionTable.setRowSorter(sorter);
 
@@ -228,7 +307,7 @@ implements ActionListener {
                             }
                         });
 
-                        ChartPanel chartPanel = new ChartPanel(setPivotChart(distributionTable, propertyTable));
+                        ChartPanel chartPanel = new ChartPanel(setChart(distributionTable, propertyTable));
                         chartPanel.getChart().getCategoryPlot().setRangeGridlinePaint(Color.DARK_GRAY);
                         chartPanel.getChart().getCategoryPlot().setDomainGridlinePaint(Color.DARK_GRAY);
                         chartPanel.getChart().getCategoryPlot().setBackgroundPaint(Color.WHITE);//setBackgroundPaint(new Color(0,0,0,0.05f));
@@ -248,7 +327,7 @@ implements ActionListener {
                         barRenderer.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont10);
 
                         chartPanel.getChart().removeLegend();
-                        chartPanel.setBorder(BorderFactory.createLoweredBevelBorder());
+                        //chartPanel.setBorder(BorderFactory.createLoweredBevelBorder());
 
                         JButton searchBtn = new JButton("SEARCH");
                         searchBtn.setFocusable(false);
@@ -276,6 +355,124 @@ implements ActionListener {
                             public void componentResized(ComponentEvent e) {
                             super.componentResized(e);
                             splitPane.setDividerLocation(0.20);
+                            }
+                        });
+
+                        JFrame f = new JFrame("PIVOT PREVIEW");
+                        f.setLayout(new BorderLayout(3,3));
+                        f.getContentPane().add(splitPane, BorderLayout.CENTER);
+                        f.pack();
+                        f.setVisible(true);
+                    } else { // For xValue is empty.
+                        searchColumnSelecter = new JComboBox();
+                        searchColumnSelecter.setFont(MyDirectGraphVars.tahomaPlainFont12);
+                        searchColumnSelecter.setFocusable(false);
+                        searchColumnSelecter.setBackground(Color.WHITE);
+                        searchColumnSelecter.addItem("");
+                        for (int i = 1; i < columns.length; i++) {
+                            searchColumnSelecter.addItem(columns[i]);
+                        }
+
+                        String [] propertyColumns = {"PROPERTY", "VALUE"};
+                        String [][] propertyData = {};
+
+                        DefaultTableModel propertyModel = new DefaultTableModel(propertyData, propertyColumns);
+                        JTable propertyTable = new JTable(propertyModel);
+                        propertyTable.setRowHeight(24);
+                        propertyTable.setFont(MyDirectGraphVars.f_pln_12);
+                        propertyTable.setBackground(Color.WHITE);
+                        propertyTable.setFocusable(false);
+                        propertyTable.getTableHeader().setBackground(new Color(0,0,0,0));
+                        propertyTable.getTableHeader().setOpaque(false);
+                        propertyTable.getTableHeader().setFont(MyDirectGraphVars.tahomaBoldFont12);
+
+                        String [] columns = {"NO.", "VALUE", "FREQ.", "MAX. R.", "R."};
+                        String [][] data = {};
+
+                        DefaultTableModel model = new DefaultTableModel(data, columns);
+                        JTable distributionTable = new JTable(model);
+                        distributionTable.setRowHeight(24);
+                        distributionTable.setFont(MyDirectGraphVars.f_pln_12);
+                        distributionTable.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(55);
+                        distributionTable.getTableHeader().getColumnModel().getColumn(1).setPreferredWidth(120);
+                        distributionTable.getTableHeader().getColumnModel().getColumn(2).setPreferredWidth(75);
+                        distributionTable.getTableHeader().getColumnModel().getColumn(3).setPreferredWidth(80);
+                        distributionTable.getTableHeader().getColumnModel().getColumn(4).setPreferredWidth(80);
+                        distributionTable.setBackground(Color.WHITE);
+                        distributionTable.setFocusable(false);
+                        distributionTable.getTableHeader().setBackground(new Color(0,0,0,0));
+                        distributionTable.getTableHeader().setOpaque(false);
+                        distributionTable.getTableHeader().setFont(MyDirectGraphVars.tahomaBoldFont12);
+                        distributionTable.getColumnModel().getColumn(3).setCellRenderer(new MyTableCellBarChartRenderer());
+                        sorter = new TableRowSorter<>(distributionTable.getModel());
+                        distributionTable.setRowSorter(sorter);
+
+                        JButton searchBtn = new JButton("SEARCH");
+                        searchBtn.setFocusable(false);
+                        searchTxt.setFont(MyDirectGraphVars.f_pln_12);
+                        searchTxt.setBorder(BorderFactory.createEtchedBorder());
+                        searchTxt.addKeyListener(new KeyAdapter() {
+                            public void keyTyped(KeyEvent e) {
+                                char keyChar = e.getKeyChar();
+                                e.setKeyChar(Character.toUpperCase(keyChar));
+                            }
+                        });
+
+                        JPanel dataSearchPanel = new JPanel();
+                        dataSearchPanel.setLayout(new BorderLayout(1,1));
+                        dataSearchPanel.add(searchTxt, BorderLayout.CENTER);
+                        dataSearchPanel.add(searchBtn, BorderLayout.EAST);
+                        searchBtn.addActionListener(pivotPreview::searchButtonActionPerformed);
+
+                        JPanel tablePanel = new JPanel();
+                        tablePanel.setLayout(new BorderLayout(1,1));
+                        tablePanel.add(new JScrollPane(distributionTable), BorderLayout.CENTER);
+                        tablePanel.add(dataSearchPanel, BorderLayout.SOUTH);
+
+                        JSplitPane tableSplitPane = new JSplitPane();
+                        tableSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+                        tableSplitPane.setTopComponent(new JScrollPane(propertyTable));
+                        tableSplitPane.setBottomComponent(tablePanel);
+                        tableSplitPane.setOneTouchExpandable(false);
+                        tableSplitPane.setDividerLocation(0.185);
+                        tableSplitPane.addComponentListener(new ComponentAdapter() {
+                            @Override public void componentResized(ComponentEvent e) {
+                                super.componentResized(e);
+                                tableSplitPane.setDividerLocation(0.185);
+                            }
+                        });
+
+                        ChartPanel chartPanel = new ChartPanel(setChart(distributionTable, propertyTable));
+                        chartPanel.getChart().getCategoryPlot().setRangeGridlinePaint(Color.DARK_GRAY);
+                        chartPanel.getChart().getCategoryPlot().setDomainGridlinePaint(Color.DARK_GRAY);
+                        chartPanel.getChart().getCategoryPlot().setBackgroundPaint(Color.WHITE);//setBackgroundPaint(new Color(0,0,0,0.05f));
+                        chartPanel.getChart().getCategoryPlot().getDomainAxis().setTickLabelFont(new Font("Arial", Font.PLAIN, 0));
+                        chartPanel.getChart().getCategoryPlot().getDomainAxis().setLabelFont(new Font("Arial", Font.PLAIN, 0));
+                        chartPanel.getChart().getCategoryPlot().getRangeAxis().setTickLabelFont(MyDirectGraphVars.f_pln_10);
+                        chartPanel.getChart().getCategoryPlot().getRangeAxis().setLabelFont(MyDirectGraphVars.f_pln_8);
+
+                        CategoryAxis domainAxis = chartPanel.getChart().getCategoryPlot().getDomainAxis();
+                        domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_90);
+
+                        BarRenderer barRenderer = (BarRenderer) chartPanel.getChart().getCategoryPlot().getRenderer();
+                        barRenderer.setSeriesPaint(0, Color.decode("#489EE0"));//new Color(0, 0, 0, 0.3f));
+                        barRenderer.setShadowPaint(Color.WHITE);
+                        barRenderer.setBaseFillPaint(Color.decode("#07CF61"));
+                        barRenderer.setBarPainter(new StandardBarPainter());
+                        barRenderer.setBaseLegendTextFont(MyDirectGraphVars.tahomaPlainFont10);
+
+                        chartPanel.getChart().removeLegend();
+                        //chartPanel.setBorder(BorderFactory.createLoweredBevelBorder());
+
+                        JSplitPane splitPane = new JSplitPane();
+                        splitPane.setLeftComponent(tableSplitPane);
+                        splitPane.setRightComponent(chartPanel);
+                        splitPane.setDividerLocation(0.20);
+                        splitPane.addComponentListener(new ComponentAdapter() {
+                            @Override
+                            public void componentResized(ComponentEvent e) {
+                                super.componentResized(e);
+                                splitPane.setDividerLocation(0.20);
                             }
                         });
 
@@ -313,156 +510,199 @@ implements ActionListener {
         }
     }
 
-    private JFreeChart setPivotChart(JTable distributionTable, JTable propertyTable) {
+    private static boolean isDateString(String input) {
+        // Define the regular expression pattern for date formats (YYYY-MM-DD)
+        String datePattern = "^\\d{4}-\\d{2}-\\d{2}$";
+        Pattern pattern = Pattern.compile(datePattern);
+        Matcher matcher = pattern.matcher(input);
+
+        return matcher.matches();
+    }
+
+    private JFreeChart setChart(JTable distributionTable, JTable propertyTable) {
+        int row = 0;
+        boolean isCategoryChart = false;
+        while (row < dataTbl.getRowCount()) {
+            String yValue = dataTbl.getValueAt(0, yVariable.getSelectedIndex()).toString();
+            if (!yValue.matches("-?\\d+(\\.\\d+)?")) {
+                isCategoryChart = true;
+                break;
+            } else if (isDateString(yValue.split(" ")[0])) {
+                isCategoryChart = true;
+                break;
+            }
+        }
+
+        if (isCategoryChart) {
+            if (xValue.getSelectedIndex() == 0) {
+                return setCategoryPivotChartWithoutXValue(distributionTable, propertyTable);
+            } else {
+                return setCategoryPivotChart(distributionTable, propertyTable);
+            }
+        } else {
+            return setNumericPivotChart(distributionTable, propertyTable);
+        }
+    }
+
+    private JFreeChart setNumericPivotChart(JTable distributionTable, JTable propertyTable) {
         MyProgressBar pb = new MyProgressBar(false);
         try {
-            LinkedHashMap<Long, Long> numericValueMap = null;
-            LinkedHashMap<String, Long> stringValueMap = null;
-
+            DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+            LinkedHashMap<Long, Long> valueMap = new LinkedHashMap<>();
             long totalValue = 0;
+            int pivotColumn = xVariable.getSelectedIndex();
+            int yColumn = yVariable.getSelectedIndex();
             int row = dataTbl.getRowCount() - 1;
             while (row > -1) {
-                if (!dataTbl.getValueAt(0, variable1.getSelectedIndex()).toString().matches("\\d+(\\.\\d+)?")) {
-                    String pivotValue = dataTbl.getValueAt(row, variable1.getSelectedIndex()).toString();
-                    if (pivotValue.equals(this.variable1Value.getSelectedItem().toString())) {
-                        if (dataTbl.getValueAt(0, variable2.getSelectedIndex()).toString().matches("\\d+(\\.\\d+)?")) {
-                            if (numericValueMap == null) numericValueMap = new LinkedHashMap<>();
-                            long targetValue = (long) Float.parseFloat(dataTbl.getValueAt(row, variable2.getSelectedIndex()).toString());
-                            totalValue += targetValue;
-                            if (numericValueMap.containsKey(targetValue)) {
-                                numericValueMap.put(targetValue, numericValueMap.get(targetValue) + 1);
-                            } else {
-                                numericValueMap.put(targetValue, 1L);
-                            }
-
-                            if (maxValue < targetValue) {
-                                maxValue = targetValue;
-                            }
-
-                            if (minValue > targetValue) {
-                                minValue = targetValue;
-                            }
-
-                            if (maxFreq < numericValueMap.get(targetValue)) {
-                                maxFreq = numericValueMap.get(targetValue);
-                            }
-
-                            if (minFreq > numericValueMap.get(targetValue)) {
-                                minFreq = numericValueMap.get(targetValue);
-                            }
+                if (pivotColumn > 0) {
+                    String pivotValue = dataTbl.getValueAt(row, pivotColumn).toString();
+                    if (pivotValue.equals(this.xValue.getSelectedItem().toString())) {
+                        long yValue = (long) Float.parseFloat(dataTbl.getValueAt(row, yColumn).toString());
+                        if (valueMap.containsKey(yValue)) {
+                            valueMap.put(yValue, valueMap.get(yValue) + 1);
                         } else {
-                            if (stringValueMap == null) stringValueMap = new LinkedHashMap<>();
-                            String targetValue = dataTbl.getValueAt(row, variable2.getSelectedIndex()).toString();
-                            if (stringValueMap.containsKey(targetValue)) {
-                                stringValueMap.put(targetValue, stringValueMap.get(targetValue) + 1);
-                            } else {
-                                stringValueMap.put(targetValue, 1L);
-                            }
-
-                            if (maxFreq < stringValueMap.get(targetValue)) {
-                                maxFreq = stringValueMap.get(targetValue);
-                            }
-
-                            if (minFreq > stringValueMap.get(targetValue)) {
-                                minFreq = stringValueMap.get(targetValue);
-                            }
+                            valueMap.put(yValue, 1L);
                         }
-                    }
-                } else {
-                    long pivotValue = (long) (Float.parseFloat(dataTbl.getValueAt(row, variable1.getSelectedIndex()).toString().split("\\.")[0]));
-                    if (pivotValue == Long.parseLong(this.variable1Value.getSelectedItem().toString())) {
-                        if (!dataTbl.getValueAt(0, variable2.getSelectedIndex()).toString().matches("\\d+(\\.\\d+)?")) {
-                            if (stringValueMap == null) stringValueMap = new LinkedHashMap<>();
-                            String targetValue = dataTbl.getValueAt(row, variable2.getSelectedIndex()).toString();
-                            if (stringValueMap.containsKey(targetValue)) {
-                                stringValueMap.put(targetValue, stringValueMap.get(targetValue) + 1);
-                            } else {
-                                stringValueMap.put(targetValue, 1L);
-                            }
+                        totalValue += yValue;
 
-                            if (maxFreq < stringValueMap.get(targetValue)) {
-                                maxFreq = stringValueMap.get(targetValue);
-                            }
+                        if (maxValue < yValue) {
+                            maxValue = yValue;
+                        }
 
-                            if (minFreq > stringValueMap.get(targetValue)) {
-                                minFreq = stringValueMap.get(targetValue);
-                            }
-                        } else {
-                            if (numericValueMap == null) numericValueMap = new LinkedHashMap<>();
-                            long targetValue = Long.parseLong(dataTbl.getValueAt(row, variable2.getSelectedIndex()).toString().split("\\.")[0]);
-                            if (numericValueMap.containsKey(targetValue)) {
-                                numericValueMap.put(targetValue, numericValueMap.get(targetValue) + 1);
-                            } else {
-                                numericValueMap.put(targetValue, 1L);
-                            }
+                        if (minValue > yValue) {
+                            minValue = yValue;
+                        }
 
-                            if (maxValue < targetValue) {
-                                maxValue = targetValue;
-                            }
+                        if (maxFreq < valueMap.get(yValue)) {
+                            maxFreq = valueMap.get(yValue);
+                        }
 
-                            if (minValue > targetValue) {
-                                minValue = targetValue;
-                            }
-
-                            if (maxFreq < numericValueMap.get(targetValue)) {
-                                maxFreq = numericValueMap.get(targetValue);
-                            }
-
-                            if (minFreq > numericValueMap.get(targetValue)) {
-                                minFreq = numericValueMap.get(targetValue);
-                            }
+                        if (minFreq > valueMap.get(yValue)) {
+                            minFreq = valueMap.get(yValue);
                         }
                     }
                 }
-                row--;
+            }
+
+            int i = 1;
+            valueMap = MyDirectGraphSysUtil.sortMapByLongKeyByLongValue(valueMap);
+            pb.updateValue(50, 100);
+            for (Long key : valueMap.keySet()) {
+                dataset.addValue(valueMap.get(key), "", key);
+                ((DefaultTableModel) distributionTable.getModel()).addRow(new String[]{
+                    "" + (i++),
+                    "" + key,
+                    "" + valueMap.get(key),
+                    "" + MyDirectGraphMathUtil.threeDecimalFormat((double) valueMap.get(key) / maxFreq),
+                    "" + MyDirectGraphMathUtil.threeDecimalPercent((double) valueMap.get(key) / dataTbl.getRowCount())
+                });
+            }
+
+            avg = (float) totalValue / row;
+            ((DefaultTableModel) propertyTable.getModel()).addRow(new String[]{"MIN.", "" + MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat(minValue))});
+            ((DefaultTableModel) propertyTable.getModel()).addRow(new String[]{"MAX.", "" + MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat(maxValue))});
+            ((DefaultTableModel) propertyTable.getModel()).addRow(new String[]{"AVG.", "" + MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat(avg))});
+            ((DefaultTableModel) propertyTable.getModel()).addRow(new String[]{"STD.", "" + MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat(getStandardDeviation(valueMap, avg)))});
+
+            String plotTitle = "";
+            String xaxis = "";
+            String yaxis = "";
+            PlotOrientation orientation = PlotOrientation.VERTICAL;
+            boolean show = false;
+            boolean toolTips = true;
+            boolean urls = false;
+            pb.updateValue(100, 100);
+            pb.dispose();
+            return ChartFactory.createBarChart(plotTitle, xaxis, yaxis, dataset, orientation, show, toolTips, urls);
+        } catch (Exception ex) {
+            pb.updateValue(100, 100);
+            pb.dispose();
+            return null;
+        }
+    }
+
+    private JFreeChart setCategoryPivotChartWithoutXValue(JTable distributionTable, JTable propertyTable) {
+        MyProgressBar pb = new MyProgressBar(false);
+        try {
+            LinkedHashMap<String, LinkedHashMap<String, Integer>> valueMap = new LinkedHashMap<>();
+            int xColumn = xVariable.getSelectedIndex();
+            int yColumn = yVariable.getSelectedIndex();
+            int maxNumberOfYValueFrequency = 0;
+            int minNumberOfYValueFrequency = 1000000000;
+            boolean duplicatedValueExistsByID = false;
+
+            int maxNumberOfYValues = 0;
+            int minNumberOfYValues = 1000000000;
+            int row = 0;
+            while (row < dataTbl.getRowCount()) {
+                String pivotValue = dataTbl.getValueAt(row, xColumn).toString();
+                String yValue = dataTbl.getValueAt(row, yColumn).toString();
+                if (valueMap.containsKey(pivotValue)) {
+                    if (valueMap.get(pivotValue).containsKey(yValue)) {
+                        valueMap.get(pivotValue).put(yValue, valueMap.get(pivotValue).get(yValue)+1);
+                        duplicatedValueExistsByID = true;
+                    } else {
+                        valueMap.get(pivotValue).put(yValue, 1);
+                    }
+                } else {
+                    LinkedHashMap<String, Integer> yValueMap = new LinkedHashMap();
+                    yValueMap.put(yValue, 1);
+                    valueMap.put(pivotValue, yValueMap);
+                }
+                row++;
+            }
+
+            LinkedHashMap<String, Integer> yValueFrequencyMap = new LinkedHashMap<>();
+            for (String pivotKey : valueMap.keySet()) {
+                LinkedHashMap<String, Integer> yValueMap = valueMap.get(pivotKey);
+                if (maxNumberOfYValues < yValueMap.size()) {
+                    maxNumberOfYValues = yValueMap.size();
+                }
+
+                if (minNumberOfYValues > yValueMap.size()) {
+                    minNumberOfYValues = yValueMap.size();
+                }
+
+                for (String yValueKey : yValueMap.keySet()) {
+                    if (yValueFrequencyMap.containsKey(yValueKey)) {
+                        yValueFrequencyMap.put(yValueKey, yValueFrequencyMap.get(yValueKey)+yValueMap.get(yValueKey));
+                    } else {
+                        yValueFrequencyMap.put(yValueKey, yValueMap.get(yValueKey));
+                    }
+
+                    if (maxNumberOfYValueFrequency < yValueFrequencyMap.get(yValueKey)) {
+                        maxNumberOfYValueFrequency = yValueFrequencyMap.get(yValueKey);
+                    }
+
+                    if (minNumberOfYValueFrequency > yValueFrequencyMap.get(yValueKey)) {
+                        minNumberOfYValueFrequency = yValueFrequencyMap.get(yValueKey);
+                    }
+                }
             }
 
             DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-            int i=1;
-            if (numericValueMap != null) {
-                numericValueMap = MyDirectGraphSysUtil.sortMapByLongKeyByLongValue(numericValueMap);
-                pb.updateValue(50, 100);
+            int i = 1;
 
-                int totalRows = 0;
-                for (Long key : numericValueMap.keySet()) {
-                    dataset.addValue(numericValueMap.get(key), "", key);
-                    ((DefaultTableModel) distributionTable.getModel()).addRow(new String[]{
-                            "" + (i++),
-                            "" + key,
-                            "" + numericValueMap.get(key),
-                            "" + MyDirectGraphMathUtil.threeDecimalFormat((double)numericValueMap.get(key)/maxFreq),
-                            "" + MyDirectGraphMathUtil.threeDecimalPercent((double)numericValueMap.get(key)/dataTbl.getRowCount())
-                    });
-                    totalRows += key * numericValueMap.get(key);
-                }
-                avg = (float)totalValue/totalRows;
+            yValueFrequencyMap = MyDirectGraphSysUtil.sortMapByIntegerValue(yValueFrequencyMap);
 
-                ((DefaultTableModel)propertyTable.getModel()).addRow(new String[]{"MIN.", "" + minValue});
-                ((DefaultTableModel)propertyTable.getModel()).addRow(new String[]{"MAX.", "" + maxValue});
-                ((DefaultTableModel)propertyTable.getModel()).addRow(new String[]{"AVG.", "" + MyDirectGraphMathUtil.threeDecimalFormat(avg)});
-                ((DefaultTableModel)propertyTable.getModel()).addRow(new String[]{"STD.", "" + MyDirectGraphMathUtil.threeDecimalFormat(getStandardDeviation(numericValueMap))});
-            } else {
-                stringValueMap = MyDirectGraphSysUtil.sortMapByLongValue(stringValueMap);
-                pb.updateValue(50, 100);
-
-                for (String key : stringValueMap.keySet()) {
-                    dataset.addValue(stringValueMap.get(key), "", key);
-                    ((DefaultTableModel) distributionTable.getModel()).addRow(new String[]{
-                            "" + (i++),
-                            "" + key,
-                            "" + stringValueMap.get(key),
-                            "" + MyDirectGraphMathUtil.threeDecimalFormat((double)stringValueMap.get(key)/maxFreq),
-                            "" + MyDirectGraphMathUtil.threeDecimalPercent((double)stringValueMap.get(key)/dataTbl.getRowCount())
-                    });
-                    totalValue += stringValueMap.get(key);
-                }
-                avg = totalValue/stringValueMap.size();
-
-                ((DefaultTableModel)propertyTable.getModel()).addRow(new String[]{"MIN.", "" + minFreq});
-                ((DefaultTableModel)propertyTable.getModel()).addRow(new String[]{"MAX.", "" + maxFreq});
-                ((DefaultTableModel)propertyTable.getModel()).addRow(new String[]{"AVG.", "" + MyDirectGraphMathUtil.threeDecimalFormat(avg)});
-                ((DefaultTableModel)propertyTable.getModel()).addRow(new String[]{"STD.", "" });
+            for (String key : yValueFrequencyMap.keySet()) {
+                dataset.addValue(yValueFrequencyMap.get(key), "", key);
+                ((DefaultTableModel) distributionTable.getModel()).addRow(new String[]{
+                        "" + (i++),
+                        "" + key,
+                        "" + yValueFrequencyMap.get(key),
+                        "" + MyDirectGraphMathUtil.threeDecimalFormat((float)yValueFrequencyMap.get(key)/maxNumberOfYValueFrequency),
+                        "" + MyDirectGraphMathUtil.threeDecimalPercent((float)yValueFrequencyMap.get(key)/dataTbl.getRowCount())
+                });
             }
+            ((DefaultTableModel)propertyTable.getModel()).addRow(new String[]{"MIN. NO. OF Y V.", "" + MyDirectGraphMathUtil.getCommaSeperatedNumber(minNumberOfYValues)});
+            ((DefaultTableModel)propertyTable.getModel()).addRow(new String[]{"MAX. NO. OF Y V.", "" + MyDirectGraphMathUtil.getCommaSeperatedNumber(maxNumberOfYValues)});
+            ((DefaultTableModel)propertyTable.getModel()).addRow(new String[]{"MIN. Y V. FREQ.", "" + MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat(minNumberOfYValueFrequency))});
+            ((DefaultTableModel)propertyTable.getModel()).addRow(new String[]{"MAX. Y V. FREQ.", "" + MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat(maxNumberOfYValueFrequency))});
+            ((DefaultTableModel)propertyTable.getModel()).addRow(new String[]{"AVG. Y V. FREQ.", "" + MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat((float)dataTbl.getRowCount()/yValueFrequencyMap.size()))});
+            ((DefaultTableModel)propertyTable.getModel()).addRow(new String[]{"AVG. Y V. FREQ. BY X VAR.", "" + MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat((float)yValueFrequencyMap.size()/valueMap.size()))});
+            ((DefaultTableModel)propertyTable.getModel()).addRow(new String[]{"STD.", "N/A" });
+            ((DefaultTableModel)propertyTable.getModel()).addRow(new String[]{"DUP. Y V. BY X VAR. EXISTS.", (duplicatedValueExistsByID ? "TRUE" : "FALSE")});
 
             String plotTitle = "";
             String xaxis = "";
@@ -483,21 +723,93 @@ implements ActionListener {
         return null;
     }
 
-    public float getStandardDeviation(LinkedHashMap<Long, Long> valueMap) {
-        float sum = 0.00f;
-        int data = 0;
-        for (long n : valueMap.keySet()) {
-            for (int i=0; i < n*valueMap.get(n); i++) {
-                sum += n;
-                data++;
+    private JFreeChart setCategoryPivotChart(JTable distributionTable, JTable propertyTable) {
+        MyProgressBar pb = new MyProgressBar(false);
+        try {
+            LinkedHashMap<String, Long> valueMap = new LinkedHashMap<>();
+            int xColumn = xVariable.getSelectedIndex();
+            int yColumn = yVariable.getSelectedIndex();
+            long totalValue = 0;
+            int row = 0;
+            while (row < dataTbl.getRowCount()) {
+                String pivotValue = dataTbl.getValueAt(row, xColumn).toString();
+                if (pivotValue.equals(this.xValue.getSelectedItem().toString())) {
+                    String yValue = dataTbl.getValueAt(row, yColumn).toString();
+                    if (valueMap.containsKey(yValue)) {
+                        valueMap.put(yValue, valueMap.get(yValue) + 1);
+                    } else {
+                        valueMap.put(yValue, 1L);
+                    }
+
+                    if (maxFreq < valueMap.get(yValue)) {
+                        maxFreq = valueMap.get(yValue);
+                    }
+
+                    if (minFreq > valueMap.get(yValue)) {
+                        minFreq = valueMap.get(yValue);
+                    }
+                }
+                row++;
             }
+
+            DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+            int i=1;
+
+            valueMap = MyDirectGraphSysUtil.sortMapByLongValue(valueMap);
+            pb.updateValue(50, 100);
+
+            for (String key : valueMap.keySet()) {
+                dataset.addValue(valueMap.get(key), "", key);
+                ((DefaultTableModel) distributionTable.getModel()).addRow(new String[]{
+                    "" + (i++),
+                    "" + key,
+                    "" + valueMap.get(key),
+                    "" + MyDirectGraphMathUtil.threeDecimalFormat((double)valueMap.get(key)/maxFreq),
+                    "" + MyDirectGraphMathUtil.threeDecimalPercent((double)valueMap.get(key)/dataTbl.getRowCount())
+                });
+                    totalValue += valueMap.get(key);
+            }
+            avg = totalValue/valueMap.size();
+
+            ((DefaultTableModel) propertyTable.getModel()).addRow(new String[]{"MIN.", "" + MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat(minFreq))});
+            ((DefaultTableModel) propertyTable.getModel()).addRow(new String[]{"MAX.", "" + MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat(maxFreq))});
+            ((DefaultTableModel)propertyTable.getModel()).addRow(new String[]{"AVG.", "" + MyDirectGraphSysUtil.formatAverageValue(MyDirectGraphMathUtil.threeDecimalFormat(avg))});
+            ((DefaultTableModel)propertyTable.getModel()).addRow(new String[]{"STD.", "N/A" });
+
+            String plotTitle = "";
+            String xaxis = "";
+            String yaxis = "";
+            PlotOrientation orientation = PlotOrientation.VERTICAL;
+            boolean show = false;
+            boolean toolTips = true;
+            boolean urls = false;
+            pb.updateValue(100, 100);
+            pb.dispose();
+
+            return ChartFactory.createBarChart(plotTitle, xaxis, yaxis, dataset, orientation, show, toolTips, urls);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            pb.updateValue(100, 100);
+            pb.dispose();
         }
-        double mean = sum / data;
-        sum = 0f;
-        for (long n : valueMap.keySet()) {
-            sum += Math.pow(n - mean, 2);
+        return null;
+    }
+
+    public float getStandardDeviation(LinkedHashMap<Long, Long> valueMap, float avg) {
+        try {
+            int data = 0;
+            float sum = 0f;
+            for (long n : valueMap.keySet()) {
+                for (int i=0; i < n * valueMap.get(n); i++) {
+                    sum += Math.pow(n - avg, 2);
+                    data++;
+                }
+            }
+            return (sum == 0.00f ? 0.00f : (float) Math.sqrt(sum / data));
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-        return (sum == 0.00f ? 0.00f : (float) Math.sqrt(sum / data));
+        return 0;
     }
 
 }

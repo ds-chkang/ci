@@ -21,18 +21,18 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 public class MyChartPreviewer
 extends JPanel {
 
-    private int selectedChart = 0;
+    private JLabel fromValueLabel = new JLabel("BETWEEN ");
+    private JLabel toValueLabel = new JLabel(" AND ");
     private int numberOfTopValues = 150;
-    private float numericFromValue = 0f;
-    private float numericToValue = 0f;
+    private int selectedChart;
+    private float numericFromValue;
+    private float numericToValue;
     private String fromStringValue;
     private String toStringValue;
     private JTable dataTbl;
@@ -43,8 +43,6 @@ extends JPanel {
     private JTextField toValueTxt;
     private JTextField quantizationTxt;
     private int quantizationValue;
-    private JLabel fromValueLabel = new JLabel("BETWEEN ");
-    private JLabel toValueLabel = new JLabel(" AND ");
     private String avg;
     private String min;
     private String minCategoryValue;
@@ -65,23 +63,25 @@ extends JPanel {
                 this.columnDistributionTbl = columnDataDistributionTable;
             }
 
-            JLabel topValueLabel = new JLabel("NO. OF TOP VALUES: ");
+            JLabel topValueLabel = new JLabel("TOP V.: ");
+            topValueLabel.setToolTipText("NO. OF TOP VALUES");
             topValueLabel.setFont(MyDirectGraphVars.tahomaPlainFont12);
             topValueTxt = new JTextField();
             topValueTxt.setText(MyDirectGraphMathUtil.getCommaSeperatedNumber(numberOfTopValues));
             topValueTxt.setHorizontalAlignment(JTextField.CENTER);
-            topValueTxt.setPreferredSize(new Dimension(100, 23));
+            topValueTxt.setPreferredSize(new Dimension(70, 23));
             topValueTxt.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
             topValueTxt.setFont(MyDirectGraphVars.tahomaPlainFont12);
 
-            JLabel quantizationLabel = new JLabel(" NO. OF QUANTIZATIONS: ");
+            JLabel quantizationLabel = new JLabel(" Q.: ");
+            quantizationLabel.setToolTipText("QUANTIZATION");
             quantizationLabel.setFont(MyDirectGraphVars.tahomaPlainFont12);
 
             quantizationTxt = new JTextField();
             quantizationTxt.setText("0");
             quantizationTxt.setText(MyDirectGraphMathUtil.getCommaSeperatedNumber(quantizationValue));
             quantizationTxt.setHorizontalAlignment(JTextField.CENTER);
-            quantizationTxt.setPreferredSize(new Dimension(100, 23));
+            quantizationTxt.setPreferredSize(new Dimension(70, 23));
             quantizationTxt.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
             quantizationTxt.setFont(MyDirectGraphVars.tahomaPlainFont12);
 
@@ -94,7 +94,7 @@ extends JPanel {
 
             toValueTxt = new JTextField();
             toValueTxt.setHorizontalAlignment(JTextField.CENTER);
-            toValueTxt.setPreferredSize(new Dimension(100, 23));
+            toValueTxt.setPreferredSize(new Dimension(70, 23));
             toValueTxt.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
             toValueTxt.setFont(MyDirectGraphVars.tahomaPlainFont12);
 
@@ -102,7 +102,7 @@ extends JPanel {
 
             fromValueTxt = new JTextField();
             fromValueTxt.setHorizontalAlignment(JTextField.CENTER);
-            fromValueTxt.setPreferredSize(new Dimension(100, 23));
+            fromValueTxt.setPreferredSize(new Dimension(70, 23));
             fromValueTxt.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
             fromValueTxt.setFont(MyDirectGraphVars.tahomaPlainFont12);
 
@@ -133,13 +133,13 @@ extends JPanel {
                             String toValueStr = toValueTxt.getText().trim();
 
                             if (fromValueStr.trim().length() > 0 && toValueStr.trim().length() > 0) {
-                                if (fromValueStr.matches("\\d+(\\.\\d+)?") && !toValueStr.matches("\\d+(\\.\\d+)?")) {
+                                if (fromValueStr.matches("-?\\d+(\\.\\d+)?") && !toValueStr.matches("-?\\d+(\\.\\d+)?")) {
                                     MyMessageUtil.showInfoMsg("Check the between values.");
                                     return;
-                                } else if (!fromValueStr.matches("\\d+(\\.\\d+)?") && toValueStr.matches("\\d+(\\.\\d+)?")) {
+                                } else if (!fromValueStr.matches("-?\\d+(\\.\\d+)?") && toValueStr.matches("-?\\d+(\\.\\d+)?")) {
                                     MyMessageUtil.showInfoMsg("Check the between values.");
                                     return;
-                                } else if (fromValueStr.matches("\\d+(\\.\\d+)?") && toValueStr.matches("\\d+(\\.\\d+)?")) {
+                                } else if (fromValueStr.matches("-?\\d+(\\.\\d+)?") && toValueStr.matches("-?\\d+(\\.\\d+)?")) {
                                     numericFromValue = (fromValueTxt.getText().trim().length() == 0 ? 0f : Float.parseFloat(fromValueTxt.getText().trim()));
                                     numericToValue = (toValueTxt.getText().trim().length() == 0 ? 0f : Float.parseFloat(toValueTxt.getText().trim()));
                                 } else {
@@ -151,7 +151,6 @@ extends JPanel {
                                 MyMessageUtil.showInfoMsg("Check the between values.");
                                 return;
                             }
-
                             avg = "";
                             max = "";
                             min = "";
@@ -225,9 +224,6 @@ extends JPanel {
             JPanel statPanel = new JPanel();
             statPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
-            JLabel valueLabel = new JLabel("VALUES: " + MyDirectGraphMathUtil.getCommaSeperatedNumber(dataTbl.getRowCount()) + "    ");
-            valueLabel.setFont(MyDirectGraphVars.tahomaBoldFont12);
-
             JLabel maxLabel = new JLabel("MAX.: " + (std == null ? maxCategoryValue : max) + "     ");
             maxLabel.setFont(MyDirectGraphVars.tahomaBoldFont12);
 
@@ -237,14 +233,15 @@ extends JPanel {
             JLabel avgLabel = new JLabel("AVG.: " + avg + "    ");
             avgLabel.setFont(MyDirectGraphVars.tahomaBoldFont12);
 
-            JLabel stdLabel = new JLabel("STD.: " + (std == null ? "" : std));
-            stdLabel.setFont(MyDirectGraphVars.tahomaBoldFont12);
-
-            statPanel.add(valueLabel);
             statPanel.add(maxLabel);
             statPanel.add(minLabel);
             statPanel.add(avgLabel);
-            statPanel.add(stdLabel);
+
+            if (std != null && !std.equals("")) {
+                JLabel stdLabel = new JLabel("STD.: " + std);
+                stdLabel.setFont(MyDirectGraphVars.tahomaBoldFont12);
+                statPanel.add(stdLabel);
+            }
 
             JPanel chart = new JPanel();
             chart.setLayout(new BorderLayout(1,1));
@@ -265,7 +262,6 @@ extends JPanel {
     private void enlarge() {
         MyChartPreviewer dataPreviewChart = new MyChartPreviewer();
         dataPreviewChart.decorate(dataTbl, columnDistributionTbl);
-
         JFrame f = new JFrame();
         f.setLayout(new BorderLayout(1,1));
         f.getContentPane().add(dataPreviewChart, BorderLayout.CENTER);
@@ -278,7 +274,7 @@ extends JPanel {
         boolean isNumericColumn = true;
         for (; row > 0; row--) {
             String value = dataTbl.getValueAt(row-1, selectedChart + 1).toString().split("\\.")[0];
-            if (!value.matches("\\d+(\\.\\d+)?")) {
+            if (!value.matches("-?\\d+(\\.\\d+)?")) {
                 isNumericColumn = false;
                 break;
             }
@@ -430,7 +426,6 @@ extends JPanel {
         MySequentialGraphCategory quantizer = new MySequentialGraphCategory(min, max, categories);
         quantizer.setCategoryIntervals(columnsValues);
         java.util.List<Integer> quantizations = quantizer.getCategoryIntervals();
-
         return quantizations;
     }
 
@@ -442,7 +437,6 @@ extends JPanel {
             int totalRows = dataTbl.getRowCount();
             if (quantizationTxt.getText().length() > 0 && Integer.parseInt(quantizationTxt.getText()) > 0) {
                 java.util.List<Integer> quantizations = getQutizations();
-                System.out.println(quantizations);
                 int row = dataTbl.getRowCount() - 1;
                 while (row > -1) {
                     long value = Long.parseLong(dataTbl.getValueAt(row, selectedChart + 1).toString().trim().split("\\.")[0]);
@@ -533,7 +527,7 @@ extends JPanel {
                 });
             }
 
-            std = MyDirectGraphMathUtil.threeDecimalFormat(getColumnNumericValueStandardDeviation(valueMap));
+            std = MyDirectGraphMathUtil.threeDecimalFormat(getColumnNumericValueStandardDeviation(valueMap, Float.parseFloat(avg)));
 
             columnDistributionTbl.revalidate();
             columnDistributionTbl.repaint();
@@ -557,21 +551,21 @@ extends JPanel {
         return null;
     }
 
-    public float getColumnNumericValueStandardDeviation(LinkedHashMap<Long, Long> valueMap) {
-        float sum = 0.00f;
-        int data = 0;
-        for (long n : valueMap.keySet()) {
-            for (int i=0; i < n*valueMap.get(n); i++) {
-                sum += n;
-                data++;
+    public float getColumnNumericValueStandardDeviation(LinkedHashMap<Long, Long> valueMap, float avg) {
+        try {
+            int data = 0;
+            float sum = 0f;
+            for (long n : valueMap.keySet()) {
+                for (int i=0; i < n * valueMap.get(n); i++) {
+                    sum += Math.pow(n - avg, 2);
+                    data++;
+                }
             }
+            return (sum == 0.00f ? 0.00f : (float) Math.sqrt(sum / data));
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-        double mean = sum / data;
-        sum = 0f;
-        for (long n : valueMap.keySet()) {
-            sum += Math.pow(n - mean, 2);
-        }
-        return (sum == 0.00f ? 0.00f : (float) Math.sqrt(sum / data));
+        return 0;
     }
 
 }

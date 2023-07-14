@@ -40,7 +40,6 @@ extends JPanel {
         table.getTableHeader().setFont(MyDirectGraphVars.tahomaBoldFont12);
         table.getTableHeader().setBackground(new Color(0,0,0,0));
         table.getTableHeader().setOpaque(false);
-
         this.add(new JScrollPane(table), BorderLayout.CENTER);
     }
 
